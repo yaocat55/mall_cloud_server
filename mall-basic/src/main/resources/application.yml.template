@@ -1,0 +1,69 @@
+spring:
+  devtools:
+    restart:
+      enabled: false
+  profiles:
+    active: dev
+  application:
+    name: mall-basic-api
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    url: jdbc:mysql://localhost:3306/mall_basic?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true
+    username: root
+    password: your_mysql_password
+  cloud:
+    nacos:
+      config:
+        override-none: true
+        namespace: mall
+        server-addr: your_nacos_host:8848
+        file-extension: yaml
+        group: mall-cloud
+        enabled: true
+        username: nacos
+        password: your_nacos_password
+      discovery:
+        server-addr: your_nacos_host:8848
+        namespace: mall
+        username: nacos
+        password: your_nacos_password
+  config:
+    import: nacos:mall-basic-api-dev.yaml
+  data:
+    redis:
+      database: 5
+      host: your_redis_host
+      port: 6379
+      password: your_redis_password
+      timeout: 50000
+    mongodb:
+      host: your_mongodb_host
+      port: 27017
+      auto-index-creation: true
+      database: mall
+      username: mongodb
+      password: your_mongodb_password
+  ai:
+   ollama:
+    base-url: http://localhost:11434
+    chat:
+      model: deepseek-r1:8b
+mybatis:
+  configLocation: classpath:/mybatis-config.xml
+aliyun:
+  sms:
+    host: dysmsapi.aliyuncs.com
+    access-key-id: your_aliyun_access_key_id
+    access-key-secret: your_aliyun_access_key_secret
+    sign-name: Java
+    region-id: cn-hangzhou
+    registerTemplateCode: SMS_471350295
+    loginTemplateCode: SMS_471510035
+minio:
+  endpoint: http://your_minio_host
+  port: 9002
+  bucketName: mall-dev
+  secure: false
+  accessKey: root
+  secretKey: your_minio_secret_key

@@ -1,0 +1,48 @@
+server:
+  port: 8027
+
+spring:
+  devtools:
+    restart:
+      enabled: false
+  application:
+    name: mall-pay-api
+  data:
+    redis:
+      database: 5
+      host: your_redis_host
+      port: 6379
+      password: your_redis_password
+      timeout: 50000
+  cloud:
+    nacos:
+      config:
+        override-none: true
+        namespace: mall
+        server-addr: your_nacos_host:8848
+        file-extension: yaml
+        group: mall-cloud
+        enabled: true
+        username: nacos
+        password: your_nacos_password
+      discovery:
+        server-addr: your_nacos_host:8848
+        namespace: mall
+        username: nacos
+        password: your_nacos_password
+  config:
+    import: nacos:mall-pay-api-dev.yaml
+
+mall:
+  pay:
+    alipay:
+      protocol: https
+      gatewayHost: openapi-sandbox.dl.alipaydev.com
+      signType: RSA2
+      appId: your_alipay_app_id
+      privateKey: your_alipay_private_key
+      publicKey: your_alipay_public_key
+      notifyUrl: your_alipay_notify_url
+mall:
+  mgt:
+    tokenSecret: your_jwt_secret_here

@@ -1,0 +1,61 @@
+server:
+  port: 8026
+
+spring:
+  devtools:
+    restart:
+      enabled: false
+  application:
+    name: mall-order-api
+  main:
+    allow-bean-definition-overriding: true
+  data:
+    redis:
+      database: 5
+      host: your_redis_host
+      port: 6379
+      password: your_redis_password
+      timeout: 50000
+  cloud:
+    nacos:
+      config:
+        override-none: true
+        namespace: mall
+        server-addr: your_nacos_host:8848
+        file-extension: yaml
+        group: mall-cloud
+        enabled: true
+        username: nacos
+        password: your_nacos_password
+      discovery:
+        server-addr: your_nacos_host:8848
+        namespace: mall
+        username: nacos
+        password: your_nacos_password
+  config:
+    import: nacos:mall-order-api-dev.yaml
+  elasticsearch:
+    uris: http://your_es_host:9200
+    username: elastic
+    password: your_elasticsearch_password
+    connection-timeout: 60s
+    socket-timeout: 180s
+
+mybatis:
+  mapper-locations: classpath:cn/net/mall/order/mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    root: info
+    org.apache.shardingsphere: info
+    ShardingSphere-SQL: info
+    org.apache.shardingsphere.infra.route: debug
+
+mall:
+  order:
+    orderTimeoutDelayLevel: 15
+mall:
+  mgt:
+    tokenSecret: your_jwt_secret_here

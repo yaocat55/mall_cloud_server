@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.net.mall.order.mapper.OrderReturnApplyMapper">
+
+    <resultMap type="cn.net.mall.order.entity.OrderReturnApplyEntity" id="OrderReturnApplyResult">
+        <result property="id" column="id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="orderCode" column="order_code"/>
+        <result property="userId" column="user_id"/>
+        <result property="reason" column="reason"/>
+        <result property="description" column="description"/>
+        <result property="applyStatus" column="apply_status"/>
+        <result property="refundAmount" column="refund_amount"/>
+        <result property="applyTime" column="apply_time"/>
+        <result property="auditTime" column="audit_time"/>
+        <result property="receiveTime" column="receive_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createUserName" column="create_user_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+        <result property="updateUserName" column="update_user_name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDel" column="is_del"/>
+    </resultMap>
+
+    <sql id="selectOrderReturnApplyColumn">
+        id,
+        order_id,
+        order_code,
+        user_id,
+        reason,
+        description,
+        apply_status,
+        refund_amount,
+        apply_time,
+        audit_time,
+        receive_time,
+        create_user_id,
+        create_user_name,
+        create_time,
+        update_user_id,
+        update_user_name,
+        update_time,
+        is_del
+    </sql>
+
+    <sql id="queryWhere">
+        <where>
+            <if test="createBeginTime != null and createBeginTime !=''">
+                AND create_time >= #{createBeginTime}
+            </if>
+
+            <if test="createEndTime != null and createEndTime !=''">
+                AND create_time <![CDATA[<]]> #{createEndTime}
+            </if>
+
+            <if test="orderId != null ">
+                AND order_id = #{orderId}
+            </if>
+            <if test="orderCode != null  and orderCode != ''">
+                AND order_code = #{orderCode}
+            </if>
+            <if test="userId != null ">
+                AND user_id = #{userId}
+            </if>
+            <if test="applyStatus != null ">
+                AND apply_status = #{applyStatus}
+            </if>
+        </where>
+    </sql>
+
+    <select id="searchCount" parameterType="cn.net.mall.order.entity.OrderReturnApplyConditionEntity" resultType="int">
+        SELECT COUNT(1)
+        FROM t_order_return_apply
+        <include refid="queryWhere"/>
+    </select>
+
+    <select id="searchByCondition" parameterType="cn.net.mall.order.entity.OrderReturnApplyConditionEntity"
+            resultMap="OrderReturnApplyResult">
+        SELECT
+        <include refid="selectOrderReturnApplyColumn"/>
+        FROM t_order_return_apply
+        <include refid="queryWhere"/>
+        <include refid="cn.net.mall.mapper.BaseMapper.paginationSql"/>
+    </select>
+
+    <insert id="insert" parameterType="cn.net.mall.order.entity.OrderReturnApplyEntity">
+        INSERT INTO t_order_return_apply (
+        id,
+        order_id,
+        order_code,
+        user_id,
+        reason,
+        description,
+        apply_status,
+        refund_amount,
+        apply_time,
+        create_user_id,
+        create_user_name,
+        create_time,
+        is_del
+        ) VALUES (
+        #{id},
+        #{orderId},
+        #{orderCode},
+        #{userId},
+        #{reason},
+        #{description},
+        #{applyStatus},
+        #{refundAmount},
+        #{applyTime},
+        #{createUserId},
+        #{createUserName},
+        #{createTime},
+        #{isDel}
+        )
+    </insert>
+
+    <update id="update" parameterType="cn.net.mall.order.entity.OrderReturnApplyEntity">
+        UPDATE t_order_return_apply
+        <set>
+            <if test="orderId != null">order_id = #{orderId},</if>
+            <if test="orderCode != null and orderCode != ''">order_code = #{orderCode},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="reason != null and reason != ''">reason = #{reason},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
+            <if test="applyStatus != null">apply_status = #{applyStatus},</if>
+            <if test="refundAmount != null">refund_amount = #{refundAmount},</if>
+            <if test="applyTime != null">apply_time = #{applyTime},</if>
+            <if test="auditTime != null">audit_time = #{auditTime},</if>
+            <if test="receiveTime != null">receive_time = #{receiveTime},</if>
+            <if test="updateUserId != null">update_user_id = #{updateUserId},</if>
+            <if test="updateUserName != null and updateUserName != ''">update_user_name = #{updateUserName},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDel != null">is_del = #{isDel},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.net.mall.message.mapper.BaseMapper">
+    <sql id="paginationSql">
+        <choose>
+            <when test="sortField != null and sortField.size()>0">
+                ORDER BY ${sortString}
+            </when>
+            <otherwise>
+                ORDER BY create_time DESC
+            </otherwise>
+        </choose>
+
+        <if test="pageNo > 0">
+            LIMIT #{pageBegin} , #{pageSize}
+        </if>
+    </sql>
+</mapper>

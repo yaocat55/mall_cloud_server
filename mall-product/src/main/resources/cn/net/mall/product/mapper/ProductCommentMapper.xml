@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.net.mall.product.mapper.ProductCommentMapper">
+
+    <resultMap type="cn.net.mall.product.entity.ProductCommentEntity" id="ProductCommentResult">
+        <result property="id" column="id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="productId" column="product_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="avatarUrl" column="avatar_url"/>
+        <result property="content" column="content"/>
+        <result property="rating" column="rating"/>
+        <result property="type" column="type"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createUserName" column="create_user_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+        <result property="updateUserName" column="update_user_name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDel" column="is_del"/>
+    </resultMap>
+
+
+    <sql id="paginationSql">
+        LIMIT #{pageBegin} , #{pageSize}
+    </sql>
+
+    <sql id="selectProductCommentColumn">
+         id,
+         parent_id,
+         order_id,
+         product_id,
+         user_id,
+         user_name,
+         avatar_url,
+         content,
+         rating,
+         type,
+         create_user_id,
+         create_user_name,
+         create_time,
+         update_user_id,
+         update_user_name,
+         update_time,
+         is_del
+    </sql>
+
+    <sql id="queryWhere">
+        <where>
+            <if test="idList != null and idList.size()>0">
+                AND id IN
+                <foreach collection="idList" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="createBeginTime != null and createBeginTime !=''">
+                AND create_time >= #{createBeginTime}
+            </if>
+
+            <if test="createEndTime != null and createEndTime !=''">
+                AND create_time <![CDATA[<]]> #{createEndTime}
+            </if>
+            <if test="id != null ">
+                AND id = #{id}
+            </if>
+            <if test="parentId != null ">
+                AND parent_id = #{parentId}
+            </if>
+            <if test="orderId != null ">
+                AND order_id = #{orderId}
+            </if>
+            <if test="productId != null ">
+                AND product_id = #{productId}
+            </if>
+            <if test="productIdList != null and productIdList.size()>0">
+                AND product_id IN
+                <foreach collection="productIdList" item="pid" open="(" close=")" separator=",">
+                    #{pid}
+                </foreach>
+            </if>
+            <if test="userId != null ">
+                AND user_id = #{userId}
+            </if>
+            <if test="content != null  and content != ''">
+                AND content = #{content}
+            </if>
+            <if test="rating != null ">
+                AND rating = #{rating}
+            </if>
+            <if test="type != null ">
+                AND type = #{type}
+            </if>
+            <if test="createUserId != null ">
+                AND create_user_id = #{createUserId}
+            </if>
+            <if test="createUserName != null  and createUserName != ''">
+                AND create_user_name = #{createUserName}
+            </if>
+            <if test="updateUserId != null ">
+                AND update_user_id = #{updateUserId}
+            </if>
+            <if test="updateUserName != null  and updateUserName != ''">
+                AND update_user_name = #{updateUserName}
+            </if>
+            <if test="isDel != null ">
+                AND is_del = #{isDel}
+            </if>
+            AND is_del = 0
+        </where>
+    </sql>
+
+    <select id="findById" parameterType="Long"
+            resultMap="ProductCommentResult">
+        SELECT
+        <include refid="selectProductCommentColumn"/>
+        FROM product_comment
+        WHERE id = #{id}
+    </select>
+
+    <select id="searchByCondition"
+            parameterType="cn.net.mall.product.entity.ProductCommentConditionEntity"
+            resultMap="ProductCommentResult">
+        SELECT
+        <include refid="selectProductCommentColumn"/>
+        FROM product_comment
+        <include refid="queryWhere"/>
+        <include refid="cn.net.mall.product.mapper.BaseMapper.paginationSql"/>
+    </select>
+
+    <select id="searchCount"
+            parameterType="cn.net.mall.product.entity.ProductCommentConditionEntity"
+            resultType="int">
+        SELECT
+        COUNT(*)
+        FROM product_comment
+        <include refid="queryWhere"/>
+    </select>
+
+
+    <update id="update" parameterType="cn.net.mall.product.entity.ProductCommentEntity">
+        UPDATE product_comment
+        <trim prefix="SET" suffixOverrides=",">
+
+            <if test="parentId != null ">
+                parent_id = #{parentId},
+            </if>
+
+            <if test="orderId != null ">
+                order_id = #{orderId},
+            </if>
+
+            <if test="productId != null ">
+                product_id = #{productId},
+            </if>
+
+
+            <if test="userId != null ">
+                user_id = #{userId},
+            </if>
+
+
+            <if test="content != null  and content != ''">
+                content = #{content},
+            </if>
+
+
+            <if test="rating != null ">
+                rating = #{rating},
+            </if>
+
+            <if test="type != null ">
+                type = #{type},
+            </if>
+
+            <if test="createUserId != null ">
+                create_user_id = #{createUserId},
+            </if>
+
+
+            <if test="createUserName != null  and createUserName != ''">
+                create_user_name = #{createUserName},
+            </if>
+
+
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+
+
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                update_user_name = #{updateUserName},
+            </if>
+
+
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+
+
+            <if test="isDel != null ">
+                is_del = #{isDel},
+            </if>
+
+            update_time=now(3)
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteByIds">
+        UPDATE product_comment
+        SET is_del =
+        1,update_time=now(3),update_user_id=#{entity.updateUserId},update_user_name=#{entity.updateUserName}
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="batchInsert" parameterType="cn.net.mall.product.entity.ProductCommentEntity">
+        INSERT INTO product_comment
+        (
+        id,
+        parent_id,
+        order_id,
+        product_id,
+        user_id,
+        user_name,
+        avatar_url,
+        content,
+        rating,
+        type,
+        create_user_id,
+        create_user_name,
+        create_time,
+        is_del
+        )
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id},
+            #{item.parentId},
+            #{item.orderId},
+            #{item.productId},
+            #{item.userId},
+            #{CURRENT_USER_NAME},
+            #{item.avatarUrl},
+            #{item.content},
+            #{item.rating},
+            #{item.type},
+            #{CURRENT_USER_ID},
+            #{CURRENT_USER_NAME},
+            now(3),
+            0
+            )
+        </foreach>
+    </insert>
+
+    <insert id="insert" parameterType="cn.net.mall.product.entity.ProductCommentEntity">
+        INSERT INTO product_comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            <if test="parentId != null ">
+                parent_id,
+            </if>
+            <if test="orderId != null ">
+                order_id,
+            </if>
+            <if test="productId != null ">
+                product_id,
+            </if>
+            <if test="userId != null ">
+                user_id,
+            </if>
+            <if test="content != null  and content != ''">
+                content,
+            </if>
+            <if test="rating != null ">
+                rating,
+            </if>
+            <if test="type != null ">
+                type,
+            </if>
+            user_name,
+            create_user_id,
+            create_user_name,
+            create_time,
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+            <if test="updateUserName != null  and updateUserName != ''">
+                update_user_name,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+            <if test="isDel != null ">
+                is_del,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{GENERATE_ID},
+            <if test="parentId != null ">
+                #{parentId},
+            </if>
+            <if test="orderId != null ">
+                #{orderId},
+            </if>
+            <if test="productId != null ">
+                #{productId},
+            </if>
+            <if test="userId != null ">
+                #{userId},
+            </if>
+            <if test="content != null  and content != ''">
+                #{content},
+            </if>
+            <if test="rating != null ">
+                #{rating},
+            </if>
+            <if test="type != null ">
+                #{type},
+            </if>
+            #{CURRENT_USER_NAME},
+            #{CURRENT_USER_ID},
+            #{CURRENT_USER_NAME},
+            now(3),
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+            <if test="updateUserName != null  and updateUserName != ''">
+                #{updateUserName},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+            <if test="isDel != null ">
+                #{isDel},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="findByIds" parameterType="Long"
+            resultMap="ProductCommentResult">
+        SELECT
+        <include refid="selectProductCommentColumn"/>
+        FROM product_comment
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

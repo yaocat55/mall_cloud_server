@@ -1,0 +1,87 @@
+package cn.net.mall.entity.seckill;
+
+
+import cn.net.mall.entity.SignEntity;
+import lombok.Data;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+/**
+ * 用户秒杀商品订单实体
+ *
+ * @date 2024/7/24 下午3:02
+ */
+@Data
+public class UserSeckillProductTradeEntity extends SignEntity {
+
+    /**
+     * 订单ID
+     */
+    private Long tradeId;
+
+    /**
+     * 订单code
+     */
+    private String code;
+
+    /**
+     * 用户名称
+     */
+    private String userName;
+
+    /**
+     * 用户ID
+     */
+    private Long userId;
+
+    /**
+     * 总金额
+     */
+    private BigDecimal totalAmount;
+
+    /**
+     * 付款金额
+     */
+    private BigDecimal paymentAmount;
+
+    /**
+     * 秒杀商品ID
+     */
+    private Long seckillProductId;
+
+    /**
+     * 原始商品ID
+     */
+    private Long productId;
+
+    /**
+     * 商品名称
+     */
+    private String productName;
+
+    /**
+     * 商品规格
+     */
+    private String model;
+
+    /**
+     * 秒杀价
+     */
+    private BigDecimal price;
+
+    /**
+     * 原价
+     */
+    private BigDecimal costPrice;
+
+    /**
+     * 数量
+     */
+    private Integer quantity;
+
+    /**
+     * 下单时间
+     */
+    private Date orderTime;
+}

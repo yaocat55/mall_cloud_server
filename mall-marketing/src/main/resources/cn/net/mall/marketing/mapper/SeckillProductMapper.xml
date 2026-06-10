@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.net.mall.marketing.mapper.SeckillProductMapper">
+
+    <resultMap type="cn.net.mall.marketing.entity.SeckillProductEntity" id="SeckillProductResult">
+        <result property="id" column="id"/>
+        <result property="productId" column="product_id"/>
+        <result property="withHoldQuantity" column="with_hold_quantity"/>
+        <result property="remainQuantity" column="remain_quantity"/>
+        <result property="price" column="price"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createUserName" column="create_user_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+        <result property="updateUserName" column="update_user_name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDel" column="is_del"/>
+        <result property="startTime"    column="start_time" />
+        <result property="endTime"    column="end_time" />
+    </resultMap>
+
+
+    <sql id="selectSeckillProductColumn">
+         id,
+         product_id,
+         with_hold_quantity,
+         remain_quantity,
+         price,
+         start_time,
+         end_time,
+         create_user_id,
+         create_user_name,
+         create_time,
+         update_user_id,
+         update_user_name,
+         update_time,
+         is_del
+    </sql>
+
+    <sql id="queryWhere">
+        <where>
+
+            <if test="id != null ">
+                AND id = #{id}
+            </if>
+
+            <if test="idList != null and idList.size()>0">
+                AND id IN
+                <foreach collection="idList" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+
+            <if test="productId != null ">
+                AND product_id = #{productId}
+            </if>
+
+            <if test="withHoldQuantity != null ">
+                AND with_hold_quantity = #{withHoldQuantity}
+            </if>
+
+            <if test="remainQuantity != null ">
+                AND remain_quantity = #{remainQuantity}
+            </if>
+
+            <if test="price != null ">
+                AND price = #{price}
+            </if>
+
+            <if test="createUserId != null ">
+                AND create_user_id = #{createUserId}
+            </if>
+
+            <if test="createUserName != null  and createUserName != ''">
+                AND create_user_name = #{createUserName}
+            </if>
+
+            <if test="createTime != null ">
+                AND create_time = #{createTime}
+            </if>
+
+            <if test="updateUserId != null ">
+                AND update_user_id = #{updateUserId}
+            </if>
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                AND update_user_name = #{updateUserName}
+            </if>
+
+            <if test="updateTime != null ">
+                AND update_time = #{updateTime}
+            </if>
+
+            <if test="isDel != null ">
+                AND is_del = #{isDel}
+            </if>
+
+            <if test="startTime != null ">
+                AND start_time = #{startTime}
+            </if>
+
+            <if test="endTime != null ">
+                AND end_time = #{endTime}
+            </if>
+            AND is_del = 0
+        </where>
+    </sql>
+
+    <select id="findById" parameterType="Long"
+            resultMap="SeckillProductResult">
+        SELECT
+        <include refid="selectSeckillProductColumn"/>
+        FROM seckill_product
+        WHERE id = #{id}
+    </select>
+
+    <select id="searchByCondition"
+            parameterType="cn.net.mall.marketing.entity.SeckillProductConditionEntity"
+            resultMap="SeckillProductResult">
+        SELECT
+        <include refid="selectSeckillProductColumn"/>
+        FROM seckill_product
+        <include refid="queryWhere"/>
+        <include refid="cn.net.mall.marketing.mapper.BaseMapper.paginationSql"/>
+    </select>
+
+    <select id="searchCount"
+            parameterType="cn.net.mall.marketing.entity.SeckillProductConditionEntity"
+            resultType="int">
+        SELECT
+        COUNT(*)
+        FROM seckill_product
+        <include refid="queryWhere"/>
+    </select>
+
+
+    <update id="update" parameterType="cn.net.mall.marketing.entity.SeckillProductEntity">
+        UPDATE seckill_product
+        <trim prefix="SET" suffixOverrides=",">
+
+            <if test="productId != null ">
+                product_id = #{productId},
+            </if>
+
+
+            <if test="withHoldQuantity != null ">
+                with_hold_quantity = #{withHoldQuantity},
+            </if>
+
+
+            <if test="remainQuantity != null ">
+                remain_quantity = #{remainQuantity},
+            </if>
+
+
+            <if test="price != null ">
+                price = #{price},
+            </if>
+
+
+            <if test="createUserId != null ">
+                create_user_id = #{createUserId},
+            </if>
+
+
+            <if test="createUserName != null  and createUserName != ''">
+                create_user_name = #{createUserName},
+            </if>
+
+
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+
+
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                update_user_name = #{updateUserName},
+            </if>
+
+
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+
+
+            <if test="isDel != null ">
+                is_del = #{isDel},
+            </if>
+
+            <if test="startTime != null ">
+                start_time = #{startTime},
+            </if>
+
+
+            <if test="endTime != null ">
+                end_time = #{endTime},
+            </if>
+            update_time=now(3)
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteByIds">
+        UPDATE seckill_product
+        SET is_del =
+        1,update_time=now(3),update_user_id=#{entity.updateUserId},update_user_name=#{entity.updateUserName}
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="insert" parameterType="cn.net.mall.marketing.entity.SeckillProductEntity"  useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO seckill_product
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                id,
+            <if test="productId != null ">
+                product_id,
+            </if>
+
+
+            <if test="withHoldQuantity != null ">
+                with_hold_quantity,
+            </if>
+
+
+            <if test="remainQuantity != null ">
+                remain_quantity,
+            </if>
+
+
+            <if test="price != null ">
+                price,
+            </if>
+
+                create_user_id,
+                create_user_name,
+                create_time,
+
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                update_user_name,
+            </if>
+
+
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+
+
+            <if test="isDel != null ">
+                is_del,
+            </if>
+
+            <if test="startTime != null ">
+                start_time,
+            </if>
+
+
+            <if test="endTime != null ">
+                end_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{GENERATE_ID},
+
+            <if test="productId != null ">
+                #{productId},
+            </if>
+
+            <if test="withHoldQuantity != null ">
+                #{withHoldQuantity},
+            </if>
+
+            <if test="remainQuantity != null ">
+                #{remainQuantity},
+            </if>
+
+            <if test="price != null ">
+                #{price},
+            </if>
+
+            #{CURRENT_USER_ID},
+            #{CURRENT_USER_NAME},
+            now(3),
+
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                #{updateUserName},
+            </if>
+
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+
+            <if test="isDel != null ">
+                #{isDel},
+            </if>
+
+            <if test="startTime != null ">
+                #{startTime},
+            </if>
+
+            <if test="endTime != null ">
+                #{endTime},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="findByIds" parameterType="Long"
+            resultMap="SeckillProductResult">
+        SELECT
+        <include refid="selectSeckillProductColumn"/>
+        FROM seckill_product
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

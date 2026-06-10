@@ -1,0 +1,44 @@
+spring:
+  devtools:
+    restart:
+      enabled: false
+  profiles:
+    active: dev
+  application:
+    name: mall-marketing-api
+  main:
+      allow-bean-definition-overriding: true
+  datasource:
+    url: jdbc:mysql://localhost:3306/mall_marketing?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true
+    username: root
+    password: your_mysql_password
+  cloud:
+    nacos:
+      config:
+        override-none: true
+        namespace: mall
+        server-addr: your_nacos_host:8848
+        file-extension: yaml
+        group: mall-cloud
+        enabled: true
+        username: nacos
+        password: your_nacos_password
+      discovery:
+        server-addr: your_nacos_host:8848
+        namespace: mall
+        username: nacos
+        password: your_nacos_password
+  config:
+    import: nacos:mall-marketing-api-dev.yaml
+mybatis:
+  configLocation: classpath:/mybatis-config.xml
+logging:
+  level:
+    cn:
+      net:
+        mall:
+          auth:
+            mapper: debug
+mall:
+  mgt:
+    tokenSecret: your_jwt_secret_here

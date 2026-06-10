@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.net.mall.basic.mapper.common.CommonTaskMapper">
+
+    <resultMap type="cn.net.mall.basic.entity.common.CommonTaskEntity" id="CommonTaskResult">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="fileUrl" column="file_url"/>
+        <result property="type" column="type"/>
+        <result property="status" column="status"/>
+        <result property="failureCount" column="failure_count"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createUserName" column="create_user_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+        <result property="updateUserName" column="update_user_name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDel" column="is_del"/>
+        <result property="bizType" column="biz_type"/>
+        <result property="requestParam" column="request_param"/>
+    </resultMap>
+
+    <sql id="selectCommonTaskColumn">
+         id,
+         name,
+         file_url,
+         type,
+         status,
+         failure_count,
+         create_user_id,
+         create_user_name,
+         create_time,
+         update_user_id,
+         update_user_name,
+         update_time,
+         is_del,
+         biz_type,
+         request_param
+    </sql>
+
+    <sql id="queryWhere">
+        <where>
+
+            <if test="id != null ">
+                AND id = #{id}
+            </if>
+
+            <if test="name != null  and name != ''">
+                AND name = #{name}
+            </if>
+
+            <if test="fileUrl != null  and fileUrl != ''">
+                AND file_url = #{fileUrl}
+            </if>
+
+            <if test="type != null ">
+                AND type = #{type}
+            </if>
+
+            <if test="status != null ">
+                AND status = #{status}
+            </if>
+
+            <if test="statusList != null and statusList.size()>0">
+                AND status IN
+                 <foreach collection="statusList" item="status" open="(" close=")" separator=",">
+                     #{status}
+                 </foreach>
+            </if>
+
+            <if test="failureCount != null ">
+                AND failure_count = #{failureCount}
+            </if>
+
+            <if test="createUserId != null ">
+                AND create_user_id = #{createUserId}
+            </if>
+
+            <if test="createUserName != null  and createUserName != ''">
+                AND create_user_name = #{createUserName}
+            </if>
+
+            <if test="createTime != null ">
+                AND create_time = #{createTime}
+            </if>
+
+            <if test="updateUserId != null ">
+                AND update_user_id = #{updateUserId}
+            </if>
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                AND update_user_name = #{updateUserName}
+            </if>
+
+            <if test="updateTime != null ">
+                AND update_time = #{updateTime}
+            </if>
+
+            <if test="isDel != null ">
+                AND is_del = #{isDel}
+            </if>
+
+            <if test="bizType != null ">
+                AND biz_type = #{bizType}
+            </if>
+
+            <if test="requestParam != null ">
+                AND request_param = #{requestParam}
+            </if>
+            AND is_del = 0
+        </where>
+    </sql>
+
+    <select id="findById" parameterType="Long"
+            resultMap="CommonTaskResult">
+        SELECT
+        <include refid="selectCommonTaskColumn"/>
+        FROM common_task
+        WHERE id = #{id}
+    </select>
+
+    <select id="searchByCondition"
+            parameterType="cn.net.mall.basic.entity.common.CommonTaskConditionEntity"
+            resultMap="CommonTaskResult">
+        SELECT
+        <include refid="selectCommonTaskColumn"/>
+        FROM common_task
+        <include refid="queryWhere"/>
+        <include refid="cn.net.mall.basic.mapper.BaseMapper.paginationSql"/>
+    </select>
+
+    <select id="searchCount"
+            parameterType="cn.net.mall.basic.entity.common.CommonTaskConditionEntity"
+            resultType="int">
+        SELECT
+        COUNT(*)
+        FROM common_task
+        <include refid="queryWhere"/>
+    </select>
+
+
+    <update id="update" parameterType="cn.net.mall.basic.entity.common.CommonTaskEntity">
+        UPDATE common_task
+        <trim prefix="SET" suffixOverrides=",">
+
+            <if test="name != null  and name != ''">
+                name = #{name},
+            </if>
+
+
+            <if test="fileUrl != null  and fileUrl != ''">
+                file_url = #{fileUrl},
+            </if>
+
+
+            <if test="type != null ">
+                type = #{type},
+            </if>
+
+
+            <if test="status != null ">
+                status = #{status},
+            </if>
+
+
+            <if test="failureCount != null ">
+                failure_count = #{failureCount},
+            </if>
+
+
+            <if test="createUserId != null ">
+                create_user_id = #{createUserId},
+            </if>
+
+
+            <if test="createUserName != null  and createUserName != ''">
+                create_user_name = #{createUserName},
+            </if>
+
+
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+
+
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                update_user_name = #{updateUserName},
+            </if>
+
+
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+
+
+            <if test="isDel != null ">
+                is_del = #{isDel},
+            </if>
+
+
+            <if test="bizType != null ">
+                biz_type = #{bizType},
+            </if>
+
+
+            <if test="requestParam != null ">
+                request_param = #{requestParam},
+            </if>
+
+            update_time=now(3)
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        UPDATE common_task
+        SET is_del = 1,update_time=now(3)
+        WHERE id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="cn.net.mall.basic.entity.common.CommonTaskEntity">
+        INSERT INTO common_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            <if test="name != null  and name != ''">
+                name,
+            </if>
+
+
+            <if test="fileUrl != null  and fileUrl != ''">
+                file_url,
+            </if>
+
+
+            <if test="type != null ">
+                type,
+            </if>
+
+
+            <if test="status != null ">
+                status,
+            </if>
+
+
+            <if test="failureCount != null ">
+                failure_count,
+            </if>
+
+            create_user_id,
+            create_user_name,
+            create_time,
+
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                update_user_name,
+            </if>
+
+
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+
+
+            <if test="isDel != null ">
+                is_del,
+            </if>
+
+
+            <if test="bizType != null ">
+                biz_type,
+            </if>
+
+
+            <if test="requestParam != null ">
+                request_param,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{GENERATE_ID},
+            <if test="name != null  and name != ''">
+                #{name},
+            </if>
+
+            <if test="fileUrl != null  and fileUrl != ''">
+                #{fileUrl},
+            </if>
+
+            <if test="type != null ">
+                #{type},
+            </if>
+
+            <if test="status != null ">
+                #{status},
+            </if>
+
+            <if test="failureCount != null ">
+                #{failureCount},
+            </if>
+
+            #{CURRENT_USER_ID},
+            #{CURRENT_USER_NAME},
+            now(3),
+
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                #{updateUserName},
+            </if>
+
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+
+            <if test="isDel != null ">
+                #{isDel},
+            </if>
+
+            <if test="bizType != null ">
+                #{bizType},
+            </if>
+
+            <if test="requestParam != null ">
+                #{requestParam},
+            </if>
+
+        </trim>
+    </insert>
+
+</mapper>

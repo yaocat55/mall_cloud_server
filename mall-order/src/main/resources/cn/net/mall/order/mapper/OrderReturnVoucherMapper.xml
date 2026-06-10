@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.net.mall.order.mapper.OrderReturnVoucherMapper">
+
+    <resultMap type="cn.net.mall.order.entity.OrderReturnVoucherEntity" id="OrderReturnVoucherResult">
+        <result property="id" column="id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="returnApplyId" column="return_apply_id"/>
+        <result property="url" column="url"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createUserName" column="create_user_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+        <result property="updateUserName" column="update_user_name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDel" column="is_del"/>
+    </resultMap>
+
+    <sql id="selectOrderReturnVoucherColumn">
+        id,
+        order_id,
+        return_apply_id,
+        url,
+        create_user_id,
+        create_user_name,
+        create_time,
+        update_user_id,
+        update_user_name,
+        update_time,
+        is_del
+    </sql>
+
+    <sql id="queryWhere">
+        <where>
+            <if test="orderId != null ">
+                AND order_id = #{orderId}
+            </if>
+            <if test="returnApplyId != null ">
+                AND return_apply_id = #{returnApplyId}
+            </if>
+        </where>
+    </sql>
+
+    <select id="searchCount" parameterType="cn.net.mall.order.entity.OrderReturnVoucherConditionEntity" resultType="int">
+        SELECT COUNT(1)
+        FROM t_order_return_voucher
+        <include refid="queryWhere"/>
+    </select>
+
+    <select id="searchByCondition" parameterType="cn.net.mall.order.entity.OrderReturnVoucherConditionEntity"
+            resultMap="OrderReturnVoucherResult">
+        SELECT
+        <include refid="selectOrderReturnVoucherColumn"/>
+        FROM t_order_return_voucher
+        <include refid="queryWhere"/>
+        <include refid="cn.net.mall.mapper.BaseMapper.paginationSql"/>
+    </select>
+
+    <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_order_return_voucher
+        (
+            id,
+            order_id,
+            return_apply_id,
+            url,
+            create_user_id,
+            create_user_name,
+            create_time,
+            update_user_id,
+            update_user_name,
+            update_time,
+            is_del
+        )
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+        (
+            #{item.id},
+            #{item.orderId},
+            #{item.returnApplyId},
+            #{item.url},
+            #{item.createUserId},
+            #{item.createUserName},
+            #{item.createTime},
+            #{item.updateUserId},
+            #{item.updateUserName},
+            #{item.updateTime},
+            #{item.isDel}
+        )
+        </foreach>
+    </insert>
+</mapper>
+

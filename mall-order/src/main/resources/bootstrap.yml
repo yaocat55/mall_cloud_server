@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: mall-order-api
+  cloud:
+    nacos:
+      config:
+        server-addr: 117.72.88.11:8848
+        file-extension: yaml
+        namespace: mall
+        group: mall-cloud
+        username: nacos
+        password: susan123
+      discovery:
+        server-addr: 117.72.88.11:8848
+        namespace: mall
+        username: nacos
+        password: susan123
+
+rocketmq:
+  name-server: 117.72.88.11:9876
+  producer:
+    send-message-timeout: 3000

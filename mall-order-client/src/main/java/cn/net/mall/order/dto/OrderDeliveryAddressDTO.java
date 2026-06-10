@@ -1,0 +1,26 @@
+package cn.net.mall.order.dto;
+
+import cn.net.mall.entity.BaseEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+@Data
+@EqualsAndHashCode(callSuper = true)
+@Schema(description = "订单收货地址传输对象")
+public class OrderDeliveryAddressDTO extends BaseEntity {
+    @Schema(description = "订单ID")
+    private Long orderId;
+    @Schema(description = "收货人名称")
+    private String receiverName;
+    @Schema(description = "收货人电话")
+    private String receiverPhone;
+    @Schema(description = "省份/直辖市")
+    private String receiverProvince;
+    @Schema(description = "城市")
+    private String receiverCity;
+    @Schema(description = "区")
+    private String receiverRegion;
+    @Schema(description = "详细地址")
+    private String receiverDetailAddress;
+}

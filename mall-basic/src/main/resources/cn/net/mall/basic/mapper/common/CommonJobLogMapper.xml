@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.net.mall.basic.mapper.common.CommonJobLogMapper">
+
+    <resultMap type="cn.net.mall.basic.entity.common.CommonJobLogEntity" id="CommonJobLogResult">
+        <result property="id" column="id"/>
+        <result property="jobId" column="job_id"/>
+        <result property="jobName" column="job_name"/>
+        <result property="runStatus" column="run_status"/>
+        <result property="beanName" column="bean_name"/>
+        <result property="methodName" column="method_name"/>
+        <result property="cronExpression" column="cron_expression"/>
+        <result property="params" column="params"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="exception" column="exception"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createUserName" column="create_user_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+        <result property="updateUserName" column="update_user_name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDel" column="is_del"/>
+    </resultMap>
+
+    <sql id="selectCommonJobLogColumn">
+         id,
+         job_id,
+         job_name,
+         run_status,
+         bean_name,
+         method_name,
+         cron_expression,
+         params,
+         start_time,
+         end_time,
+         exception,
+         create_user_id,
+         create_user_name,
+         create_time,
+         update_user_id,
+         update_user_name,
+         update_time,
+         is_del
+    </sql>
+
+    <sql id="queryWhere">
+        <where>
+
+            <if test="id != null ">
+                AND id = #{id}
+            </if>
+
+            <if test="jobId != null ">
+                AND job_id = #{jobId}
+            </if>
+
+            <if test="jobName != null  and jobName != ''">
+                AND job_name = #{jobName}
+            </if>
+
+            <if test="runStatus != null ">
+                AND run_status = #{runStatus}
+            </if>
+
+            <if test="beanName != null  and beanName != ''">
+                AND bean_name = #{beanName}
+            </if>
+
+            <if test="methodName != null  and methodName != ''">
+                AND method_name = #{methodName}
+            </if>
+
+            <if test="cronExpression != null  and cronExpression != ''">
+                AND cron_expression = #{cronExpression}
+            </if>
+
+            <if test="params != null  and params != ''">
+                AND params = #{params}
+            </if>
+
+            <if test="startTime != null ">
+                AND start_time = #{startTime}
+            </if>
+
+            <if test="endTime != null ">
+                AND end_time = #{endTime}
+            </if>
+
+            <if test="exception != null  and exception != ''">
+                AND exception = #{exception}
+            </if>
+
+            <if test="createUserId != null ">
+                AND create_user_id = #{createUserId}
+            </if>
+
+            <if test="createUserName != null  and createUserName != ''">
+                AND create_user_name = #{createUserName}
+            </if>
+
+            <if test="createTime != null ">
+                AND create_time = #{createTime}
+            </if>
+
+            <if test="updateUserId != null ">
+                AND update_user_id = #{updateUserId}
+            </if>
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                AND update_user_name = #{updateUserName}
+            </if>
+
+            <if test="updateTime != null ">
+                AND update_time = #{updateTime}
+            </if>
+
+            <if test="createBeginTime != null and createBeginTime !=''">
+                AND create_time >= #{createBeginTime}
+            </if>
+
+            <if test="createEndTime != null and createEndTime !=''">
+                AND create_time <![CDATA[<]]> #{createEndTime}
+            </if>
+
+            <if test="isDel != null ">
+                AND is_del = #{isDel}
+            </if>
+            AND is_del = 0
+        </where>
+    </sql>
+
+    <select id="findById" parameterType="Long"
+            resultMap="CommonJobLogResult">
+        SELECT
+        <include refid="selectCommonJobLogColumn"/>
+        FROM common_job_log
+        WHERE id = #{id}
+    </select>
+
+    <select id="searchByCondition"
+            parameterType="cn.net.mall.basic.entity.common.CommonJobLogConditionEntity"
+            resultMap="CommonJobLogResult">
+        SELECT
+        <include refid="selectCommonJobLogColumn"/>
+        FROM common_job_log
+        <include refid="queryWhere"/>
+        <include refid="cn.net.mall.basic.mapper.BaseMapper.paginationSql"/>
+    </select>
+
+    <select id="searchCount"
+            parameterType="cn.net.mall.basic.entity.common.CommonJobLogConditionEntity"
+            resultType="int">
+        SELECT
+        COUNT(*)
+        FROM common_job_log
+        <include refid="queryWhere"/>
+    </select>
+
+
+    <update id="update" parameterType="cn.net.mall.basic.entity.common.CommonJobLogEntity">
+        UPDATE common_job_log
+        <trim prefix="SET" suffixOverrides=",">
+
+            <if test="jobId != null ">
+                job_id = #{jobId},
+            </if>
+
+
+            <if test="jobName != null  and jobName != ''">
+                job_name = #{jobName},
+            </if>
+
+
+            <if test="runStatus != null ">
+                run_status = #{runStatus},
+            </if>
+
+
+            <if test="beanName != null  and beanName != ''">
+                bean_name = #{beanName},
+            </if>
+
+
+            <if test="methodName != null  and methodName != ''">
+                method_name = #{methodName},
+            </if>
+
+
+            <if test="cronExpression != null  and cronExpression != ''">
+                cron_expression = #{cronExpression},
+            </if>
+
+
+            <if test="params != null  and params != ''">
+                params = #{params},
+            </if>
+
+
+            <if test="startTime != null ">
+                start_time = #{startTime},
+            </if>
+
+
+            <if test="endTime != null ">
+                end_time = #{endTime},
+            </if>
+
+
+            <if test="exception != null  and exception != ''">
+                exception = #{exception},
+            </if>
+
+
+            <if test="createUserId != null ">
+                create_user_id = #{createUserId},
+            </if>
+
+
+            <if test="createUserName != null  and createUserName != ''">
+                create_user_name = #{createUserName},
+            </if>
+
+
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+
+
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                update_user_name = #{updateUserName},
+            </if>
+
+
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+
+            <if test="isDel != null ">
+                is_del = #{isDel},
+            </if>
+
+            update_time=now(3)
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteByIds">
+        UPDATE common_job_log
+        SET is_del =
+        1,update_time=now(3),update_user_id=#{entity.updateUserId},update_user_name=#{entity.updateUserName}
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="insert" parameterType="cn.net.mall.basic.entity.common.CommonJobLogEntity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO common_job_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            <if test="jobId != null ">
+                job_id,
+            </if>
+
+
+            <if test="jobName != null  and jobName != ''">
+                job_name,
+            </if>
+
+
+            <if test="runStatus != null ">
+                run_status,
+            </if>
+
+
+            <if test="beanName != null  and beanName != ''">
+                bean_name,
+            </if>
+
+
+            <if test="methodName != null  and methodName != ''">
+                method_name,
+            </if>
+
+
+            <if test="cronExpression != null  and cronExpression != ''">
+                cron_expression,
+            </if>
+
+
+            <if test="params != null  and params != ''">
+                params,
+            </if>
+
+
+            <if test="startTime != null ">
+                start_time,
+            </if>
+
+
+            <if test="endTime != null ">
+                end_time,
+            </if>
+
+
+            <if test="exception != null  and exception != ''">
+                exception,
+            </if>
+
+            create_user_id,
+            create_user_name,
+            create_time,
+
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                update_user_name,
+            </if>
+
+
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+
+
+            <if test="isDel != null ">
+                is_del,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{GENERATE_ID},
+            <if test="jobId != null ">
+                #{jobId},
+            </if>
+
+            <if test="jobName != null  and jobName != ''">
+                #{jobName},
+            </if>
+
+            <if test="runStatus != null ">
+                #{runStatus},
+            </if>
+
+            <if test="beanName != null  and beanName != ''">
+                #{beanName},
+            </if>
+
+            <if test="methodName != null  and methodName != ''">
+                #{methodName},
+            </if>
+
+            <if test="cronExpression != null  and cronExpression != ''">
+                #{cronExpression},
+            </if>
+
+            <if test="params != null  and params != ''">
+                #{params},
+            </if>
+
+            <if test="startTime != null ">
+                #{startTime},
+            </if>
+
+            <if test="endTime != null ">
+                #{endTime},
+            </if>
+
+            <if test="exception != null  and exception != ''">
+                #{exception},
+            </if>
+
+            #{CURRENT_USER_ID},
+            #{CURRENT_USER_NAME},
+            now(3),
+
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                #{updateUserName},
+            </if>
+
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+
+            <if test="isDel != null ">
+                #{isDel},
+            </if>
+
+        </trim>
+    </insert>
+
+    <select id="findByIds" parameterType="Long"
+            resultMap="CommonJobLogResult">
+        SELECT
+        <include refid="selectCommonJobLogColumn"/>
+        FROM common_job_log
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

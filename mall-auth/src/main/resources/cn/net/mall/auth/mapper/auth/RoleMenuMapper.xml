@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.net.mall.auth.mapper.auth.RoleMenuMapper">
+
+    <resultMap type="cn.net.mall.auth.entity.auth.RoleMenuEntity" id="RoleMenuResult">
+        <result property="id" column="id"/>
+        <result property="roleId" column="role_id"/>
+        <result property="menuId" column="menu_id"/>
+    </resultMap>
+
+
+    <sql id="paginationSql">
+        LIMIT #{pageBegin} , #{pageSize}
+    </sql>
+
+    <sql id="selectRoleMenuColumn">
+         id,
+         role_id,
+         menu_id
+    </sql>
+
+    <sql id="queryWhere">
+        <where>
+            <if test="roleIdList != null and roleIdList.size()>0">
+                AND roleIdList IN
+                <foreach collection="roleIdList" item="roleId" open="(" close=")" separator=",">
+                    #{roleId}
+                </foreach>
+            </if>
+            <if test="id != null ">
+                AND id = #{id}
+            </if>
+
+            <if test="roleId != null ">
+                AND role_id = #{roleId}
+            </if>
+
+            <if test="menuId != null ">
+                AND menu_id = #{menuId}
+            </if>
+            AND is_del = 0
+        </where>
+    </sql>
+
+    <select id="findById" parameterType="Long"
+            resultMap="RoleMenuResult">
+        SELECT
+        <include refid="selectRoleMenuColumn"/>
+        FROM auth_role_menu
+        WHERE id = #{id}
+    </select>
+
+    <select id="searchByCondition"
+            parameterType="cn.net.mall.auth.entity.auth.RoleMenuConditionEntity"
+            resultMap="RoleMenuResult">
+        SELECT
+        <include refid="selectRoleMenuColumn"/>
+        FROM auth_role_menu
+        <include refid="queryWhere"/>
+        <include refid="paginationSql"/>
+    </select>
+
+    <select id="searchCount"
+            parameterType="cn.net.mall.auth.entity.auth.RoleMenuConditionEntity"
+            resultType="int">
+        SELECT
+        COUNT(*)
+        FROM auth_role_menu
+        <include refid="queryWhere"/>
+    </select>
+
+
+    <update id="update" parameterType="cn.net.mall.auth.entity.auth.RoleMenuEntity">
+        UPDATE auth_role_menu
+        <trim prefix="SET" suffixOverrides=",">
+
+            <if test="roleId != null ">
+                role_id = #{roleId},
+            </if>
+
+
+            <if test="menuId != null ">
+                menu_id = #{menuId},
+            </if>
+
+            update_time=now(3)
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteByMenuId">
+        DELETE FROM auth_role_menu
+        WHERE menu_id = #{menuId}
+    </delete>
+
+    <delete id="deleteByRoleIds">
+        DELETE FROM auth_role_menu
+        WHERE role_id IN
+        <foreach collection="roleIds" item="roleId" open="(" close=")" separator=",">
+            #{roleId}
+        </foreach>
+    </delete>
+
+    <insert id="insert" parameterType="cn.net.mall.auth.entity.auth.RoleMenuEntity">
+        INSERT INTO auth_role_menu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            <if test="roleId != null ">
+                role_id,
+            </if>
+
+
+            <if test="menuId != null ">
+                menu_id,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{GENERATE_ID},
+            <if test="roleId != null ">
+                #{roleId},
+            </if>
+
+            <if test="menuId != null ">
+                #{menuId},
+            </if>
+
+        </trim>
+    </insert>
+
+    <insert id="batchInsert" parameterType="cn.net.mall.auth.entity.auth.RoleMenuEntity">
+        INSERT INTO auth_role_menu
+        (
+        id,
+        role_id,
+        menu_id
+        )
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id},
+            #{item.roleId},
+            #{item.menuId}
+            )
+        </foreach>
+    </insert>
+</mapper>

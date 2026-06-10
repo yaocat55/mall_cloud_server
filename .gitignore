@@ -1,0 +1,15 @@
+*.classpath
+*.project
+*.iml
+*.factorypath
+target
+docs
+*/target
+.idea/
+*.log
+logs
+*.DS_Store
+
+# Sensitive configuration files — copy .template and fill in your own values
+**/application.yml
+**/application-*.yml

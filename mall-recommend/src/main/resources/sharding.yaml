@@ -1,0 +1,104 @@
+dataSources:
+  mall_recommend_0:
+    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/mall_recommend_0?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: ${DB_USER:root}
+    password: ${DB_PWD:123456}
+  mall_recommend_1:
+    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/mall_recommend_1?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: ${DB_USER:root}
+    password: ${DB_PWD:123456}
+  mall_recommend_2:
+    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/mall_recommend_2?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: ${DB_USER:root}
+    password: ${DB_PWD:123456}
+  mall_recommend_3:
+    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/mall_recommend_3?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: ${DB_USER:root}
+    password: ${DB_PWD:123456}
+  mall_recommend_4:
+    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/mall_recommend_4?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: ${DB_USER:root}
+    password: ${DB_PWD:123456}
+  mall_recommend_5:
+    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/mall_recommend_5?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: ${DB_USER:root}
+    password: ${DB_PWD:123456}
+  mall_recommend_6:
+    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/mall_recommend_6?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: ${DB_USER:root}
+    password: ${DB_PWD:123456}
+  mall_recommend_7:
+    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/mall_recommend_7?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: ${DB_USER:root}
+    password: ${DB_PWD:123456}
+
+rules:
+- !SHARDING
+  tables:
+    product_favorites:
+      actualDataNodes: mall_recommend_${0..7}.product_favorites_${0..15}
+      tableStrategy:
+        standard:
+          shardingColumn: user_id
+          shardingAlgorithmName: pf-table-inline
+      databaseStrategy:
+        standard:
+          shardingColumn: user_id
+          shardingAlgorithmName: pf-database-inline
+      keyGenerateStrategy:
+        column: id
+        keyGeneratorName: snowflake
+    product_view_record:
+      actualDataNodes: mall_recommend_${0..7}.product_view_record_${0..63}
+      tableStrategy:
+        standard:
+          shardingColumn: user_id
+          shardingAlgorithmName: pvr-table-inline
+      databaseStrategy:
+        standard:
+          shardingColumn: user_id
+          shardingAlgorithmName: pvr-database-inline
+      keyGenerateStrategy:
+        column: id
+        keyGeneratorName: snowflake
+
+  shardingAlgorithms:
+    pf-database-inline:
+      type: INLINE
+      props:
+        algorithm-expression: mall_recommend_${user_id % 8}
+    pf-table-inline:
+      type: INLINE
+      props:
+        algorithm-expression: product_favorites_${user_id % 16}
+    pvr-database-inline:
+      type: INLINE
+      props:
+        algorithm-expression: mall_recommend_${user_id % 8}
+    pvr-table-inline:
+      type: INLINE
+      props:
+        algorithm-expression: product_view_record_${user_id % 64}
+
+  keyGenerators:
+    snowflake:
+      type: SNOWFLAKE
+
+props:
+  sql-show: true

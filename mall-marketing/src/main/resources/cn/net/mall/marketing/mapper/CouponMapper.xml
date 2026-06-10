@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.net.mall.marketing.mapper.CouponMapper">
+
+    <resultMap type="cn.net.mall.marketing.entity.CouponEntity" id="CouponResult">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type"/>
+        <result property="photoUrl" column="photo_url"/>
+        <result property="receiveStartTime" column="receive_start_time"/>
+        <result property="receiveEndTime" column="receive_end_time"/>
+        <result property="useStartTime" column="use_start_time"/>
+        <result property="useEndTime" column="use_end_time"/>
+        <result property="quantity" column="quantity"/>
+        <result property="offMoney" column="off_money"/>
+        <result property="discount" column="discount"/>
+        <result property="minMoney" column="min_money"/>
+        <result property="minProductCount" column="min_product_count"/>
+        <result property="limitCountOneDay" column="limit_count_one_day"/>
+        <result property="validStatus" column="valid_status"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createUserName" column="create_user_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+        <result property="updateUserName" column="update_user_name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDel" column="is_del"/>
+    </resultMap>
+
+
+    <sql id="paginationSql">
+        LIMIT #{pageBegin} , #{pageSize}
+    </sql>
+
+    <sql id="selectCouponColumn">
+         id,
+         name,
+         type,
+         photo_url,
+         receive_start_time,
+         receive_end_time,
+         use_start_time,
+         use_end_time,
+         quantity,
+         off_money,
+         discount,
+         min_money,
+         min_product_count,
+         limit_count_one_day,
+         valid_status,
+         create_user_id,
+         create_user_name,
+         create_time,
+         update_user_id,
+         update_user_name,
+         update_time,
+         is_del
+    </sql>
+
+    <sql id="queryWhere">
+        <where>
+            <if test="idList != null and idList.size()>0">
+                AND id IN
+                <foreach collection="idList" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="createBeginTime != null and createBeginTime !=''">
+                AND create_time >= #{createBeginTime}
+            </if>
+
+            <if test="createEndTime != null and createEndTime !=''">
+                AND create_time <![CDATA[<]]> #{createEndTime}
+            </if>
+            <if test="id != null ">
+                AND id = #{id}
+            </if>
+            <if test="name != null  and name != ''">
+                AND name = #{name}
+            </if>
+            <if test="type != null ">
+                AND type = #{type}
+            </if>
+            <if test="photoUrl != null  and photoUrl != ''">
+                AND photo_url = #{photoUrl}
+            </if>
+            <if test="receiveStartTime != null ">
+                AND receive_start_time = #{receiveStartTime}
+            </if>
+            <if test="receiveEndTime != null ">
+                AND receive_end_time = #{receiveEndTime}
+            </if>
+            <if test="useStartTime != null ">
+                AND use_start_time = #{useStartTime}
+            </if>
+            <if test="useEndTime != null ">
+                AND use_end_time = #{useEndTime}
+            </if>
+            <if test="quantity != null ">
+                AND quantity = #{quantity}
+            </if>
+            <if test="offMoney != null ">
+                AND off_money = #{offMoney}
+            </if>
+            <if test="discount != null ">
+                AND discount = #{discount}
+            </if>
+            <if test="minMoney != null ">
+                AND min_money = #{minMoney}
+            </if>
+            <if test="minProductCount != null ">
+                AND min_product_count = #{minProductCount}
+            </if>
+            <if test="limitCountOneDay != null ">
+                AND limit_count_one_day = #{limitCountOneDay}
+            </if>
+            <if test="validStatus != null ">
+                AND valid_status = #{validStatus}
+            </if>
+            <if test="createUserId != null ">
+                AND create_user_id = #{createUserId}
+            </if>
+            <if test="createUserName != null  and createUserName != ''">
+                AND create_user_name = #{createUserName}
+            </if>
+            <if test="updateUserId != null ">
+                AND update_user_id = #{updateUserId}
+            </if>
+            <if test="updateUserName != null  and updateUserName != ''">
+                AND update_user_name = #{updateUserName}
+            </if>
+            <if test="isDel != null ">
+                AND is_del = #{isDel}
+            </if>
+            AND is_del = 0
+        </where>
+    </sql>
+
+    <select id="findById" parameterType="Long"
+            resultMap="CouponResult">
+        SELECT
+        <include refid="selectCouponColumn"/>
+        FROM coupon
+        WHERE id = #{id}
+    </select>
+
+    <select id="searchByCondition"
+            parameterType="cn.net.mall.marketing.entity.CouponConditionEntity"
+            resultMap="CouponResult">
+        SELECT
+        <include refid="selectCouponColumn"/>
+        FROM coupon
+        <include refid="queryWhere"/>
+        <include refid="cn.net.mall.marketing.mapper.BaseMapper.paginationSql"/>
+    </select>
+
+    <select id="searchCount"
+            parameterType="cn.net.mall.marketing.entity.CouponConditionEntity"
+            resultType="int">
+        SELECT
+        COUNT(*)
+        FROM coupon
+        <include refid="queryWhere"/>
+    </select>
+
+
+    <update id="update" parameterType="cn.net.mall.marketing.entity.CouponEntity">
+        UPDATE coupon
+        <trim prefix="SET" suffixOverrides=",">
+
+            <if test="name != null  and name != ''">
+                name = #{name},
+            </if>
+
+
+            <if test="type != null ">
+                type = #{type},
+            </if>
+
+
+            <if test="photoUrl != null  and photoUrl != ''">
+                photo_url = #{photoUrl},
+            </if>
+
+
+            <if test="receiveStartTime != null ">
+                receive_start_time = #{receiveStartTime},
+            </if>
+
+
+            <if test="receiveEndTime != null ">
+                receive_end_time = #{receiveEndTime},
+            </if>
+
+
+            <if test="useStartTime != null ">
+                use_start_time = #{useStartTime},
+            </if>
+
+
+            <if test="useEndTime != null ">
+                use_end_time = #{useEndTime},
+            </if>
+
+
+            <if test="quantity != null ">
+                quantity = #{quantity},
+            </if>
+
+
+            <if test="offMoney != null ">
+                off_money = #{offMoney},
+            </if>
+
+
+            <if test="discount != null ">
+                discount = #{discount},
+            </if>
+
+
+            <if test="minMoney != null ">
+                min_money = #{minMoney},
+            </if>
+
+
+            <if test="minProductCount != null ">
+                min_product_count = #{minProductCount},
+            </if>
+
+
+            <if test="limitCountOneDay != null ">
+                limit_count_one_day = #{limitCountOneDay},
+            </if>
+
+
+            <if test="validStatus != null ">
+                valid_status = #{validStatus},
+            </if>
+
+
+            <if test="createUserId != null ">
+                create_user_id = #{createUserId},
+            </if>
+
+
+            <if test="createUserName != null  and createUserName != ''">
+                create_user_name = #{createUserName},
+            </if>
+
+
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+
+
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                update_user_name = #{updateUserName},
+            </if>
+
+
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+
+
+            <if test="isDel != null ">
+                is_del = #{isDel},
+            </if>
+
+            update_time=now(3)
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteByIds">
+        UPDATE coupon
+        SET is_del =
+        1,update_time=now(3),update_user_id=#{entity.updateUserId},update_user_name=#{entity.updateUserName}
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="insert" parameterType="cn.net.mall.marketing.entity.CouponEntity">
+        INSERT INTO coupon
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            <if test="name != null  and name != ''">
+                name,
+            </if>
+            <if test="type != null ">
+                type,
+            </if>
+            <if test="photoUrl != null  and photoUrl != ''">
+                photo_url,
+            </if>
+            <if test="receiveStartTime != null ">
+                receive_start_time,
+            </if>
+            <if test="receiveEndTime != null ">
+                receive_end_time,
+            </if>
+            <if test="useStartTime != null ">
+                use_start_time,
+            </if>
+            <if test="useEndTime != null ">
+                use_end_time,
+            </if>
+            <if test="quantity != null ">
+                quantity,
+            </if>
+            <if test="offMoney != null ">
+                off_money,
+            </if>
+            <if test="discount != null ">
+                discount,
+            </if>
+            <if test="minMoney != null ">
+                min_money,
+            </if>
+            <if test="minProductCount != null ">
+                min_product_count,
+            </if>
+            <if test="limitCountOneDay != null ">
+                limit_count_one_day,
+            </if>
+            <if test="validStatus != null ">
+                valid_status,
+            </if>
+            create_user_id,
+            create_user_name,
+            create_time,
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+            <if test="updateUserName != null  and updateUserName != ''">
+                update_user_name,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+            <if test="isDel != null ">
+                is_del,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{GENERATE_ID},
+            <if test="name != null  and name != ''">
+                #{name},
+            </if>
+            <if test="type != null ">
+                #{type},
+            </if>
+            <if test="photoUrl != null  and photoUrl != ''">
+                #{photoUrl},
+            </if>
+            <if test="receiveStartTime != null ">
+                #{receiveStartTime},
+            </if>
+            <if test="receiveEndTime != null ">
+                #{receiveEndTime},
+            </if>
+            <if test="useStartTime != null ">
+                #{useStartTime},
+            </if>
+            <if test="useEndTime != null ">
+                #{useEndTime},
+            </if>
+            <if test="quantity != null ">
+                #{quantity},
+            </if>
+            <if test="offMoney != null ">
+                #{offMoney},
+            </if>
+            <if test="discount != null ">
+                #{discount},
+            </if>
+            <if test="minMoney != null ">
+                #{minMoney},
+            </if>
+            <if test="minProductCount != null ">
+                #{minProductCount},
+            </if>
+            <if test="limitCountOneDay != null ">
+                #{limitCountOneDay},
+            </if>
+            <if test="validStatus != null ">
+                #{validStatus},
+            </if>
+            #{CURRENT_USER_ID},
+            #{CURRENT_USER_NAME},
+            now(3),
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+            <if test="updateUserName != null  and updateUserName != ''">
+                #{updateUserName},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+            <if test="isDel != null ">
+                #{isDel},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="findByIds" parameterType="Long"
+            resultMap="CouponResult">
+        SELECT
+        <include refid="selectCouponColumn"/>
+        FROM coupon
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

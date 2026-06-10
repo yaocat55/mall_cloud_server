@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.net.mall.order.mapper.OrderDeliveryAddressMapper">
+
+    <resultMap type="cn.net.mall.order.entity.OrderDeliveryAddressEntity" id="OrderDeliveryAddressResult">
+        <result property="id" column="id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="orderCode" column="order_code"/>
+        <result property="userId" column="user_id"/>
+        <result property="receiverName" column="receiver_name"/>
+        <result property="receiverPhone" column="receiver_phone"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="district" column="area"/>
+        <result property="detailAddress" column="address"/>
+        <result property="postCode" column="zip_code"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createUserName" column="create_user_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+        <result property="updateUserName" column="update_user_name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDel" column="is_del"/>
+    </resultMap>
+
+
+    <sql id="paginationSql">
+        LIMIT #{pageBegin} , #{pageSize}
+    </sql>
+
+    <sql id="selectOrderDeliveryAddressColumn">
+         id,
+         order_id,
+         order_code,
+         user_id,
+         receiver_name,
+         receiver_phone,
+         province,
+         city,
+         area,
+         address,
+         zip_code,
+         create_user_id,
+         create_user_name,
+         create_time,
+         update_user_id,
+         update_user_name,
+         update_time,
+         is_del
+    </sql>
+
+    <sql id="queryWhere">
+        <where>
+            <if test="idList != null and idList.size()>0">
+                AND id IN
+                <foreach collection="idList" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="createBeginTime != null and createBeginTime !=''">
+                AND create_time >= #{createBeginTime}
+            </if>
+
+            <if test="createEndTime != null and createEndTime !=''">
+                AND create_time <![CDATA[<]]> #{createEndTime}
+            </if>
+            <if test="id != null ">
+                AND id = #{id}
+            </if>
+            <if test="orderId != null ">
+                AND order_id = #{orderId}
+            </if>
+            <if test="orderCode != null  and orderCode != ''">
+                AND order_code = #{orderCode}
+            </if>
+            <if test="userId != null ">
+                AND user_id = #{userId}
+            </if>
+            <if test="receiverName != null  and receiverName != ''">
+                AND receiver_name = #{receiverName}
+            </if>
+            <if test="receiverPhone != null  and receiverPhone != ''">
+                AND receiver_phone = #{receiverPhone}
+            </if>
+            <if test="province != null  and province != ''">
+                AND province = #{province}
+            </if>
+            <if test="city != null  and city != ''">
+                AND city = #{city}
+            </if>
+            <if test="district != null  and district != ''">
+                AND area = #{district}
+            </if>
+            <if test="detailAddress != null  and detailAddress != ''">
+                AND address = #{detailAddress}
+            </if>
+            <if test="postCode != null  and postCode != ''">
+                AND zip_code = #{postCode}
+            </if>
+            AND is_del = 0
+        </where>
+    </sql>
+
+    <select id="findById" parameterType="Long"
+            resultMap="OrderDeliveryAddressResult">
+        SELECT
+        <include refid="selectOrderDeliveryAddressColumn"/>
+        FROM t_order_delivery_address
+        WHERE id = #{id}
+    </select>
+
+    <select id="searchByCondition"
+            parameterType="cn.net.mall.order.entity.OrderDeliveryAddressConditionEntity"
+            resultMap="OrderDeliveryAddressResult">
+        SELECT
+        <include refid="selectOrderDeliveryAddressColumn"/>
+        FROM t_order_delivery_address
+        <include refid="queryWhere"/>
+        <include refid="cn.net.mall.mapper.BaseMapper.paginationSql"/>
+    </select>
+
+    <select id="searchCount"
+            parameterType="cn.net.mall.order.entity.OrderDeliveryAddressConditionEntity"
+            resultType="int">
+        SELECT
+        COUNT(*)
+        FROM t_order_delivery_address
+        <include refid="queryWhere"/>
+    </select>
+
+
+    <update id="update" parameterType="cn.net.mall.order.entity.OrderDeliveryAddressEntity">
+        UPDATE t_order_delivery_address
+        <set>
+            <if test="orderId != null">
+                order_id = #{orderId},
+            </if>
+            <if test="orderCode != null">
+                order_code = #{orderCode},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="receiverName != null">
+                receiver_name = #{receiverName},
+            </if>
+            <if test="receiverPhone != null">
+                receiver_phone = #{receiverPhone},
+            </if>
+            <if test="province != null">
+                province = #{province},
+            </if>
+            <if test="city != null">
+                city = #{city},
+            </if>
+            <if test="district != null">
+                area = #{district},
+            </if>
+            <if test="detailAddress != null">
+                address = #{detailAddress},
+            </if>
+            <if test="postCode != null">
+                zip_code = #{postCode},
+            </if>
+            <if test="createUserId != null">
+                create_user_id = #{createUserId},
+            </if>
+            <if test="createUserName != null">
+                create_user_name = #{createUserName},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateUserId != null">
+                update_user_id = #{updateUserId},
+            </if>
+            <if test="updateUserName != null">
+                update_user_name = #{updateUserName},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="isDel != null">
+                is_del = #{isDel},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteByIds">
+        UPDATE t_order_delivery_address
+        SET is_del =
+        1,update_time=now(3),update_user_id=#{entity.updateUserId},update_user_name=#{entity.updateUserName}
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="insert" parameterType="cn.net.mall.order.entity.OrderDeliveryAddressEntity">
+        INSERT INTO t_order_delivery_address(
+            id,
+            order_id,
+            order_code,
+            user_id,
+            receiver_name,
+            receiver_phone,
+            province,
+            city,
+            area,
+            address,
+            zip_code,
+            create_user_id,
+            create_user_name,
+            create_time,
+            update_user_id,
+            update_user_name,
+            update_time,
+            is_del
+        )
+        VALUES (
+            #{id},
+            #{orderId},
+            #{orderCode},
+            #{userId},
+            #{receiverName},
+            #{receiverPhone},
+            #{province},
+            #{city},
+            #{district},
+            #{detailAddress},
+            #{postCode},
+            #{createUserId},
+            #{createUserName},
+            #{createTime},
+            #{updateUserId},
+            #{updateUserName},
+            #{updateTime},
+            #{isDel}
+        )
+    </insert>
+
+    <select id="findByIds" parameterType="java.util.List" resultMap="OrderDeliveryAddressResult">
+        SELECT
+        <include refid="selectOrderDeliveryAddressColumn"/>
+        FROM t_order_delivery_address
+        WHERE id IN
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

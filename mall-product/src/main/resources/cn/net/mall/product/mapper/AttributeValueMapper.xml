@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.net.mall.product.mapper.AttributeValueMapper">
+
+    <resultMap type="cn.net.mall.product.entity.AttributeValueEntity" id="AttributeValueResult">
+        <result property="id" column="id"/>
+        <result property="attributeId" column="attribute_id"/>
+        <result property="value" column="value"/>
+        <result property="sort" column="sort"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createUserName" column="create_user_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+        <result property="updateUserName" column="update_user_name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDel" column="is_del"/>
+    </resultMap>
+
+    <sql id="selectAttributeValueColumn">
+         id,
+         attribute_id,
+         value,
+         sort,
+         create_user_id,
+         create_user_name,
+         create_time,
+         update_user_id,
+         update_user_name,
+         update_time,
+         is_del
+    </sql>
+
+    <sql id="queryWhere">
+        <where>
+
+            <if test="id != null ">
+                AND id = #{id}
+            </if>
+
+            <if test="idList != null and idList.size()>0">
+                AND id IN
+                <foreach collection="idList" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+
+            <if test="attributeId != null ">
+                AND attribute_id = #{attributeId}
+            </if>
+
+            <if test="value != null  and value != ''">
+                AND value = #{value}
+            </if>
+
+            <if test="sort != null ">
+                AND sort = #{sort}
+            </if>
+
+            <if test="createUserId != null ">
+                AND create_user_id = #{createUserId}
+            </if>
+
+            <if test="createUserName != null  and createUserName != ''">
+                AND create_user_name = #{createUserName}
+            </if>
+
+            <if test="createTime != null ">
+                AND create_time = #{createTime}
+            </if>
+
+            <if test="updateUserId != null ">
+                AND update_user_id = #{updateUserId}
+            </if>
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                AND update_user_name = #{updateUserName}
+            </if>
+
+            <if test="updateTime != null ">
+                AND update_time = #{updateTime}
+            </if>
+
+            <if test="isDel != null ">
+                AND is_del = #{isDel}
+            </if>
+            AND is_del = 0
+        </where>
+    </sql>
+
+    <select id="findById" parameterType="Long"
+            resultMap="AttributeValueResult">
+        SELECT
+        <include refid="selectAttributeValueColumn"/>
+        FROM attribute_value
+        WHERE id = #{id}
+    </select>
+
+    <select id="searchByCondition"
+            parameterType="cn.net.mall.product.entity.AttributeValueConditionEntity"
+            resultMap="AttributeValueResult">
+        SELECT
+        <include refid="selectAttributeValueColumn"/>
+        FROM attribute_value
+        <include refid="queryWhere"/>
+        <include refid="cn.net.mall.product.mapper.BaseMapper.paginationSql"/>
+    </select>
+
+    <select id="searchCount"
+            parameterType="cn.net.mall.product.entity.AttributeValueConditionEntity"
+            resultType="int">
+        SELECT
+        COUNT(*)
+        FROM attribute_value
+        <include refid="queryWhere"/>
+    </select>
+
+
+    <update id="update" parameterType="cn.net.mall.product.entity.AttributeValueEntity">
+        UPDATE attribute_value
+        <trim prefix="SET" suffixOverrides=",">
+
+            <if test="attributeId != null ">
+                attribute_id = #{attributeId},
+            </if>
+
+
+            <if test="value != null  and value != ''">
+                value = #{value},
+            </if>
+
+
+            <if test="sort != null ">
+                sort = #{sort},
+            </if>
+
+
+            <if test="createUserId != null ">
+                create_user_id = #{createUserId},
+            </if>
+
+
+            <if test="createUserName != null  and createUserName != ''">
+                create_user_name = #{createUserName},
+            </if>
+
+
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+
+
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                update_user_name = #{updateUserName},
+            </if>
+
+
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+
+
+            <if test="isDel != null ">
+                is_del = #{isDel},
+            </if>
+
+            update_time=now(3)
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteByIds">
+        UPDATE attribute_value
+        SET is_del =
+        1,update_time=now(3),update_user_id=#{entity.updateUserId},update_user_name=#{entity.updateUserName}
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="insert" parameterType="cn.net.mall.product.entity.AttributeValueEntity">
+        INSERT INTO attribute_value
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            <if test="attributeId != null ">
+                attribute_id,
+            </if>
+
+
+            <if test="value != null  and value != ''">
+                value,
+            </if>
+
+
+            <if test="sort != null ">
+                sort,
+            </if>
+
+            create_user_id,
+            create_user_name,
+            create_time,
+
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                update_user_name,
+            </if>
+
+
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+
+
+            <if test="isDel != null ">
+                is_del,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{GENERATE_ID},
+            <if test="attributeId != null ">
+                #{attributeId},
+            </if>
+
+            <if test="value != null  and value != ''">
+                #{value},
+            </if>
+
+            <if test="sort != null ">
+                #{sort},
+            </if>
+
+            #{CURRENT_USER_ID},
+            #{CURRENT_USER_NAME},
+            now(3),
+
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                #{updateUserName},
+            </if>
+
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+
+            <if test="isDel != null ">
+                #{isDel},
+            </if>
+
+        </trim>
+    </insert>
+
+    <select id="findByIds" parameterType="Long"
+            resultMap="AttributeValueResult">
+        SELECT
+        <include refid="selectAttributeValueColumn"/>
+        FROM attribute_value
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

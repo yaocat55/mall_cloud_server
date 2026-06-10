@@ -1,0 +1,132 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: mall-gateway
+  main:
+    web-application-type: reactive
+  data:
+    redis:
+      database: 5
+      host: your_redis_host
+      port: 6379
+      password: your_redis_password
+      timeout: 50000
+  cloud:
+    nacos:
+      config:
+        override-none: true
+        namespace: mall
+        server-addr: your_nacos_host:8848
+        file-extension: yaml
+        group: mall-cloud
+        enabled: true
+        username: nacos
+        password: your_nacos_password
+      discovery:
+        enabled: true
+        register-enabled: true
+        server-addr: your_nacos_host:8848
+        namespace: mall
+        username: nacos
+        password: your_nacos_password
+    sentinel:
+      transport:
+        dashboard: localhost:9903
+      eager: true
+      datasource:
+        flow:
+          nacos:
+            server-addr: your_nacos_host:8848
+            dataId: ${spring.application.name}-flow-rules
+            groupId: mall-cloud
+            data-type: json
+            rule-type: flow
+            namespace: mall
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+      routes:
+        - id: mall-basic-api
+          uri: lb://mall-basic-api
+          order: 8000
+          predicates:
+            - Path=/api/basic/**
+          filters:
+            - StripPrefix=2
+        - id: mall-auth-api
+          uri: lb://mall-auth-api
+          order: 8001
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=2
+        - id: mall-product-api
+          uri: lb://mall-product-api
+          order: 8002
+          predicates:
+            - Path=/api/product/**
+          filters:
+            - StripPrefix=2
+        - id: mall-marketing-api
+          uri: lb://mall-marketing-api
+          order: 8003
+          predicates:
+            - Path=/api/marketing/**
+          filters:
+            - StripPrefix=2
+        - id: mall-mobile-api
+          uri: lb://mall-mobile-api
+          order: 8006
+          predicates:
+            - Path=/api/mobile/**
+          filters:
+            - StripPrefix=2
+        - id: mall-order-api
+          uri: lb://mall-order-api
+          order: 8007
+          predicates:
+            - Path=/api/order/**
+          filters:
+            - StripPrefix=2
+        - id: mall-pay-api
+          uri: lb://mall-pay-api
+          order: 8008
+          predicates:
+            - Path=/api/pay/**
+          filters:
+            - StripPrefix=2
+        - id: mall-recommend-api
+          uri: lb://mall-recommend-api
+          order: 8009
+          predicates:
+            - Path=/api/recommend/**
+          filters:
+            - StripPrefix=2
+        - id: mall-message-ws
+          uri: lb:ws://mall-message-api
+          order: 8009
+          predicates:
+            - Path=/api/message/ws,/api/message/ws/**,/api/message/ws-stomp,/api/message/ws-stomp/**
+          filters:
+            - StripPrefix=2
+        - id: mall-message-api
+          uri: lb://mall-message-api
+          order: 8010
+          predicates:
+            - Path=/api/message/**
+          filters:
+            - StripPrefix=2
+  config:
+    import: nacos:mall-gateway-dev.yaml
+gateway:
+  filter:
+    noAuth: /api/auth/v1/web/user/getCode,/api/auth/v1/web/user/login,/api/auth/v1/web/user/loginByPhone,/api/auth/v1/mobile/user/register
+mall:
+  mgt:
+    tokenSecret: your_jwt_secret_here

@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.net.mall.basic.mapper.common.CommonDictDetailMapper">
+
+    <resultMap type="cn.net.mall.basic.entity.common.CommonDictDetailEntity" id="DictDetailResult">
+        <result property="id" column="id"/>
+        <result property="dictId" column="dict_id"/>
+        <result property="value" column="value"/>
+        <result property="label" column="label"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createUserName" column="create_user_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+        <result property="updateUserName" column="update_user_name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDel" column="is_del"/>
+        <result property="sort" column="sort"/>
+    </resultMap>
+
+    <sql id="selectDictDetailColumn">
+         id,
+         dict_id,
+         value,
+         label,
+         create_user_id,
+         create_user_name,
+         create_time,
+         update_user_id,
+         update_user_name,
+         update_time,
+         is_del,
+         sort
+    </sql>
+
+    <sql id="queryWhere">
+        <where>
+
+            <if test="id != null ">
+                AND id = #{id}
+            </if>
+
+            <if test="dictId != null ">
+                AND dict_id = #{dictId}
+            </if>
+
+            <if test="dictIdList !=null and dictIdList.size() > 0">
+                AND dict_id IN
+                <foreach collection="dictIdList" item="dictId" open="(" close=")" separator=",">
+                    #{dictId}
+                </foreach>
+            </if>
+
+            <if test="value != null  and value != ''">
+                AND value = #{value}
+            </if>
+
+            <if test="label != null  and label != ''">
+                AND label = #{label}
+            </if>
+
+            <if test="createUserId != null ">
+                AND create_user_id = #{createUserId}
+            </if>
+
+            <if test="createUserName != null  and createUserName != ''">
+                AND create_user_name = #{createUserName}
+            </if>
+
+            <if test="createTime != null ">
+                AND create_time = #{createTime}
+            </if>
+
+            <if test="updateUserId != null ">
+                AND update_user_id = #{updateUserId}
+            </if>
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                AND update_user_name = #{updateUserName}
+            </if>
+
+            <if test="updateTime != null ">
+                AND update_time = #{updateTime}
+            </if>
+
+            <if test="isDel != null ">
+                AND is_del = #{isDel}
+            </if>
+            AND is_del = 0
+        </where>
+    </sql>
+
+    <select id="findById" parameterType="Long"
+            resultMap="DictDetailResult">
+        SELECT
+        <include refid="selectDictDetailColumn"/>
+        FROM common_dict_detail
+        WHERE id = #{id}
+    </select>
+
+    <select id="searchByCondition"
+            parameterType="cn.net.mall.basic.entity.common.CommonDictDetailConditionEntity"
+            resultMap="DictDetailResult">
+        SELECT
+        <include refid="selectDictDetailColumn"/>
+        FROM common_dict_detail
+        <include refid="queryWhere"/>
+        <include refid="cn.net.mall.basic.mapper.BaseMapper.paginationSql"/>
+    </select>
+
+    <select id="searchCount"
+            parameterType="cn.net.mall.basic.entity.common.CommonDictDetailConditionEntity"
+            resultType="int">
+        SELECT
+        COUNT(*)
+        FROM common_dict_detail
+        <include refid="queryWhere"/>
+    </select>
+
+
+    <update id="update" parameterType="cn.net.mall.basic.entity.common.CommonDictDetailEntity">
+        UPDATE common_dict_detail
+        <trim prefix="SET" suffixOverrides=",">
+
+            <if test="dictId != null ">
+                dict_id = #{dictId},
+            </if>
+
+
+            <if test="value != null  and value != ''">
+                value = #{value},
+            </if>
+
+
+            <if test="label != null  and label != ''">
+                label = #{label},
+            </if>
+
+
+            <if test="createUserId != null ">
+                create_user_id = #{createUserId},
+            </if>
+
+
+            <if test="createUserName != null  and createUserName != ''">
+                create_user_name = #{createUserName},
+            </if>
+
+
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+
+
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                update_user_name = #{updateUserName},
+            </if>
+
+
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+
+
+            <if test="isDel != null ">
+                is_del = #{isDel},
+            </if>
+
+            <if test="sort != null ">
+                sort = #{sort},
+            </if>
+
+            update_time=now(3)
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        UPDATE common_dict_detail
+        SET is_del = 1,update_time=now(3)
+        WHERE id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="cn.net.mall.basic.entity.common.CommonDictDetailEntity">
+        INSERT INTO common_dict_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            <if test="dictId != null ">
+                dict_id,
+            </if>
+
+
+            <if test="value != null  and value != ''">
+                value,
+            </if>
+
+
+            <if test="label != null  and label != ''">
+                label,
+            </if>
+
+
+            <if test="createUserId != null ">
+                create_user_id,
+            </if>
+
+
+            <if test="createUserName != null  and createUserName != ''">
+                create_user_name,
+            </if>
+
+
+            <if test="createTime != null ">
+                create_time,
+            </if>
+
+
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                update_user_name,
+            </if>
+
+
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+
+
+            <if test="isDel != null ">
+                is_del,
+            </if>
+
+            <if test="sort != null ">
+                sort,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{GENERATE_ID},
+            <if test="dictId != null ">
+                #{dictId},
+            </if>
+
+            <if test="value != null  and value != ''">
+                #{value},
+            </if>
+
+            <if test="label != null  and label != ''">
+                #{label},
+            </if>
+
+            <if test="createUserId != null ">
+                #{createUserId},
+            </if>
+
+            <if test="createUserName != null  and createUserName != ''">
+                #{createUserName},
+            </if>
+
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                #{updateUserName},
+            </if>
+
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+
+            <if test="isDel != null ">
+                #{isDel},
+            </if>
+
+            <if test="sort != null ">
+                #{sort},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="findByIds" parameterType="Long"
+            resultMap="DictDetailResult">
+        SELECT
+        <include refid="selectDictDetailColumn"/>
+        FROM common_dict_detail
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="findByDictName" parameterType="String"
+            resultMap="DictDetailResult">
+        SELECT
+         cdd.id,
+         cdd.dict_id,
+         cdd.value,
+         cdd.label
+        FROM common_dict_detail cdd
+        INNER JOIN common_dict cd ON cdd.dict_id = cd.id
+        <where>
+            cd.dict_name = #{dictName} AND cd.is_del = 0 AND cdd.is_del = 0
+        </where>
+        ORDER BY sort ASC
+    </select>
+
+    <delete id="deleteByIds">
+        UPDATE common_dict_detail
+        SET is_del = 1,update_time=now(3),update_user_id=#{dictDetailEntity.updateUserId},update_user_name=#{dictDetailEntity.updateUserName}
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

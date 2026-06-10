@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.net.mall.order.mapper.OrderMapper">
+
+    <resultMap type="cn.net.mall.order.entity.OrderEntity" id="OrderResult">
+        <result property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="codeHash" column="code_hash"/>
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="orderTime" column="order_time"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="payStatus" column="pay_status"/>
+        <result property="totalAmount" column="total_amount"/>
+        <result property="paymentAmount" column="payment_amount"/>
+        <result property="remark" column="remark"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createUserName" column="create_user_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+        <result property="updateUserName" column="update_user_name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDel" column="is_del"/>
+    </resultMap>
+
+    <sql id="selectOrderColumn">
+         id,
+         code,
+         code_hash,
+         user_id,
+         user_name,
+         order_time,
+         order_status,
+         pay_status,
+         total_amount,
+         payment_amount,
+         remark,
+         create_user_id,
+         create_user_name,
+         create_time,
+         update_user_id,
+         update_user_name,
+         update_time,
+         is_del
+    </sql>
+
+    <sql id="queryWhere">
+        <where>
+
+            <if test="id != null ">
+                AND id = #{id}
+            </if>
+
+            <if test="code != null  and code != ''">
+                AND code = #{code}
+            </if>
+
+            <if test="userId != null ">
+                AND user_id = #{userId}
+            </if>
+
+            <if test="userName != null  and userName != ''">
+                AND user_name = #{userName}
+            </if>
+
+            <if test="orderTime != null ">
+                AND order_time = #{orderTime}
+            </if>
+
+            <if test="orderStatus != null ">
+                AND order_status = #{orderStatus}
+            </if>
+
+            <if test="payStatus != null ">
+                AND pay_status = #{payStatus}
+            </if>
+
+            AND is_del = 0
+        </where>
+    </sql>
+
+    <select id="findById" parameterType="Long"
+            resultMap="OrderResult">
+        SELECT
+        <include refid="selectOrderColumn"/>
+        FROM t_order
+        WHERE id = #{id}
+    </select>
+
+    <select id="searchByCondition"
+            parameterType="cn.net.mall.order.entity.OrderConditionEntity"
+            resultMap="OrderResult">
+        SELECT
+        <include refid="selectOrderColumn"/>
+        FROM t_order
+        <include refid="queryWhere"/>
+        <include refid="cn.net.mall.mapper.BaseMapper.paginationSql"/>
+    </select>
+
+    <select id="searchCount"
+            parameterType="cn.net.mall.order.entity.OrderConditionEntity"
+            resultType="int">
+        SELECT
+        COUNT(*)
+        FROM t_order
+        <include refid="queryWhere"/>
+    </select>
+
+
+    <update id="update" parameterType="cn.net.mall.order.entity.OrderEntity">
+        UPDATE t_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null ">
+                user_id = #{userId},
+            </if>
+
+            <if test="userName != null  and userName != ''">
+                user_name = #{userName},
+            </if>
+
+
+            <if test="orderTime != null ">
+                order_time = #{orderTime},
+            </if>
+
+
+            <if test="orderStatus != null ">
+                order_status = #{orderStatus},
+            </if>
+
+            <if test="payStatus != null ">
+                pay_status = #{payStatus},
+            </if>
+
+
+            <if test="totalAmount != null ">
+                total_amount = #{totalAmount},
+            </if>
+
+
+            <if test="paymentAmount != null ">
+                payment_amount = #{paymentAmount},
+            </if>
+
+
+            <if test="remark != null  and remark != ''">
+                remark = #{remark},
+            </if>
+
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                update_user_name = #{updateUserName},
+            </if>
+
+
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+
+
+            <if test="isDel != null ">
+                is_del = #{isDel},
+            </if>
+
+            update_time=now(3)
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteByIds">
+        UPDATE t_order
+        SET is_del =
+        1,update_time=now(3),update_user_id=#{entity.updateUserId},update_user_name=#{entity.updateUserName}
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="updateOrderStatusByIds">
+        UPDATE t_order
+        SET order_status = #{orderStatus},update_time=now(3),update_user_id=#{entity.updateUserId},update_user_name=#{entity.updateUserName}
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="cancelIfUnpaid">
+        UPDATE t_order
+        SET order_status = #{cancelStatus}, update_time = now(3)
+        WHERE id = #{id}
+          AND order_status = 1
+          AND pay_status = 1
+          AND is_del = 0
+    </update>
+
+    <insert id="insert" parameterType="cn.net.mall.order.entity.OrderEntity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            <if test="code != null  and code != ''">
+                code,
+            </if>
+            <if test="codeHash != null">
+                code_hash,
+            </if>
+            <if test="userId != null ">
+                user_id,
+            </if>
+            <if test="userName != null  and userName != ''">
+                user_name,
+            </if>
+            <if test="orderTime != null ">
+                order_time,
+            </if>
+            <if test="orderStatus != null ">
+                order_status,
+            </if>
+            <if test="payStatus != null ">
+                pay_status,
+            </if>
+            <if test="totalAmount != null ">
+                total_amount,
+            </if>
+            <if test="paymentAmount != null ">
+                payment_amount,
+            </if>
+            <if test="remark != null  and remark != ''">
+                remark,
+            </if>
+            <if test="createUserId != null ">
+                create_user_id,
+            </if>
+            <if test="createUserName != null  and createUserName != ''">
+                create_user_name,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+            <if test="updateUserName != null  and updateUserName != ''">
+                update_user_name,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+            <if test="isDel != null ">
+                is_del,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{id},
+            <if test="code != null  and code != ''">
+                #{code},
+            </if>
+            <if test="codeHash != null">
+                #{codeHash},
+            </if>
+            <if test="userId != null ">
+                #{userId},
+            </if>
+            <if test="userName != null  and userName != ''">
+                #{userName},
+            </if>
+            <if test="orderTime != null ">
+                #{orderTime},
+            </if>
+            <if test="orderStatus != null ">
+                #{orderStatus},
+            </if>
+            <if test="payStatus != null ">
+                #{payStatus},
+            </if>
+            <if test="totalAmount != null ">
+                #{totalAmount},
+            </if>
+            <if test="paymentAmount != null ">
+                #{paymentAmount},
+            </if>
+            <if test="remark != null  and remark != ''">
+                #{remark},
+            </if>
+            <if test="createUserId != null ">
+                #{createUserId},
+            </if>
+            <if test="createUserName != null  and createUserName != ''">
+                #{createUserName},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+            <if test="updateUserName != null  and updateUserName != ''">
+                #{updateUserName},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+            <if test="isDel != null ">
+                #{isDel},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="findByIds" parameterType="java.util.List" resultMap="OrderResult">
+        SELECT
+        <include refid="selectOrderColumn"/>
+        FROM t_order
+        WHERE id IN
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

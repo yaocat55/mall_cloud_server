@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.net.mall.order.mapper.OrderItemMapper">
+
+    <resultMap type="cn.net.mall.order.entity.OrderItemEntity" id="OrderItemResult">
+        <result property="id" column="id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="orderCode" column="order_code"/>
+        <result property="productId" column="product_id"/>
+        <result property="productName" column="product_name"/>
+        <result property="model" column="product_model"/>
+        <result property="price" column="product_price"/>
+        <result property="quantity" column="quantity"/>
+        <result property="amount" column="amount"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createUserName" column="create_user_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+        <result property="updateUserName" column="update_user_name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDel" column="is_del"/>
+        <result property="coverUrl" column="product_pic"/>
+    </resultMap>
+
+    <sql id="selectOrderItemColumn">
+         id,
+         order_id,
+         order_code,
+         product_id,
+         product_name,
+         product_model,
+         product_price,
+         quantity,
+         amount,
+         create_user_id,
+         create_user_name,
+         create_time,
+         update_user_id,
+         update_user_name,
+         update_time,
+         is_del,
+         product_pic
+    </sql>
+
+    <sql id="queryWhere">
+        <where>
+
+            <if test="id != null ">
+                AND id = #{id}
+            </if>
+
+            <if test="orderCode != null ">
+                AND order_code = #{orderCode}
+            </if>
+
+            <if test="orderId != null ">
+                AND order_id = #{orderId}
+            </if>
+
+            <if test="orderIdList != null and orderIdList.size()>0">
+                AND order_id IN
+                <foreach collection="orderIdList" item="orderId" open="(" close=")" separator=",">
+                    #{orderId}
+                </foreach>
+            </if>
+
+            <if test="productId != null ">
+                AND product_id = #{productId}
+            </if>
+
+            <if test="productName != null ">
+                AND product_name = #{productName}
+            </if>
+
+            <if test="model != null ">
+                AND product_model = #{model}
+            </if>
+
+            <if test="price != null ">
+                AND product_price = #{price}
+            </if>
+
+            <if test="quantity != null ">
+                AND quantity = #{quantity}
+            </if>
+
+            <if test="amount != null ">
+                AND amount = #{amount}
+            </if>
+            AND is_del = 0
+        </where>
+    </sql>
+
+    <select id="findById" parameterType="Long"
+            resultMap="OrderItemResult">
+        SELECT
+        <include refid="selectOrderItemColumn"/>
+        FROM t_order_item
+        WHERE id = #{id}
+    </select>
+
+    <select id="searchByCondition"
+            parameterType="cn.net.mall.order.entity.OrderItemConditionEntity"
+            resultMap="OrderItemResult">
+        SELECT
+        <include refid="selectOrderItemColumn"/>
+        FROM t_order_item
+        <include refid="queryWhere"/>
+        <include refid="cn.net.mall.mapper.BaseMapper.paginationSql"/>
+    </select>
+
+    <select id="searchCount"
+            parameterType="cn.net.mall.order.entity.OrderItemConditionEntity"
+            resultType="int">
+        SELECT
+        COUNT(*)
+        FROM t_order_item
+        <include refid="queryWhere"/>
+    </select>
+
+
+    <update id="update" parameterType="cn.net.mall.order.entity.OrderItemEntity">
+        UPDATE t_order_item
+        <trim prefix="SET" suffixOverrides=",">
+
+            <if test="orderId != null ">
+                order_id = #{orderId},
+            </if>
+
+
+            <if test="productId != null ">
+                product_id = #{productId},
+            </if>
+
+
+            <if test="productName != null ">
+                product_name = #{productName},
+            </if>
+
+
+            <if test="model != null ">
+                product_model = #{model},
+            </if>
+
+
+            <if test="price != null ">
+                product_price = #{price},
+            </if>
+
+
+            <if test="quantity != null ">
+                quantity = #{quantity},
+            </if>
+
+
+            <if test="amount != null ">
+                amount = #{amount},
+            </if>
+
+
+            <if test="createUserId != null ">
+                create_user_id = #{createUserId},
+            </if>
+
+
+            <if test="createUserName != null  and createUserName != ''">
+                create_user_name = #{createUserName},
+            </if>
+
+
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+
+
+            <if test="updateUserId != null ">
+                update_user_id = #{updateUserId},
+            </if>
+
+
+            <if test="updateUserName != null  and updateUserName != ''">
+                update_user_name = #{updateUserName},
+            </if>
+
+
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+
+
+            <if test="isDel != null ">
+                is_del = #{isDel},
+            </if>
+
+            update_time=now(3)
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteByIds">
+        UPDATE t_order_item
+        SET is_del =
+        1,update_time=now(3),update_user_id=#{entity.updateUserId},update_user_name=#{entity.updateUserName}
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="insert" parameterType="cn.net.mall.order.entity.OrderItemEntity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_order_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            <if test="orderId != null ">
+                order_id,
+            </if>
+            <if test="orderCode != null ">
+                order_code,
+            </if>
+            <if test="productId != null ">
+                product_id,
+            </if>
+            <if test="productName != null ">
+                product_name,
+            </if>
+            <if test="model != null ">
+                product_model,
+            </if>
+            <if test="price != null ">
+                product_price,
+            </if>
+            <if test="quantity != null ">
+                quantity,
+            </if>
+            <if test="amount != null ">
+                amount,
+            </if>
+            <if test="createUserId != null ">
+                create_user_id,
+            </if>
+            <if test="createUserName != null  and createUserName != ''">
+                create_user_name,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="updateUserId != null ">
+                update_user_id,
+            </if>
+            <if test="updateUserName != null  and updateUserName != ''">
+                update_user_name,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+            <if test="isDel != null ">
+                is_del,
+            </if>
+            <if test="coverUrl != null ">
+                product_pic,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{id},
+            <if test="orderId != null ">
+                #{orderId},
+            </if>
+            <if test="orderCode != null ">
+                #{orderCode},
+            </if>
+            <if test="productId != null ">
+                #{productId},
+            </if>
+            <if test="productName != null ">
+                #{productName},
+            </if>
+            <if test="model != null ">
+                #{model},
+            </if>
+            <if test="price != null ">
+                #{price},
+            </if>
+            <if test="quantity != null ">
+                #{quantity},
+            </if>
+            <if test="amount != null ">
+                #{amount},
+            </if>
+            <if test="createUserId != null ">
+                #{createUserId},
+            </if>
+            <if test="createUserName != null  and createUserName != ''">
+                #{createUserName},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="updateUserId != null ">
+                #{updateUserId},
+            </if>
+            <if test="updateUserName != null  and updateUserName != ''">
+                #{updateUserName},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+            <if test="isDel != null ">
+                #{isDel},
+            </if>
+            <if test="coverUrl != null ">
+                #{coverUrl},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_order_item
+        (
+            id,
+            order_id,
+            order_code,
+            product_id,
+            product_name,
+            product_model,
+            product_price,
+            quantity,
+            amount,
+            create_user_id,
+            create_user_name,
+            create_time,
+            update_user_id,
+            update_user_name,
+            update_time,
+            is_del,
+            product_pic
+        )
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+        (
+            #{item.id},
+            #{item.orderId},
+            #{item.orderCode},
+            #{item.productId},
+            #{item.productName},
+            #{item.model},
+            #{item.price},
+            #{item.quantity},
+            #{item.amount},
+            #{item.createUserId},
+            #{item.createUserName},
+            #{item.createTime},
+            #{item.updateUserId},
+            #{item.updateUserName},
+            #{item.updateTime},
+            #{item.isDel},
+            #{item.coverUrl}
+        )
+        </foreach>
+    </insert>
+
+    <select id="findByIds" parameterType="java.util.List" resultMap="OrderItemResult">
+        SELECT
+        <include refid="selectOrderItemColumn"/>
+        FROM t_order_item
+        WHERE id IN
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="statProductSaleQuantity" resultType="cn.net.mall.order.entity.OrderItemEntity">
+        SELECT
+          oti.product_id AS productId,
+          IFNULL(SUM(oti.quantity),0) AS quantity
+        FROM t_order_item oti
+        INNER JOIN t_order ot ON oti.order_id = ot.id
+        <where>
+            oti.product_id = #{productId}
+            AND ot.order_status = #{orderStatus}
+            AND oti.is_del = 0 AND ot.is_del = 0
+        </where>
+        GROUP BY oti.product_id
+    </select>
+</mapper>
