@@ -27,34 +27,27 @@
         <dependency>
             <groupId>cn.net.mall</groupId>
             <artifactId>mall-basic-client</artifactId>
-            <version>1.0.0</version>
+            <version>${mall-basic-client.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>cn.net.mall</groupId>
             <artifactId>mall-product-client</artifactId>
-            <version>1.0.0</version>
+            <version>${mall-product-client.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>cn.net.mall</groupId>
-            <artifactId>mall-order-client</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-
         <dependency>
             <groupId>cn.net.mall</groupId>
             <artifactId>mall-auth-client</artifactId>
-            <version>1.0.0</version>
+            <version>${mall-auth-client.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>cn.net.mall</groupId>
             <artifactId>mall-auth-api-starter</artifactId>
-            <version>1.0.0</version>
+            <version>${mall-auth-api-starter.version}</version>
             <scope>compile</scope>
         </dependency>
 

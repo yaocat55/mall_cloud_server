@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=cn.net.susan.auth.config.AuthApiAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=cn.net.mall.auth.config.AuthApiAutoConfiguration

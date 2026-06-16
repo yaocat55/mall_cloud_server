@@ -9,7 +9,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableFeignClients(basePackages = "cn.net.mall")
 @EnableDiscoveryClient
 @MapperScan("cn.net.mall.message.mapper")
-@SpringBootApplication(scanBasePackages = {"cn.net.mall"})
+@SpringBootApplication(scanBasePackages = {"cn.net.mall.message"})
 public class MessageApplication {
     public static void main(String[] args) {
         SpringApplication.run(MessageApplication.class, args);

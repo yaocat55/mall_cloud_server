@@ -14,7 +14,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @EnableFeignClients(basePackages = {"cn.net.mall.auth"})
 @MapperScan("cn.net.mall.basic.mapper")
 @EnableCaching
-@SpringBootApplication(scanBasePackages = {"cn.net.mall"})
+@SpringBootApplication(scanBasePackages = {"cn.net.mall.basic"})
 public class BasicApiApplication {
 
     public static void main(String[] args) {

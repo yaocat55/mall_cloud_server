@@ -15,7 +15,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @EnableDiscoveryClient
 @MapperScan("cn.net.mall.auth.mapper")
 @EnableCaching
-@SpringBootApplication(scanBasePackages = {"cn.net.mall"})
+@SpringBootApplication(scanBasePackages = {"cn.net.mall.auth"})
 public class AuthApiApplication {
 
     public static void main(String[] args) {

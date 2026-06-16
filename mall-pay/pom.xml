@@ -23,7 +23,7 @@
         <dependency>
             <groupId>cn.net.mall</groupId>
             <artifactId>mall-pay-client</artifactId>
-            <version>1.0.0</version>
+            <version>${mall-pay-client.version}</version>
         </dependency>
 
         <dependency>
@@ -35,13 +35,13 @@
         <dependency>
             <groupId>cn.net.mall</groupId>
             <artifactId>mall-auth-api-starter</artifactId>
-            <version>1.0.0</version>
+            <version>${mall-auth-api-starter.version}</version>
         </dependency>
 
         <dependency>
             <groupId>cn.net.mall</groupId>
             <artifactId>mall-order-client</artifactId>
-            <version>1.0.0</version>
+            <version>${mall-order-client.version}</version>
         </dependency>
 
         <dependency>

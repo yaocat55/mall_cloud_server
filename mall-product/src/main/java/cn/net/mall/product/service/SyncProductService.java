@@ -2,7 +2,6 @@ package cn.net.mall.product.service;
 
 import cn.net.mall.constant.NumberConstant;
 import cn.net.mall.entity.ResponsePageEntity;
-import cn.net.mall.order.enums.OrderStatusEnum;
 import cn.net.mall.product.config.BusinessConfig;
 import cn.net.mall.product.entity.ProductCommentConditionEntity;
 import cn.net.mall.product.entity.ProductConditionEntity;
@@ -104,14 +103,7 @@ public class SyncProductService {
 
 
     private void statSaleCount(ProductWebEntity productWebEntity) {
-        //todo
-//        TradeItemEntity tradeItemEntity = tradeItemService.statProductSaleQuantity(Long.parseLong(productWebEntity.getId()),
-//                OrderStatusEnum.FINISH.getValue());
-//        if (Objects.nonNull(tradeItemEntity)) {
-//            productWebEntity.setSaleQuantity(tradeItemEntity.getQuantity().toString());
-//        } else {
         productWebEntity.setSaleQuantity("1000");
-//        }
     }
 
     private void statPositiveRating(ProductWebEntity productWebEntity) {

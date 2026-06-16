@@ -12,12 +12,12 @@ import org.springframework.context.annotation.Import;
 /**
  * @date 2024/1/3 下午3:44
  */
-@EnableFeignClients(basePackages = {"cn.net.mall.basic","cn.net.mall.order","cn.net.mall.auth"})
+@EnableFeignClients(basePackages = {"cn.net.mall.basic","cn.net.mall.auth"})
 @EnableDiscoveryClient
 @MapperScan("cn.net.mall.product.mapper")
 @EnableCaching
 @Import(RocketMQAutoConfiguration.class)
-@SpringBootApplication(scanBasePackages = {"cn.net.mall"})
+@SpringBootApplication(scanBasePackages = {"cn.net.mall.product"})
 public class ProductApiApplication {
 
     public static void main(String[] args) {

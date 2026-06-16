@@ -66,6 +66,15 @@
         <feign.okhttp.version>13.1</feign.okhttp.version>
         <jackson.datatype.version>2.17.2</jackson.datatype.version>
         <skywalking.version>9.0.0</skywalking.version>
+
+        <!-- client 模块独立版本号 -->
+        <mall-auth-client.version>1.0.0</mall-auth-client.version>
+        <mall-basic-client.version>1.0.0</mall-basic-client.version>
+        <mall-marketing-client.version>1.0.0</mall-marketing-client.version>
+        <mall-product-client.version>1.0.0</mall-product-client.version>
+        <mall-order-client.version>1.0.0</mall-order-client.version>
+        <mall-pay-client.version>1.0.0</mall-pay-client.version>
+        <mall-auth-api-starter.version>1.0.0</mall-auth-api-starter.version>
     </properties>
 
 <dependencyManagement>

@@ -14,7 +14,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableDiscoveryClient
 @MapperScan("cn.net.mall.marketing.mapper")
 @EnableCaching
-@SpringBootApplication(scanBasePackages = {"cn.net.mall"})
+@SpringBootApplication(scanBasePackages = {"cn.net.mall.marketing"})
 public class MarketingApiApplication {
 
     public static void main(String[] args) {

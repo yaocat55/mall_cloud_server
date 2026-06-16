@@ -656,25 +656,74 @@ Gateway 已配置全局 CORS（允许所有 Origin）。如果仍然报跨域，
 
 项目从单体拆分而来，虽已完成微服务基础骨架改造，但仍存在以下遗留问题：
 
-### 1. 双向服务依赖
+### 1. 双向服务依赖（已修复）
 
+~~`mall-product` 和 `mall-order` 存在**双向 Feign 调用**，生产上订单状态变更应改为 RocketMQ 事件广播，避免循环调用和紧耦合。~~
+
+已移除 `mall-product` 对 `mall-order-client` 的编译期依赖，当前依赖方向为单向：`mall-order → mall-product`（通过 ProductFeignClient 调用）。
+
+### 2. 公共 DTO 变更爆炸（已修复）
+
+~~所有 `*-client` 模块使用统一版本号 `1.0.0`，未独立版本化管理。一旦某个 DTO 字段变更（如 `ProductDTO`），所有消费方（mall-order、mall-recommend、mall-marketing）都必须重新发布。标准做法是 client 独立版本号 + 兼容策略（字段只增不改，老字段加 `@Deprecated`）。~~
+
+已为每个 client 模块声明独立版本号（通过根 POM 属性管控），后续升级只需修改对应属性值。
+
+### 5. 缺少分布式事务
+
+订单扣库存使用同步 Feign 调用，但**缺乏事务补偿机制**：
+
+| 场景 | 结果 |
+|------|------|
+| Feign 扣库存成功 → 订单创建成功 | ✅ 正常 |
+| Feign 扣库存失败 → 订单创建失败 | ✅ 正常 |
+| Feign 扣库存成功 → 订单创建失败 | ❌ 库存悬空，无人释放 |
+
+项目中无 Seata、TCC 或任何分布式事务方案。
+
+**建议：**
+- **下单扣库存**保持同步调用（需强一致），但补充订单失败时的库存回滚 MQ 补偿
+- **取消订单/超时释放库存**可改为 MQ 异步（最终一致性即可）
+
+### 3. scanBasePackages 扫全量（已修复）
+
+~~全部服务使用 `@SpringBootApplication(scanBasePackages = {"cn.net.mall"})`，Spring 启动时会扫描整个项目类路径。标准做法是只扫本模块包路径 + 显式引入的 starter 配置，避免启动变慢和潜在的 Bean 冲突。~~
+
+已限缩到各自模块包（如 `cn.net.mall.auth`），共享 bean 通过 `AutoConfiguration.imports` + `MallCommonAutoConfiguration` 按需加载。
+
+### 4. product_favorites 的同步机制不明确
+
+`product_favorites`（商品收藏）数据分别存储在 mall-product 的单库和 mall-recommend 的分库分表中。
+
+**实际数据流：**
+
+| 环节 | 说明 |
+|------|------|
+| mall-product | 用户收藏操作写入 `mall_product.product_favorites` 单表 |
+| 同步机制 | **不明确**（mall-recommend 中无 RocketMQ 消费者，README 此前描述的 MQ 同步与实际代码不符） |
+| mall-recommend | 从自身的分库分表（`mall_recommend_0..7.product_favorites_0..15`，按 `user_id` 分片）分页读取 |
+
+**推荐算法实际只用了 2 个字段：**
+
+```java
+// RecommendService.java - buildUserItemMatrixFromFavorites()
+// userId + productId 已足够，权重固定为 3（浏览记录的 3 倍）
 ```
-mall-product  ↔  mall-order
-```
 
-`mall-product` 和 `mall-order` 存在**双向 Feign 调用**，生产上订单状态变更应改为 RocketMQ 事件广播，避免循环调用和紧耦合。
+其他所有字段（`createTime`、`isDel` 等）仅作为过滤条件或行级安全约束，不参与算法计算。
 
-### 2. 公共 DTO 变更爆炸
+**问题：**
 
-所有 `*-client` 模块使用统一版本号 `1.0.0`，未独立版本化管理。一旦某个 DTO 字段变更（如 `ProductDTO`），所有消费方（mall-order、mall-recommend、mall-marketing）都必须重新发布。标准做法是 client 独立版本号 + 兼容策略（字段只增不改，老字段加 `@Deprecated`）。
+1. **同步机制不透明** — 数据如何从 mall-product 到达 mall-recommend 没有明确的代码路径和保障（无消费者、无对账、无重试）
+2. **Data owner 不明确** — 两边各自维护一份 product_favorites 表结构，schema 变更需要两边同步修改
+3. **防腐层缺失** — mall-recommend 只需要 `userId` + `productId`，但强行同步了整个表结构。理想的防腐层应该是定义最小契约：
+   ```java
+   class ProductFavoritedEvent {
+       Long userId;
+       Long productId;  // mall-recommend 只需要这两个
+   }
+   ```
 
-### 3. scanBasePackages 扫全量
-
-全部服务使用 `@SpringBootApplication(scanBasePackages = {"cn.net.mall"})`，Spring 启动时会扫描整个项目类路径。标准做法是只扫本模块包路径 + 显式引入的 starter 配置，避免启动变慢和潜在的 Bean 冲突。
-
-### 4. 共享数据存储
-
-`product_favorites` 由 `mall-product` 写入（单库），`mall-recommend` 通过 RocketMQ 消费后同步到分库分表做查询。理论上每个服务应该独享数据存储，跨服务数据只能通过 API 获取。建议统一由 `mall-recommend` 管理收藏数据，`mall-product` 通过 Feign 调用查询。
+**建议：** 明确同步路径（RocketMQ 或定时批处理），并定义最小消息契约替代共享表结构。
 
 ---
 

@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>mall-auth-api-starter</artifactId>
+    <version>${mall-auth-api-starter.version}</version>
     <name>mall-auth-api-starter</name>
     <description>权限基础模块</description>
 

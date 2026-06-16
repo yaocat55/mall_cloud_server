@@ -60,12 +60,12 @@
         <dependency>
             <groupId>cn.net.mall</groupId>
             <artifactId>mall-auth-api-starter</artifactId>
-            <version>1.0.0</version>
+            <version>${mall-auth-api-starter.version}</version>
         </dependency>
         <dependency>
             <groupId>cn.net.mall</groupId>
             <artifactId>mall-product-client</artifactId>
-            <version>1.0.0</version>
+            <version>${mall-product-client.version}</version>
         </dependency>
 
         <dependency>

@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>mall-marketing-client</artifactId>
+    <version>${mall-marketing-client.version}</version>
     <name>mall-marketing-client</name>
     <description>营销服务客户端</description>
 

@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>mall-order-client</artifactId>
+    <version>${mall-order-client.version}</version>
     <name>mall-order-client</name>
     <description>订单服务客户端</description>
 
@@ -22,17 +23,17 @@
         <dependency>
             <groupId>cn.net.mall</groupId>
             <artifactId>mall-product-client</artifactId>
-            <version>1.0.0</version>
+            <version>${mall-product-client.version}</version>
         </dependency>
         <dependency>
             <groupId>cn.net.mall</groupId>
             <artifactId>mall-auth-client</artifactId>
-            <version>1.0.0</version>
+            <version>${mall-auth-client.version}</version>
         </dependency>
         <dependency>
             <groupId>cn.net.mall</groupId>
             <artifactId>mall-marketing-client</artifactId>
-            <version>1.0.0</version>
+            <version>${mall-marketing-client.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

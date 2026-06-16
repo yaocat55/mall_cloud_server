@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
-@SpringBootApplication(scanBasePackages = "cn.net.mall")
+@SpringBootApplication(scanBasePackages = "cn.net.mall.recommend")
 @MapperScan("cn.net.mall.recommend.mapper")
 @EnableFeignClients(basePackages = {
         "cn.net.mall.product.client",

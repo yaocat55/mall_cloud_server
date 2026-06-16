@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>mall-basic-client</artifactId>
+    <version>${mall-basic-client.version}</version>
     <name>mall-basic-client</name>
     <description>公共基础服务客户端</description>
 
