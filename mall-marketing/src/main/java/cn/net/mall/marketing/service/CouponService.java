@@ -7,7 +7,7 @@ import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.entity.auth.JwtUserEntity;
 import cn.net.mall.marketing.entity.*;
 import cn.net.mall.marketing.entity.web.CouponWebEntity;
-import cn.net.mall.enums.ValidStatusEnum;
+import cn.net.mall.marketing.enums.ValidStatusEnum;
 import cn.net.mall.mapper.BaseMapper;
 import cn.net.mall.marketing.mapper.CouponMapper;
 import cn.net.mall.marketing.mapper.CouponUserProvideMapper;

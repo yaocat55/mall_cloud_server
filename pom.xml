@@ -65,6 +65,7 @@
         <redisson.version>3.13.6</redisson.version>
         <feign.okhttp.version>13.1</feign.okhttp.version>
         <jackson.datatype.version>2.17.2</jackson.datatype.version>
+        <skywalking.version>9.0.0</skywalking.version>
     </properties>
 
 <dependencyManagement>
@@ -96,6 +97,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
+            <version>${springboot.version}</version>
         </dependency>
         <!-- spring cache -->
         <dependency>

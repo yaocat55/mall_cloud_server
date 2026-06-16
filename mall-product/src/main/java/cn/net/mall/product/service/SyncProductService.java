@@ -2,7 +2,7 @@ package cn.net.mall.product.service;
 
 import cn.net.mall.constant.NumberConstant;
 import cn.net.mall.entity.ResponsePageEntity;
-import cn.net.mall.enums.OrderStatusEnum;
+import cn.net.mall.order.enums.OrderStatusEnum;
 import cn.net.mall.product.config.BusinessConfig;
 import cn.net.mall.product.entity.ProductCommentConditionEntity;
 import cn.net.mall.product.entity.ProductConditionEntity;

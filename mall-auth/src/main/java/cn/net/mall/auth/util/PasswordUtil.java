@@ -2,7 +2,7 @@ package cn.net.mall.auth.util;
 
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
-import cn.net.mall.entity.auth.AuthUserEntity;
+import cn.net.mall.auth.entity.auth.AuthUserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;

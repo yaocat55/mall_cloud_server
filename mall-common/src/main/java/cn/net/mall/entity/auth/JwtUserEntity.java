@@ -9,9 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 
-/**
- * @date 2024/1/12 下午6:10
- */
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -22,9 +19,6 @@ public class JwtUserEntity implements UserDetails {
     @JsonIgnore
     private String password;
     private List<SimpleGrantedAuthority> authorities;
-    /**
-     * 角色信息
-     */
     private List<String> roles;
 
     @Override

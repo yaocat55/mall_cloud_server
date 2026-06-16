@@ -1,8 +1,8 @@
 package cn.net.mall.pay.service;
 
 import cn.net.mall.entity.auth.JwtUserEntity;
-import cn.net.mall.enums.OrderStatusEnum;
-import cn.net.mall.enums.PayStatusEnum;
+import cn.net.mall.order.enums.OrderStatusEnum;
+import cn.net.mall.pay.enums.PayStatusEnum;
 import cn.net.mall.order.client.OrderFeignClient;
 import cn.net.mall.order.dto.OrderDTO;
 import cn.net.mall.pay.dto.PayWebDTO;

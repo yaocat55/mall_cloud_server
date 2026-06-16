@@ -1,6 +1,6 @@
 package cn.net.mall.order.service;
 
-import cn.net.mall.enums.OrderStatusEnum;
+import cn.net.mall.order.enums.OrderStatusEnum;
 import cn.net.mall.helper.IdGenerateHelper;
 import cn.net.mall.mapper.BaseMapper;
 import cn.net.mall.marketing.client.MarketingFeignClient;

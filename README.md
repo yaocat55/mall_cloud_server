@@ -28,6 +28,8 @@
 - [数据库设计](#数据库设计)
 - [快速开始](#快速开始)
 - [设计要点](#设计要点)
+- [已知问题](#已知问题)
+- [多仓库拆分方案](#多仓库拆分方案)
 
 ---
 
@@ -39,7 +41,7 @@
 
 - 🚪 统一 API 网关，JWT 鉴权 + Sentinel 流控
 - 🔐 RBAC 权限模型（用户 → 角色 → 菜单 / 部门）
-- 📦 18 个 Maven 模块，7 个独立业务服务 + 7 个 Feign 客户端
+- 📦 17 个 Maven 模块，9 个独立部署微服务 + 6 个 Feign 客户端
 - 🔄 MySQL + Elasticsearch 双写，ShardingSphere 分库分表
 - ⚡ RocketMQ 延迟消息驱动订单超时取消，异步解耦浏览记录采集
 - 🔗 认证 SDK 自动透传用户上下文，Feign 调用零侵入
@@ -66,38 +68,39 @@
 ## 项目结构
 
 ```
-mall_cloud/
-├── mall-common/                   公共模块
-│   ├── 实体基类 (BaseEntity / EsBaseEntity / 分页)
-│   ├── 工具类 (雪花 ID / Token / MD5 / Excel / Redis)
-│   ├── 全局响应包装 (GlobalApiResultHandler)
-│   ├── 全局异常处理 (GlobalExceptionHandler)
-│   └── 敏感词脱敏 (CustomMaskService)
+mall_cloud_server/
+├── mall-common/                   公共 Starter 模块
+│   ├── 实体基类 (BaseEntity / 分页)
+│   ├── 工具类 (雪花 ID / Token / MD5 / Excel)
+│   ├── 全局响应包装 & 异常处理
+│   ├── 敏感词脱敏
+│   └── 基础设施自动配置 (Redis / Feign / 全局异常)
 │
 ├── mall-gateway/                  网关层
-│   └── Spring Cloud Gateway + AuthFilter (JWT) + CORS + Sentinel
+│   └── Spring Cloud Gateway + JWT 校验 + CORS + Sentinel
 │
-├── mall-auth/                     认证服务
-│   ├── mall-auth-client/          Feign 客户端
-│   └── mall-auth-api-starter/     认证 SDK（自动注入拦截器 + Feign 鉴权透传）
+├── mall-auth/                     认证服务（登录、RBAC 权限）
+├── mall-auth-client/              认证服务 Feign 接口 & DTO
+├── mall-auth-api-starter/         认证 SDK（JWT 解析、用户上下文透传）
 │
-├── mall-basic/                    基础服务
-│   └── mall-basic-client/         Feign 客户端
+├── mall-basic/                    基础服务（字典、短信、文件、Quartz）
+├── mall-basic-client/             基础服务 Feign 接口 & DTO
 │
-├── mall-product/                  商品服务
-│   └── mall-product-client/       Feign 客户端
+├── mall-product/                  商品服务（商品、分类、品牌、购物车、ES 搜索）
+├── mall-product-client/           商品服务 Feign 接口 & DTO
 │
-├── mall-order/                    订单服务
-│   └── mall-order-client/         Feign 客户端
+├── mall-order/                    订单服务（订单、退货、分库分表）
+├── mall-order-client/             订单服务 Feign 接口 & DTO
 │
-├── mall-pay/                      支付服务
-│   └── mall-pay-client/           Feign 客户端
+├── mall-pay/                      支付服务（支付宝对接，无数据库）
+├── mall-pay-client/               支付服务 Feign 接口 & DTO
 │
-├── mall-marketing/                营销服务
-│   └── mall-marketing-client/     Feign 客户端
+├── mall-marketing/                营销服务（优惠券、秒杀）
+├── mall-marketing-client/         营销服务 Feign 接口 & DTO
 │
-├── mall-recommend/                推荐服务
-├── mall-message/                  消息推送服务
+├── mall-recommend/                推荐服务（收藏、浏览历史，分库分表）
+├── mall-message/                  消息推送服务（WebSocket + 站内通知，分库分表）
+│
 └── docs/                          项目文档
 ```
 
@@ -110,237 +113,83 @@ mall_cloud/
 
 ### 整体架构
 
-```mermaid
-graph TB
-    subgraph 客户端["🌐 客户端"]
-        WEB[Web 端]
-        MOBILE[移动端]
-    end
-
-    subgraph 网关层["🚪 网关层"]
-        GW[mall-gateway<br/>Spring Cloud Gateway<br/>JWT 鉴权 · CORS · Sentinel 流控]
-    end
-
-    subgraph 业务服务层["⚙️ 业务服务层"]
-        AUTH[mall-auth<br/>认证 & RBAC 权限]
-        BASIC[mall-basic<br/>基础服务]
-        PRODUCT[mall-product<br/>商品服务]
-        ORDER[mall-order<br/>订单服务 · 分库分表]
-        PAY[mall-pay<br/>支付服务]
-        MARKET[mall-marketing<br/>营销服务]
-        RECOMMEND[mall-recommend<br/>推荐服务 · 分库分表]
-        MESSAGE[mall-message<br/>消息推送 · WebSocket · 分库分表]
-    end
-
-    subgraph 中间件层["💾 中间件层"]
-        NACOS[(Nacos<br/>注册 & 配置中心)]
-        REDIS[(Redis + Redisson<br/>缓存 & 分布式锁)]
-        MYSQL[(MySQL 8.x<br/>多库 + 分库分表)]
-        ES[(Elasticsearch 7.17<br/>商品 / 订单 / 秒杀搜索)]
-        MONGO[(MongoDB<br/>文档存储)]
-        ROCKETMQ[RocketMQ<br/>异步消息队列]
-        MINIO[MinIO<br/>文件 / 图片存储]
-        SENTINEL[Sentinel<br/>流量监控]
-    end
-
-    subgraph 外部服务["☁️ 外部服务"]
-        ALIPAY[支付宝沙箱]
-        ALISMS[阿里云 SMS]
-        OLLAMA[Ollama AI]
-    end
-
-    subgraph SDK["🔗 认证透传 SDK"]
-        AUTH_SDK[mall-auth-api-starter<br/>AuthApiInterceptor → FillUserUtil<br/>FeignAuthInterceptor → 透传 JWT]
-    end
-
-    WEB --> GW
-    MOBILE --> GW
-
-    GW -- "路由转发" --> AUTH
-    GW -- "路由转发" --> BASIC
-    GW -- "路由转发" --> PRODUCT
-    GW -- "路由转发" --> ORDER
-    GW -- "路由转发" --> PAY
-    GW -- "路由转发" --> MARKET
-    GW -- "路由转发" --> RECOMMEND
-    GW -- "路由转发" --> MESSAGE
-
-    AUTH_SDK -. "自动注入 所有业务服务" .-> AUTH
-    AUTH_SDK -.-> BASIC
-    AUTH_SDK -.-> PRODUCT
-    AUTH_SDK -.-> ORDER
-    AUTH_SDK -.-> PAY
-    AUTH_SDK -.-> MARKET
-    AUTH_SDK -.-> RECOMMEND
-    AUTH_SDK -.-> MESSAGE
-
-    AUTH --- MYSQL
-    AUTH --- REDIS
-    BASIC --- MYSQL
-    BASIC --- REDIS
-    BASIC --- MONGO
-    BASIC --- MINIO
-    BASIC --- ALISMS
-    BASIC --- OLLAMA
-    PRODUCT --- MYSQL
-    PRODUCT --- REDIS
-    PRODUCT --- ES
-    PRODUCT --- MONGO
-    ORDER --- MYSQL
-    ORDER --- REDIS
-    ORDER --- ES
-    ORDER --- ROCKETMQ
-    PAY --- ALIPAY
-    MARKET --- MYSQL
-    MARKET --- REDIS
-    MARKET --- ES
-    RECOMMEND --- MYSQL
-    RECOMMEND --- REDIS
-    RECOMMEND --- ROCKETMQ
-    MESSAGE --- MYSQL
-    MESSAGE --- REDIS
-
-    GW -. "服务发现 · 配置拉取" .-> NACOS
-    AUTH -.-> NACOS
-    BASIC -.-> NACOS
-    PRODUCT -.-> NACOS
-    ORDER -.-> NACOS
-    PAY -.-> NACOS
-    MARKET -.-> NACOS
-    RECOMMEND -.-> NACOS
-    MESSAGE -.-> NACOS
-
-    GW -. "流控规则" .-> SENTINEL
 ```
+客户端 (Web / Mobile)
+        │
+        ▼
+  ┌──────────────────────────┐
+  │  mall-gateway  (8080)    │
+  │  JWT · CORS · Sentinel   │
+  └──────────────────────────┘
+        │
+        ▼
+  ┌──────────────────────────┐
+  │  9 个业务微服务            │
+  │  auth / basic / product  │
+  │  order / pay / marketing │
+  │  recommend / message     │
+  └──────────────────────────┘
+        │
+        ▼
+  ┌──────────────────────────┐
+  │  中间件 & 外部服务         │
+  │  Nacos · Redis · MySQL   │
+  │  ES · MongoDB · RocketMQ │
+  │  MinIO · 支付宝 · 阿里云   │
+  └──────────────────────────┘
+```
+
+各服务使用的中间件详见[基础设施](#基础设施)。所有服务通过 Nacos 注册发现，Feign 调用自动透传 JWT 用户上下文。
 
 ### 服务依赖关系
 
 > 实线箭头 = 编译期引入 `*-client` 模块 + 运行时 OpenFeign 调用。
 > 每次调用自动透传 JWT，下游通过 `AuthApiInterceptor` 还原用户信息。
 
-```mermaid
-graph LR
-    AUTH[mall-auth] -- "SMS / 字典 / 上传" --> BASIC[mall-basic]
-    BASIC -- "用户信息" --> AUTH
-    PRODUCT[mall-product] -- "上传 / 字典 / 区域" --> BASIC
-    PRODUCT -- "订单操作" --> ORDER[mall-order]
-    PRODUCT -- "用户信息" --> AUTH
-    ORDER -- "商品查询 / 扣库存 / 购物车" --> PRODUCT
-    ORDER -- "用户信息 / 收货地址" --> AUTH
-    ORDER -- "优惠券列表 / 试算 / 核销" --> MARKET[mall-marketing]
-    PAY[mall-pay] -- "订单查询 / 状态更新" --> ORDER
-    MARKET -- "上传 / 字典" --> BASIC
-    MARKET -- "用户信息" --> AUTH
-    MARKET -- "商品信息（秒杀）" --> PRODUCT
-    RECOMMEND[mall-recommend] -- "商品信息" --> PRODUCT
-    MESSAGE[mall-message] -- "用户信息" --> AUTH
-
-    style AUTH fill:#e1f5fe
-    style BASIC fill:#fff3e0
-    style PRODUCT fill:#e8f5e9
-    style ORDER fill:#fce4ec
-    style PAY fill:#f3e5f5
-    style MARKET fill:#fff9c4
-    style RECOMMEND fill:#e0f2f1
-    style MESSAGE fill:#ede7f6
-```
-
-<details>
-<summary><b>📊 依赖关系矩阵</b></summary>
-
-| 服务 ↓ \ 被调方 → | auth | basic | product | order | marketing |
+| 调用方 ↓ / 被调方 → | auth | basic | product | order | marketing |
 |:---|:---:|:---:|:---:|:---:|:---:|
-| **mall-auth** | — | ✅ SMS/字典/上传 | — | — | — |
-| **mall-basic** | ✅ 用户信息 | — | — | — | — |
-| **mall-product** | ✅ 用户信息 | ✅ 字典/区域 | — | ✅ 订单操作 | — |
-| **mall-order** | ✅ 用户/地址 | — | ✅ 商品/库存/购物车 | — | ✅ 优惠券 |
-| **mall-pay** | — | — | — | ✅ 订单状态 | — |
-| **mall-marketing** | ✅ 用户信息 | ✅ 上传/字典 | ✅ 商品信息 | — | — |
-| **mall-recommend** | — | — | ✅ 商品信息 | — | — |
-| **mall-message** | ✅ 用户信息 | — | — | — | — |
-
-</details>
+| **mall-auth** | — | SMS/字典/上传 | — | — | — |
+| **mall-basic** | 用户信息 | — | — | — | — |
+| **mall-product** | 用户信息 | 字典/区域 | — | 订单操作 | — |
+| **mall-order** | 用户/地址 | — | 商品/库存/购物车 | — | 优惠券 |
+| **mall-pay** | — | — | — | 订单状态 | — |
+| **mall-marketing** | 用户信息 | 上传/字典 | 商品信息 | — | — |
+| **mall-recommend** | — | — | 商品信息 | — | — |
+| **mall-message** | 用户信息 | — | — | — | — |
 
 ### 核心流程：下单 → 支付
 
 ```mermaid
 sequenceDiagram
     participant C as 客户端
-    participant GW as mall-gateway
+    participant GW as Gateway
     participant O as mall-order
     participant P as mall-product
-    participant M as mall-marketing
-    participant A as mall-auth
-    participant PAY as mall-pay
     participant MQ as RocketMQ
 
-    rect rgb(232, 245, 233)
-        Note over C,MQ: ① 创建订单
-        C->>GW: POST /api/order/v1/mobile/trade/create
-        GW->>GW: JWT 鉴权（白名单跳过）
-        GW->>O: 转发请求
-        O->>A: Feign: 获取用户信息 & 收货地址
-        A-->>O: 用户 + 地址
-        O->>P: Feign: 查询商品详情 & 校验库存
-        P-->>O: 商品 + 库存状态
-        O->>M: Feign: 获取优惠券 & 试算优惠金额
-        M-->>O: 折后金额
-        O->>O: 生成预下单订单
-        O->>MQ: 延迟消息 ORDER_TIMEOUT_CANCEL_TOPIC
-        O-->>GW: 订单信息
-        GW-->>C: 订单创建成功
-    end
+    Note over C,MQ: ① 创建订单
+    C->>GW: POST /api/order/.../create
+    GW->>O: 转发（JWT 鉴权）
+    O->>P: Feign: 查商品 / 扣库存
+    O->>O: 生成订单
+    O->>MQ: 延迟消息（超时取消）
 
-    rect rgb(255, 243, 224)
-        Note over C,PAY: ② 支付
-        C->>GW: POST /api/pay/v1/mobile/pay/mockPay
-        GW->>PAY: 转发支付请求
-        PAY->>O: Feign: 查询订单 & 更新为已支付
-        O-->>PAY: 确认
-        PAY-->>GW: 支付结果
-        GW-->>C: 支付完成
-    end
+    Note over C,MQ: ② 支付
+    C->>GW: POST /api/pay/.../pay
+    GW->>O: Feign: 更新订单状态
 
-    rect rgb(255, 205, 210)
-        Note over MQ,O: ③ 超时取消（异步）
-        MQ-->>O: 延迟消息到达（订单超时未付）
-        O->>O: 检查状态 → 取消订单
-        O->>P: Feign: 回滚库存
-    end
+    Note over MQ,O: ③ 超时取消（异步）
+    MQ-->>O: 延迟消息到达
+    O->>O: 取消订单
+    O->>P: Feign: 回滚库存
 ```
 
 ### 异步解耦：消息队列
 
-```mermaid
-graph LR
-    subgraph 生产者["📤 生产者"]
-        ORDER_P[mall-order<br/>订单超时取消]
-        PRODUCT_P[mall-product<br/>商品浏览记录]
-        BASIC_P[mall-basic<br/>定时任务触发]
-    end
-
-    subgraph Topics["📨 RocketMQ Topics"]
-        T1[ORDER_TIMEOUT_CANCEL_TOPIC<br/>Tag: CANCEL_TIMEOUT]
-        T2[RECOMMEND_PRODUCT_VIEW_TOPIC]
-        T3[COMMON_JOB_TOPIC]
-    end
-
-    subgraph 消费者["📥 消费者"]
-        ORDER_C[mall-order<br/>取消超时未付订单<br/>回滚库存]
-        RECOMMEND_C[mall-recommend<br/>记录用户浏览历史]
-    end
-
-    ORDER_P -- "延迟消息<br/>订单创建时发送" --> T1
-    PRODUCT_P -- "用户浏览商品时发送" --> T2
-    BASIC_P -- "Quartz 触发时发送" --> T3
-
-    T1 -- "Push 消费<br/>order_timeout_cancel_group" --> ORDER_C
-    T2 -- "Push 消费<br/>recommend_product_view_group" --> RECOMMEND_C
-
-    style T1 fill:#ffcdd2
-    style T2 fill:#c8e6c9
-    style T3 fill:#fff9c4
-```
+| 生产者 | Topic | 消费者 | 用途 |
+|--------|-------|--------|------|
+| mall-order | `ORDER_TIMEOUT_CANCEL_TOPIC` | mall-order | 延迟消息，取消超时未付订单 |
+| mall-product | `RECOMMEND_PRODUCT_VIEW_TOPIC` | mall-recommend | 记录用户浏览历史 |
 
 > [!IMPORTANT]
 > **同步（Feign）vs 异步（RocketMQ）的取舍：**
@@ -383,13 +232,13 @@ graph LR
 
 | 服务 | 地址 | 说明 |
 |------|------|------|
-| Nacos | `117.72.88.11:8848` | 注册中心 & 配置中心 |
-| Redis | `117.72.88.11:6379` | 缓存 & Redisson 分布式锁 |
+| Nacos | `<your-server-ip>:8848` | 注册中心 & 配置中心 |
+| Redis | `<your-server-ip>:6379` | 缓存 & Redisson 分布式锁 |
 | MySQL | `localhost:3306` | 多实例（见下方数据库设计） |
-| Elasticsearch | `117.72.88.11:9200` | 商品 / 订单 / 秒杀搜索 |
-| MongoDB | `117.72.88.11:27017` | 文件元数据 / 文档存储 |
-| RocketMQ | `117.72.88.11:9876` | 异步消息（延迟消息推量约 0.1 QPS） |
-| MinIO | `117.72.88.11:9002` | 文件 / 图片对象存储 |
+| Elasticsearch | `<your-server-ip>:9200` | 商品 / 订单 / 秒杀搜索 |
+| MongoDB | `<your-server-ip>:27017` | 文件元数据 / 文档存储 |
+| RocketMQ | `<your-server-ip>:9876` | 异步消息（延迟消息推量约 0.1 QPS） |
+| MinIO | `<your-server-ip>:9002` | 文件 / 图片对象存储 |
 | Sentinel | `localhost:9903` | 流量监控 Dashboard |
 | Ollama | `localhost:11434` | AI 对话（deepseek-r1:8b） |
 | 支付宝沙箱 | `openapi-sandbox.dl.alipaydev.com` | 开发测试支付 |
@@ -399,25 +248,117 @@ graph LR
 
 ## 数据库设计
 
-### 单库业务
+### 部署拓扑
 
-| 数据库 | 所属服务 |
-|--------|----------|
-| `mall_auth` | 认证服务 |
-| `mall_basic` | 基础服务 |
-| `mall_product` | 商品服务 |
-| `mall_marketing` | 营销服务 |
+| 微服务 | 数据库 | 分片策略 | 说明 |
+|--------|--------|---------|------|
+| `mall-gateway` | 无 | — | 纯网关，无数据库 |
+| `mall-auth` | `mall_auth` | 单库 | 认证鉴权、RBAC、收货地址 |
+| `mall-basic` | `mall_basic` | 单库 | 字典、行政区域、图片、任务调度 |
+| `mall-product` | `mall_product` | 单库 | 商品中心、分类品牌、首页管理、购物车 |
+| `mall-marketing` | `mall_marketing` | 单库 | 优惠券、秒杀 |
+| `mall-order` | `mall_trade_0~7` | 8 库 × N 表 | 订单、订单项、收货地址 |
+| `mall-pay` | 无 | — | 纯支付 API 对接 |
+| `mall-recommend` | `mall_recommend_0~7` | 8 库 × 16/64 表 | 收藏、浏览历史 |
+| `mall-message` | `mall_message_0~7` | 8 库 × 64 表 | 站内通知 |
 
-### 分库分表（ShardingSphere-JDBC）
+### 各服务对应的表
 
-| 数据库 | 服务 | 分片策略 | 分片键 |
-|--------|------|---------|--------|
-| `mall_trade_0` ~ `mall_trade_7` | 订单服务 | 订单表 8×32 / 订单项 8×256 / 地址 8×32 | `id` / `order_id` |
-| `mall_message_0` ~ `mall_message_7` | 消息服务 | 8 库 × 64 表 | `to_user_id` |
-| `mall_recommend_0` ~ `mall_recommend_7` | 推荐服务 | 收藏 8×16 / 浏览历史 8×64 | `user_id` |
+#### mall-auth（库：`mall_auth`）
+
+| 表名 | 说明 |
+|------|------|
+| `auth_user` | 系统用户 |
+| `auth_user_role` | 用户-角色关联 |
+| `auth_user_avatar` | 用户头像 |
+| `auth_role` | 角色 |
+| `auth_role_menu` | 角色-菜单关联 |
+| `auth_role_dept` | 角色-部门关联 |
+| `auth_menu` | 菜单权限 |
+| `auth_dept` | 部门 |
+| `auth_job` | 岗位 |
+| `delivery_address` | 用户收货地址 |
+
+#### mall-basic（库：`mall_basic`）
+
+| 表名 | 说明 |
+|------|------|
+| `common_dict` | 字典 |
+| `common_dict_detail` | 字典详情 |
+| `common_area` | 行政区域 |
+| `common_photo` | 图片资源 |
+| `common_photo_group` | 图片分组 |
+| `common_job` | Quartz 定时任务 |
+| `common_job_log` | 任务执行日志 |
+| `common_sms_record` | 短信发送记录 |
+| `common_sensitive_word` | 敏感词库 |
+| `common_task` | 异步任务 |
+
+#### mall-product（库：`mall_product`）
+
+| 表名 | 说明 |
+|------|------|
+| `product` | 商品 |
+| `product_detail` | 商品详情（富文本） |
+| `product_photo` | 商品图片 |
+| `product_comment` | 商品评价 |
+| `product_comment_photo` | 评价图片 |
+| `product_attribute` | 商品-属性关联 |
+| `product_group` | 商品分组 |
+| `product_group_attribute` | 分组-属性关联 |
+| `category` | 分类 |
+| `brand` | 品牌 |
+| `attribute` | 属性 |
+| `attribute_value` | 属性值 |
+| `unit` | 单位 |
+| `shopping_cart` | 购物车 |
+| `product_favorites` | 商品收藏（写操作） |
+| `product_view_record` | 浏览记录（写操作） |
+| `mall_index_carousel_image` | 首页轮播图 |
+| `mall_index_notice` | 首页公告 |
+| `mall_index_product` | 首页推荐商品 |
+
+> `product_favorites` 和 `product_view_record` 由 mall-product 写入，mall-recommend 通过 RocketMQ 异步消费后同步到分库分表做查询。
+
+#### mall-marketing（库：`mall_marketing`）
+
+| 表名 | 说明 |
+|------|------|
+| `coupon` | 优惠券定义 |
+| `coupon_user_receive` | 用户领券记录 |
+| `coupon_user_provide` | 用户发券记录 |
+| `seckill_product` | 秒杀商品 |
+
+#### mall-order（库：`mall_trade_0~7`，ShardingSphere 分库分表）
+
+| 逻辑表名 | 物理分片 | 说明 |
+|----------|---------|------|
+| `t_order` | 8 库 × 32 表 | 订单主表 |
+| `t_order_item` | 8 库 × 256 表 | 订单明细 |
+| `t_order_delivery_address` | 8 库 × 32 表 | 订单收货地址 |
+| `t_order_return_apply` | 每库 4 表 | 退货申请 |
+| `t_order_return_item` | 每库 8 表 | 退货明细 |
+| `t_order_return_voucher` | 每库 16 表 | 退货凭证 |
+
+#### mall-recommend（库：`mall_recommend_0~7`，ShardingSphere 分库分表）
+
+| 逻辑表名 | 物理分片 | 分片键 | 说明 |
+|----------|---------|--------|------|
+| `product_favorites` | 8 库 × 16 表 | `user_id` | 用户收藏 |
+| `product_view_record` | 8 库 × 64 表 | `user_id` | 浏览历史 |
+
+#### mall-message（库：`mall_message_0~7`，ShardingSphere 分库分表）
+
+| 逻辑表名 | 物理分片 | 分片键 | 说明 |
+|----------|---------|--------|------|
+| `common_notify` | 8 库 × 64 表 | `to_user_id` | 站内通知 |
+
+#### mall-pay / mall-gateway
+
+无数据库。
 
 > [!WARNING]
-> 分库分表的建表 SQL 统一放在 `mall-order/src/main/resources/sql/mall_trade_sharding.sql`（约 408 KB），**务必通过脚本批量初始化，严禁逐表手动创建**。
+> 分库分表的建表 SQL 位于各服务 `sql/` 目录下：`mall_trade_sharding.sql`（约 408 KB）、`mall_message_sharding.sql`、`mall_recommend_sharding.sql`。**务必通过脚本批量初始化，严禁逐表手动创建**。
 
 ---
 
@@ -459,12 +400,12 @@ done
 | JDK | 17+ | `java -version` |
 | Maven | 3.8+ | `mvn -v` |
 | MySQL | 8.x | `mysql -u root -p -e "SELECT VERSION()"` |
-| Nacos | 2.x | 浏览器打开 `http://117.72.88.11:8848/nacos` |
-| Redis | 6+ | `redis-cli -h 117.72.88.11 -p 6379 PING` |
-| RocketMQ | 5.x | NameServer `117.72.88.11:9876` 可连通 |
-| Elasticsearch | 7.17 | `curl http://117.72.88.11:9200` |
-| MongoDB | 5+ | `mongosh 117.72.88.11:27017 --eval "db.version()"` |
-| MinIO | — | 浏览器打开 `http://117.72.88.11:9002` |
+| Nacos | 2.x | 浏览器打开 `http://<your-server-ip>:8848/nacos` |
+| Redis | 6+ | `redis-cli -h <your-server-ip> -p 6379 PING` |
+| RocketMQ | 5.x | NameServer `<your-server-ip>:9876` 可连通 |
+| Elasticsearch | 7.17 | `curl http://<your-server-ip>:9200` |
+| MongoDB | 5+ | `mongosh <your-server-ip>:27017 --eval "db.version()"` |
+| MinIO | — | 浏览器打开 `http://<your-server-ip>:9002` |
 
 ### 第一步：初始化数据库
 
@@ -524,7 +465,7 @@ Group:     mall-cloud
 ### 第三步：构建项目
 
 ```bash
-# 在项目根目录 mall_cloud/ 下执行
+# 在项目根目录 mall_cloud_server/ 下执行
 
 # 方案 A：一次性全量构建（推荐首次）
 mvn clean package -DskipTests
@@ -566,14 +507,14 @@ java -jar mall-message/target/mall-message.jar &       # 依赖 auth
 
 | 服务 | 主类 | 模块目录 |
 |------|------|---------|
-| Gateway | `GateWayApplication` | `mall-gateway` |
-| Auth | `AuthApplication` | `mall-auth` |
-| Basic | `BasicApplication` | `mall-basic` |
-| Product | `ProductApplication` | `mall-product` |
-| Order | `OrderApplication` | `mall-order` |
-| Pay | `PayApplication` | `mall-pay` |
-| Marketing | `MarketingApplication` | `mall-marketing` |
-| Recommend | `RecommendApplication` | `mall-recommend` |
+| Gateway | `GatewayApplication` | `mall-gateway` |
+| Auth | `AuthApiApplication` | `mall-auth` |
+| Basic | `BasicApiApplication` | `mall-basic` |
+| Product | `ProductApiApplication` | `mall-product` |
+| Order | `OrderApiApplication` | `mall-order` |
+| Pay | `PayApiApplication` | `mall-pay` |
+| Marketing | `MarketingApiApplication` | `mall-marketing` |
+| Recommend | `RecommendApiApplication` | `mall-recommend` |
 | Message | `MessageApplication` | `mall-message` |
 
 启动顺序同上：Gateway → Auth/Basic → Product → Order/Pay/Marketing → Recommend/Message
@@ -584,7 +525,7 @@ java -jar mall-message/target/mall-message.jar &       # 依赖 auth
 
 ```bash
 # 1. 检查 Nacos 注册状态
-#    浏览器打开 http://117.72.88.11:8848/nacos → 服务管理 → 服务列表
+#    浏览器打开 http://<your-server-ip>:8848/nacos → 服务管理 → 服务列表
 #    确认以下 9 个服务均在"健康实例"列表中：
 #      mall-gateway / mall-auth-api / mall-basic-api / mall-product-api
 #      mall-order-api / mall-pay-api / mall-marketing-api
@@ -631,7 +572,7 @@ curl http://localhost:8080/api/product/v1/product/list
 排查：
 ```bash
 # 确认目标服务已在 Nacos 注册
-curl http://117.72.88.11:8848/nacos/v1/ns/instance/list?serviceName=mall-product-api
+curl http://<your-server-ip>:8848/nacos/v1/ns/instance/list?serviceName=mall-product-api
 ```
 检查 Feign 客户端注解中的 `name` / `value` 是否与 Nacos 服务名一致。
 
@@ -655,7 +596,7 @@ SHOW DATABASES LIKE 'mall_recommend_%'; -- 应该有 8 个
 <details>
 <summary><b>Q: Nacos 能注册但无法拉取配置</b></summary>
 
-检查配置是否已导入 Nacos 控制台：`http://117.72.88.11:8848/nacos`
+检查配置是否已导入 Nacos 控制台：`http://<your-server-ip>:8848/nacos`
 
 - namespace 必须是 `mall`
 - group 必须是 `mall-cloud`
@@ -696,23 +637,6 @@ Gateway 已配置全局 CORS（允许所有 Origin）。如果仍然报跨域，
 | 订单状态流转 | 同步更新，辅以 RocketMQ 延迟消息处理超时取消 |
 | 浏览记录采集 | 异步 RocketMQ，允许短暂延迟，不阻塞用户浏览 |
 
-**服务耦合**
-
-```mermaid
-graph LR
-    subgraph "高耦合（需关注）"
-        PRODUCT[mall-product] <--> ORDER[mall-order]
-    end
-    subgraph "低耦合（健康）"
-        PAY --> ORDER
-        RECOMMEND --> PRODUCT
-        MARKET --> PRODUCT
-    end
-```
-
-- `mall-product` 与 `mall-order` 存在双向同步依赖，是当前架构中耦合度最高的点
-- 建议方向：将订单状态变更（支付、发货、签收）改为 RocketMQ 事件广播，product 侧异步消费去解耦
-
 **配置管理**
 
 ```
@@ -722,14 +646,95 @@ graph LR
 
 **日志 & 链路追踪**
 
-- `mall-common` 和 `mall-gateway` 集成了 **Apache SkyWalking**（`apm-toolkit-trace`）
-- Feign 调用自动接续 TraceId，可在 SkyWalking UI 查看完整调用链
+- **SkyWalking Java Agent** 附加在 JVM 启动参数中，自动拦截所有服务的 HTTP/Feign/JDBC 调用，无需 Maven 依赖即可实现分布式链路追踪
+- `apm-toolkit` 系列依赖（`apm-toolkit-trace`、`apm-toolkit-logback-1.x`）仅用于日志中输出 TraceId 和 gRPC 日志上报，不影响核心追踪能力
+- `mall-gateway`、`mall-auth`、`mall-basic`、`mall-product` 显式引入 toolkit，其余服务依赖 agent 自动追踪
 
 ---
 
-## License
+## 已知问题
 
-内部项目，仅供学习参考。
+项目从单体拆分而来，虽已完成微服务基础骨架改造，但仍存在以下遗留问题：
+
+### 1. 双向服务依赖
+
+```
+mall-product  ↔  mall-order
+```
+
+`mall-product` 和 `mall-order` 存在**双向 Feign 调用**，生产上订单状态变更应改为 RocketMQ 事件广播，避免循环调用和紧耦合。
+
+### 2. 公共 DTO 变更爆炸
+
+所有 `*-client` 模块使用统一版本号 `1.0.0`，未独立版本化管理。一旦某个 DTO 字段变更（如 `ProductDTO`），所有消费方（mall-order、mall-recommend、mall-marketing）都必须重新发布。标准做法是 client 独立版本号 + 兼容策略（字段只增不改，老字段加 `@Deprecated`）。
+
+### 3. scanBasePackages 扫全量
+
+全部服务使用 `@SpringBootApplication(scanBasePackages = {"cn.net.mall"})`，Spring 启动时会扫描整个项目类路径。标准做法是只扫本模块包路径 + 显式引入的 starter 配置，避免启动变慢和潜在的 Bean 冲突。
+
+### 4. 共享数据存储
+
+`product_favorites` 由 `mall-product` 写入（单库），`mall-recommend` 通过 RocketMQ 消费后同步到分库分表做查询。理论上每个服务应该独享数据存储，跨服务数据只能通过 API 获取。建议统一由 `mall-recommend` 管理收藏数据，`mall-product` 通过 Feign 调用查询。
+
+---
+
+## 多仓库拆分方案
+
+当前为单仓库（Monorepo），适合 1-2 个团队协作。若团队规模扩大，可按以下方案拆分。
+
+### 方案一：10 仓库（细粒度）
+
+每个团队独立负责一个服务 + 其 client JAR，通过 Nexus/Artifactory 发布版本。
+
+| 仓库 | 包含模块 | 团队 |
+|------|---------|------|
+| `mall-common` | mall-common | 基建团队 |
+| `mall-gateway` | mall-gateway | 基建团队 |
+| `mall-auth` | mall-auth + mall-auth-client + mall-auth-api-starter | 权限团队 |
+| `mall-basic` | mall-basic + mall-basic-client | 基础服务团队 |
+| `mall-product` | mall-product + mall-product-client | 商品团队 |
+| `mall-marketing` | mall-marketing + mall-marketing-client | 营销团队 |
+| `mall-order` | mall-order + mall-order-client | 订单团队 |
+| `mall-pay` | mall-pay + mall-pay-client | 支付团队 |
+| `mall-recommend` | mall-recommend | 推荐团队 |
+| `mall-message` | mall-message | 消息团队 |
+
+**版本管理规则：**
+
+- **加字段** → 小版本升级（1.0.0 → 1.1.0），消费方无需改代码
+- **改/删字段** → 大版本升级（1.0.0 → 2.0.0），消费方必须配合
+
+**协作成本：**
+
+```
+mall-product-client v1.0.1 ──→ Nexus
+                                    │
+                    ┌───────────────┴───────────────┐
+                    ▼                               ▼
+          mall-order（更新依赖版本）        mall-recommend（保持旧版本）
+```
+
+每个团队独立发布 client 版本，消费方按需升级。`mall-order-client` 依赖 3 个上游 client（product、auth、marketing），订单团队需要关注 3 个上游的版本变更。
+
+### 方案二：3 仓库（折中）
+
+将耦合紧密的服务放在同一仓库，降低版本协调成本。
+
+| 仓库 | 包含模块 | 说明 |
+|------|---------|------|
+| `mall-foundation` | mall-common + mall-gateway + mall-auth | 基础设施，变动少，稳定版本 |
+| `mall-business` | mall-basic + mall-product + mall-order + mall-pay + mall-marketing + 各自 client | 核心业务，联动频繁，放一起省去跨仓库版本协调 |
+| `mall-enhancement` | mall-recommend + mall-message | 边缘业务，独立迭代 |
+
+**适用场景：**
+
+| 方案 | 适用阶段 |
+|------|---------|
+| 当前 Monorepo | 1-2 个团队，快速迭代 |
+| 3 仓库 | 2-4 个团队（推荐过渡方案） |
+| 10 仓库 | 5 个以上独立团队 |
+
+> 建议先走 3 仓库，等团队扩张到自然边界时再拆 10 仓库。过早拆分会增加版本管理和 CI/CD 成本，而非提高效率。
 
 ---
 

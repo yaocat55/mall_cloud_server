@@ -7,6 +7,7 @@ import feign.FeignException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -30,6 +31,7 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 @RestControllerAdvice
+@ConditionalOnClass(name = "org.springframework.web.bind.annotation.RestControllerAdvice")
 public class GlobalExceptionHandler {
 
 //    @ExceptionHandler(FeignException.class)

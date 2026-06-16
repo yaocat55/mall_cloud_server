@@ -1,7 +1,7 @@
 package cn.net.mall.marketing.service;
 
 import cn.net.mall.entity.ResponsePageEntity;
-import cn.net.mall.enums.ValidStatusEnum;
+import cn.net.mall.marketing.enums.ValidStatusEnum;
 import cn.net.mall.mapper.BaseMapper;
 import cn.net.mall.marketing.entity.CouponUserProvideConditionEntity;
 import cn.net.mall.marketing.entity.CouponUserProvideEntity;

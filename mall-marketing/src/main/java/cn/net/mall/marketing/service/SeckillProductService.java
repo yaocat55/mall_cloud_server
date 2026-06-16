@@ -2,8 +2,8 @@ package cn.net.mall.marketing.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.net.mall.entity.ResponsePageEntity;
-import cn.net.mall.entity.seckill.ESSeckillProductEntity;
-import cn.net.mall.entity.seckill.SeckillProductDetailEntity;
+import cn.net.mall.marketing.entity.seckill.ESSeckillProductEntity;
+import cn.net.mall.marketing.entity.seckill.SeckillProductDetailEntity;
 import cn.net.mall.enums.PhotoTypeEnum;
 import cn.net.mall.exception.BusinessException;
 import cn.net.mall.mapper.BaseMapper;
