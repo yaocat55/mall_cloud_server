@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mall-product
+  namespace: mall
+  labels:
+    app: mall-product
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mall-product
+  template:
+    metadata:
+      labels:
+        app: mall-product
+    spec:
+      containers:
+        - name: product
+          image: mall-product:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: TZ
+              value: Asia/Shanghai
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mall-product
+  namespace: mall
+spec:
+  selector:
+    app: mall-product
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: ClusterIP

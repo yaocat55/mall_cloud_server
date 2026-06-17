@@ -1,6 +1,7 @@
 package cn.net.mall.entity;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.net.mall.exception.BusinessException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -69,7 +70,16 @@ public class RequestPageEntity implements Serializable {
         StringBuilder sortBuilder = new StringBuilder();
         for (String field : sortField) {
             String[] values = field.split(",");
-            sortBuilder.append(String.format("%s %s", values[0], values[1])).append(",");
+            String column = values[0].trim();
+            // 白名单校验：只允许字母、数字、下划线
+            if (!column.matches("^[a-zA-Z_][a-zA-Z0-9_]*$")) {
+                throw new BusinessException("非法排序字段: " + column);
+            }
+            String direction = values.length > 1 ? values[1].trim().toLowerCase() : "asc";
+            if (!"asc".equals(direction) && !"desc".equals(direction)) {
+                direction = "asc";
+            }
+            sortBuilder.append(column).append(" ").append(direction).append(",");
         }
         return sortBuilder.deleteCharAt(sortBuilder.length() - 1).toString();
     }

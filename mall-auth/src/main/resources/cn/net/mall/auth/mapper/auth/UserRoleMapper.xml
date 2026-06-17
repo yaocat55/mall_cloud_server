@@ -100,7 +100,7 @@
 
     <delete id="deleteByUserId">
         DELETE FROM auth_user_role
-        WHERE user_id = ${userId}
+        WHERE user_id = #{userId}
     </delete>
 
     <insert id="insert" parameterType="cn.net.mall.auth.entity.auth.UserRoleEntity">
