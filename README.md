@@ -483,25 +483,33 @@ mvn clean package -DskipTests -pl mall-gateway -am
 
 **启动必须遵循以下顺序，否则 Feign 客户端注册会出现找不到服务的报错。**
 
-```bash
-# ───── 阶段 ①：网关（必须第一个启动）─────
-java -jar mall-gateway/target/mall-gateway.jar
+```
+外部依赖（先确保以下中间件已启动）
+  │
+  ├── Nacos       → 必须第一个启动（服务注册/配置中心）
+  ├── MySQL       → 所有数据库已初始化
+  ├── Redis       → 缓存 + 雪花算法 workerId
+  ├── RocketMQ    → 延迟消息（订单超时取消）
+  ├── Elasticsearch → 商品/订单搜索
+  └── MongoDB     → 基本服务依赖
+        │
+        ▼
+微服务启动顺序（严格按以下顺序）
+  │
+  ├── ① mall-gateway     → 网关入口，路由转发（不依赖其他微服务）
+  ├── ② mall-auth        → 认证服务，注册到 Nacos 为 mall-auth-api
+  ├── ② mall-basic       → 基础服务，可和 auth 并行启动，注册为 mall-basic-api
+  ├── ③ mall-product     → 商品服务，依赖 basic（Feign 调用 AreaFeignClient）
+  ├── ④ mall-order       → 订单服务，依赖 product（Feign 调用 ProductFeignClient）
+  ├── ④ mall-marketing   → 营销服务，依赖 product/auth/basic
+  ├── ④ mall-pay         → 支付服务，依赖 order（Feign 调用 OrderFeignClient，无数据库）
+  ├── ⑤ mall-recommend   → 推荐服务，依赖 product
+  └── ⑤ mall-message     → 消息推送，依赖 auth
 
-# ───── 阶段 ②：基础服务（可并行启动）─────
-java -jar mall-auth/target/mall-auth.jar &
-java -jar mall-basic/target/mall-basic.jar &
-
-# ───── 阶段 ③：业务服务（按依赖先后启动）─────
-java -jar mall-product/target/mall-product.jar &      # 被 order/marketing/recommend 依赖
-java -jar mall-order/target/mall-order.jar &           # 被 pay/product 依赖
-java -jar mall-pay/target/mall-pay.jar &               # 依赖 order
-java -jar mall-marketing/target/mall-marketing.jar &   # 依赖 product
-java -jar mall-recommend/target/mall-recommend.jar &   # 依赖 product
-java -jar mall-message/target/mall-message.jar &       # 依赖 auth
+最后启动 mall-gateway
 ```
 
-<details>
-<summary><b>IDEA 内启动（开发调试推荐）</b></summary>
+#### 方式 A：IDEA 启动（开发推荐）
 
 每个服务模块下找到 `*Application.java` 主类，右键 → Run：
 
@@ -517,9 +525,53 @@ java -jar mall-message/target/mall-message.jar &       # 依赖 auth
 | Recommend | `RecommendApiApplication` | `mall-recommend` |
 | Message | `MessageApplication` | `mall-message` |
 
-启动顺序同上：Gateway → Auth/Basic → Product → Order/Pay/Marketing → Recommend/Message
+> **IDEA 编译注意**：如果启动报 `-parameters` 相关错误，在 `File → Settings → Build, Execution, Deployment → Compiler → Java Compiler` 的 "Additional command line parameters" 中填入 `-parameters`。
 
-</details>
+> **IDEA Run Configurations 只显示部分服务**：右键根 `pom.xml` → Maven → Reload Project 即可刷新。
+
+#### 方式 B：Maven 命令行启动
+
+```bash
+# ───── 阶段 ①：编译依赖并启动 auth（测试单个服务时用） ─────
+mvn compile -pl mall-auth -am          # 先编译依赖
+mvn -pl mall-auth spring-boot:run      # 再启动
+
+# ───── 阶段 ②：编译依赖并启动 basic ─────
+mvn compile -pl mall-basic -am
+mvn -pl mall-basic spring-boot:run
+
+# ───── 阶段 ③：编译依赖并启动 product ─────
+mvn compile -pl mall-product -am
+mvn -pl mall-product spring-boot:run
+
+# ───── 阶段 ④：编译依赖并启动 order/pay/marketing ─────
+mvn compile -pl mall-order -am
+mvn -pl mall-order spring-boot:run
+
+# ───── 阶段 ⑤：编译依赖并启动 recommend/message ─────
+mvn compile -pl mall-recommend -am
+mvn -pl mall-recommend spring-boot:run
+```
+
+#### 方式 C：打包后 JAR 启动（部署用）
+
+```bash
+mvn clean package -DskipTests
+
+# 严格按启动顺序
+java -jar mall-gateway/target/mall-gateway.jar &        # ① 网关
+java -jar mall-auth/target/mall-auth.jar &               # ② 认证
+java -jar mall-basic/target/mall-basic.jar &             # ② 基础
+sleep 15                                                  # 等 auth/basic 注册完毕
+java -jar mall-product/target/mall-product.jar &         # ③ 商品
+sleep 10
+java -jar mall-order/target/mall-order.jar &             # ④ 订单
+java -jar mall-pay/target/mall-pay.jar &                 # ④ 支付
+java -jar mall-marketing/target/mall-marketing.jar &     # ④ 营销
+sleep 10
+java -jar mall-recommend/target/mall-recommend.jar &     # ⑤ 推荐
+java -jar mall-message/target/mall-message.jar &         # ⑤ 消息
+```
 
 ### 第五步：验证服务
 

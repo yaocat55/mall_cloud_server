@@ -137,7 +137,7 @@ public class SpringSecurityConfig implements ApplicationContextAware {
     }
 
     private void initNoLogin(ApplicationContext applicationContext) {
-        Map<RequestMappingInfo, HandlerMethod> handlerMethodMap = applicationContext.getBean(RequestMappingHandlerMapping.class).getHandlerMethods();
+        Map<RequestMappingInfo, HandlerMethod> handlerMethodMap = applicationContext.getBean("requestMappingHandlerMapping", RequestMappingHandlerMapping.class).getHandlerMethods();
         if (MapUtils.isEmpty(handlerMethodMap)) {
             return;
         }
