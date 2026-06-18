@@ -777,6 +777,32 @@ Gateway 已配置全局 CORS（允许所有 Origin）。如果仍然报跨域，
 
 **建议：** 明确同步路径（RocketMQ 或定时批处理），并定义最小消息契约替代共享表结构。
 
+### 6. Gateway 鉴权链路不完整
+
+Gateway 的 `AuthFilter` 原设计为边缘鉴权节点——验 JWT 签名 + 查 Redis 确认用户状态。但由于 Gateway 使用 reactive（WebFlux）运行时，无法使用 servlet 栈的 `StringRedisTemplate`，导致 Redis 查询不可用。
+
+当前鉴权链路：
+
+```
+外部请求 → Gateway（验 JWT 签名，不拦人）→ 下游服务
+                                            → JwtTokenFilter / AuthApiInterceptor
+                                            → 查 Redis → 恢复用户上下文
+Feign 调用 → 上游服务 → FeignAuthInterceptor（透传 JWT）
+                      → 下游服务 AuthApiInterceptor
+                      → 查 Redis → 恢复用户上下文
+```
+
+问题：
+1. **每次请求每个服务重复查 Redis** — Gateway 不拦、下游也不缓存，每次请求都走一次 Redis
+2. **用户信息需查 Redis 才完整** — JWT claims 只含 username，userId、角色等均在 Redis 中，无法本地解析
+3. **Gateway 白名单不全** — `@NoLogin` 散落各服务，Gateway 无法集中管理放行路径
+4. **Gateway 实际不拦人** — 白名单外的请求有 token 则验签，无 token / 验签失败也放行，身份校验全部依赖下游服务
+
+**建议：**
+- 将 userId、角色等关键信息写入 JWT claims，下游服务可本地解析，减少 Redis 查询
+- 补全 Gateway 白名单，使其可拦截无效请求
+- 或用短 TTL 黑名单替代 Redis 查询实现踢人，Gateway 做完整边界鉴权
+
 ---
 
 ## 多仓库拆分方案

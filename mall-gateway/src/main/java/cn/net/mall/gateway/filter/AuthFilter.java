@@ -1,51 +1,43 @@
 package cn.net.mall.gateway.filter;
 
-import cn.net.mall.exception.BusinessException;
-import cn.net.mall.helper.TokenHelper;
-import cn.net.mall.util.SpringUtil;
 import cn.net.mall.util.TokenUtil;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.nacos.shaded.com.google.common.base.Joiner;
-import com.alibaba.nacos.shaded.com.google.common.base.Throwables;
-import jakarta.validation.constraints.NotNull;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.core.io.buffer.DataBufferFactory;
-import org.springframework.core.io.buffer.DataBufferUtils;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.crypto.SecretKey;
 import java.net.URI;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.ORIGINAL_RESPONSE_CONTENT_TYPE_ATTR;
-import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
-
+/**
+ * 网关全局鉴权过滤器
+ *
+ * 功能：
+ * 1. 白名单路径直接放行（登录、验证码等）
+ * 2. JWT 签名校验（仅验签 + 过期，不查 Redis）
+ * 3. 验签通过后将用户名写入请求头 X-User-Name，下游服务可据此恢复上下文
+ *
+ * 注意：
+ * - 踢人下线 / 完整用户信息查询由 mall-auth-api-starter 在下游服务中完成
+ * - 因为时区使用 localDateTime ，如果遇到时区相关时间问题自己调整一下
+ */
 @Component
 @Slf4j
 public class AuthFilter implements GlobalFilter, Ordered {
 
-    private static Joiner joiner = Joiner.on("");
+    @Value("${mall.mgt.tokenSecret:123456test}")
+    private String tokenSecret;
 
     @Value("${gateway.filter.noAuth:}")
     private String noAuth;
@@ -53,116 +45,42 @@ public class AuthFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         URI uri = exchange.getRequest().getURI();
-        ServerHttpRequest request = exchange.getRequest();
-        ServerHttpRequest.Builder mutate = request.mutate();
-        // 网关不进行拦截的URI配置，常见如验证码、Login接口
+
+        // 白名单路径直接放行
         if (isNoAuth(uri.getPath())) {
-            return handleResponse(chain, exchange);
+            return chain.filter(exchange);
         }
 
+        ServerHttpRequest request = exchange.getRequest();
         String token = TokenUtil.getToken(request);
+
+        // 有 token 则验签，通过后把用户名传给下游
         if (StringUtils.hasLength(token)) {
-            TokenHelper tokenHelper = SpringUtil.getBean("tokenHelper", TokenHelper.class);
+            try {
+                SecretKey key = Keys.hmacShaKeyFor(tokenSecret.getBytes(StandardCharsets.UTF_8));
+                Claims claims = Jwts.parser()
+                        .verifyWith(key)
+                        .build()
+                        .parseSignedClaims(token)
+                        .getPayload();
 
-            if (Objects.nonNull(tokenHelper)) {
-                try {
-                    String username = tokenHelper.getUsernameFromToken(token);
-                    if (StringUtils.hasLength(username)) {
-                        UserDetails userDetails = tokenHelper.getUserDetailsFromUsername(username);
-                        if (Objects.nonNull(userDetails)) {
-                            //todo权限认证
-                            return handleResponse(chain, exchange);
-                        }
-                    }
-                    throw new BusinessException(HttpStatus.FORBIDDEN.value(), "请先登录");
-                } catch (BusinessException e) {
-                    throw new BusinessException(HttpStatus.FORBIDDEN.value(), "请先登录");
+                String username = claims.getSubject();
+                if (StringUtils.hasLength(username)) {
+                    ServerHttpRequest mutatedRequest = request.mutate()
+                            .header("X-User-Name", username)
+                            .build();
+                    return chain.filter(exchange.mutate().request(mutatedRequest).build());
                 }
+            } catch (JwtException e) {
+                log.warn("JWT 验签失败（已放行，由下游服务拦截）: {}", e.getMessage());
             }
         }
 
-        return handleResponse(chain, exchange);
+        // 无 token 或验签失败均放行，鉴权强制由下游服务完成
+        return chain.filter(exchange);
     }
 
-
-    private Mono<Void> handleResponse(GatewayFilterChain chain, ServerWebExchange exchange) {
-        ServerHttpResponse originalResponse = exchange.getResponse();
-        DataBufferFactory bufferFactory = originalResponse.bufferFactory();
-        ServerHttpResponseDecorator decoratedResponse = new ServerHttpResponseDecorator(originalResponse) {
-
-            @Override
-            public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) {
-                if (getStatusCode().equals(HttpStatus.OK) && body instanceof Flux) {
-                    // 获取ContentType，判断是否返回JSON格式数据
-                    String originalResponseContentType = exchange.getAttribute(ORIGINAL_RESPONSE_CONTENT_TYPE_ATTR);
-
-                    if (StringUtils.hasLength(originalResponseContentType) && originalResponseContentType.contains(APPLICATION_JSON_VALUE)) {
-                        Flux<? extends DataBuffer> fluxBody = Flux.from(body);
-                        //（返回数据内如果字符串过大，默认会切割）解决返回体分段传输
-                        return super.writeWith(fluxBody.buffer().handle((dataBuffers, sink) -> {
-                            List<String> list = new ArrayList<>();
-                            dataBuffers.forEach(dataBuffer -> {
-                                try {
-                                    byte[] content = new byte[dataBuffer.readableByteCount()];
-                                    dataBuffer.read(content);
-                                    DataBufferUtils.release(dataBuffer);
-                                    list.add(new String(content, "utf-8"));
-                                } catch (Exception e) {
-                                    log.info("加载Response字节流异常，失败原因：{}", Throwables.getStackTraceAsString(e));
-                                }
-                            });
-                            String responseData = joiner.join(list);
-                            log.info("requestURI:{},responseData：{}", exchange.getRequest().getURI(), responseData);
-
-                            String apiResult = getApiResult(responseData);
-                            byte[] uppedContent = new String(apiResult.getBytes(), Charset.forName("UTF-8")).getBytes();
-                            originalResponse.getHeaders().setContentLength(uppedContent.length);
-                            sink.next(bufferFactory.wrap(uppedContent));
-                        }));
-                    }
-                }
-                return super.writeWith(body);
-            }
-
-            @Override
-            public Mono<Void> writeAndFlushWith(Publisher<? extends Publisher<? extends DataBuffer>> body) {
-                return writeWith(Flux.from(body).flatMapSequential(p -> p));
-            }
-        };
-        return chain.filter(exchange.mutate().response(decoratedResponse).build());
-
-    }
-
-    private String getApiResult(String responseData) {
-        try {
-            Object json = com.alibaba.fastjson.JSON.parse(responseData);
-            if (json instanceof com.alibaba.fastjson.JSONObject) {
-                com.alibaba.fastjson.JSONObject obj = (com.alibaba.fastjson.JSONObject) json;
-                if (obj.containsKey("code") && obj.containsKey("message")) {
-                    return responseData;
-                }
-            }
-        } catch (Exception ignored) {
-        }
-        return "{\"code\":200,\"message\":null,\"data\":" + responseData + "}";
-    }
-
-    @NotNull
-    private Mono<Void> getVoidMono(ServerWebExchange serverWebExchange, Exception e) {
-        serverWebExchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
-        byte[] bytes = JSONObject.toJSONString(e.getMessage()).getBytes(StandardCharsets.UTF_8);
-        DataBuffer buffer = serverWebExchange.getResponse().bufferFactory().wrap(bytes);
-        return serverWebExchange.getResponse().writeWith(Flux.just(buffer));
-    }
-
-    /**
-     * URI是否以什么打头
-     *
-     * @param requestUri
-     * @return
-     */
     private boolean isNoAuth(String requestUri) {
-        boolean flag = false;
         if (StringUtils.hasLength(noAuth)) {
             for (String url : noAuth.split(",")) {
                 if (requestUri.startsWith(url)) {
@@ -170,8 +88,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
                 }
             }
         }
-
-        return flag;
+        return false;
     }
 
     @Override
