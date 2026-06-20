@@ -215,14 +215,70 @@ sequenceDiagram
 | `/api/message/ws**` | `lb:ws://mall-message-api` | WebSocket 连接 |
 | `/api/message/**` | `lb://mall-message-api` | 消息服务 |
 
-**JWT 白名单（无需 Token）：**
+**JWT 白名单（无需 Token）—— 完整列表（共 38 个路径）：**
+
+<details>
+<summary><b>点击展开完整白名单</b></summary>
 
 ```
-/api/auth/v1/web/user/getCode
-/api/auth/v1/web/user/login
-/api/auth/v1/web/user/loginByPhone
-/api/auth/v1/mobile/user/register
+# mall-auth（认证相关）
+/api/auth/v1/web/user/getCode                # 获取验证码
+/api/auth/v1/web/user/login                   # 登录
+/api/auth/v1/web/user/loginByPhone            # 手机号登录
+/api/auth/v1/web/user/logout                  # 登出
+/api/auth/v1/web/user/info                    # 获取用户信息
+/api/auth/v1/web/user/resetPassword           # 重置密码
+/api/auth/v1/mobile/user/register             # 移动端注册
+
+# mall-auth（菜单）
+/api/auth/v1/menu/searchByPage                # 查询菜单列表
+/api/auth/v1/menu/insert                      # 添加菜单
+/api/auth/v1/menu/update                      # 修改菜单
+/api/auth/v1/menu/deleteByIds                 # 删除菜单
+
+# mall-auth（角色）
+/api/auth/v1/role/all                         # 查询所有角色
+
+# mall-auth（部门）
+/api/auth/v1/dept/findById                    # 查询部门信息
+/api/auth/v1/dept/searchByPage                # 查询部门列表
+/api/auth/v1/dept/searchByTree                # 查询部门树
+
+# mall-auth（岗位）
+/api/auth/v1/job/searchByPage                 # 查询岗位列表
+/api/auth/v1/job/deleteByIds                  # 删除岗位
+
+# mall-auth（用户管理）
+/api/auth/v1/user/findByPhone                 # 通过手机号查询用户
+
+# mall-basic（文件/短信/敏感词）
+/api/basic/v1/file/upload                     # 上传文件
+/api/basic/v1/image/upload                    # 上传图片
+/api/basic/v1/commonSmsRecord/findSmsRecord   # 查询短信记录
+/api/basic/v1/commonSensitiveWord/checkSensitiveWord  # 校验敏感词
+
+# mall-product（移动端）
+/api/product/v1/mobile/product/searchProduct              # 搜索商品
+/api/product/v1/mobile/product/getDetail                  # 商品详情
+/api/product/v1/mobile/product/searchProductComment       # 商品评论
+/api/product/v1/mobile/index/getIndexCarouselImageList    # 首页轮播图
+/api/product/v1/mobile/index/getIndexProductList          # 首页商品列表
+/api/product/v1/mobile/index/getIndexNoticeList           # 首页公告列表
+/api/product/v1/mobile/index/searchIndexNoticeByPage      # 搜索公告
+/api/product/v1/mobile/index/getIndexNoticeDetail         # 公告详情
+/api/product/v1/mobile/category/getCategoryByParentId     # 商品分类
+
+# mall-product（管理端）
+/api/product/v1/category/searchByTree        # 查询分类树
+
+# mall-pay
+/api/pay/v1/mobile/pay/doPay                 # 支付接口
+/api/pay/v1/mobile/pay/createQrCode          # 创建支付二维码
 ```
+</details>
+
+> [!WARNING]
+> 白名单路径散落在各服务的 `@NoLogin` 注解中，Gateway 配置为集中管理。**当前 Gateway 行为为"验签但放行"**，身份校验由下游服务自行完成。如要启用 Gateway 层拦截，需确保白名单完整覆盖所有无需登录的接口。
 
 ---
 
@@ -792,16 +848,20 @@ Feign 调用 → 上游服务 → FeignAuthInterceptor（透传 JWT）
                       → 查 Redis → 恢复用户上下文
 ```
 
-问题：
-1. **每次请求每个服务重复查 Redis** — Gateway 不拦、下游也不缓存，每次请求都走一次 Redis
-2. **用户信息需查 Redis 才完整** — JWT claims 只含 username，userId、角色等均在 Redis 中，无法本地解析
-3. **Gateway 白名单不全** — `@NoLogin` 散落各服务，Gateway 无法集中管理放行路径
-4. **Gateway 实际不拦人** — 白名单外的请求有 token 则验签，无 token / 验签失败也放行，身份校验全部依赖下游服务
+已处理的问题：
+
+| # | 问题 | 状态 |
+|---|------|------|
+| 1 | 每次请求每个服务重复查 Redis | ⏳ 待优化（可引入 Caffeine 本地缓存或 JWT claims 扩展） |
+| 2 | 用户信息需查 Redis 才完整 | ⏳ 待优化（JWT claims 仅含 username） |
+| 3 | **Gateway 白名单不全** | ✅ **已修复** — 已收集全部 38 个 `@NoLogin` 路径至 Gateway 配置 |
+| 4 | Gateway 实际不拦人 | ⏳ 当前设计如此，拦截依赖下游服务 |
+
+**原因：** White Label 项目，用户体系/auth 模块不够完善，Gateway 做完整边界鉴权需要先补齐 auth 的用户状态管理能力。
 
 **建议：**
-- 将 userId、角色等关键信息写入 JWT claims，下游服务可本地解析，减少 Redis 查询
-- 补全 Gateway 白名单，使其可拦截无效请求
-- 或用短 TTL 黑名单替代 Redis 查询实现踢人，Gateway 做完整边界鉴权
+- 短期：引入 Caffeine 本地缓存减少重复 Redis 查询（改动小，收益大）
+- 长期：将 userId、角色等写入 JWT claims，Gateway 做完整边界鉴权，Redis 仅用于黑名单
 
 ---
 

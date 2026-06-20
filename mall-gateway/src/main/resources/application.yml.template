@@ -126,7 +126,7 @@ spring:
     import: nacos:mall-gateway-dev.yaml
 gateway:
   filter:
-    noAuth: /api/auth/v1/web/user/getCode,/api/auth/v1/web/user/login,/api/auth/v1/web/user/loginByPhone,/api/auth/v1/mobile/user/register
+    noAuth: /api/auth/v1/web/user/getCode,/api/auth/v1/web/user/login,/api/auth/v1/web/user/loginByPhone,/api/auth/v1/mobile/user/register,/api/auth/v1/web/user/logout,/api/auth/v1/web/user/info,/api/auth/v1/web/user/resetPassword,/api/auth/v1/menu/searchByPage,/api/auth/v1/menu/insert,/api/auth/v1/menu/update,/api/auth/v1/menu/deleteByIds,/api/auth/v1/role/all,/api/auth/v1/dept/findById,/api/auth/v1/dept/searchByPage,/api/auth/v1/dept/searchByTree,/api/auth/v1/job/searchByPage,/api/auth/v1/job/deleteByIds,/api/auth/v1/user/findByPhone,/api/auth/v1/test/testOpenFeign,/api/basic/v1/file/upload,/api/basic/v1/image/upload,/api/basic/v1/commonSmsRecord/findSmsRecord,/api/basic/v1/commonSensitiveWord/checkSensitiveWord,/api/product/v1/mobile/product/searchProduct,/api/product/v1/mobile/product/getDetail,/api/product/v1/mobile/product/searchProductComment,/api/product/v1/mobile/index/getIndexCarouselImageList,/api/product/v1/mobile/index/getIndexProductList,/api/product/v1/mobile/index/getIndexNoticeList,/api/product/v1/mobile/index/searchIndexNoticeByPage,/api/product/v1/mobile/index/getIndexNoticeDetail,/api/product/v1/mobile/category/getCategoryByParentId,/api/product/v1/category/searchByTree,/api/pay/v1/mobile/pay/doPay,/api/pay/v1/mobile/pay/createQrCode
 mall:
   mgt:
     tokenSecret: your_jwt_secret_here
