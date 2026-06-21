@@ -646,6 +646,13 @@ bash deploy/start-local.sh --tail
 
 **Windows 用户**：双击 `deploy\start-local.bat` 即可，首次会自动编译，每个服务运行在独立的 cmd 窗口中。
 
+**一键停止：**
+
+```bash
+bash deploy/stop-local.sh        # Linux / Git Bash
+deploy\stop-local.bat            # Windows（双击）
+```
+
 > 启动脚本会自动为 auth、basic、product、marketing 分配本地端口（8021–8024），避免端口冲突。日志输出在 `logs/` 目录下。
 
 ```bash
