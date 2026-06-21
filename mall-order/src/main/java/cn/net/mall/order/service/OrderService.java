@@ -538,7 +538,18 @@ public class OrderService extends BaseService<OrderEntity, OrderConditionEntity>
             saveOrderDeliveryAddress(submitDTO, currentUser, orderEntity);
         }
 
-        // 5. 保存订单
+        // 5. 扣减库存 + 保存订单（扣库存成功但订单失败时，通过 MQ 补偿回滚）
+        //    先扣库存，防止超卖；扣库存失败时直接抛异常，订单不成立
+        if (!CollectionUtils.isEmpty(cartItems)) {
+            try {
+                productFeignClient.reduceStockBatch(cartItems);
+                log.info("扣库存成功, items={}", cartItems.size());
+            } catch (Exception e) {
+                log.error("扣库存失败，下单终止", e);
+                throw new BusinessException("库存不足");
+            }
+        }
+
         try {
             String tradeCouponsJson = redisUtil.get(buildTradeCouponKey(submitDTO.getTradeCode()));
             if (tradeCouponsJson != null && !tradeCouponsJson.isEmpty()) {
@@ -554,7 +565,18 @@ public class OrderService extends BaseService<OrderEntity, OrderConditionEntity>
         } catch (Exception e) {
             log.error("获取结算优惠券缓存失败, tradeCode={}", submitDTO.getTradeCode(), e);
         }
-        Long orderId = createOrder(orderEntity);
+
+        Long orderId;
+        try {
+            orderId = createOrder(orderEntity);
+        } catch (Exception e) {
+            // 补偿：库存已扣但订单创建失败，发 MQ 通知 product 回滚库存
+            log.error("订单创建失败，发起库存回滚补偿, items={}", cartItems, e);
+            if (!CollectionUtils.isEmpty(cartItems)) {
+                mqHelper.send(businessConfig.getStockRollbackTopic(), cartItems);
+            }
+            throw e;
+        }
         try {
             redisUtil.del(buildTradeCouponKey(submitDTO.getTradeCode()));
         } catch (Exception ignore) {

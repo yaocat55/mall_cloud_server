@@ -16,4 +16,9 @@ public class BusinessConfig {
     private int orderTimeoutDelayLevel = 15;
 
     private String orderTimeoutCancelTag = "CANCEL_TIMEOUT";
+
+    /**
+     * 库存回滚 Topic（下单失败时补偿用）
+     */
+    private String stockRollbackTopic = "STOCK_ROLLBACK_TOPIC";
 }

@@ -70,4 +70,13 @@ public interface ProductMapper extends BaseMapper<ProductEntity, ProductConditio
      * @return 结果
      */
     int reduceStock(@Param("id") Long id, int quantity);
+
+    /**
+     * 回滚库存（补偿用）
+     *
+     * @param id       主键
+     * @param quantity 商品数量
+     * @return 结果
+     */
+    int addStock(@Param("id") Long id, @Param("quantity") int quantity);
 }

@@ -1072,6 +1072,23 @@ public class ProductService extends BaseService<ProductEntity, ProductConditionE
         return productMapper;
     }
 
+    /**
+     * 回滚库存（补偿用）
+     */
+    public void addStockBatch(List<ShoppingCartDTO> items) {
+        if (org.apache.commons.collections4.CollectionUtils.isEmpty(items)) {
+            return;
+        }
+        for (ShoppingCartDTO sc : items) {
+            Long pid = sc.getProductId();
+            Integer qty = sc.getQuantity();
+            if (pid == null || qty == null || qty <= 0) {
+                continue;
+            }
+            productMapper.addStock(pid, qty);
+        }
+    }
+
     public void reduceStockBatch(List<ShoppingCartDTO> items) {
         if (org.apache.commons.collections4.CollectionUtils.isEmpty(items)) {
             return;
