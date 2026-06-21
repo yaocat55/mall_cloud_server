@@ -629,7 +629,24 @@ java -jar mall-recommend/target/mall-recommend.jar &     # ⑤ 推荐
 java -jar mall-message/target/mall-message.jar &         # ⑤ 消息
 ```
 
-### 第五步：验证服务
+#### 方式 D：一键脚本启动（本地开发推荐）
+
+编译 + 启动全部 9 个服务，一次搞定：
+
+```bash
+# 首次使用（先编译再启动）
+bash deploy/start-local.sh --build
+
+# 后续（只启动，跳过编译）
+bash deploy/start-local.sh
+
+# 启动后实时查看 Gateway 日志（Ctrl+C 停止所有）
+bash deploy/start-local.sh --tail
+```
+
+**Windows 用户**：双击 `deploy\start-local.bat` 即可，首次会自动编译，每个服务运行在独立的 cmd 窗口中。
+
+> 启动脚本会自动为 auth、basic、product、marketing 分配本地端口（8021–8024），避免端口冲突。日志输出在 `logs/` 目录下。
 
 ```bash
 # 1. 检查 Nacos 注册状态
