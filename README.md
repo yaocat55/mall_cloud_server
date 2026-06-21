@@ -696,6 +696,23 @@ curl http://localhost:8080/api/product/v1/product/list
 
 > ① 本地开发时端口冲突：auth、basic、product、marketing 的端口在 Nacos 配置中心，本地 `application.yml` 未配置时默认均为 8080。**单机启动前请在本地 `application.yml`（gitignored）中手动指定端口**，推荐按上表分配。
 
+### API 文档（Swagger）
+
+每个服务独立提供 Swagger UI，支持 mobile / admin 分组：
+
+| 服务 | Swagger 地址 | 分组 |
+|------|-------------|------|
+| mall-auth | `http://localhost:8021/swagger-ui.html` | mobile / admin |
+| mall-basic | `http://localhost:8022/swagger-ui.html` | mobile / admin |
+| mall-product | `http://localhost:8023/swagger-ui.html` | mobile / admin |
+| mall-marketing | `http://localhost:8024/swagger-ui.html` | admin |
+| mall-order | `http://localhost:8026/swagger-ui.html` | mobile |
+| mall-pay | `http://localhost:8027/swagger-ui.html` | mobile |
+| mall-recommend | `http://localhost:8028/swagger-ui.html` | mobile / admin |
+| mall-message | `http://localhost:8029/swagger-ui.html` | admin |
+
+> 选中 **mobile** 分组只显示移动端接口，**admin** 分组显示管理后台接口。Feign 内部调用接口不通过 Gateway，不在 Swagger 中展示。
+
 ### 常见启动问题
 
 <details>
