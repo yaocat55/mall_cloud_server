@@ -3,6 +3,7 @@ package cn.net.mall.auth.config;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.ForwardedHeaderFilter;
@@ -22,5 +23,24 @@ public class SwaggerConfig {
                 .externalDocs(new ExternalDocumentation()
                         .description("swagger 3 详解")
                         .url("https://springshop.wiki.github.org/docs"));
+    }
+
+    @Bean
+    public GroupedOpenApi authMobileApi() {
+        return GroupedOpenApi.builder()
+                .group("mobile")
+                .displayName("移动端接口")
+                .packagesToScan("cn.net.mall.auth.controller.mobile")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi authAdminApi() {
+        return GroupedOpenApi.builder()
+                .group("admin")
+                .displayName("管理后台接口")
+                .packagesToScan("cn.net.mall.auth.controller")
+                .packagesToExclude("cn.net.mall.auth.controller.mobile")
+                .build();
     }
 }

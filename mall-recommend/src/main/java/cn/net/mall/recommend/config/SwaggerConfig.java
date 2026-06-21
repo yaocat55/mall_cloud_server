@@ -1,4 +1,4 @@
-package cn.net.mall.product.config;
+package cn.net.mall.recommend.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -10,29 +10,29 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfig {
 
     @Bean
-    public OpenAPI productOpenAPI() {
+    public OpenAPI recommendOpenAPI() {
         return new OpenAPI()
-                .info(new Info().title("商品服务文档")
-                        .description("商品、分类、品牌、购物车、首页管理等")
+                .info(new Info().title("推荐服务文档")
+                        .description("商品推荐、收藏管理、浏览历史")
                         .version("v0.0.1"));
     }
 
     @Bean
-    public GroupedOpenApi productMobileApi() {
+    public GroupedOpenApi recommendMobileApi() {
         return GroupedOpenApi.builder()
                 .group("mobile")
                 .displayName("移动端接口")
-                .packagesToScan("cn.net.mall.product.controller.mobile")
+                .packagesToScan("cn.net.mall.recommend.controller.mobile")
                 .build();
     }
 
     @Bean
-    public GroupedOpenApi productAdminApi() {
+    public GroupedOpenApi recommendAdminApi() {
         return GroupedOpenApi.builder()
                 .group("admin")
                 .displayName("管理后台接口")
-                .packagesToScan("cn.net.mall.product.controller")
-                .packagesToExclude("cn.net.mall.product.controller.mobile")
+                .packagesToScan("cn.net.mall.recommend.controller")
+                .packagesToExclude("cn.net.mall.recommend.controller.mobile")
                 .build();
     }
 }

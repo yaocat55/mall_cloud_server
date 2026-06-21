@@ -1,25 +1,38 @@
 package cn.net.mall.basic.config;
 
-import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * @date 2024/1/8 下午4:45
- */
 @Configuration
 public class SwaggerConfig {
 
     @Bean
-    public OpenAPI springShopOpenAPI() {
+    public OpenAPI basicOpenAPI() {
         return new OpenAPI()
-                .info(new Info().title("公共基础服务接口文档")
-                        .description("Swagger3 Spring Boot 3.0 application")
-                        .version("v0.0.1"))
-                .externalDocs(new ExternalDocumentation()
-                        .description("swagger 3 详解")
-                        .url("https://springshop.wiki.github.org/docs"));
+                .info(new Info().title("基础服务文档")
+                        .description("字典、文件、短信、地区、定时任务等")
+                        .version("v0.0.1"));
+    }
+
+    @Bean
+    public GroupedOpenApi basicMobileApi() {
+        return GroupedOpenApi.builder()
+                .group("mobile")
+                .displayName("移动端接口")
+                .packagesToScan("cn.net.mall.basic.controller.mobile")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi basicAdminApi() {
+        return GroupedOpenApi.builder()
+                .group("admin")
+                .displayName("管理后台接口")
+                .packagesToScan("cn.net.mall.basic.controller")
+                .packagesToExclude("cn.net.mall.basic.controller.mobile")
+                .build();
     }
 }
