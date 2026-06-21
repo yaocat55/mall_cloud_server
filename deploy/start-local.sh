@@ -47,7 +47,10 @@ INTER_PHASE=12
 if [ "$1" == "--build" ]; then
   echo "========== 编译全部模块 =========="
   cd "$ROOT_DIR"
-  mvn clean package -DskipTests -q
+  # 先 compile（所有模块），再 package 有 main class 的 9 个服务
+  # 避免 mall-common 等非启动模块因缺少 main class 导致 repackage 失败
+  mvn compile -q
+  mvn package -DskipTests -q -pl mall-gateway,mall-auth,mall-basic,mall-product,mall-order,mall-pay,mall-marketing,mall-recommend,mall-message -am
   echo "编译完成"
   echo ""
   shift

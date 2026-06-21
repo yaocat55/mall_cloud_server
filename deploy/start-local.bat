@@ -1,5 +1,4 @@
 @echo off
-chcp 65001 >nul
 REM Mall Cloud 本地一键启动脚本（Windows）
 
 set ROOT_DIR=%~dp0..
@@ -28,12 +27,20 @@ set MESSAGE_JAR=%ROOT_DIR%\mall-message\target\mall-message.jar
 
 echo ========== Mall Cloud Local Startup ==========
 
+REM 检查是否已编译
 if not exist "%GW_JAR%" (
-    echo [INFO] Building project first...
+    echo [INFO] Building project...
     cd /d "%ROOT_DIR%"
-    call mvn clean package -DskipTests -q
+    REM 先编译全部模块（不打包），然后逐个打包有 main class 的服务
+    call mvn compile -q
     if errorlevel 1 (
-        echo [ERROR] Build failed
+        echo [ERROR] Compile failed
+        pause
+        exit /b 1
+    )
+    call mvn package -DskipTests -q -pl mall-gateway,mall-auth,mall-basic,mall-product,mall-order,mall-pay,mall-marketing,mall-recommend,mall-message -am
+    if errorlevel 1 (
+        echo [ERROR] Package failed
         pause
         exit /b 1
     )
