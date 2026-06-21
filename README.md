@@ -661,14 +661,16 @@ curl http://localhost:8080/api/product/v1/product/list
 | 服务 | 端口 | 配置来源 | Nacos 服务名 |
 |------|------|----------|-------------|
 | Gateway | 8080 | 本地 application.yml | `mall-gateway` |
-| Auth | — | Nacos 配置中心 | `mall-auth-api` |
-| Basic | — | Nacos 配置中心 | `mall-basic-api` |
-| Product | — | Nacos 配置中心 | `mall-product-api` |
+| Auth | 8021① | Nacos 配置中心 | `mall-auth-api` |
+| Basic | 8022① | Nacos 配置中心 | `mall-basic-api` |
+| Product | 8023① | Nacos 配置中心 | `mall-product-api` |
+| Marketing | 8024① | Nacos 配置中心 | `mall-marketing-api` |
 | Order | 8026 | 本地 application.yml | `mall-order-api` |
 | Pay | 8027 | 本地 application.yml | `mall-pay-api` |
 | Recommend | 8028 | 本地 application.yml | `mall-recommend-api` |
 | Message | 8029 | 本地 application.yml | `mall-message-api` |
-| Marketing | — | Nacos 配置中心 | `mall-marketing-api` |
+
+> ① 本地开发时端口冲突：auth、basic、product、marketing 的端口在 Nacos 配置中心，本地 `application.yml` 未配置时默认均为 8080。**单机启动前请在本地 `application.yml`（gitignored）中手动指定端口**，推荐按上表分配。
 
 ### 常见启动问题
 
