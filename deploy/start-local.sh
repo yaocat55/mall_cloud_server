@@ -47,10 +47,13 @@ INTER_PHASE=12
 if [ "$1" == "--build" ]; then
   echo "========== 编译全部模块 =========="
   cd "$ROOT_DIR"
-  # 先 compile（所有模块），再 package 有 main class 的 9 个服务
-  # 避免 mall-common 等非启动模块因缺少 main class 导致 repackage 失败
-  mvn compile -q
-  mvn package -DskipTests -q -pl mall-gateway,mall-auth,mall-basic,mall-product,mall-order,mall-pay,mall-marketing,mall-recommend,mall-message -am
+  # Step 1: 安装基础库到本地仓库（跳过 boot repackage，避免无 main class 报错）
+  mvn install -DskipTests -Dspring-boot.repackage.skip=true -q \
+    -pl mall-common,mall-auth-client,mall-auth-api-starter,mall-basic-client,mall-product-client,mall-order-client,mall-pay-client,mall-marketing-client
+  # Step 2: 逐个打包 9 个服务（不依赖 -am，避免重新处理基础库）
+  for svc in mall-gateway mall-auth mall-basic mall-product mall-order mall-pay mall-marketing mall-recommend mall-message; do
+    mvn package -DskipTests -q -pl "$svc"
+  done
   echo "编译完成"
   echo ""
   shift

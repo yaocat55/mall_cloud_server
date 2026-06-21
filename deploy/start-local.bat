@@ -27,26 +27,52 @@ set MESSAGE_JAR=%ROOT_DIR%\mall-message\target\mall-message.jar
 
 echo ========== Mall Cloud Local Startup ==========
 
-REM 检查是否已编译
 if not exist "%GW_JAR%" (
     echo [INFO] Building project...
     cd /d "%ROOT_DIR%"
-    REM 先编译全部模块（不打包），然后逐个打包有 main class 的服务
-    call mvn compile -q
+
+    REM Step 1: 安装基础库到本地仓库（跳过 boot repackage）
+    call mvn install -DskipTests -Dspring-boot.repackage.skip=true -q -pl mall-common,mall-auth-client,mall-auth-api-starter,mall-basic-client,mall-product-client,mall-order-client,mall-pay-client,mall-marketing-client
     if errorlevel 1 (
-        echo [ERROR] Compile failed
+        echo [ERROR] Library build failed
         pause
         exit /b 1
     )
-    call mvn package -DskipTests -q -pl mall-gateway,mall-auth,mall-basic,mall-product,mall-order,mall-pay,mall-marketing,mall-recommend,mall-message -am
-    if errorlevel 1 (
-        echo [ERROR] Package failed
-        pause
-        exit /b 1
-    )
+
+    REM Step 2: 逐个打包每个可启动服务（不依赖 -am）
+    echo [INFO] Packaging services...
+    call mvn package -DskipTests -q -pl mall-gateway
+    if errorlevel 1 goto :buildfail
+    call mvn package -DskipTests -q -pl mall-auth
+    if errorlevel 1 goto :buildfail
+    call mvn package -DskipTests -q -pl mall-basic
+    if errorlevel 1 goto :buildfail
+    call mvn package -DskipTests -q -pl mall-product
+    if errorlevel 1 goto :buildfail
+    call mvn package -DskipTests -q -pl mall-order
+    if errorlevel 1 goto :buildfail
+    call mvn package -DskipTests -q -pl mall-pay
+    if errorlevel 1 goto :buildfail
+    call mvn package -DskipTests -q -pl mall-marketing
+    if errorlevel 1 goto :buildfail
+    call mvn package -DskipTests -q -pl mall-recommend
+    if errorlevel 1 goto :buildfail
+    call mvn package -DskipTests -q -pl mall-message
+    if errorlevel 1 goto :buildfail
+
     echo [INFO] Build complete
 )
 
+call :start_all
+pause
+exit /b 0
+
+:buildfail
+    echo [ERROR] Package failed
+    pause
+    exit /b 1
+
+:start_all
 echo Logs: %LOG_DIR%
 
 echo [1/9] mall-gateway ^(port %GW_PORT%^)
@@ -88,5 +114,4 @@ echo.
 echo ========== All services started ==========
 echo Gateway: http://localhost:%GW_PORT%
 echo Logs: %LOG_DIR%
-echo Close each cmd window to stop the service.
-pause
+exit /b 0

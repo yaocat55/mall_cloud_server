@@ -175,6 +175,14 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+            <!-- 非启动模块，跳过 Spring Boot repackage -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
