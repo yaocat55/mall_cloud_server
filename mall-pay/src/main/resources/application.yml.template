@@ -7,6 +7,8 @@ spring:
       enabled: false
   application:
     name: mall-pay-api
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
   data:
     redis:
       database: 5
@@ -18,7 +20,7 @@ spring:
     nacos:
       config:
         override-none: true
-        namespace: mall
+        namespace: ${NACOS_NAMESPACE:mall}
         server-addr: your_nacos_host:8848
         file-extension: yaml
         group: mall-cloud
@@ -27,11 +29,11 @@ spring:
         password: your_nacos_password
       discovery:
         server-addr: your_nacos_host:8848
-        namespace: mall
+        namespace: ${NACOS_NAMESPACE:mall}
         username: nacos
         password: your_nacos_password
   config:
-    import: nacos:mall-pay-api-dev.yaml
+    import: nacos:mall-pay-api.yaml
 
 mall:
   pay:

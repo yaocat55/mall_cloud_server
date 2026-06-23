@@ -3,7 +3,7 @@ spring:
     restart:
       enabled: false
   profiles:
-    active: dev
+    active: ${SPRING_PROFILES_ACTIVE:dev}
   application:
     name: mall-product-api
   main:
@@ -23,7 +23,7 @@ spring:
     nacos:
       config:
         override-none: true
-        namespace: mall
+        namespace: ${NACOS_NAMESPACE:mall}
         server-addr: your_nacos_host:8848
         file-extension: yaml
         group: mall-cloud
@@ -32,11 +32,11 @@ spring:
         password: your_nacos_password
       discovery:
         server-addr: your_nacos_host:8848
-        namespace: mall
+        namespace: ${NACOS_NAMESPACE:mall}
         username: nacos
         password: your_nacos_password
   config:
-    import: nacos:mall-product-api-dev.yaml
+    import: nacos:mall-product-api.yaml
 mybatis:
   configLocation: classpath:/mybatis-config.xml
 logging:

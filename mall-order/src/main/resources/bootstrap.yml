@@ -1,18 +1,20 @@
 spring:
   application:
     name: mall-order-api
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
   cloud:
     nacos:
       config:
         server-addr: 117.72.88.11:8848
         file-extension: yaml
-        namespace: mall
+        namespace: ${NACOS_NAMESPACE:mall}
         group: mall-cloud
         username: nacos
         password: susan123
       discovery:
         server-addr: 117.72.88.11:8848
-        namespace: mall
+        namespace: ${NACOS_NAMESPACE:mall}
         username: nacos
         password: susan123
 
