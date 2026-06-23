@@ -794,10 +794,33 @@ Gateway 已配置全局 CORS（允许所有 Origin）。如果仍然报跨域，
 
 **配置管理**
 
+所有服务的业务配置托管在 Nacos 配置中心，本地只保留 Nacos 连接信息。通过环境变量切换环境。
+
+```yaml
+# application.yml.template — 提交到仓库，CI/CD 使用
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}         # 环境变量切换 dev/prod
+  cloud:
+    nacos:
+      config:
+        server-addr: ${NACOS_ADDR:your_nacos_host:8848}
+        namespace: ${NACOS_NAMESPACE:mall}         # 不同环境不同命名空间
+  config:
+    import: nacos:${spring.application.name}.yaml   # dataId 固定，namespace 隔离
 ```
-本地 bootstrap.yml  →  Nacos 配置中心  →  业务 YAML 全部在 Nacos 托管
-     (仅含地址)          (namespace: mall)        (可在 Nacos 控制台热更新)
-```
+
+**环境切换：**
+
+| 变量 | 本地 dev（不设） | 生产 |
+|------|----------------|------|
+| `SPRING_PROFILES_ACTIVE` | `dev`（默认） | `prod` |
+| `NACOS_NAMESPACE` | `mall`（默认） | `mall-prod` |
+| Nacos dataId | `mall-auth-api.yaml`（不变） | `mall-auth-api.yaml`（不变） |
+
+**本地开发：** 复制 template → `application.yml`（gitignored），填入 Nacos 地址和密码即可。所有数据库、Redis 等配置从 Nacos 拉取，无需写在本地。
+
+> ⚠️ 如果本地 Nacos 中没有 `mall-xxx-api.yaml`（无 `-dev` 后缀的 dataId），在复制 template 后将 `config.import` 改回 `mall-xxx-api-dev.yaml` 保持兼容。
 
 **日志 & 链路追踪**
 
