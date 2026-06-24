@@ -818,9 +818,37 @@ spring:
 | `NACOS_NAMESPACE` | `mall`（默认） | `mall-prod` |
 | Nacos dataId | `mall-auth-api.yaml`（不变） | `mall-auth-api.yaml`（不变） |
 
+**Nacos 创建指南：**
+
+在 Nacos 控制台先建 namespace、再建配置：
+
+```
+① 创建命名空间
+   命名空间ID: mall（自动生成，不填则由 Nacos 分配）
+   命名空间名称: mall
+   描述: 本地开发环境
+
+② 创建 group
+   默认使用 mall-cloud，不需要在 Nacos 上创建，在配置中指定即可
+
+③ 创建配置（每个服务一条）
+   以 mall-auth 为例：
+     Data ID:    mall-auth-api.yaml
+     Group:      mall-cloud
+     配置格式:   YAML
+     配置内容:   根据下面每张表复制
+
+④ 多环境方案（企业级做法）
+   生产环境再建一个 namespace：mall-prod（命名空间ID 不同）
+   同一份 dataId，不同 namespace，配置内容不同
+   启动时设 NACOS_NAMESPACE=mall-prod 完成切换
+```
+
+> 强烈建议 dataId 不加 `-dev`/`-prod` 后缀，用 namespace 隔离环境。
+
 **本地开发：** 复制 template → `application.yml`（gitignored），填入 Nacos 地址和密码即可。所有数据库、Redis 等配置从 Nacos 拉取，无需写在本地。
 
-> ⚠️ 如果本地 Nacos 中没有 `mall-xxx-api.yaml`（无 `-dev` 后缀的 dataId），在复制 template 后将 `config.import` 改回 `mall-xxx-api-dev.yaml` 保持兼容。
+> ⚠️ 如果本地 Nacos 中已有 `mall-xxx-api-dev.yaml`（带 `-dev` 后缀），在复制 template 后将 `config.import` 改回 `mall-xxx-api-dev.yaml` 保持兼容，后续再迁移到无后缀命名。
 
 **Nacos 配置清单：**
 
