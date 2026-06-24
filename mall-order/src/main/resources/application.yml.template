@@ -35,7 +35,7 @@ spring:
         username: nacos
         password: your_nacos_password
   config:
-    import: nacos:mall-order-api.yaml
+    import: nacos:mall-order-api-dev.yaml
   elasticsearch:
     uris: http://your_es_host:9200
     username: elastic
