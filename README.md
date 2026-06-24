@@ -856,17 +856,17 @@ spring:
 
 本地 Nacos 建议统一 namespace 为 `mall`，Group 为 `mall-cloud`。每个服务一个 dataId，内容根据模板中的 `your_*` 占位符配置：
 
-| 服务 | 服务说明 | Nacos dataId | 需配置的内容 |
-|------|---------|-------------|-------------|
-| mall-gateway | 统一网关入口：路由转发、CORS、Sentinel 流控 | `mall-gateway.yaml` | Redis、tokenSecret |
-| mall-auth | 用户与权限管理：登录注册、RBAC 权限（用户→角色→菜单/部门/岗位）、收货地址管理。同时提供 `mall-auth-api-starter` 供其他服务鉴权调用 | `mall-auth-api.yaml` | 数据源(datasource)、Redis、tokenSecret |
-| mall-basic | 基础服务：字典管理、行政区域、文件上传(MinIO)、敏感词过滤、定时任务(Quartz)、AI 对话(Ollama) | `mall-basic-api.yaml` | 数据源、Redis、MongoDB、tokenSecret |
-| mall-product | 商品中心：商品CRUD、分类/品牌/属性、购物车、MySQL+ES 双写搜索、首页管理 | `mall-product-api.yaml` | 数据源、Redis、RocketMQ、tokenSecret |
-| mall-order | 订单交易：下单→支付→发货→收货→评价 全生命周期、退货退款、ShardingSphere 分库分表(8库)、ES 搜索 | `mall-order-api.yaml` | Redis、Elasticsearch、RocketMQ、tokenSecret |
-| mall-pay | 支付服务：支付宝沙箱对接、二维码生成(ZXing)。**无数据库**，纯 Feign 调用 | `mall-pay-api.yaml` | Redis、支付宝参数(沙箱appId/密钥)、tokenSecret |
-| mall-marketing | 营销中心：优惠券发放/核销、秒杀商品、优惠金额试算 | `mall-marketing-api.yaml` | 数据源、tokenSecret |
-| mall-recommend | 智能推荐：商品推荐(Mahout)、收藏管理、浏览历史、ShardingSphere 分库分表(8库) | `mall-recommend-api.yaml` | Redis、RocketMQ、tokenSecret |
-| mall-message | 消息推送：WebSocket + STOMP 实时推送、站内通知管理、ShardingSphere 分库分表(8库) | `mall-message-api.yaml` | Redis、tokenSecret |
+| 服务 | 服务说明 | Nacos dataId | Nacos 配置描述（创建时填入） | 需配置的内容 |
+|------|---------|-------------|--------------------------|-------------|
+| mall-gateway | 统一网关入口：路由转发、CORS、Sentinel 流控 | `mall-gateway.yaml` | mall-gateway 服务 dev 环境配置 — 统一网关入口、路由转发、CORS、Sentinel 流控。维护人：@基础架构团队 | Redis、tokenSecret |
+| mall-auth | 用户与权限管理：登录注册、RBAC 权限（用户→角色→菜单/部门/岗位）、收货地址管理。同时提供 `mall-auth-api-starter` 供其他服务鉴权调用 | `mall-auth-api.yaml` | mall-auth 服务 dev 环境配置 — 用户认证授权、RBAC 权限模型、收货地址、鉴权 Starter。维护人：@基础架构团队 | 数据源(datasource)、Redis、tokenSecret |
+| mall-basic | 基础服务：字典管理、行政区域、文件上传(MinIO)、敏感词过滤、定时任务(Quartz)、AI 对话(Ollama) | `mall-basic-api.yaml` | mall-basic 服务 dev 环境配置 — 字典、区域、文件、短信、敏感词、定时任务、Ollama AI。维护人：@基础架构团队 | 数据源、Redis、MongoDB、tokenSecret |
+| mall-product | 商品中心：商品CRUD、分类/品牌/属性、购物车、MySQL+ES 双写搜索、首页管理 | `mall-product-api.yaml` | mall-product 服务 dev 环境配置 — 商品中心、分类品牌、购物车、ES 双写、首页管理。维护人：@商品团队 | 数据源、Redis、RocketMQ、tokenSecret |
+| mall-order | 订单交易：下单→支付→发货→收货→评价 全生命周期、退货退款、ShardingSphere 分库分表(8库)、ES 搜索 | `mall-order-api.yaml` | mall-order 服务 dev 环境配置 — 订单全生命周期、退货退款、ShardingSphere 分库(8库)、ES 订单搜索。维护人：@订单团队 | Redis、Elasticsearch、RocketMQ、tokenSecret |
+| mall-pay | 支付服务：支付宝沙箱对接、二维码生成(ZXing)。**无数据库**，纯 Feign 调用 | `mall-pay-api.yaml` | mall-pay 服务 dev 环境配置 — 支付宝沙箱支付、二维码生成。维护人：@支付团队 | Redis、支付宝参数(沙箱appId/密钥)、tokenSecret |
+| mall-marketing | 营销中心：优惠券发放/核销、秒杀商品、优惠金额试算 | `mall-marketing-api.yaml` | mall-marketing 服务 dev 环境配置 — 优惠券发放核销、秒杀商品、金额试算。维护人：@营销团队 | 数据源、tokenSecret |
+| mall-recommend | 智能推荐：商品推荐(Mahout)、收藏管理、浏览历史、ShardingSphere 分库分表(8库) | `mall-recommend-api.yaml` | mall-recommend 服务 dev 环境配置 — 商品推荐(Mahout)、收藏管理、浏览历史、ShardingSphere 分库(8库)。维护人：@推荐团队 | Redis、RocketMQ、tokenSecret |
+| mall-message | 消息推送：WebSocket + STOMP 实时推送、站内通知管理、ShardingSphere 分库分表(8库) | `mall-message-api.yaml` | mall-message 服务 dev 环境配置 — WebSocket 实时推送、站内通知、ShardingSphere 分库(8库)。维护人：@消息团队 | Redis、tokenSecret |
 
 **配置文件示例（mall-auth-api.yaml）：**
 
