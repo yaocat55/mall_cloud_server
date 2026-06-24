@@ -822,6 +822,43 @@ spring:
 
 > ⚠️ 如果本地 Nacos 中没有 `mall-xxx-api.yaml`（无 `-dev` 后缀的 dataId），在复制 template 后将 `config.import` 改回 `mall-xxx-api-dev.yaml` 保持兼容。
 
+**Nacos 配置清单：**
+
+本地 Nacos 建议统一 namespace 为 `mall`，Group 为 `mall-cloud`。每个服务一个 dataId，内容根据模板中的 `your_*` 占位符配置：
+
+| 服务 | Nacos dataId | 需配置的内容 |
+|------|-------------|------------|
+| mall-gateway | `mall-gateway.yaml` | Redis、tokenSecret |
+| mall-auth | `mall-auth-api.yaml` | 数据源(datasource)、Redis、tokenSecret |
+| mall-basic | `mall-basic-api.yaml` | 数据源、Redis、MongoDB、tokenSecret |
+| mall-product | `mall-product-api.yaml` | 数据源、Redis、RocketMQ、tokenSecret |
+| mall-order | `mall-order-api.yaml` | Redis、Elasticsearch、RocketMQ、tokenSecret |
+| mall-pay | `mall-pay-api.yaml` | Redis、支付宝参数(沙箱appId/密钥)、tokenSecret |
+| mall-marketing | `mall-marketing-api.yaml` | 数据源、tokenSecret |
+| mall-recommend | `mall-recommend-api.yaml` | Redis、RocketMQ、tokenSecret |
+| mall-message | `mall-message-api.yaml` | Redis、tokenSecret |
+
+**配置文件示例（mall-auth-api.yaml）：**
+
+```yaml
+# Nacos → mall 命名空间 → mall-cloud group → dataId: mall-auth-api.yaml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/mall_auth?useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: your_password
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: your_password
+mall:
+  mgt:
+    tokenSecret: your_jwt_secret
+```
+
+> 每个 `application.yml.template` 里标记为 `your_*` 的占位符，均在 Nacos 上配置。本地 `application.yml` 不需要重复填写，因为 Nacos 配置会覆盖本地值。
+
 **日志 & 链路追踪**
 
 - **SkyWalking Java Agent** 附加在 JVM 启动参数中，自动拦截所有服务的 HTTP/Feign/JDBC 调用，无需 Maven 依赖即可实现分布式链路追踪
