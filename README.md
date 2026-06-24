@@ -824,19 +824,21 @@ spring:
 
 **Nacos 配置清单：**
 
+本地 `application.yml` 使用 `spring.config.import` 直连 Nacos 拉取配置，无需在本地重复填写数据库密码等敏感信息。
+
 本地 Nacos 建议统一 namespace 为 `mall`，Group 为 `mall-cloud`。每个服务一个 dataId，内容根据模板中的 `your_*` 占位符配置：
 
-| 服务 | Nacos dataId | 需配置的内容 |
-|------|-------------|------------|
-| mall-gateway | `mall-gateway.yaml` | Redis、tokenSecret |
-| mall-auth | `mall-auth-api.yaml` | 数据源(datasource)、Redis、tokenSecret |
-| mall-basic | `mall-basic-api.yaml` | 数据源、Redis、MongoDB、tokenSecret |
-| mall-product | `mall-product-api.yaml` | 数据源、Redis、RocketMQ、tokenSecret |
-| mall-order | `mall-order-api.yaml` | Redis、Elasticsearch、RocketMQ、tokenSecret |
-| mall-pay | `mall-pay-api.yaml` | Redis、支付宝参数(沙箱appId/密钥)、tokenSecret |
-| mall-marketing | `mall-marketing-api.yaml` | 数据源、tokenSecret |
-| mall-recommend | `mall-recommend-api.yaml` | Redis、RocketMQ、tokenSecret |
-| mall-message | `mall-message-api.yaml` | Redis、tokenSecret |
+| 服务 | 本地 config.import | Nacos dataId | 需配置的内容 |
+|------|-------------------|-------------|-------------|
+| mall-gateway | `nacos:mall-gateway.yaml` | `mall-gateway.yaml` | Redis、tokenSecret |
+| mall-auth | `nacos:mall-auth-api.yaml` | `mall-auth-api.yaml` | 数据源(datasource)、Redis、tokenSecret |
+| mall-basic | `nacos:mall-basic-api.yaml` | `mall-basic-api.yaml` | 数据源、Redis、MongoDB、tokenSecret |
+| mall-product | `nacos:mall-product-api.yaml` | `mall-product-api.yaml` | 数据源、Redis、RocketMQ、tokenSecret |
+| mall-order | `nacos:mall-order-api.yaml` | `mall-order-api.yaml` | Redis、Elasticsearch、RocketMQ、tokenSecret |
+| mall-pay | `nacos:mall-pay-api.yaml` | `mall-pay-api.yaml` | Redis、支付宝参数(沙箱appId/密钥)、tokenSecret |
+| mall-marketing | `nacos:mall-marketing-api.yaml` | `mall-marketing-api.yaml` | 数据源、tokenSecret |
+| mall-recommend | `nacos:mall-recommend-api.yaml` | `mall-recommend-api.yaml` | Redis、RocketMQ、tokenSecret |
+| mall-message | `nacos:mall-message-api.yaml` | `mall-message-api.yaml` | Redis、tokenSecret |
 
 **配置文件示例（mall-auth-api.yaml）：**
 
