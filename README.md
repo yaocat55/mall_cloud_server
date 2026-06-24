@@ -899,124 +899,105 @@ mall:
 
 ## 已知问题
 
-项目从单体拆分而来，虽已完成微服务基础骨架改造，但仍存在以下遗留问题：
+项目从单体拆分而来，虽已完成微服务基础骨架改造，但仍存在以下遗留问题。
 
-### 1. 双向服务依赖（已修复）
+---
 
-~~`mall-product` 和 `mall-order` 存在**双向 Feign 调用**，生产上订单状态变更应改为 RocketMQ 事件广播，避免循环调用和紧耦合。~~
+### ✅ 已修复
 
-已移除 `mall-product` 对 `mall-order-client` 的编译期依赖，当前依赖方向为单向：`mall-order → mall-product`（通过 ProductFeignClient 调用）。
+| # | 问题 | 修复内容 |
+|---|------|---------|
+| 1 | **双向服务依赖** | 移除 `mall-product` 对 `mall-order-client` 的编译期依赖，现为单向：`mall-order → mall-product` |
+| 2 | **公共 DTO 变更爆炸** | 每个 client 模块声明独立版本号，通过根 POM 属性管控 |
+| 3 | **scanBasePackages 扫全量** | 限缩到各自模块包，共享 bean 通过 `AutoConfiguration.imports` + `MallCommonAutoConfiguration` 按需加载 |
+| 5 | **缺少事务补偿机制** | 下单先扣库存（`reduceStockBatch`），订单创建失败时发送 `STOCK_ROLLBACK_TOPIC` 消息由 mall-product 异步回滚库存 |
 
-### 2. 公共 DTO 变更爆炸（已修复）
+---
 
-~~所有 `*-client` 模块使用统一版本号 `1.0.0`，未独立版本化管理。一旦某个 DTO 字段变更（如 `ProductDTO`），所有消费方（mall-order、mall-recommend、mall-marketing）都必须重新发布。标准做法是 client 独立版本号 + 兼容策略（字段只增不改，老字段加 `@Deprecated`）。~~
+### ❌ 悬而未决
 
-已为每个 client 模块声明独立版本号（通过根 POM 属性管控），后续升级只需修改对应属性值。
+#### 4. product_favorites 同步机制不明确
 
-### 5. 缺少事务补偿机制（已修复）
-
-~~下单扣库存使用同步 Feign 调用，但**没有补偿机制**：~~
-
-~~| 场景 | 结果 |
-|------|------|
-| Feign 扣库存成功 → 订单创建成功 | ✅ 正常 |
-| Feign 扣库存失败 → 订单创建失败 | ✅ 正常（扣库存抛异常，订单回滚） |
-| Feign 扣库存成功 → 订单入库失败 | ❌ **库存悬空，无人释放** |~~
-
-已通过 RocketMQ 补偿机制修复。具体改动：
-
-**mall-order（订单服务）：**
-- 下单时先调用 `reduceStockBatch` 扣库存（防止超卖）
-- 扣库存成功后订单创建失败 → 发送 `STOCK_ROLLBACK_TOPIC` 消息补偿
-- 扣库存本身失败 → 直接抛异常，订单不成立
-
-**mall-product（商品服务）：**
-- 新增 `addStock` / `addStockBatch` 恢复库存
-- 新增 `StockRollbackConsumer` 监听 `STOCK_ROLLBACK_TOPIC`，消费补偿消息
-
-完整链路：
-
-```
-下单请求
-  → ① Feign 扣库存（mall-order → mall-product）
-  → ② 本地入库
-     → 成功 ✅ 正常完成
-     → 失败 ❌ 发送 MQ 给 mall-product 回滚库存
-  → ③ mall-product 收到补偿消息 → 库存加回来
-```
-
-> 使用**最终一致性**而非强一致：库存回滚允许秒级延迟，不需要分布式事务。
-
-### 3. scanBasePackages 扫全量（已修复）
-
-~~全部服务使用 `@SpringBootApplication(scanBasePackages = {"cn.net.mall"})`，Spring 启动时会扫描整个项目类路径。标准做法是只扫本模块包路径 + 显式引入的 starter 配置，避免启动变慢和潜在的 Bean 冲突。~~
-
-已限缩到各自模块包（如 `cn.net.mall.auth`），共享 bean 通过 `AutoConfiguration.imports` + `MallCommonAutoConfiguration` 按需加载。
-
-### 4. product_favorites 的同步机制不明确
-
-`product_favorites`（商品收藏）数据分别存储在 mall-product 的单库和 mall-recommend 的分库分表中。
-
-**实际数据流：**
+`product_favorites` 数据分别存储在 mall-product 的单库和 mall-recommend 的分库分表中，**同步路径不存在**。
 
 | 环节 | 说明 |
 |------|------|
 | mall-product | 用户收藏操作写入 `mall_product.product_favorites` 单表 |
-| 同步机制 | **不明确**（mall-recommend 中无 RocketMQ 消费者，README 此前描述的 MQ 同步与实际代码不符） |
-| mall-recommend | 从自身的分库分表（`mall_recommend_0..7.product_favorites_0..15`，按 `user_id` 分片）分页读取 |
+| 同步机制 | **不存在**（mall-recommend 中无 RocketMQ 消费者） |
+| mall-recommend | 从自身的分库分表分页读取（数据来源不明） |
 
-**推荐算法实际只用了 2 个字段：**
-
-```java
-// RecommendService.java - buildUserItemMatrixFromFavorites()
-// userId + productId 已足够，权重固定为 3（浏览记录的 3 倍）
-```
-
-其他所有字段（`createTime`、`isDel` 等）仅作为过滤条件或行级安全约束，不参与算法计算。
-
-**问题：**
-
-1. **同步机制不透明** — 数据如何从 mall-product 到达 mall-recommend 没有明确的代码路径和保障（无消费者、无对账、无重试）
-2. **Data owner 不明确** — 两边各自维护一份 product_favorites 表结构，schema 变更需要两边同步修改
-3. **防腐层缺失** — mall-recommend 只需要 `userId` + `productId`，但强行同步了整个表结构。理想的防腐层应该是定义最小契约：
-   ```java
-   class ProductFavoritedEvent {
-       Long userId;
-       Long productId;  // mall-recommend 只需要这两个
-   }
-   ```
+**影响：** 推荐算法的收藏数据可能不完整，用户收藏操作与推荐服务所见的数据不一致。
 
 **建议：** 明确同步路径（RocketMQ 或定时批处理），并定义最小消息契约替代共享表结构。
 
-### 6. Gateway 鉴权链路不完整
+---
 
-Gateway 的 `AuthFilter` 原设计为边缘鉴权节点——验 JWT 签名 + 查 Redis 确认用户状态。但由于 Gateway 使用 reactive（WebFlux）运行时，无法使用 servlet 栈的 `StringRedisTemplate`，导致 Redis 查询不可用。
+#### 6. Gateway 鉴权链路不完整
 
-当前鉴权链路：
+Gateway 验 JWT 签名后**全放行**，不拦截任何请求，身份校验全部依赖下游服务自行完成。
 
 ```
-外部请求 → Gateway（验 JWT 签名，不拦人）→ 下游服务
-                                            → JwtTokenFilter / AuthApiInterceptor
-                                            → 查 Redis → 恢复用户上下文
-Feign 调用 → 上游服务 → FeignAuthInterceptor（透传 JWT）
-                      → 下游服务 AuthApiInterceptor
-                      → 查 Redis → 恢复用户上下文
+外部请求 → Gateway（验 JWT 签名，不拦人）
+         → 下游服务（JwtTokenFilter / AuthApiInterceptor→查 Redis→恢复上下文）
 ```
 
-已处理的问题：
+**影响：**
+- 每次请求每个服务重复查 Redis（JWT claims 仅含 username）
+- Gateway 白名单虽已补全但未启用拦截
+- 踢人下线/用户状态变更依赖 Redis，但 Gateway 不做此校验
 
-| # | 问题 | 状态 |
-|---|------|------|
-| 1 | 每次请求每个服务重复查 Redis | ⏳ 待优化（可引入 Caffeine 本地缓存或 JWT claims 扩展） |
-| 2 | 用户信息需查 Redis 才完整 | ⏳ 待优化（JWT claims 仅含 username） |
-| 3 | **Gateway 白名单不全** | ✅ **已修复** — 已收集全部 38 个 `@NoLogin` 路径至 Gateway 配置 |
-| 4 | Gateway 实际不拦人 | ⏳ 当前设计如此，拦截依赖下游服务 |
+**建议：** 将 userId、角色写入 JWT claims，Gateway 做完整边界鉴权，Redis 仅用于黑名单（踢人）。
 
-**原因：** White Label 项目，用户体系/auth 模块不够完善，Gateway 做完整边界鉴权需要先补齐 auth 的用户状态管理能力。
+---
 
-**建议：**
-- 短期：引入 Caffeine 本地缓存减少重复 Redis 查询（改动小，收益大）
-- 长期：将 userId、角色等写入 JWT claims，Gateway 做完整边界鉴权，Redis 仅用于黑名单
+#### 7. Mobile / Admin API 混合部署
+
+所有服务的移动端和管理后台接口编译在同一个 JAR 中，部署时无法独立扩缩容。
+
+| 服务 | Mobile 控制器 | Admin 控制器 |
+|------|-------------|-------------|
+| mall-product | `controller/mobile/` | `controller/product/`、`controller/shopping/` |
+| mall-auth | `controller/mobile/` | `controller/auth/`、`controller/web/` |
+| mall-basic | `controller/mobile/` | `controller/common/`、`controller/upload/` |
+
+**影响：**
+- Mobile 流量远大于 Admin，但只能一起部署，无法针对性扩缩
+- Admin 接口安全性要求高，与公网 Mobile 接口同进程暴露
+- 一方代码变更导致另一方也需要重新发布
+
+**建议：** Gateway 层按路径前缀分流到不同实例组，或拆分为独立 BFF 服务。
+
+---
+
+#### 8. Gateway 路由中存在无效转发
+
+`mall-gateway` 中有一条 `mall-mobile-api` 路由：
+
+```yaml
+- id: mall-mobile-api
+  uri: lb://mall-mobile-api    # ⚠️ 该服务不存在
+  predicates:
+    - Path=/api/mobile/**
+```
+
+Nacos 中无 `mall-mobile-api` 服务注册，该路由无法匹配任何后端，属于死配置。
+
+**建议：** 确认是否遗留路由，如无用则删除，避免误导排查。
+
+---
+
+#### 9. 认证模块功能不完整
+
+`mall-auth` 仅实现了登录注册和 RBAC 基础模型，缺乏生产所需的关键功能：
+
+| 缺失功能 | 影响 |
+|---------|------|
+| 用户状态管理（禁用/冻结/锁定） | 无法踢人下线、封禁账号 |
+| 多设备登录策略 | 无单设备/多设备限制 |
+| 登录安全（失败锁定、异地检测） | 暴力破解无防护 |
+| OAuth2 / 三方登录 | 仅支持账号密码登录 |
+
+**建议：** 这些功能是生产环境的基本要求，当前项目作为学习项目可暂时忽略。
 
 ---
 
