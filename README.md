@@ -942,8 +942,8 @@ mall:
 | 1 | **双向服务依赖** | 移除 `mall-product` 对 `mall-order-client` 的编译期依赖，现为单向：`mall-order → mall-product` |
 | 2 | **公共 DTO 变更爆炸** | 每个 client 模块声明独立版本号，通过根 POM 属性管控 |
 | 3 | **scanBasePackages 扫全量** | 限缩到各自模块包，共享 bean 通过 `AutoConfiguration.imports` + `MallCommonAutoConfiguration` 按需加载 |
-| 5 | **缺少事务补偿机制** | 下单先扣库存（`reduceStockBatch`），订单创建失败时发送 `STOCK_ROLLBACK_TOPIC` 消息由 mall-product 异步回滚库存 |
-| 6 | **`rocketmq-spring-boot-starter:2.1.1` 不兼容 Spring Boot 3.x** | 该版本的自动配置仅注册在旧版 `spring.factories`，Spring Boot 3.3.x 已弃用此机制，导致 `RocketMQTemplate` 从未被自动创建。`mall-order` 靠自定义 `RocketMQConfig.java` 手动 `@Bean` 规避，`mall-basic` 的 `MqHelper` 直接注入导致启动崩溃。修复：将 `MqHelper` 改为 `ObjectProvider<RocketMQTemplate>` 懒加载，无 RocketMQ 时优雅降级跳过 |
+| 5 | **缺少事务补偿机制** | 下单先扣库存（`reduceStockBatch`），订单创建失败时发送 `STOCK_ROLLBACK_TOPIC` 消息由 mall-product 异步回滚库存。⚠️ 补偿消费者 `StockRollbackConsumer` 使用了 `@RocketMQMessageListener`，触发了 `DefaultRocketMQListenerContainer` 初始化，引入 RocketMQ 5.x 兼容问题（见第 6 条） |
+| 6 | **`rocketmq-spring-boot-starter:2.1.1` 与 Alibaba BOM 的 RocketMQ 版本冲突** | `spring-cloud-alibaba-dependencies:2023.0.1.0` 的 BOM 将 `rocketmq.version` 锁定为 `5.1.4`，但 starter `2.1.1` 的代码引用了 4.x 才有的 `MessageModel` 类（5.x 已移除）。无 `@RocketMQMessageListener` 的服务不受影响（如原项目），一旦有消息监听容器创建即报 `ClassNotFoundException`。修复：在根 POM `dependencyManagement` 中统一锁定 `rocketmq-client`、`rocketmq-common`、`rocketmq-acl`、`rocketmq-remoting` 全部为 `4.9.4` 版本 |
 
 ---
 
