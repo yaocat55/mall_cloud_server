@@ -688,19 +688,49 @@ curl http://localhost:8080/api/product/v1/product/list
 
 ### 端口总览
 
-| 服务 | 端口 | 配置来源 | Nacos 服务名 |
-|------|------|----------|-------------|
-| Gateway | 8080 | 本地 application.yml | `mall-gateway` |
-| Auth | 8021① | Nacos 配置中心 | `mall-auth-api` |
-| Basic | 8022① | Nacos 配置中心 | `mall-basic-api` |
-| Product | 8023① | Nacos 配置中心 | `mall-product-api` |
-| Marketing | 8024① | Nacos 配置中心 | `mall-marketing-api` |
-| Order | 8026 | 本地 application.yml | `mall-order-api` |
-| Pay | 8027 | 本地 application.yml | `mall-pay-api` |
-| Recommend | 8028 | 本地 application.yml | `mall-recommend-api` |
-| Message | 8029 | 本地 application.yml | `mall-message-api` |
+所有服务的端口统一在本地 `application.yml` 中通过 `server.port` 指定，不再依赖 Nacos 远程配置。
 
-> ① 本地开发时端口冲突：auth、basic、product、marketing 的端口在 Nacos 配置中心，本地 `application.yml` 未配置时默认均为 8080。**单机启动前请在本地 `application.yml`（gitignored）中手动指定端口**，推荐按上表分配。
+| 服务 | 端口 | 说明 |
+|------|:----:|------|
+| mall-gateway | 8080 | 网关统一入口 |
+| mall-auth | 8021 | 用户认证与 RBAC 权限 |
+| mall-basic | 8022 | 文件、短信、敏感词等基础服务 |
+| mall-product | 8023 | 商品、分类与搜索 |
+| mall-marketing | 8024 | 营销活动与优惠 |
+| mall-order | 8026 | 订单与购物车 |
+| mall-pay | 8027 | 支付与退款 |
+| mall-recommend | 8028 | 商品推荐与热门 |
+| mall-message | 8029 | 消息与 WebSocket |
+
+---
+
+## 注意事项
+
+### mall-mobile-api 未实现
+
+Gateway 配置了到 `mall-mobile-api` 的路由（`/api/mobile/**`），但该服务**从未实现**，Nacos 上对应的 `mall-mobile-api-dev.yaml` 仅为前期 BFF 架构规划遗留的占位配置。请求打到 Gateway → `lb://mall-mobile-api` 会返回 503，当前无任何流量经过此路由。
+
+### rocketmq-spring-boot-starter 版本兼容性
+
+项目使用 `rocketmq-spring-boot-starter:2.1.1`（2020 年发布），其自动配置仅通过 `spring.factories` 注册。该机制在 Spring Boot 3.x 中仍受支持，但属于**已弃用**行为。该 Starter 的自动配置依赖 `@ConditionalOnProperty(prefix="rocketmq", value={"name-server","producer.group"})`——只有两个属性同时存在时才会创建 `RocketMQTemplate` Bean。
+
+各服务的 RocketMQ 现状：
+
+| 服务 | RocketMQ Bean 来源 | 说明 |
+|------|-------------------|------|
+| mall-order | 自定义 `RocketMQConfig.java` 手动 `@Bean` | 不依赖自动配置，始终可用 |
+| mall-product | Starter 自动配置 | 需 Nacos 上配齐 `name-server` + `producer.group` |
+| mall-basic | 无（`MqHelper` 已改为 `ObjectProvider` 懒加载） | 无 RocketMQ 配置也不报错，优雅跳过 |
+
+### tokenSecret（JWT 密钥）多服务一致性
+
+各服务的 `mall.mgt.tokenSecret` 须使用**同一个密钥**，否则 JWT 验签会失败。该值在 Nacos 上统一配置，修改时需同步更新所有 dataId。
+
+### Config 与 Discovery 的 group 需分别配置
+
+`spring.cloud.nacos.config.group` 仅影响配置中心分组，不继承给服务发现。`spring.cloud.nacos.discovery.group` 需单独声明，否则服务注册到 `DEFAULT_GROUP`。
+
+---
 
 ### API 文档（Swagger）
 
@@ -913,6 +943,7 @@ mall:
 | 2 | **公共 DTO 变更爆炸** | 每个 client 模块声明独立版本号，通过根 POM 属性管控 |
 | 3 | **scanBasePackages 扫全量** | 限缩到各自模块包，共享 bean 通过 `AutoConfiguration.imports` + `MallCommonAutoConfiguration` 按需加载 |
 | 5 | **缺少事务补偿机制** | 下单先扣库存（`reduceStockBatch`），订单创建失败时发送 `STOCK_ROLLBACK_TOPIC` 消息由 mall-product 异步回滚库存 |
+| 6 | **`rocketmq-spring-boot-starter:2.1.1` 不兼容 Spring Boot 3.x** | 该版本的自动配置仅注册在旧版 `spring.factories`，Spring Boot 3.3.x 已弃用此机制，导致 `RocketMQTemplate` 从未被自动创建。`mall-order` 靠自定义 `RocketMQConfig.java` 手动 `@Bean` 规避，`mall-basic` 的 `MqHelper` 直接注入导致启动崩溃。修复：将 `MqHelper` 改为 `ObjectProvider<RocketMQTemplate>` 懒加载，无 RocketMQ 时优雅降级跳过 |
 
 ---
 

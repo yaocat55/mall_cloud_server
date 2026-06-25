@@ -5,7 +5,7 @@ import org.apache.rocketmq.client.producer.SendCallback;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.MessageConst;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
@@ -21,9 +21,9 @@ import java.util.Collections;
 @Slf4j
 @Component
 public class MqHelper {
-    private final RocketMQTemplate rocketMQTemplate;
-    public MqHelper(RocketMQTemplate rocketMQTemplate) {
-        this.rocketMQTemplate = rocketMQTemplate;
+    private final ObjectProvider<RocketMQTemplate> rocketMQTemplateProvider;
+    public MqHelper(ObjectProvider<RocketMQTemplate> rocketMQTemplateProvider) {
+        this.rocketMQTemplateProvider = rocketMQTemplateProvider;
     }
 
     /**
@@ -34,6 +34,11 @@ public class MqHelper {
      */
     public void send(String topic, Object data, int delayLevel) {
         try {
+            RocketMQTemplate rocketMQTemplate = rocketMQTemplateProvider.getIfAvailable();
+            if (rocketMQTemplate == null) {
+                log.warn("RocketMQTemplate不存在，跳过发送，topic={}, message={}", topic, data);
+                return;
+            }
             MessageHeaders headers = new MessageHeaders(
                     Collections.singletonMap(
                             MessageConst.PROPERTY_DELAY_TIME_LEVEL, String.valueOf(delayLevel)
@@ -66,6 +71,11 @@ public class MqHelper {
      */
     public void send(String topic, Object message) {
         try {
+            RocketMQTemplate rocketMQTemplate = rocketMQTemplateProvider.getIfAvailable();
+            if (rocketMQTemplate == null) {
+                log.warn("RocketMQTemplate不存在，跳过发送，topic={}, message={}", topic, message);
+                return;
+            }
             rocketMQTemplate.asyncSend(topic, message, new SendCallback() {
                 @Override
                 public void onSuccess(SendResult sendResult) {
