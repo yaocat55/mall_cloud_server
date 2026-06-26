@@ -1,7 +1,6 @@
 package cn.net.mall.enums;
 
 import cn.hutool.core.util.DesensitizedUtil;
-import cn.net.mall.sensitive.ICustomMaskService;
 import lombok.Getter;
 
 /**
@@ -47,13 +46,7 @@ public enum SensitiveTypeEnum {
             return data;
         }
     },
-    CUSTOM("custom", "自定义") {
-        @Override
-        public String maskSensitiveData(String data, ICustomMaskService customMaskService) {
-            // 可以自定义处理的service，根据实际使用情况可能需要添加参数，调整一下即可
-            return customMaskService.maskData(data);
-        }
-    };
+    ;
 
 
     @Getter
@@ -78,7 +71,4 @@ public enum SensitiveTypeEnum {
         return data;
     }
 
-    public String maskSensitiveData(String data, ICustomMaskService customMaskService) {
-        return null;
-    }
 }

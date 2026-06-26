@@ -84,7 +84,7 @@
         <dependency>
             <groupId>cn.net.mall</groupId>
             <artifactId>mall-cloud-bom</artifactId>
-            <version>1.0.3</version>
+            <version>2.0.0</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>

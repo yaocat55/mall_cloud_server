@@ -14,7 +14,7 @@ import cn.net.mall.product.entity.mongo.ProductDetailEntity;
 import cn.net.mall.product.enums.PhotoTypeEnum;
 import cn.net.mall.product.enums.ProductCommentTypeEnum;
 import cn.net.mall.exception.BusinessException;
-import cn.net.mall.helper.*;
+import cn.net.mall.workid.IdGenerateHelper;
 import cn.net.mall.mapper.BaseMapper;
 import cn.net.mall.product.es.EsTemplate;
 import cn.net.mall.product.helper.*;
