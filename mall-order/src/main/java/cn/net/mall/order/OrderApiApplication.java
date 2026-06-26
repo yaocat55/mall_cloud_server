@@ -8,10 +8,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"cn.net.mall.order"})
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = "cn.net.mall")
-@ComponentScan(basePackages = "cn.net.mall")
+@EnableFeignClients(basePackages = {"cn.net.mall.order", "cn.net.mall.product.client", "cn.net.mall.marketing.client", "cn.net.mall.auth.client"})
 @MapperScan("cn.net.mall.order.mapper")
 @EnableAsync
 public class OrderApiApplication {
