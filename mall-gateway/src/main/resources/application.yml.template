@@ -23,6 +23,10 @@ spring:
         enabled: true
         username: nacos
         password: your_nacos_password
+        shared-configs:
+          - data-id: common.yaml
+            group: mall-cloud
+            refresh: true
       discovery:
         enabled: true
         register-enabled: true
@@ -30,6 +34,10 @@ spring:
         namespace: ${NACOS_NAMESPACE:mall}
         username: nacos
         password: your_nacos_password
+        shared-configs:
+          - data-id: common.yaml
+            group: mall-cloud
+            refresh: true
     sentinel:
       transport:
         dashboard: localhost:9903

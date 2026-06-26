@@ -20,11 +20,19 @@ spring:
         enabled: true
         username: nacos
         password: your_nacos_password
+        shared-configs:
+          - data-id: common.yaml
+            group: mall-cloud
+            refresh: true
       discovery:
         server-addr: your_nacos_host:8848
         namespace: ${NACOS_NAMESPACE:mall}
         username: nacos
         password: your_nacos_password
+        shared-configs:
+          - data-id: common.yaml
+            group: mall-cloud
+            refresh: true
   config:
     import: nacos:mall-message-api.yaml
   data:
