@@ -15,6 +15,9 @@ import java.util.*;
 class ProductViewRecordConsumerTest {
 
     static class FakeRedis extends RedisUtil {
+        public FakeRedis() {
+            super(null);
+        }
         private final Set<String> keys = new HashSet<>();
         @Override
         public boolean setIfAbsent(String key, String value) {

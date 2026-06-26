@@ -23,6 +23,9 @@ import java.util.*;
 class RecommendServiceTest {
 
     static class FakeRedisUtil extends RedisUtil {
+        public FakeRedisUtil() {
+            super(null); // Fake 实现覆盖了所有方法，不需要真实的 StringRedisTemplate
+        }
         private final Map<String, String> store = new HashMap<>();
         @Override
         public boolean set(String key, String value) {
