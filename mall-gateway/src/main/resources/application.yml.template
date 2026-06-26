@@ -1,14 +1,14 @@
 spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
   application:
     name: mall-gateway
   main:
     web-application-type: reactive
-  data:
-    redis:
-      database: 5
-      host: your_redis_host
       port: 6379
       password: your_redis_password
       timeout: 50000
