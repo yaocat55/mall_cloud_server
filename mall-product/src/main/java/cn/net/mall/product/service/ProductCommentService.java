@@ -2,7 +2,7 @@ package cn.net.mall.product.service;
 
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.exception.BusinessException;
-import cn.net.mall.helper.IdGenerateHelper;
+import cn.net.mall.workid.IdGenerateHelper;
 import cn.net.mall.auth.client.UserFeignClient;
 import cn.net.mall.auth.dto.UserDTO;
 import cn.net.mall.mapper.BaseMapper;

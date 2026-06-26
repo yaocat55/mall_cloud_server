@@ -2,7 +2,7 @@ package cn.net.mall.mybatis;
 
 
 import cn.net.mall.entity.auth.JwtUserEntity;
-import cn.net.mall.helper.IdGenerateHelper;
+import cn.net.mall.workid.IdGenerateHelper;
 import cn.net.mall.util.FillUserUtil;
 import cn.net.mall.util.SpringUtil;
 import org.apache.ibatis.executor.Executor;

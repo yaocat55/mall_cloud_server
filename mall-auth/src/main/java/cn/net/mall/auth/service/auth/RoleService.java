@@ -4,7 +4,7 @@ import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.auth.entity.auth.RoleConditionEntity;
 import cn.net.mall.auth.entity.auth.RoleEntity;
 import cn.net.mall.auth.entity.auth.RoleMenuEntity;
-import cn.net.mall.helper.IdGenerateHelper;
+import cn.net.mall.workid.IdGenerateHelper;
 import cn.net.mall.mapper.BaseMapper;
 import cn.net.mall.auth.mapper.auth.RoleMapper;
 import cn.net.mall.auth.mapper.auth.RoleMenuMapper;

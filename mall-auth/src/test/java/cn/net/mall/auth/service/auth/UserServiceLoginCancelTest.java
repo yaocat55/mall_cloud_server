@@ -7,7 +7,7 @@ import cn.net.mall.auth.mapper.auth.*;
 import cn.net.mall.auth.util.PasswordUtil;
 import cn.net.mall.entity.auth.JwtUserEntity;
 import cn.net.mall.exception.BusinessException;
-import cn.net.mall.helper.IdGenerateHelper;
+import cn.net.mall.workid.IdGenerateHelper;
 import cn.net.mall.redis.TokenHelper;
 import cn.net.mall.redis.UserTokenHelper;
 import cn.net.mall.redis.RedisUtil;

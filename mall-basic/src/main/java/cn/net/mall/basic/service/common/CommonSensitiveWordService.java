@@ -5,7 +5,7 @@ import cn.net.mall.basic.entity.common.CommonSensitiveWordEntity;
 import cn.net.mall.basic.mapper.common.CommonSensitiveWordMapper;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.exception.BusinessException;
-import cn.net.mall.helper.IdGenerateHelper;
+import cn.net.mall.workid.IdGenerateHelper;
 import cn.net.mall.mapper.BaseMapper;
 import cn.net.mall.service.BaseService;
 import cn.net.mall.util.AssertUtil;

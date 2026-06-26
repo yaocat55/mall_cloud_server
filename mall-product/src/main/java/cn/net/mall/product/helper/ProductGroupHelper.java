@@ -1,6 +1,6 @@
 package cn.net.mall.product.helper;
 
-import cn.net.mall.helper.IdGenerateHelper;
+import cn.net.mall.workid.IdGenerateHelper;
 import cn.net.mall.product.entity.ProductGroupConditionEntity;
 import cn.net.mall.product.entity.ProductGroupEntity;
 import cn.net.mall.product.mapper.ProductGroupMapper;

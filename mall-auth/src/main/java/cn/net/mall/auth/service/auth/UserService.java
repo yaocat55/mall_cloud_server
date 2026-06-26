@@ -19,7 +19,7 @@ import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.entity.auth.JwtUserEntity;
 import cn.net.mall.enums.SmsTypeEnum;
 import cn.net.mall.exception.BusinessException;
-import cn.net.mall.helper.IdGenerateHelper;
+import cn.net.mall.workid.IdGenerateHelper;
 import cn.net.mall.redis.TokenHelper;
 import cn.net.mall.redis.UserTokenHelper;
 import cn.net.mall.mapper.BaseMapper;
