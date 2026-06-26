@@ -7,10 +7,9 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+@SpringBootApplication(scanBasePackages = {"cn.net.mall.pay"}, exclude = {DataSourceAutoConfiguration.class})
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = "cn.net.mall")
-@ComponentScan(basePackages = "cn.net.mall")
+@EnableFeignClients(basePackages = "cn.net.mall.pay")
 public class PayApiApplication {
     public static void main(String[] args) {
         SpringApplication.run(PayApiApplication.class, args);
