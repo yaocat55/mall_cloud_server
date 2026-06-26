@@ -1,1 +1,2 @@
 cn.net.mall.config.MallCommonAutoConfiguration
+cn.net.mall.config.FeignDecoderConfig
