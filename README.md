@@ -904,42 +904,35 @@ spring:
 
 **Nacos 配置清单：**
 
-本地 `application.yml` 使用 `spring.config.import` 直连 Nacos 拉取配置，无需在本地重复填写数据库密码等敏感信息。
+本地 `application.yml` 使用 `spring.config.import` 直连 Nacos 拉取配置。公共配置（Redis、JWT密钥、Actuator）抽取到 `common.yaml` 统一管理，各服务通过 `shared-configs` 自动引用，无需重复配置。
 
 本地 Nacos 建议统一 namespace 为 `mall`，Group 为 `mall-cloud`。每个服务一个 dataId，内容根据模板中的 `your_*` 占位符配置：
 
-| 服务 | 服务说明 | Nacos dataId | Nacos 配置描述（创建时填入） | 需配置的内容 |
-|------|---------|-------------|--------------------------|-------------|
-| mall-gateway | 统一网关入口：路由转发、CORS、Sentinel 流控 | `mall-gateway-dev.yaml` | mall-gateway 服务 dev 环境配置 — 统一网关入口、路由转发、CORS、Sentinel 流控。维护人：@基础架构团队 | Redis、tokenSecret |
-| mall-auth | 用户与权限管理：登录注册、RBAC 权限（用户→角色→菜单/部门/岗位）、收货地址管理。同时提供 `mall-auth-api-starter` 供其他服务鉴权调用 | `mall-auth-api-dev.yaml` | mall-auth 服务 dev 环境配置 — 用户认证授权、RBAC 权限模型、收货地址、鉴权 Starter。维护人：@基础架构团队 | 数据源(datasource)、Redis、tokenSecret |
-| mall-basic | 基础服务：字典管理、行政区域、文件上传(MinIO)、敏感词过滤、定时任务(Quartz)、AI 对话(Ollama) | `mall-basic-api-dev.yaml` | mall-basic 服务 dev 环境配置 — 字典、区域、文件、短信、敏感词、定时任务、Ollama AI。维护人：@基础架构团队 | 数据源、Redis、MongoDB、tokenSecret |
-| mall-product | 商品中心：商品CRUD、分类/品牌/属性、购物车、MySQL+ES 双写搜索、首页管理 | `mall-product-api-dev.yaml` | mall-product 服务 dev 环境配置 — 商品中心、分类品牌、购物车、ES 双写、首页管理。维护人：@商品团队 | 数据源、Redis、RocketMQ、tokenSecret |
-| mall-order | 订单交易：下单→支付→发货→收货→评价 全生命周期、退货退款、ShardingSphere 分库分表(8库)、ES 搜索 | `mall-order-api-dev.yaml` | mall-order 服务 dev 环境配置 — 订单全生命周期、退货退款、ShardingSphere 分库(8库)、ES 订单搜索。维护人：@订单团队 | Redis、Elasticsearch、RocketMQ、tokenSecret |
-| mall-pay | 支付服务：支付宝沙箱对接、二维码生成(ZXing)。**无数据库**，纯 Feign 调用 | `mall-pay-api-dev.yaml` | mall-pay 服务 dev 环境配置 — 支付宝沙箱支付、二维码生成。维护人：@支付团队 | Redis、支付宝参数(沙箱appId/密钥)、tokenSecret |
-| mall-marketing | 营销中心：优惠券发放/核销、秒杀商品、优惠金额试算 | `mall-marketing-api-dev.yaml` | mall-marketing 服务 dev 环境配置 — 优惠券发放核销、秒杀商品、金额试算。维护人：@营销团队 | 数据源、tokenSecret |
-| mall-recommend | 智能推荐：商品推荐(Mahout)、收藏管理、浏览历史、ShardingSphere 分库分表(8库) | `mall-recommend-api-dev.yaml` | mall-recommend 服务 dev 环境配置 — 商品推荐(Mahout)、收藏管理、浏览历史、ShardingSphere 分库(8库)。维护人：@推荐团队 | Redis、RocketMQ、tokenSecret |
-| mall-message | 消息推送：WebSocket + STOMP 实时推送、站内通知管理、ShardingSphere 分库分表(8库) | `mall-message-api-dev.yaml` | mall-message 服务 dev 环境配置 — WebSocket 实时推送、站内通知、ShardingSphere 分库(8库)。维护人：@消息团队 | Redis、tokenSecret |
+| 服务 | 服务说明 | Nacos dataId | 需配置的内容 |
+|------|---------|-------------|-------------|
+| — | **公共配置（所有服务共享）** | `common.yaml` | Redis、JWT tokenSecret、Actuator/Prometheus |
+| mall-gateway | 统一网关入口：路由转发、CORS、Sentinel 流控 | `mall-gateway-dev.yaml` | 无（仅网关特有配置） |
+| mall-auth | 用户与权限管理：登录注册、RBAC 权限、收货地址管理、鉴权 Starter | `mall-auth-api-dev.yaml` | 数据源(datasource) |
+| mall-basic | 基础服务：字典、区域、文件(MinIO)、短信、敏感词、定时任务(Quartz)、Ollama AI | `mall-basic-api-dev.yaml` | 数据源、MongoDB、MinIO、阿里云短信 |
+| mall-product | 商品中心：商品CRUD、分类/品牌/属性、购物车、MySQL+ES双写、首页管理 | `mall-product-api-dev.yaml` | 数据源、ES、RocketMQ |
+| mall-order | 订单交易：下单→支付→发货→收货→评价 全生命周期、ShardingSphere(8库)、ES搜索 | `mall-order-api-dev.yaml` | ES、RocketMQ、ShardingSphere |
+| mall-pay | 支付服务：支付宝沙箱对接、二维码生成(ZXing)。**无数据库** | `mall-pay-api-dev.yaml` | 支付宝参数(沙箱appId/密钥) |
+| mall-marketing | 营销中心：优惠券发放/核销、秒杀商品、优惠金额试算 | `mall-marketing-api-dev.yaml` | 数据源 |
+| mall-recommend | 智能推荐：商品推荐(Mahout)、收藏管理、浏览历史、ShardingSphere(8库) | `mall-recommend-api-dev.yaml` | RocketMQ、ShardingSphere |
+| mall-message | 消息推送：WebSocket + STOMP 实时推送、站内通知、ShardingSphere(8库) | `mall-message-api-dev.yaml` | ShardingSphere |
 
-**配置文件示例（mall-auth-api.yaml）：**
+**配置文件示例（mall-auth）：**
 
 ```yaml
-# Nacos → mall 命名空间 → mall-cloud group → dataId: mall-auth-api.yaml
+# Nacos → mall 命名空间 → mall-cloud group → dataId: mall-auth-api-dev.yaml
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/mall_auth?useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: your_password
-  data:
-    redis:
-      host: localhost
-      port: 6379
-      password: your_password
-mall:
-  mgt:
-    tokenSecret: your_jwt_secret
 ```
 
-> 每个 `application.yml.template` 里标记为 `your_*` 的占位符，均在 Nacos 上配置。本地 `application.yml` 不需要重复填写，因为 Nacos 配置会覆盖本地值。
+> 公共配置（Redis、JWT密钥、Actuator）已统一在 `common.yaml` 中通过 `shared-configs` 引用，各服务的 dataId 中不再需要重复填写。每个 `application.yml.template` 里标记为 `your_*` 的占位符，均在 Nacos 上配置。
 
 **日志 & 链路追踪**
 
