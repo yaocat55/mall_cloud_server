@@ -3,11 +3,13 @@ package cn.net.mall.helper;
 import cn.hutool.json.JSONUtil;
 import cn.net.mall.entity.BaseEntity;
 import cn.net.mall.entity.auth.JwtUserEntity;
+import cn.net.mall.exception.BusinessException;
 import cn.net.mall.util.AssertUtil;
 import cn.net.mall.util.FillUserUtil;
 import cn.net.mall.util.RedisUtil;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,7 +42,11 @@ public class TokenHelper extends UserTokenHelper {
     public void fillUpdateUserInfo(BaseEntity baseEntity) {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         FillUserUtil.checkUserLoginStatus(authentication);
-        JwtUserEntity jwtUserEntity = (JwtUserEntity) authentication.getPrincipal();
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof String) {
+            throw new BusinessException(HttpStatus.FORBIDDEN.value(), "登录已过期，请重新登录");
+        }
+        JwtUserEntity jwtUserEntity = (JwtUserEntity) principal;
         baseEntity.setUpdateUserId(jwtUserEntity.getId());
         baseEntity.setUpdateUserName(jwtUserEntity.getUsername());
     }
@@ -54,7 +60,11 @@ public class TokenHelper extends UserTokenHelper {
     public String getCurrentUsername() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         FillUserUtil.checkUserLoginStatus(authentication);
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof String) {
+            throw new BusinessException(HttpStatus.FORBIDDEN.value(), "登录已过期，请重新登录");
+        }
+        UserDetails userDetails = (UserDetails) principal;
         return userDetails.getUsername();
     }
 
