@@ -9,7 +9,7 @@ import cn.net.mall.product.entity.ProductViewRecordEntity;
 import cn.net.mall.product.entity.ProductEntity;
 import cn.net.mall.product.entity.web.ProductWebEntity;
 import cn.net.mall.product.mapper.ProductViewRecordMapper;
-import cn.net.mall.util.RedisUtil;
+import cn.net.mall.redis.RedisUtil;
 import com.alibaba.fastjson.JSON;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;

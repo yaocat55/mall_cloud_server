@@ -1,7 +1,7 @@
 package cn.net.mall.message.websocket;
 
-import cn.net.mall.helper.TokenHelper;
-import cn.net.mall.helper.UserTokenHelper;
+import cn.net.mall.redis.TokenHelper;
+import cn.net.mall.redis.UserTokenHelper;
 import cn.net.mall.util.TokenUtil;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;

@@ -10,7 +10,7 @@ import cn.net.mall.auth.mapper.auth.UserMapper;
 import cn.net.mall.util.AssertUtil;
 import cn.net.mall.util.FillUserUtil;
 import cn.net.mall.util.RandomUtil;
-import cn.net.mall.util.RedisUtil;
+import cn.net.mall.redis.RedisUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;

@@ -11,7 +11,7 @@ import cn.net.mall.recommend.entity.ProductFavoritesEntity;
 import cn.net.mall.recommend.entity.ProductViewRecordEntity;
 import cn.net.mall.recommend.mapper.ProductFavoritesMapper;
 import cn.net.mall.recommend.mapper.ProductViewRecordMapper;
-import cn.net.mall.util.RedisUtil;
+import cn.net.mall.redis.RedisUtil;
 import com.alibaba.fastjson.JSON;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

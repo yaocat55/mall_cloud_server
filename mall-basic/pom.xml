@@ -26,6 +26,11 @@
 
         <dependency>
             <groupId>cn.net.mall</groupId>
+            <artifactId>mall-redis-spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.net.mall</groupId>
             <artifactId>mall-basic-client</artifactId>
             <version>${mall-basic-client.version}</version>
             <scope>compile</scope>

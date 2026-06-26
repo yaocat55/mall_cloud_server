@@ -17,7 +17,7 @@ import cn.net.mall.recommend.entity.ProductViewRecordEntity;
 import cn.net.mall.recommend.entity.ProductViewRecordConditionEntity;
 import cn.net.mall.recommend.mapper.ProductFavoritesMapper;
 import cn.net.mall.recommend.mapper.ProductViewRecordMapper;
-import cn.net.mall.util.RedisUtil;
+import cn.net.mall.redis.RedisUtil;
 import cn.net.mall.util.FillUserUtil;
 import cn.net.mall.entity.auth.JwtUserEntity;
 import com.alibaba.fastjson.JSON;

@@ -37,7 +37,7 @@ import cn.net.mall.entity.RequestPageEntity;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.util.DateFormatUtil;
 import cn.net.mall.util.BetweenTimeUtil;
-import cn.net.mall.util.RedisUtil;
+import cn.net.mall.redis.RedisUtil;
 import cn.net.mall.order.config.BusinessConfig;
 import cn.net.mall.order.message.OrderTimeoutCancelMessage;
 import cn.net.mall.order.helper.MqHelper;

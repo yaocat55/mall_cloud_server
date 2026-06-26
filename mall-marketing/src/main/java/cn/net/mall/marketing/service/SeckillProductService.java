@@ -19,7 +19,7 @@ import cn.net.mall.product.dto.ProductPhotoDTO;
 import cn.net.mall.service.BaseService;
 import cn.net.mall.util.AssertUtil;
 import cn.net.mall.util.FillUserUtil;
-import cn.net.mall.util.RedisUtil;
+import cn.net.mall.redis.RedisUtil;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;

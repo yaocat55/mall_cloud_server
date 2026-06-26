@@ -12,7 +12,7 @@ import cn.net.mall.basic.mapper.common.CommonDictMapper;
 import cn.net.mall.service.BaseService;
 import cn.net.mall.util.AssertUtil;
 import cn.net.mall.util.FillUserUtil;
-import cn.net.mall.util.RedisUtil;
+import cn.net.mall.redis.RedisUtil;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;

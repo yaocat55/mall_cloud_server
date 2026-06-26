@@ -1,7 +1,7 @@
 package cn.net.mall.message.websocket;
 
-import cn.net.mall.helper.TokenHelper;
-import cn.net.mall.helper.UserTokenHelper;
+import cn.net.mall.redis.TokenHelper;
+import cn.net.mall.redis.UserTokenHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.server.ServerHttpRequest;

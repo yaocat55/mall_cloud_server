@@ -3,7 +3,7 @@ package cn.net.mall.auth;
 import cn.net.mall.auth.entity.auth.UserEntity;
 import cn.net.mall.auth.mapper.auth.UserMapper;
 import cn.net.mall.entity.auth.JwtUserEntity;
-import cn.net.mall.helper.TokenHelper;
+import cn.net.mall.redis.TokenHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

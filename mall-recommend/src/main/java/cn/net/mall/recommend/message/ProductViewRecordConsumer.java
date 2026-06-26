@@ -5,7 +5,7 @@ import cn.net.mall.recommend.entity.ProductViewRecordConditionEntity;
 import cn.net.mall.recommend.entity.ProductViewRecordEntity;
 import cn.net.mall.recommend.mapper.ProductViewRecordMapper;
 import cn.net.mall.util.FillUserUtil;
-import cn.net.mall.util.RedisUtil;
+import cn.net.mall.redis.RedisUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

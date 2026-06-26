@@ -4,7 +4,7 @@ import cn.net.mall.enums.JobResult;
 import cn.net.mall.product.entity.ProductViewRecordConditionEntity;
 import cn.net.mall.product.entity.ProductViewRecordEntity;
 import cn.net.mall.product.mapper.ProductViewRecordMapper;
-import cn.net.mall.util.RedisUtil;
+import cn.net.mall.redis.RedisUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;

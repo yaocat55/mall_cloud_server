@@ -6,7 +6,7 @@ import cn.net.mall.auth.dto.auth.MetaDTO;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.auth.entity.auth.MenuConditionEntity;
 import cn.net.mall.auth.entity.auth.MenuEntity;
-import cn.net.mall.helper.TokenHelper;
+import cn.net.mall.redis.TokenHelper;
 import cn.net.mall.mapper.BaseMapper;
 import cn.net.mall.auth.mapper.auth.MenuMapper;
 import cn.net.mall.auth.mapper.auth.RoleMenuMapper;

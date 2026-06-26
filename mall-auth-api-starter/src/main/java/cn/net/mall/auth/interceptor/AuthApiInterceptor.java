@@ -2,7 +2,7 @@ package cn.net.mall.auth.interceptor;
 
 import cn.net.mall.entity.auth.JwtUserEntity;
 import cn.net.mall.exception.BusinessException;
-import cn.net.mall.helper.TokenHelper;
+import cn.net.mall.redis.TokenHelper;
 import cn.net.mall.util.FillUserUtil;
 import cn.net.mall.util.SpringUtil;
 import cn.net.mall.util.TokenUtil;

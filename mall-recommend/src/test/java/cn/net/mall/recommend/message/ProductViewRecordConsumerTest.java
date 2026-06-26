@@ -4,7 +4,7 @@ import cn.net.mall.product.dto.ProductViewRecordDTO;
 import cn.net.mall.recommend.entity.ProductViewRecordConditionEntity;
 import cn.net.mall.recommend.entity.ProductViewRecordEntity;
 import cn.net.mall.recommend.mapper.ProductViewRecordMapper;
-import cn.net.mall.util.RedisUtil;
+import cn.net.mall.redis.RedisUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;

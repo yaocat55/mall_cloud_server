@@ -7,7 +7,7 @@ import cn.net.mall.auth.mapper.auth.UserMapper;
 import cn.net.mall.auth.service.user.UserDetailsServiceImpl;
 import cn.net.mall.auth.util.NoLoginMap;
 import cn.net.mall.basic.client.SmsRecordFeignClient;
-import cn.net.mall.util.RedisUtil;
+import cn.net.mall.redis.RedisUtil;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
