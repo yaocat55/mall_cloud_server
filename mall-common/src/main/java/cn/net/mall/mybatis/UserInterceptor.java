@@ -2,7 +2,6 @@ package cn.net.mall.mybatis;
 
 
 import cn.net.mall.entity.auth.JwtUserEntity;
-import cn.net.mall.workid.IdGenerateHelper;
 import cn.net.mall.util.FillUserUtil;
 import cn.net.mall.util.SpringUtil;
 import org.apache.ibatis.executor.Executor;
@@ -102,8 +101,13 @@ public class UserInterceptor implements Interceptor {
             }
 
             if (isInsert) {
-                IdGenerateHelper idGenerateHelper = SpringUtil.getBean(IdGenerateHelper.class);
-                context.bind(GENERATE_ID, idGenerateHelper.nextId());
+                try {
+                    Object idGenerateHelper = SpringUtil.getBean("idGenerateHelper");
+                    Long id = (Long) idGenerateHelper.getClass().getMethod("nextId").invoke(idGenerateHelper);
+                    context.bind(GENERATE_ID, id);
+                } catch (Exception e) {
+                    // 项目中无 IdGenerateHelper Bean（未引入 workid starter），跳过自动生成 ID
+                }
             }
 
             return method.invoke(target, args);
