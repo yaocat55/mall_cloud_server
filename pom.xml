@@ -62,7 +62,7 @@
         <lombok.verison>1.18.30</lombok.verison>
         <mysql.version>8.0.33</mysql.version>
         <spring.data.version>2.7.18</spring.data.version>
-        <redisson.version>3.13.6</redisson.version>
+        <redisson.version>3.34.1</redisson.version>
         <feign.okhttp.version>13.1</feign.okhttp.version>
         <jackson.datatype.version>2.17.2</jackson.datatype.version>
         <skywalking.version>9.0.0</skywalking.version>
