@@ -62,8 +62,8 @@ public class MobileCacheService {
             log.info("开始刷新本地缓存...");
 
             // 0. 预热缓存：从数据库加载数据到 Redis（空 Redis 时自动填充）
-            indexCarouselImageService.refreshIndexCarouseImageToRedis(10, "create_time asc");
-            indexProductService.refreshIndexProduct(10, "create_time asc");
+            indexCarouselImageService.refreshIndexCarouseImageToRedis(10, "create_time");
+            indexProductService.refreshIndexProduct(10, "create_time");
 
             // 1. 刷新首页轮播图
             indexCarouselImageList = indexCarouselImageService.getIndexCarouselImageList();
