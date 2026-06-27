@@ -31,11 +31,6 @@
             <version>${mall-pay-client.version}</version>
         </dependency>
 
-        <!-- redisson (传递依赖 StringRedisTemplate) -->
-        <dependency>
-            <groupId>org.redisson</groupId>
-            <artifactId>redisson-spring-boot-starter</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
