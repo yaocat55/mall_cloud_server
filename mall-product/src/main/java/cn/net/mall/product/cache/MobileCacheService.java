@@ -61,12 +61,16 @@ public class MobileCacheService {
         try {
             log.info("开始刷新本地缓存...");
 
+            // 0. 预热缓存：从数据库加载数据到 Redis（空 Redis 时自动填充）
+            indexCarouselImageService.refreshIndexCarouseImageToRedis(10, "create_time asc");
+            indexProductService.refreshIndexProduct(10, "create_time asc");
+
             // 1. 刷新首页轮播图
             indexCarouselImageList = indexCarouselImageService.getIndexCarouselImageList();
 
             // 2. 刷新首页商品列表 (假设刷新类型1)
-            // 这里为了演示，刷新类型1，实际场景可能需要配置或枚举所有类型
-            indexProductListMap.put(1, indexProductService.getIndexProductList(1));
+            List<IndexProductDTO> productList = indexProductService.getIndexProductList(1);
+            indexProductListMap.put(1, productList != null ? productList : Collections.emptyList());
 
             // 3. 刷新首页公告
             indexNoticeList = indexNoticeService.getIndexNoticeList();
