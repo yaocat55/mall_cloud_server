@@ -36,8 +36,8 @@ public interface ProductFeignClient {
      * @return 商品信息
      */
     @Operation(summary = "批量查询商品基本信息", description = "由 order-service、recommend-service 通过 Feign 调用，根据ID集合批量获取商品基本信息")
-    @GetMapping("/v1/product/findByIds")
-    List<ProductDTO> findByIds(List<Long> ids);
+    @PostMapping("/v1/internal/product/findByIds")
+    List<ProductDTO> findByIds(@RequestBody List<Long> ids);
 
     /**
      * 通过id查询商品详情信息(仅仅包含详情，不包含评价、价格、规格、收藏等)
@@ -46,8 +46,8 @@ public interface ProductFeignClient {
      * @return 商品详情信息
      */
     @Operation(summary = "查询商品详情信息", description = "由 order-service 通过 Feign 调用，根据ID查询商品详情（不含评价、价格、规格）")
-    @GetMapping("/v1/product/findDetailById")
-    ProductDetailDTO findDetailById(Long id);
+    @GetMapping("/v1/internal/product/findDetailById")
+    ProductDetailDTO findDetailById(@RequestParam("id") Long id);
 
     /**
      * 通过商品id集合批量查询商品图片信息
@@ -136,7 +136,7 @@ public interface ProductFeignClient {
      * @return 购物车信息
      */
     @Operation(summary = "批量查询购物车信息", description = "由 order-service 通过 Feign 调用，根据ID集合批量获取购物车商品信息")
-    @PostMapping("/v1/shoppingCart/findByIds")
+    @PostMapping("/v1/internal/shoppingCart/findByIds")
     List<ShoppingCartDTO> findShoppingCartByIds(@RequestBody List<Long> ids);
 
     /**
@@ -164,7 +164,7 @@ public interface ProductFeignClient {
      * @return 购物车商品列表
      */
     @Operation(summary = "查询购物车商品列表", description = "由 order-service 通过 Feign 调用，根据条件获取购物车商品信息用于下单确认")
-    @PostMapping("/v1/shoppingCart/getShoppingCartProduct")
+    @PostMapping("/v1/internal/shoppingCart/getShoppingCartProduct")
     ShoppingCartBuyDTO getShoppingCartProduct(@RequestBody ShoppingCartConditionDTO shoppingCartConditionDTO);
 
     /**
@@ -183,6 +183,6 @@ public interface ProductFeignClient {
      * @param items 购物车项（含productId与quantity）
      */
     @Operation(summary = "批量扣减商品库存", description = "由 order-service 提交订单时通过 Feign 调用，批量扣减商品库存")
-    @PostMapping("/v1/product/reduceStockBatch")
+    @PostMapping("/v1/internal/product/reduceStockBatch")
     void reduceStockBatch(@RequestBody List<ShoppingCartDTO> items);
 }

@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Tag(name = "内部服务-收货地址", description = "内部微服务：mall-order 通过 Feign 调用")
 @RestController
-@RequestMapping("/v1/deliveryAddress")
+@RequestMapping("/v1/internal/deliveryAddress")
 public class DeliveryAddressInternalController {
 
     private final DeliveryAddressService deliveryAddressService;

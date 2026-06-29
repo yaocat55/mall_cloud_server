@@ -22,7 +22,7 @@ import java.util.List;
  */
 @Tag(name = "内部服务-商品", description = "内部微服务：order-service、recommend-service 通过 Feign 调用")
 @RestController
-@RequestMapping("/v1/product")
+@RequestMapping("/v1/internal/product")
 public class ProductInternalController {
 
     private final ProductService productService;

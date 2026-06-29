@@ -47,7 +47,7 @@ public interface MarketingFeignClient {
      * <p>调用方：mall-order（订单服务）</p>
      */
     @Operation(summary = "计算订单优惠价格", description = "由 mall-order 下单时调用，根据优惠券计算订单优惠金额")
-    @PostMapping("/v1/coupon/calculateOrderPrice")
+    @PostMapping("/v1/internal/coupon/calculateOrderPrice")
     List<BigDecimal> calculateOrderPrice(@RequestBody OrderPriceCalculateReqDTO req);
 
     /**
@@ -55,7 +55,7 @@ public interface MarketingFeignClient {
      * <p>调用方：mall-order（订单服务）— 支付完成后核销已使用的优惠券</p>
      */
     @Operation(summary = "核销优惠券", description = "由 mall-order 支付完成后调用，核销已使用的优惠券")
-    @PostMapping("/v1/coupon/useCoupons")
+    @PostMapping("/v1/internal/coupon/useCoupons")
     void useCoupons(@RequestBody List<Long> couponIds);
 
     /**

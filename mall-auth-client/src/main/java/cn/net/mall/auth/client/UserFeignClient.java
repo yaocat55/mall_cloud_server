@@ -36,7 +36,7 @@ public interface UserFeignClient {
      */
     @Operation(summary = "批量查询用户信息",
                description = "内部服务：由 mall-admin-api 通过 Feign 调用，根据ID集合批量查询用户信息")
-    @GetMapping("/v1/user/findByIds")
+    @PostMapping("/v1/internal/user/findByIds")
     List<UserDTO> findByIds(@RequestBody List<Long> ids);
 
 
@@ -48,7 +48,7 @@ public interface UserFeignClient {
      */
     @Operation(summary = "通过手机号查询用户信息",
                description = "内部服务：由 mall-admin-api 通过 Feign 调用，根据手机号精确查询用户")
-    @GetMapping("/v1/user/findByPhone")
+    @GetMapping("/v1/internal/user/findByPhone")
     UserDTO findByPhone(@RequestParam String phone);
 
     /**
@@ -133,7 +133,7 @@ public interface UserFeignClient {
      */
     @Operation(summary = "更新用户头像",
                description = "内部服务：由 mall-admin-api 通过 Feign 调用，更新用户头像地址")
-    @PostMapping("/v1/user/updateAvatar")
+    @PostMapping("/v1/internal/user/updateAvatar")
     void updateAvatar(@RequestBody @Valid UserAvatarDTO userAvatarDTO);
 
     /**

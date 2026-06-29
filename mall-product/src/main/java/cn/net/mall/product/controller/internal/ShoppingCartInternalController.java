@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  */
 @Tag(name = "内部服务-购物车", description = "内部微服务：order-service 通过 Feign 调用")
 @RestController
-@RequestMapping("/v1/shoppingCart")
+@RequestMapping("/v1/internal/shoppingCart")
 public class ShoppingCartInternalController {
 
     private final ShoppingCartService shoppingCartService;

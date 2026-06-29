@@ -10,7 +10,7 @@ import java.util.List;
 
 @Tag(name = "内部服务-优惠券", description = "内部微服务：mall-order 通过 Feign 调用")
 @RestController
-@RequestMapping("/v1/coupon")
+@RequestMapping("/v1/internal/coupon")
 public class CouponInternalController {
     private final CouponService couponService;
     public CouponInternalController(CouponService couponService) { this.couponService = couponService; }

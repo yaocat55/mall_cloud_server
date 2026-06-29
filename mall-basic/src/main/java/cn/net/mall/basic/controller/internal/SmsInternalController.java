@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "内部服务-短信", description = "内部微服务：mall-auth 通过 Feign 调用")
 @RestController
-@RequestMapping("/v1/sms")
+@RequestMapping("/v1/internal/sms")
 @AllArgsConstructor
 public class SmsInternalController {
     private final SmsService smsService;

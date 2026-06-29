@@ -32,6 +32,6 @@ public interface AreaFeignClient {
      * @return 地区列表
      */
     @Operation(summary = "根据parentId查询地区列表", description = "内部Feign调用：根据父级ID查询子级地区列表")
-    @GetMapping("/v1/commonArea/queryByParentId")
+    @GetMapping("/v1/internal/commonArea/queryByParentId")
     List<AreaDTO> queryByParentId(@RequestParam("parentId") Long parentId);
 }

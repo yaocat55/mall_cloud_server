@@ -22,8 +22,6 @@ public class SwaggerConfig {
     @Bean
     public GroupedOpenApi marketingInternalApi() {
         return GroupedOpenApi.builder().group("internal").displayName("🔗 内部微服务接口")
-                .packagesToScan("cn.net.mall.marketing.controller.internal")
-                .pathsToMatch("/v1/coupon/getUserCouponList", "/v1/coupon/getObtainableCouponList")
-                .build();
+                .packagesToScan("cn.net.mall.marketing.controller.internal").build();
     }
 }

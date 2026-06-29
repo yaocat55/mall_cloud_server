@@ -20,9 +20,6 @@ public class SwaggerConfig {
     @Bean
     public GroupedOpenApi orderInternalApi() {
         return GroupedOpenApi.builder().group("internal").displayName("🔗 内部微服务接口")
-                .packagesToScan("cn.net.mall.order.controller.internal")
-                .pathsToMatch("/v1/mobile/trade/search", "/v1/mobile/trade/getDetail/{id}",
-                              "/v1/mobile/trade/update", "/v1/mobile/trade/getTradeItem")
-                .build();
+                .packagesToScan("cn.net.mall.order.controller.internal").build();
     }
 }

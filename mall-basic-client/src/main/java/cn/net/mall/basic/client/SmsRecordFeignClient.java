@@ -29,6 +29,6 @@ public interface SmsRecordFeignClient {
      * @return 短信发送记录
      */
     @Operation(summary = "查询短信发送记录", description = "内部Feign调用：由mall-auth发起，查询短信发送记录")
-    @PostMapping(value = "/v1/commonSmsRecord/findSmsRecord")
+    @PostMapping(value = "/v1/internal/smsRecord/findSmsRecord")
     SmsRecordDTO findSmsRecord(@RequestBody SmsRecordConditionDTO smsRecordConditionDTO);
 }

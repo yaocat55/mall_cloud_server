@@ -25,7 +25,7 @@ import java.util.Objects;
  */
 @Tag(name = "内部服务-用户", description = "内部微服务：mall-admin-api、mall-order 通过 Feign 调用")
 @RestController
-@RequestMapping("/v1/user")
+@RequestMapping("/v1/internal/user")
 public class UserInternalController {
 
     private final UserService userService;

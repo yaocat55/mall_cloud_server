@@ -43,7 +43,7 @@ public interface OrderFeignClient {
      * <p>调用方：mall-mobile-api（BFF 服务）</p>
      */
     @Operation(summary = "创建订单", description = "由 mall-mobile-api(BFF) 调用，创建新订单")
-    @PostMapping("/v1/mobile/trade/create")
+    @PostMapping("/v1/internal/trade/create")
     Long create(@RequestBody OrderDTO orderDTO);
 
     /**
@@ -139,7 +139,7 @@ public interface OrderFeignClient {
      * <p>调用方：mall-pay（支付服务）— 支付回调时根据订单编码获取详情</p>
      */
     @Operation(summary = "根据编码查询订单详情", description = "由 mall-pay 支付回调时调用，根据订单编码获取详情")
-    @GetMapping("/v1/mobile/trade/getDetailByCode/{code}")
+    @GetMapping("/v1/internal/trade/getDetailByCode/{code}")
     TradeDetailDTO getDetailByCode(@PathVariable("code") String code);
 
     /**
@@ -147,7 +147,7 @@ public interface OrderFeignClient {
      * <p>调用方：mall-pay（支付服务）— 支付回调时根据订单编码获取基本信息</p>
      */
     @Operation(summary = "根据编码查询订单", description = "由 mall-pay 支付回调时调用，根据订单编码获取基本信息")
-    @GetMapping("/v1/mobile/trade/getTrade/{code}")
+    @GetMapping("/v1/internal/trade/getTrade/{code}")
     OrderDTO getTrade(@PathVariable("code") String code);
 
     /**

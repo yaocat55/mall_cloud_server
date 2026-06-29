@@ -43,7 +43,6 @@ public class SwaggerConfig {
                 .group("internal")
                 .displayName("🔗 内部微服务接口")
                 .packagesToScan("cn.net.mall.basic.controller.internal")
-                .pathsToMatch("/v1/dictDetail/**")
                 .build();
     }
 }

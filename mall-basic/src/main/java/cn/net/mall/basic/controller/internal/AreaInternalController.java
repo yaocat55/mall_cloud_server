@@ -9,7 +9,7 @@ import java.util.List;
 
 @Tag(name = "内部服务-地区", description = "内部微服务：mall-order、mall-product、mall-auth 通过 Feign 调用")
 @RestController
-@RequestMapping("/v1/commonArea")
+@RequestMapping("/v1/internal/commonArea")
 public class AreaInternalController {
     private final CommonAreaService commonAreaService;
     public AreaInternalController(CommonAreaService commonAreaService) {

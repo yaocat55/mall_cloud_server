@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "内部服务-订单", description = "内部微服务：mall-pay 通过 Feign 调用")
 @RestController
-@RequestMapping("/v1/mobile/trade")
+@RequestMapping("/v1/internal/trade")
 public class OrderInternalController {
     private final OrderService orderService;
     public OrderInternalController(OrderService orderService) { this.orderService = orderService; }

@@ -29,6 +29,6 @@ public interface SmsFeignClient {
      * @return 发送结果
      */
     @Operation(summary = "发送短信验证码", description = "内部Feign调用：由mall-auth发起，发送短信验证码")
-    @PostMapping("/v1/sms/sendSmsCode")
+    @PostMapping("/v1/internal/sms/sendSmsCode")
     void sendSmsCode(@RequestBody @Validated SendCodeDTO sendCodeDTO);
 }
