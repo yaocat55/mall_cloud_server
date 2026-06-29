@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @date 2024-01-08 17:18:18
  */
-@Schema(description = "用户实体")
+@Schema(description = "用户基本信息 DTO")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -32,7 +32,7 @@ public class UserDTO extends BaseEntity {
     /**
      * 头像地址
      */
-    @Schema(description = "头像地址", example = "-")
+    @Schema(description = "头像URL", example = "-")
     private String avatarUrl;
 
     /**
@@ -63,7 +63,7 @@ public class UserDTO extends BaseEntity {
     /**
      * 手机号码
      */
-    @Schema(description = "手机号码", example = "13800138000")
+    @Schema(description = "手机号", example = "13800138000")
     private String phone;
 
     /**
@@ -81,19 +81,19 @@ public class UserDTO extends BaseEntity {
     /**
      * 别名
      */
-    @Schema(description = "别名", example = "-")
+    @Schema(description = "昵称", example = "-")
     private String nickName;
 
     /**
      * 性别 1：男 2：女
      */
-    @Schema(description = "性别 1：男 2：女", example = "1")
+    @Schema(description = "性别：0-未知 1-男 2-女", example = "1")
     private Integer sex;
 
     /**
      * 有效状态 1:有效 0:无效
      */
-    @Schema(description = "有效状态 1:有效 0:无效", example = "1")
+    @Schema(description = "状态：1-启用 0-禁用", example = "1")
     private Boolean validStatus;
 
     /**

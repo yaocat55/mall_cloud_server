@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @date 2024-01-08 17:18:18
  */
-@Tag(name = "角色操作", description = "角色接口")
+@Tag(name = "角色管理", description = "管理后台：角色 CRUD")
 @RestController
 @RequestMapping("/v1/role")
 public class RoleController {

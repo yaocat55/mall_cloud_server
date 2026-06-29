@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
  * 
  * @date 2024-01-08 17:18:18
  */
-@Tag(name = "用户头像操作", description = "用户头像接口")
+@Tag(name = "用户头像管理", description = "管理后台：用户头像上传/更新")
 @RestController
 @RequestMapping("/v1/userAvatar")
 public class UserAvatarController {

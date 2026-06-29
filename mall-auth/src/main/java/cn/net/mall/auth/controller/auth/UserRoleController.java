@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
  * 
  * @date 2024-01-08 17:18:19
  */
-@Tag(name = "用户角色关联操作", description = "用户角色关联接口")
+@Tag(name = "用户角色管理", description = "管理后台：用户角色关联")
 @RestController
 @RequestMapping("/v1/userRole")
 public class UserRoleController {

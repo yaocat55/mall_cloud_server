@@ -165,6 +165,16 @@ public class DeliveryAddressService extends BaseService<DeliveryAddressEntity, D
     }
 
     /**
+     * 根据ID集合批量查询收货地址
+     *
+     * @param ids 收货地址ID集合
+     * @return 收货地址列表
+     */
+    public List<DeliveryAddressEntity> findByIds(List<Long> ids) {
+        return deliveryAddressMapper.findByIds(ids);
+    }
+
+    /**
      * 批量删除收货地址
      *
      * @param ids 系统ID集合

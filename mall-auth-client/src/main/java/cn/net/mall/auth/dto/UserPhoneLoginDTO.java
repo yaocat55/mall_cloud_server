@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
  *
  * @date 2024/11/8 下午3:30
  */
-@Schema(description = "用户手机号登录实体")
+@Schema(description = "手机号登录请求参数")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

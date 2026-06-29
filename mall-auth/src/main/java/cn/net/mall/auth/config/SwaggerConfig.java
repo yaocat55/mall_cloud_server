@@ -8,9 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.ForwardedHeaderFilter;
 
-/**
- * @date 2024/1/8 下午4:45
- */
 @Configuration
 public class SwaggerConfig {
 
@@ -29,7 +26,7 @@ public class SwaggerConfig {
     public GroupedOpenApi authMobileApi() {
         return GroupedOpenApi.builder()
                 .group("mobile")
-                .displayName("移动端接口")
+                .displayName("📱 移动端接口")
                 .packagesToScan("cn.net.mall.auth.controller.mobile")
                 .build();
     }
@@ -38,9 +35,20 @@ public class SwaggerConfig {
     public GroupedOpenApi authAdminApi() {
         return GroupedOpenApi.builder()
                 .group("admin")
-                .displayName("管理后台接口")
+                .displayName("⚙️ 管理后台接口")
                 .packagesToScan("cn.net.mall.auth.controller")
-                .packagesToExclude("cn.net.mall.auth.controller.mobile")
+                .packagesToExclude("cn.net.mall.auth.controller.mobile",
+                                   "cn.net.mall.auth.controller.web",
+                                   "cn.net.mall.auth.controller.internal")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi authInternalApi() {
+        return GroupedOpenApi.builder()
+                .group("internal")
+                .displayName("🔗 内部微服务接口")
+                .packagesToScan("cn.net.mall.auth.controller.internal")
                 .build();
     }
 }

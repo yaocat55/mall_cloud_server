@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 /**
  * @date 2024-01-08 17:18:18
  */
-@Schema(description = "用户修改实体")
+@Schema(description = "更新用户信息请求参数")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -34,13 +34,13 @@ public class UpdateUserDTO {
     /**
      * 别名
      */
-    @Schema(description = "别名", example = "-")
+    @Schema(description = "昵称", example = "-")
     private String nickName;
 
     /**
      * 性别 1：男 2：女
      */
-    @Schema(description = "性别 1：男 2：女", example = "1")
+    @Schema(description = "性别：0-未知 1-男 2-女", example = "1")
     private Integer sex;
 
     /**

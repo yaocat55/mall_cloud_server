@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * 
  * @date 2024-01-08 17:18:18
  */
-@Tag(name = "角色部门关联操作", description = "角色部门关联接口")
+@Tag(name = "角色部门管理", description = "管理后台：角色部门关联")
 @RestController
 @RequestMapping("/v1/roleDept")
 public class RoleDeptController {

@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @date 2024-01-08 17:18:17
  */
-@Tag(name = "岗位操作", description = "岗位接口")
+@Tag(name = "岗位管理", description = "管理后台：岗位 CRUD")
 @RestController
 @RequestMapping("/v1/job")
 public class JobController {

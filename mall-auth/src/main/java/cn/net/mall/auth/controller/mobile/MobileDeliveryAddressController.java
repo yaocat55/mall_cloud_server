@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @date 2024/9/22 上午10:40
  */
-@Tag(name = "web端收货地址操作", description = "web端收货地址操作")
+@Tag(name = "移动端-收货地址", description = "移动端：收货地址管理")
 @RestController
 @RequestMapping("/v1/mobile/deliveryAddress")
 @Validated

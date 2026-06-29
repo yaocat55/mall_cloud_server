@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @date 2024-01-08 17:18:18
  */
-@Tag(name = "菜单操作", description = "菜单接口")
+@Tag(name = "菜单管理", description = "管理后台：菜单权限配置")
 @RestController
 @RequestMapping("/v1/menu")
 public class MenuController {

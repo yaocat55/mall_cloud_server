@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
  * 
  * @date 2024-01-08 17:18:18
  */
-@Tag(name = "角色菜单关联操作", description = "角色菜单关联接口")
+@Tag(name = "角色菜单管理", description = "管理后台：角色菜单权限")
 @RestController
 @RequestMapping("/v1/roleMenu")
 public class RoleMenuController {

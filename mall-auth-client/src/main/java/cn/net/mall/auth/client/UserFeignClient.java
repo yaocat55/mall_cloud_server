@@ -15,7 +15,16 @@ import java.util.List;
 
 import static cn.net.mall.auth.constant.AppConstant.AUTH_SERVICE_NAME;
 
-
+/**
+ * 用户 Feign 客户端
+ * <p>
+ * <b>调用方：</b>
+ * <ul>
+ *   <li>mall-admin-api（管理端 BFF）</li>
+ *   <li>mall-order（订单服务）</li>
+ * </ul>
+ * <b>不对外暴露</b>，仅限服务间 Feign 调用
+ */
 @FeignClient(value = AUTH_SERVICE_NAME)
 public interface UserFeignClient {
 
@@ -25,7 +34,8 @@ public interface UserFeignClient {
      * @param ids 用户ID
      * @return 用户信息
      */
-    @Operation(summary = "通过id查询用户信息", description = "通过id查询用户信息")
+    @Operation(summary = "批量查询用户信息",
+               description = "内部服务：由 mall-admin-api 通过 Feign 调用，根据ID集合批量查询用户信息")
     @GetMapping("/v1/user/findByIds")
     List<UserDTO> findByIds(@RequestBody List<Long> ids);
 
@@ -36,7 +46,8 @@ public interface UserFeignClient {
      * @param phone 手机号
      * @return 用户信息
      */
-    @Operation(summary = "通过手机号查询用户信息", description = "通过手机号查询用户信息")
+    @Operation(summary = "通过手机号查询用户信息",
+               description = "内部服务：由 mall-admin-api 通过 Feign 调用，根据手机号精确查询用户")
     @GetMapping("/v1/user/findByPhone")
     UserDTO findByPhone(@RequestParam String phone);
 
@@ -45,7 +56,8 @@ public interface UserFeignClient {
      *
      * @return 验证码
      */
-    @Operation(summary = "获取动态验证码", description = "获取动态验证码")
+    @Operation(summary = "获取动态验证码",
+               description = "内部服务：获取图形验证码（base64图片），由 mall-admin-api 调用")
     @GetMapping(value = "/v1/web/user/code")
     CaptchaDTO getCode();
 
@@ -55,6 +67,8 @@ public interface UserFeignClient {
      * @param registerDTO 注册信息
      * @return 注册结果
      */
+    @Operation(summary = "用户注册",
+               description = "移动端：用户注册，由 mall-admin-api 通过 Feign 调用")
     @PostMapping("/v1/mobile/user/register")
     UserDTO register(@RequestBody @Validated RegisterDTO registerDTO);
 
@@ -65,7 +79,8 @@ public interface UserFeignClient {
      * @return 影响行数
      */
     @NoLogin
-    @Operation(summary = "用户登录", description = "用户登录")
+    @Operation(summary = "用户登录",
+               description = "Web端：用户账号密码登录，由 mall-admin-api 通过 Feign 调用")
     @PostMapping("/v1/web/user/login")
     TokenDTO login(@Valid @RequestBody UserLoginDTO userLoginDTO);
 
@@ -77,14 +92,16 @@ public interface UserFeignClient {
      * @return 影响行数
      */
     @NoLogin
-    @Operation(summary = "用户手机号登录", description = "用户手机号登录")
+    @Operation(summary = "用户手机号登录",
+               description = "Web端：用户手机号+验证码登录，由 mall-admin-api 通过 Feign 调用")
     @PostMapping("/v1/web/user/loginByPhone")
     TokenDTO loginByPhone(@Valid @RequestBody UserPhoneLoginDTO userPhoneLoginDTO);
 
     /**
      * 重置密码
      */
-    @Operation(summary = "重置密码", description = "重置密码")
+    @Operation(summary = "重置密码",
+               description = "Web端：用户重置密码，由 mall-admin-api 通过 Feign 调用")
     @PostMapping("/v1/web/user/resetPassword")
     boolean resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO);
 
@@ -93,7 +110,8 @@ public interface UserFeignClient {
      *
      * @return 用户信息
      */
-    @Operation(summary = "获取用户信息", description = "获取用户信息")
+    @Operation(summary = "获取用户信息",
+               description = "内部服务：获取当前用户基本信息，由 mall-admin-api 通过 Feign 调用")
     @GetMapping(value = "/v1/web/user/info")
     UserInfoDTO getUserInfo();
 
@@ -102,7 +120,8 @@ public interface UserFeignClient {
      *
      * @return 用户信息
      */
-    @Operation(summary = "获取当前登录的用户详情", description = "获取当前登录的用户详情")
+    @Operation(summary = "获取当前登录的用户详情",
+               description = "内部服务：获取当前登录用户完整详情，由 mall-admin-api 通过 Feign 调用")
     @GetMapping(value = "/v1/web/user/getUserDetail")
     UserDTO getUserDetail();
 
@@ -112,14 +131,16 @@ public interface UserFeignClient {
      * @param userAvatarDTO 用户头像实体
      * @return 用户头像地址
      */
-    @Operation(summary = "更新用户头像", description = "更新用户头像")
+    @Operation(summary = "更新用户头像",
+               description = "内部服务：由 mall-admin-api 通过 Feign 调用，更新用户头像地址")
     @PostMapping("/v1/user/updateAvatar")
     void updateAvatar(@RequestBody @Valid UserAvatarDTO userAvatarDTO);
 
     /**
      * 绑定手机号
      */
-    @Operation(summary = "绑定手机号", description = "绑定手机号")
+    @Operation(summary = "绑定手机号",
+               description = "移动端：用户绑定手机号，由 mall-admin-api 通过 Feign 调用")
     @PostMapping("/v1/mobile/user/bindPhone")
     void bindPhone(@RequestBody @Valid BindPhoneDTO bindPhoneDTO);
 
@@ -128,7 +149,8 @@ public interface UserFeignClient {
      *
      * @param updateUserDTO
      */
-    @Operation(summary = "更新用户信息")
+    @Operation(summary = "更新用户信息",
+               description = "内部服务：更新用户基本信息，由 mall-admin-api 通过 Feign 调用")
     @PostMapping("/v1/web/user/updateUser")
     void updateUser(@RequestBody @Valid UpdateUserDTO updateUserDTO);
 }

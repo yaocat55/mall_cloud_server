@@ -25,7 +25,7 @@ import java.util.Objects;
  *
  * @date 2024/1/9 下午4:58
  */
-@Tag(name = "web用户操作", description = "web用户接口")
+@Tag(name = "Web 用户", description = "管理后台：Web端用户登录、信息管理")
 @RestController
 @RequestMapping("/v1/web/user")
 @Validated

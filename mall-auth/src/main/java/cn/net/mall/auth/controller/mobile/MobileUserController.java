@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
  *
  * @date 2025/5/15 21:18
  */
-@Tag(name = "移动端用户相关接口", description = "移动端用户相关接口")
+@Tag(name = "移动端-用户", description = "移动端：用户注册、登录、信息管理")
 @AllArgsConstructor
 @RestController
 @RequestMapping("/v1/mobile/user")
