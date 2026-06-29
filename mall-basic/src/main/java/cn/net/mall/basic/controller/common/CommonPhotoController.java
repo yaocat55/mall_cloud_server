@@ -17,7 +17,7 @@ import java.util.Objects;
  *
  * @date 2024-07-03 16:43:09
  */
-@Tag(name = "图片操作", description = "图片接口")
+@Tag(name = "图片管理", description = "管理后台：图片资源管理")
 @RestController
 @RequestMapping("/v1/commonPhoto")
 public class CommonPhotoController {

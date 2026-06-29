@@ -20,7 +20,7 @@ import cn.net.mall.basic.dto.AreaDTO;
 
 // ... existing code ...
 
-@Tag(name = "地区接口层", description = "地区接口层")
+@Tag(name = "地区管理", description = "管理后台：地区数据管理")
 @RestController
 @RequestMapping("/v1/commonArea")
 public class CommonAreaController {

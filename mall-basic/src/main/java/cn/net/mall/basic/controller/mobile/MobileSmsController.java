@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @date 2026/1/21 17:00
  */
-@Tag(name = "短信接口", description = "短信接口")
+@Tag(name = "移动端-短信", description = "移动端：短信验证码")
 @RestController
 @RequestMapping("/v1/mobile/sms")
 @RequiredArgsConstructor

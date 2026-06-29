@@ -10,14 +10,20 @@ import org.springframework.web.multipart.MultipartFile;
 import static cn.net.mall.basic.constant.AppConstant.BASIC_SERVICE_NAME;
 
 /**
- * 上传接口
+ * [Service] Feign 客户端
+ * <p>
+ * <b>调用方：</b>
+ * <ul>
+ *   <li>mall-auth（权限服务）— 上传文件/图片</li>
+ *   <li>mall-product（商品服务）— 上传文件/图片</li>
+ * </ul>
  *
  * @date 2025/5/27 17:09
  */
 @FeignClient(value = BASIC_SERVICE_NAME, contextId = "uploadFeignClient")
 public interface UploadFeignClient {
 
-    @Operation(summary = "上传图片接口", description = "上传图片接口")
+    @Operation(summary = "上传图片接口", description = "内部Feign调用：上传图片至文件服务器")
     @PostMapping(value = "/v1/image/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     FileDTO imageUpload(MultipartFile file) throws Exception;
 }

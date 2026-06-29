@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @date 2024-05-18 21:09:00
  */
-@Tag(name = "敏感词操作", description = "敏感词接口")
+@Tag(name = "敏感词管理", description = "管理后台：敏感词过滤配置")
 @RestController
 @RequestMapping("/v1/commonSensitiveWord")
 public class CommonSensitiveWordController {

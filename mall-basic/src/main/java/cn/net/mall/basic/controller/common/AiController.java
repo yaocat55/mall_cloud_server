@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @date 2025-02-07 11:43:55
  */
-@Tag(name = "AI接口层", description = "AI接口层")
+@Tag(name = "AI 服务", description = "管理后台：AI 相关接口")
 @RestController
 @RequestMapping("/v1/ai")
 public class AiController {

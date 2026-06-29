@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @date 2024-04-30 15:09:07
  */
-@Tag(name = "定时任务执行日志操作", description = "定时任务执行日志接口")
+@Tag(name = "定时任务日志", description = "管理后台：任务执行日志查询")
 @RestController
 @RequestMapping("/v1/commonJobLog")
 public class CommonJobLogController {

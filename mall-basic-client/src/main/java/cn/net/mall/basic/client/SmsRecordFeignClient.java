@@ -10,7 +10,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import static cn.net.mall.basic.constant.AppConstant.BASIC_SERVICE_NAME;
 
 /**
- * 查询短信发送记录
+ * [Service] Feign 客户端
+ * <p>
+ * <b>调用方：</b>
+ * <ul>
+ *   <li>mall-auth（权限服务）— 查询短信发送记录</li>
+ * </ul>
  *
  * @date 2025/5/17 12:24
  */
@@ -23,7 +28,7 @@ public interface SmsRecordFeignClient {
      * @param smsRecordConditionDTO 查询条件
      * @return 短信发送记录
      */
-    @Operation(summary = "查询短信发送记录", description = "查询短信发送记录")
+    @Operation(summary = "查询短信发送记录", description = "内部Feign调用：由mall-auth发起，查询短信发送记录")
     @PostMapping(value = "/v1/commonSmsRecord/findSmsRecord")
     SmsRecordDTO findSmsRecord(@RequestBody SmsRecordConditionDTO smsRecordConditionDTO);
 }

@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @date 2024-07-03 16:43:09
  */
-@Tag(name = "图片分组操作", description = "图片分组接口")
+@Tag(name = "图片分组管理", description = "管理后台：图片分组管理")
 @RestController
 @RequestMapping("/v1/commonPhotoGroup")
 public class CommonPhotoGroupController {

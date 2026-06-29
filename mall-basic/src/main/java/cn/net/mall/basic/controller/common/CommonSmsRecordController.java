@@ -1,15 +1,11 @@
 package cn.net.mall.basic.controller.common;
 
-import cn.net.mall.annotation.NoLogin;
-import cn.net.mall.basic.dto.SmsRecordConditionDTO;
-import cn.net.mall.basic.dto.SmsRecordDTO;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.basic.entity.common.CommonSmsRecordConditionEntity;
 import cn.net.mall.basic.entity.common.CommonSmsRecordEntity;
 import cn.net.mall.basic.service.common.CommonSmsRecordService;
 import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.constraints.NotNull;
@@ -21,6 +17,7 @@ import java.util.List;
  *
  * @date 2024-11-08 13:03:15
  */
+@Tag(name = "短信记录管理", description = "管理后台：短信发送记录查询")
 @RestController
 @RequestMapping("/v1/commonSmsRecord")
 public class CommonSmsRecordController {
@@ -31,19 +28,6 @@ public class CommonSmsRecordController {
         this.commonSmsRecordService = commonSmsRecordService;
     }
 
-
-    /**
-     * 查询短信发送记录
-     *
-     * @param smsRecordConditionDTO 查询条件
-     * @return 短信发送记录
-     */
-    @NoLogin
-    @Operation(summary = "查询短信发送记录", description = "查询短信发送记录")
-    @PostMapping(value = "/findSmsRecord")
-    public SmsRecordDTO findSmsRecord(@RequestBody @Validated SmsRecordConditionDTO smsRecordConditionDTO) {
-        return commonSmsRecordService.findSmsRecord(smsRecordConditionDTO);
-    }
 
     /**
      * 通过id查询短信发送记录信息

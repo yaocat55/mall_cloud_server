@@ -21,7 +21,7 @@ public class SwaggerConfig {
     public GroupedOpenApi basicMobileApi() {
         return GroupedOpenApi.builder()
                 .group("mobile")
-                .displayName("移动端接口")
+                .displayName("📱 移动端接口")
                 .packagesToScan("cn.net.mall.basic.controller.mobile")
                 .build();
     }
@@ -30,9 +30,19 @@ public class SwaggerConfig {
     public GroupedOpenApi basicAdminApi() {
         return GroupedOpenApi.builder()
                 .group("admin")
-                .displayName("管理后台接口")
+                .displayName("⚙️ 管理后台接口")
                 .packagesToScan("cn.net.mall.basic.controller")
-                .packagesToExclude("cn.net.mall.basic.controller.mobile")
+                .packagesToExclude("cn.net.mall.basic.controller.mobile",
+                                   "cn.net.mall.basic.controller.internal")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi basicInternalApi() {
+        return GroupedOpenApi.builder()
+                .group("internal")
+                .displayName("🔗 内部微服务接口")
+                .packagesToScan("cn.net.mall.basic.controller.internal")
                 .build();
     }
 }

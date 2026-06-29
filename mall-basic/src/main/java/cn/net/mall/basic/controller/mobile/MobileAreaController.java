@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @date 2024-10-04
  */
-@Tag(name = "地区接口", description = "地区接口")
+@Tag(name = "移动端-地区", description = "移动端：省市区数据")
 @RestController
 @RequestMapping("/v1/mobile/area")
 @RequiredArgsConstructor

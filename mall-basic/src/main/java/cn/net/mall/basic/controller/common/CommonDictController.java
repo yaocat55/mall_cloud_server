@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @date 2024-03-21 18:50:46
  */
-@Tag(name = "数据字典操作", description = "数据字典接口")
+@Tag(name = "字典管理", description = "管理后台：数据字典配置")
 @RestController
 @RequestMapping("/v1/dict")
 public class CommonDictController {

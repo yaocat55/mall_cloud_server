@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @date 2024-04-30 15:09:06
  */
-@Tag(name = "定时任务操作", description = "定时任务接口")
+@Tag(name = "定时任务管理", description = "管理后台：定时任务配置")
 @RestController
 @RequestMapping("/v1/commonJob")
 public class CommonJobController {

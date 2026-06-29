@@ -27,7 +27,7 @@ import static cn.net.mall.basic.service.upload.UploadService.IMAGE;
  */
 @AllArgsConstructor
 @Slf4j
-@Tag(name = "文件上传", description = "文件上传")
+@Tag(name = "文件上传", description = "管理后台：文件上传/下载")
 @RestController
 @RequestMapping("/v1")
 public class UploadController {
