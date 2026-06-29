@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "消息通知", description = "消息通知接口")
+@Tag(name = "消息通知管理", description = "管理后台：站内通知推送")
 @RestController
 @RequestMapping("/v1/message/notify")
 public class MessageNotifyController {

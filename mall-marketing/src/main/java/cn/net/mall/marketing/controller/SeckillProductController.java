@@ -18,7 +18,7 @@ import java.util.List;
  * @date 2024-07-08 10:57:31
  */
 @AllArgsConstructor
-@Tag(name = "秒杀商品操作", description = "秒杀商品操作")
+@Tag(name = "秒杀管理", description = "管理后台：秒杀商品配置")
 @RestController
 @RequestMapping("/v1/seckillProduct")
 public class SeckillProductController {

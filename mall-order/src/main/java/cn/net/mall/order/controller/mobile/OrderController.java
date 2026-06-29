@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/v1/mobile/trade")
-@Tag(name = "订单控制层")
+@Tag(name = "移动端-订单", description = "移动端：订单查询、创建、支付确认")
 @RequiredArgsConstructor
 public class OrderController {
 
@@ -249,17 +249,6 @@ public class OrderController {
         orderService.evaluate(evaluateDTO);
     }
 
-    @PostMapping("/create")
-    @Operation(summary = "创建订单")
-    public Long create(@RequestBody OrderDTO orderDTO) {
-        OrderEntity entity = new OrderEntity();
-        BeanUtil.copyProperties(orderDTO, entity);
-        if (orderDTO.getPayAmount() != null) {
-            entity.setPaymentAmount(orderDTO.getPayAmount());
-        }
-        return orderService.createOrder(entity);
-    }
-
     @PostMapping("/getTradeItem")
     @Operation(summary = "获取订单明细")
     public TradeItemDTO getTradeItem(@RequestBody TradeItemReqDTO req) {
@@ -277,13 +266,5 @@ public class OrderController {
     public TradeDetailDTO getDetail(@Parameter(description = "订单编码")
     @PathVariable("code") String code) {
         return orderService.getDetailByCode(code);
-    }
-
-
-    @GetMapping("/getTrade/{code}")
-    @Operation(summary = "根据code查询订单")
-    public OrderDTO getTrade(@Parameter(description = "订单编码")
-    @PathVariable("code") String code) {
-        return orderService.getTradeByCode(code);
     }
 }

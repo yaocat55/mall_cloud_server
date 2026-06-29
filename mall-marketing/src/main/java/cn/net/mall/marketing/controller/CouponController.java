@@ -4,14 +4,12 @@ import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.marketing.entity.CouponConditionEntity;
 import cn.net.mall.marketing.entity.CouponEntity;
 import cn.net.mall.marketing.entity.web.CouponWebEntity;
-import cn.net.mall.marketing.entity.web.OrderPriceCalculateReq;
 import cn.net.mall.marketing.dto.CouponReceiveDTO;
 import cn.net.mall.marketing.service.CouponService;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -22,6 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/v1/coupon")
+@Tag(name = "优惠券管理", description = "管理后台：优惠券配置、发放")
 public class CouponController {
 
 	private final CouponService couponService;
@@ -100,27 +99,6 @@ public class CouponController {
     @GetMapping("/getUserCouponList")
     public List<CouponWebEntity> getUserCouponList() {
         return couponService.getUserCouponList();
-    }
-
-    /**
-     * 计算订单价格
-     *
-     * @param req 请求参数
-     * @return 价格列表
-     */
-    @PostMapping("/calculateOrderPrice")
-    public List<BigDecimal> calculateOrderPrice(@RequestBody OrderPriceCalculateReq req) {
-        return couponService.calculateOrderPrice(req);
-    }
-
-    /**
-     * 核销优惠券
-     *
-     * @param couponIds 优惠券ID集合
-     */
-    @PostMapping("/useCoupons")
-    public void useCoupons(@RequestBody List<Long> couponIds) {
-        couponService.useCoupons(couponIds);
     }
 
     /**

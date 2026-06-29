@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Tag(name = "web推荐操作", description = "web推荐操作")
+@Tag(name = "移动端-推荐", description = "移动端：商品推荐列表")
 @RestController
 @RequestMapping("/v1/mobile/recommend")
 @Validated

@@ -21,7 +21,7 @@ import jakarta.validation.Valid;
 /**
  * 支付操作
  */
-@Tag(name = "支付操作")
+@Tag(name = "移动端-支付", description = "移动端：支付、二维码生成")
 @RestController
 @RequestMapping("/v1/mobile/pay")
 @Validated
