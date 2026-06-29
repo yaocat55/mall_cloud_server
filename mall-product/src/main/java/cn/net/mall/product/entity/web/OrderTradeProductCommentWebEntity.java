@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @date 2024/10/25 上午10:11
  */
-@Schema(name = "订单商品评价实体")
+@Schema(description = "订单商品评价实体")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

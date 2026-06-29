@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @date 2024-05-09 14:43:55
  */
-@Tag(name = "单位操作", description = "单位接口")
+@Tag(name = "单位管理", description = "管理后台：商品单位配置")
 @RestController
 @RequestMapping("/v1/unit")
 public class UnitController {

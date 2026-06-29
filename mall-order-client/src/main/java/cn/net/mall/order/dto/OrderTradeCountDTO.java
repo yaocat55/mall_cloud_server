@@ -13,15 +13,15 @@ import java.io.Serializable;
 public class OrderTradeCountDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "待付款数量")
+    @Schema(description = "待付款数量", example = "0")
     private Integer toPayCount;
 
-    @Schema(description = "待发货数量")
+    @Schema(description = "待发货数量", example = "0")
     private Integer toDeliveryCount;
 
-    @Schema(description = "待收货数量")
+    @Schema(description = "待收货数量", example = "0")
     private Integer toReceiveCount;
 
-    @Schema(description = "待评价数量")
+    @Schema(description = "待评价数量", example = "0")
     private Integer toCommentCount;
 }

@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @date 2024-05-09 14:43:55
  */
-@Tag(name = "属性操作", description = "属性操作")
+@Tag(name = "商品属性管理", description = "管理后台：商品属性配置")
 @RestController
 @RequestMapping("/v1/attribute")
 public class AttributeController {

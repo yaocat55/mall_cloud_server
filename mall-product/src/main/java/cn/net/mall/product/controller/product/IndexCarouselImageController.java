@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @date 2024-08-21 18:34:11
  */
-@Tag(name = "首页轮播图操作", description = "首页轮播图接口")
+@Tag(name = "首页轮播图管理", description = "管理后台：首页轮播图配置")
 @AllArgsConstructor
 @RestController
 @RequestMapping("/v1/indexCarouselImage")

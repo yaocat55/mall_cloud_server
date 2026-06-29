@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
  *
  * @date 2024-07-03 16:43:09
  */
-@Schema(name = "图片实体")
+@Schema(description = "图片实体")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -21,18 +21,18 @@ public class CommonPhotoEntity extends BaseEntity {
     /**
      * 图片分组ID
      */
-    @Schema(name = "图片分组ID")
+    @Schema(description = "图片分组ID", example = "0")
     private Long photoGroupId;
 
     /**
      * 图片名称
      */
-    @Schema(name = "图片名称")
+    @Schema(description = "图片名称", example = "测试数据")
     private String name;
 
     /**
      * 图片url
      */
-    @Schema(name = "图片url")
+    @Schema(description = "图片url", example = "https://example.com/image.png")
     private String url;
 }

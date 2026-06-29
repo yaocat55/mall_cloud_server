@@ -7,6 +7,7 @@ import cn.net.mall.product.dto.CategoryDTO;
 import cn.net.mall.product.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +22,7 @@ import java.util.List;
  *
  * @date 2024/11/1 下午4:40
  */
-@Tag(name = "移动端分类相关接口", description = "移动端分类相关接口")
+@Tag(name = "移动端-商品分类", description = "移动端：商品分类浏览")
 @AllArgsConstructor
 @RestController
 @RequestMapping("/v1/mobile/category")
@@ -41,7 +42,8 @@ public class MobileCategoryController {
     @NoLogin
     @Operation(summary = "根据父分类ID查询分类列表", description = "根据父分类ID查询分类列表")
     @GetMapping("/getCategoryByParentId")
-    public List<CategoryDTO> getCategoryByParentId(@RequestParam("parentId") Long parentId) {
+    public List<CategoryDTO> getCategoryByParentId(@Parameter(description = "父分类ID")
+    @RequestParam("parentId") Long parentId) {
         List<CategoryDTO> result = mobileCacheService.getCategoryList(parentId);
         if (result != null) {
             return result;

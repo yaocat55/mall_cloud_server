@@ -14,6 +14,7 @@ import cn.net.mall.product.service.ProductService;
 import cn.net.mall.product.service.shopping.ShoppingCartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -27,7 +28,7 @@ import cn.net.mall.product.cache.MobileCacheService;
  *
  * @date 2025/6/16 14:50
  */
-@Tag(name = "移动端商品相关接口", description = "移动端商品相关接口")
+@Tag(name = "移动端-商品详情", description = "移动端：商品详情、评价、收藏")
 @AllArgsConstructor
 @RestController
 @RequestMapping("/v1/mobile/product")
@@ -79,7 +80,8 @@ public class MobileProductController {
     @NoLogin
     @Operation(summary = "获取商品详情", description = "获取商品详情")
     @GetMapping("/getDetail")
-    public ProductDetailInfoDTO getDetail(@RequestParam("productId") Long productId) {
+    public ProductDetailInfoDTO getDetail(@Parameter(description = "商品ID")
+    @RequestParam("productId") Long productId) {
         return BeanUtil.toBean(productService.getDetail(productId), ProductDetailInfoDTO.class);
     }
 

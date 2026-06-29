@@ -18,6 +18,6 @@ public class OrderCouponDTO implements Serializable {
     @Schema(description = "不可使用优惠券列表")
     private List<CouponDTO> unCanUseCouponList;
 
-    @Schema(description = "优惠券总数量")
+    @Schema(description = "优惠券总数量", example = "0")
     private int totalCount;
 }

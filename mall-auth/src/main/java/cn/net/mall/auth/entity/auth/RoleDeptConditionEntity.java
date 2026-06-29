@@ -9,7 +9,7 @@ import lombok.Data;
  * 
  * @date 2024-01-08 17:18:18
  */
-@Schema(name = "角色部门关联查询条件实体")
+@Schema(description = "角色部门关联查询条件实体")
 @Data
 public class RoleDeptConditionEntity extends RequestPageEntity {
 	
@@ -17,18 +17,18 @@ public class RoleDeptConditionEntity extends RequestPageEntity {
 	/**
 	 *  ID
      */
-	@Schema(name = "ID")
+	@Schema(description = "ID", example = "1")
 	private Long id;
 
 	/**
 	 *  
      */
-	@Schema(name = "")
+	@Schema(description = "", example = "1")
 	private Long roleId;
 
 	/**
 	 *  
      */
-	@Schema(name = "")
+	@Schema(description = "", example = "1")
 	private Long deptId;
 }

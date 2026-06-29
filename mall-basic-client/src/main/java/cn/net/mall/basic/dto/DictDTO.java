@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @date 2024-03-21 18:50:46
  */
-@Schema(name = "数据字典实体")
+@Schema(description = "数据字典实体")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -23,24 +23,24 @@ public class DictDTO extends BaseEntity {
     /**
      * 父字段ID
      */
-    @Schema(name = "父字段ID")
+    @Schema(description = "父字段ID", example = "0")
     private Long parentId;
 
     /**
      * 字典名称
      */
-    @Schema(name = "字典名称")
+    @Schema(description = "字典名称", example = "-")
     private String dictName;
 
     /**
      * 字典描述
      */
-    @Schema(name = "字典描述")
+    @Schema(description = "字典描述", example = "-")
     private String dictDescription;
 
     /**
      * 字典详情
      */
-    @Schema(name = "字典详情")
+    @Schema(description = "字典详情")
     private List<DictDetailDTO> detailList;
 }

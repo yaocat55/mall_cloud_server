@@ -9,29 +9,29 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-@Schema(name = "订单价格计算请求DTO")
+@Schema(description = "订单价格计算请求DTO")
 public class OrderPriceCalculateReqDTO {
 
-    @Schema(name = "商品列表")
+    @Schema(description = "商品列表")
     private List<Item> items;
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Item {
-        @Schema(name = "skuID")
+        @Schema(description = "skuID", example = "0")
         private Long skuId;
 
-        @Schema(name = "商品ID")
+        @Schema(description = "商品ID", example = "1")
         private Long productId;
 
-        @Schema(name = "商品原价")
+        @Schema(description = "商品原价", example = "99.99")
         private BigDecimal price;
 
-        @Schema(name = "商品数量")
+        @Schema(description = "商品数量", example = "0")
         private Integer count;
         
-        @Schema(name = "使用的优惠券ID")
+        @Schema(description = "使用的优惠券ID", example = "1")
         private Long couponId;
     }
 }

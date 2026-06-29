@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
  *
  * @date 2024-05-09 14:43:56
  */
-@Schema(name = "商品图片实体")
+@Schema(description = "商品图片实体")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -21,30 +21,30 @@ public class ProductPhotoEntity extends BaseEntity {
     /**
      * 商品ID
      */
-    @Schema(name = "商品ID")
+    @Schema(description = "商品ID", example = "1")
     private Long productId;
 
     /**
      * 图片名称
      */
-    @Schema(name = "图片名称")
+    @Schema(description = "图片名称", example = "测试数据")
     private String name;
 
     /**
      * 图片url
      */
-    @Schema(name = "图片url")
+    @Schema(description = "图片url", example = "https://example.com/image.png")
     private String url;
 
     /**
      * 排序
      */
-    @Schema(name = "排序")
+    @Schema(description = "排序", example = "1")
     private Integer sort;
 
     /**
      * 图片类型 1：封面 2：轮播图
      */
-    @Schema(name = "图片类型")
+    @Schema(description = "图片类型", example = "1")
     private Integer type;
 }

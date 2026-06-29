@@ -4,7 +4,7 @@ import cn.net.mall.entity.RequestConditionEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-@Schema(name = "商品浏览记录查询条件DTO")
+@Schema(description = "商品浏览记录查询条件DTO")
 @Data
 public class ProductViewRecordConditionDTO extends RequestConditionEntity {
     /**

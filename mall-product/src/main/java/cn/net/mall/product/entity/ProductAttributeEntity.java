@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
  *
  * @date 2024-05-09 14:43:56
  */
-@Schema(name = "商品属性实体")
+@Schema(description = "商品属性实体")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -21,18 +21,18 @@ public class ProductAttributeEntity extends BaseEntity {
     /**
      * 商品ID
      */
-    @Schema(name = "商品ID")
+    @Schema(description = "商品ID", example = "1")
     private Long productId;
 
     /**
      * 属性ID
      */
-    @Schema(name = "属性ID")
+    @Schema(description = "属性ID", example = "0")
     private Long attributeId;
 
     /**
      * 属性值ID
      */
-    @Schema(name = "属性值ID")
+    @Schema(description = "属性值ID", example = "0")
     private Long attributeValueId;
 }

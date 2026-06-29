@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
  *
  * @date 2024-05-18 21:09:00
  */
-@Schema(name = "敏感词实体")
+@Schema(description = "敏感词实体")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -21,12 +21,12 @@ public class CommonSensitiveWordEntity extends BaseEntity {
     /**
      * 类型 1:广告 2:政治 3：违法 4：色情 5：网址
      */
-    @Schema(name = "类型 1:广告 2:政治 3：违法 4：色情 5：网址")
+    @Schema(description = "类型 1:广告 2:政治 3：违法 4：色情 5：网址", example = "1")
     private Integer type;
 
     /**
      * 名称
      */
-    @Schema(name = "名称")
+    @Schema(description = "名称", example = "-")
     private String word;
 }

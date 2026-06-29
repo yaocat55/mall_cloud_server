@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
  *
  * @date 2024-01-29 17:31:17
  */
-@Schema(name = "任务实体")
+@Schema(description = "任务实体")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -21,31 +21,31 @@ public class CommonTaskEntity extends BaseEntity {
     /**
      * 任务名称
      */
-    @Schema(name = "任务名称")
+    @Schema(description = "任务名称", example = "测试数据")
     private String name;
 
     /**
      * 下载文件地址
      */
-    @Schema(name = "下载文件地址")
+    @Schema(description = "下载文件地址", example = "-")
     private String fileUrl;
 
     /**
      * 任务类型 1：通用excel导出
      */
-    @Schema(name = "任务类型 1：通用excel导出 2：发邮件")
+    @Schema(description = "任务类型 1：通用excel导出 2：发邮件", example = "1")
     private Integer type;
 
     /**
      * 执行状态 0：待执行 1：执行中 2：成功 3：失败
      */
-    @Schema(name = "执行状态 0：待执行 1：执行中 2：成功 3：失败")
+    @Schema(description = "执行状态 0：待执行 1：执行中 2：成功 3：失败", example = "1")
     private Integer status;
 
     /**
      * 失败次数
      */
-    @Schema(name = "失败次数")
+    @Schema(description = "失败次数", example = "0")
     private Integer failureCount;
 
     /**
@@ -56,12 +56,12 @@ public class CommonTaskEntity extends BaseEntity {
      * 任务类型时发邮件时
      * 1：异地登录
      */
-    @Schema(name = "业务类型 1：菜单 2：部门 3：角色 4：用户")
+    @Schema(description = "业务类型 1：菜单 2：部门 3：角色 4：用户", example = "0")
     private Integer bizType;
 
     /**
      * 请求参数
      */
-    @Schema(name = "请求参数")
+    @Schema(description = "请求参数", example = "-")
     private String requestParam;
 }

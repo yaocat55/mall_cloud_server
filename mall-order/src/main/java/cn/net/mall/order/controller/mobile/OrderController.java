@@ -13,6 +13,7 @@ import cn.net.mall.order.service.OrderService;
 import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,7 +40,8 @@ public class OrderController {
 
     @GetMapping("/getProductCommentByTradeCode/{code}")
     @Operation(summary = "根据订单编码获取商品评价列表")
-    public List<OrderProductCommentViewDTO> getProductCommentByTradeCode(@PathVariable("code") String code) {
+    public List<OrderProductCommentViewDTO> getProductCommentByTradeCode(@Parameter(description = "订单编码")
+    @PathVariable("code") String code) {
         return orderService.getProductCommentByTradeCode(code);
     }
 
@@ -51,7 +53,8 @@ public class OrderController {
      */
     @GetMapping("/detail/{id}")
     @Operation(summary = "根据ID查询订单")
-    public OrderDTO detail(@PathVariable("id") Long id) {
+    public OrderDTO detail(@Parameter(description = "订单ID")
+    @PathVariable("id") Long id) {
         OrderEntity entity = orderService.findById(id);
         if (entity == null) {
             return null;
@@ -271,14 +274,16 @@ public class OrderController {
 
     @GetMapping("/getDetail/{code}")
     @Operation(summary = "根据code查询订单详情")
-    public TradeDetailDTO getDetail(@PathVariable("code") String code) {
+    public TradeDetailDTO getDetail(@Parameter(description = "订单编码")
+    @PathVariable("code") String code) {
         return orderService.getDetailByCode(code);
     }
 
 
     @GetMapping("/getTrade/{code}")
     @Operation(summary = "根据code查询订单")
-    public OrderDTO getTrade(@PathVariable("code") String code) {
+    public OrderDTO getTrade(@Parameter(description = "订单编码")
+    @PathVariable("code") String code) {
         return orderService.getTradeByCode(code);
     }
 }

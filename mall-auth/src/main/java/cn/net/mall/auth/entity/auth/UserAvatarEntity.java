@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
  * 
  * @date 2024-01-08 17:18:18
  */
-@Schema(name = "用户头像实体")
+@Schema(description = "用户头像实体")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -21,18 +21,18 @@ public class UserAvatarEntity extends BaseEntity {
 	/**
 	 * 文件名
 	 */
-	@Schema(name = "文件名")
+	@Schema(description = "文件名", example = "-")
 	private String fileName;
 
 	/**
 	 * 路径
 	 */
-	@Schema(name = "路径")
+	@Schema(description = "路径", example = "-")
 	private String path;
 
 	/**
 	 * 大小
 	 */
-	@Schema(name = "大小")
+	@Schema(description = "大小", example = "-")
 	private String fileSize;
 }

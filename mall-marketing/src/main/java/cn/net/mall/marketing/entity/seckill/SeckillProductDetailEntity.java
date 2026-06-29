@@ -7,13 +7,13 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Schema(name = "秒杀商品详情实体")
+@Schema(description = "秒杀商品详情实体")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class SeckillProductDetailEntity extends ESSeckillProductEntity {
 
-    @Schema(name = "商品详情")
+    @Schema(description = "商品详情", example = "-")
     private String detail;
 
     private List<String> swiper;

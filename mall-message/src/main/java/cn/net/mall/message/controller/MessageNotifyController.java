@@ -7,6 +7,7 @@ import cn.net.mall.message.service.CommonNotifyService;
 import cn.net.mall.message.service.MessagePushService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,8 @@ public class MessageNotifyController {
 
     @Operation(summary = "通过id查询通知信息", description = "通过id查询通知信息")
     @GetMapping("/findById")
-    public CommonNotifyEntity findById(@RequestParam("id") Long id) {
+    public CommonNotifyEntity findById(@Parameter(description = "通知ID")
+    @RequestParam("id") Long id) {
         return commonNotifyService.findById(id);
     }
 
@@ -53,9 +55,12 @@ public class MessageNotifyController {
 
     @Operation(summary = "测试推送通知", description = "测试推送通知")
     @GetMapping("/test/push")
-    public void testPush(@RequestParam(value = "toUserId", required = false) Long toUserId,
-                         @RequestParam(value = "title", required = false) String title,
-                         @RequestParam(value = "content", required = false) String content) {
+    public void testPush(@Parameter(description = "目标用户ID")
+    @RequestParam(value = "toUserId", required = false) Long toUserId,
+                         @Parameter(description = "推送标题")
+    @RequestParam(value = "title", required = false) String title,
+                         @Parameter(description = "推送内容")
+    @RequestParam(value = "content", required = false) String content) {
         CommonNotifyEntity notify = new CommonNotifyEntity();
         notify.setTitle(StringUtils.hasText(title) ? title : DEFAULT_TEST_TITLE);
         notify.setContent(StringUtils.hasText(content) ? content : DEFAULT_TEST_CONTENT);

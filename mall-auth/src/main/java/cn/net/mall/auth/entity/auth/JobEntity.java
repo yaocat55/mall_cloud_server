@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
  *
  * @date 2024-01-08 17:18:17
  */
-@Schema(name = "岗位实体")
+@Schema(description = "岗位实体")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -21,24 +21,24 @@ public class JobEntity extends BaseEntity {
     /**
      * 岗位名称
      */
-    @Schema(name = "岗位名称")
+    @Schema(description = "岗位名称", example = "测试数据")
     private String name;
 
     /**
      * 岗位排序
      */
-    @Schema(name = "岗位排序")
+    @Schema(description = "岗位排序", example = "1")
     private Integer sort;
 
     /**
      * 部门ID
      */
-    @Schema(name = "部门ID")
+    @Schema(description = "部门ID", example = "1")
     private Long deptId;
 
     /**
      * 有效状态 1:有效 0:无效
      */
-    @Schema(name = "有效状态 1:有效 0:无效")
+    @Schema(description = "有效状态 1:有效 0:无效", example = "1")
     private Boolean validStatus;
 }

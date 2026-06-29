@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 /**
  * @date 2024-01-08 17:18:18
  */
-@Schema(name = "用户修改实体")
+@Schema(description = "用户修改实体")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -22,31 +22,31 @@ public class UpdateUserDTO {
      * 系统ID
      */
     @NotNull(message = "系统ID不能为空")
-    @Schema(name = "系统ID")
+    @Schema(description = "系统ID", example = "1")
     private Long id;
 
     /**
      * 邮箱
      */
-    @Schema(name = "邮箱")
+    @Schema(description = "邮箱", example = "admin@mall.com")
     private String email;
 
     /**
      * 别名
      */
-    @Schema(name = "别名")
+    @Schema(description = "别名", example = "-")
     private String nickName;
 
     /**
      * 性别 1：男 2：女
      */
-    @Schema(name = "性别 1：男 2：女")
+    @Schema(description = "性别 1：男 2：女", example = "1")
     private Integer sex;
 
     /**
      * 生日
      */
-    @Schema(name = "生日")
+    @Schema(description = "生日", example = "-")
     private String birthday;
 }
 

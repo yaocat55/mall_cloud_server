@@ -8,6 +8,7 @@ import cn.net.mall.auth.service.auth.MenuService;
 import cn.net.mall.entity.ResponsePageEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.web.bind.annotation.*;
 
@@ -73,7 +74,8 @@ public class MenuController {
      */
     @Operation(summary = "获取下级菜单", description = "获取下级菜单")
     @GetMapping("/getChild")
-    public List<Long> getChild(@RequestParam("id") Long id) {
+    public List<Long> getChild(@Parameter(description = "菜单ID")
+    @RequestParam("id") Long id) {
         return menuService.getChild(id);
     }
 

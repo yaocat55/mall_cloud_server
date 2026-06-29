@@ -23,6 +23,6 @@ public class CouponUserProvideEntity extends CouponUserEntity {
     /**
      * 已领取数量
      */
-    @Schema(name = "已领取数量")
+    @Schema(description = "已领取数量", example = "0")
     private Integer receiveCount;
 }

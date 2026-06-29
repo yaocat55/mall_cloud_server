@@ -6,6 +6,7 @@ import cn.net.mall.exception.BusinessException;
 import cn.net.mall.basic.service.upload.UploadService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -35,7 +36,8 @@ public class UploadController {
 
     @Operation(summary = "批量上传图片接口", description = "批量上传图片接口")
     @PostMapping(value = "/image/batchUpload")
-    public FileDTO batchUpload(@RequestParam("file") MultipartFile[] files) {
+    public FileDTO batchUpload(@Parameter(description = "上传文件")
+    @RequestParam("file") MultipartFile[] files) {
         try {
             return uploadService.batchUpload(files);
         } catch (Exception e) {

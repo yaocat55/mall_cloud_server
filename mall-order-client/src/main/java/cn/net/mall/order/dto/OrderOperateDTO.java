@@ -13,6 +13,6 @@ import java.io.Serializable;
 public class OrderOperateDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "订单编码")
+    @Schema(description = "订单编码", example = "TC202401010001")
     private String tradeCode;
 }

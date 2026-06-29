@@ -11,14 +11,14 @@ import java.util.List;
 /**
  * 订单明细查询条件实体
  */
-@Schema(name = "订单明细查询条件实体")
+@Schema(description = "订单明细查询条件实体")
 @Data
 public class OrderItemConditionEntity extends RequestConditionEntity {
 
 	/**
 	 *  ID
      */
-	@Schema(name = "ID")
+	@Schema(description = "ID", example = "1")
 	private Long id;
 
     public Long getId() {
@@ -32,7 +32,7 @@ public class OrderItemConditionEntity extends RequestConditionEntity {
 	/**
 	 *  订单ID
      */
-	@Schema(name = "订单ID")
+	@Schema(description = "订单ID", example = "1")
 	private Long orderId;
 
     public Long getOrderId() {
@@ -46,7 +46,7 @@ public class OrderItemConditionEntity extends RequestConditionEntity {
 	/**
 	 *  订单编码
 	 */
-	@Schema(name = "订单编码")
+	@Schema(description = "订单编码", example = "-")
 	private String orderCode;
 
     public String getOrderCode() {
@@ -60,7 +60,7 @@ public class OrderItemConditionEntity extends RequestConditionEntity {
 	/**
 	 *  订单ID集合
 	 */
-	@Schema(name = "订单ID集合")
+	@Schema(description = "订单ID集合", example = "0")
 	private List<Long> orderIdList;
 
     public List<Long> getOrderIdList() {
@@ -74,54 +74,54 @@ public class OrderItemConditionEntity extends RequestConditionEntity {
 	/**
 	 *  商品ID
      */
-	@Schema(name = "商品ID")
+	@Schema(description = "商品ID", example = "1")
 	private Long productId;
 
 	/**
 	 *  商品名称
      */
-	@Schema(name = "商品名称")
+	@Schema(description = "商品名称", example = "-")
 	private String productName;
 
 	/**
 	 *  商品规格
      */
-	@Schema(name = "商品规格")
+	@Schema(description = "商品规格", example = "型号")
 	private String model;
 
 	/**
 	 *  单价
      */
-	@Schema(name = "单价")
+	@Schema(description = "单价", example = "99.99")
 	private BigDecimal price;
 
 	/**
 	 *  数量
      */
-	@Schema(name = "数量")
+	@Schema(description = "数量", example = "10")
 	private Integer quantity;
 
 	/**
 	 *  金额
      */
-	@Schema(name = "金额")
+	@Schema(description = "金额", example = "99.99")
 	private BigDecimal amount;
 
 	/**
 	 *  创建人ID
      */
-	@Schema(name = "创建人ID")
+	@Schema(description = "创建人ID", example = "1")
 	private Long createUserId;
 
 	/**
 	 *  创建人名称
      */
-	@Schema(name = "创建人名称")
+	@Schema(description = "创建人名称", example = "admin")
 	private String createUserName;
 
 	/**
 	 *  创建日期
      */
-	@Schema(name = "创建日期")
+	@Schema(description = "创建日期", example = "2024-01-01 00:00:00")
 	private Date createTime;
 }

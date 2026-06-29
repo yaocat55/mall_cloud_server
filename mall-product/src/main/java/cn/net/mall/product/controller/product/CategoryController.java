@@ -18,7 +18,7 @@ import java.util.List;
  *
  * @date 2024-05-09 14:43:55
  */
-@Tag(name = "分类操作", description = "分类接口")
+@Tag(name = "分类管理", description = "管理后台：商品分类管理")
 @RestController
 @RequestMapping("/v1/category")
 public class CategoryController {

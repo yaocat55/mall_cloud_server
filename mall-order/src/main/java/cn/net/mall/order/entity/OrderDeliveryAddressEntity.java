@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 /**
  * 订单收货地址实体
  */
-@Schema(name = "订单收货地址实体")
+@Schema(description = "订单收货地址实体")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -18,7 +18,7 @@ public class OrderDeliveryAddressEntity extends BaseEntity {
 	/**
 	 * 订单ID
 	 */
-    @Schema(name = "订单ID")
+    @Schema(description = "订单ID", example = "1")
 	private Long orderId;
 
     public Long getOrderId() {
@@ -32,7 +32,7 @@ public class OrderDeliveryAddressEntity extends BaseEntity {
 	/**
 	 * 订单编码
 	 */
-    @Schema(name = "订单编码")
+    @Schema(description = "订单编码", example = "-")
 	private String orderCode;
 
     public String getOrderCode() {
@@ -46,54 +46,54 @@ public class OrderDeliveryAddressEntity extends BaseEntity {
 	/**
 	 * 用户ID
 	 */
-    @Schema(name = "用户ID")
+    @Schema(description = "用户ID", example = "1")
 	private Long userId;
 
 	/**
 	 * 用户名称
 	 */
-    @Schema(name = "用户名称")
+    @Schema(description = "用户名称", example = "admin")
 	private String userName;
 
 	/**
 	 * 收货人姓名
 	 */
-    @Schema(name = "收货人姓名")
+    @Schema(description = "收货人姓名", example = "-")
 	private String receiverName;
 
 	/**
 	 * 收货人手机号
 	 */
-    @Schema(name = "收货人手机号")
+    @Schema(description = "收货人手机号", example = "-")
 	private String receiverPhone;
 
 	/**
 	 * 省份
 	 */
-    @Schema(name = "省份")
+    @Schema(description = "省份", example = "北京市")
 	private String province;
 
 	/**
 	 * 城市
 	 */
-    @Schema(name = "城市")
+    @Schema(description = "城市", example = "北京市")
 	private String city;
 
 	/**
 	 * 区县
 	 */
-    @Schema(name = "区县")
+    @Schema(description = "区县", example = "朝阳区")
 	private String district;
 
 	/**
 	 * 详细地址
 	 */
-    @Schema(name = "详细地址")
+    @Schema(description = "详细地址", example = "北京市朝阳区xxx街道")
 	private String detailAddress;
 
 	/**
 	 * 邮编
 	 */
-    @Schema(name = "邮编")
+    @Schema(description = "邮编", example = "-")
 	private String postCode;
 }

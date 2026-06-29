@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @date 2024-05-09 14:43:55
  */
-@Tag(name = "品牌操作", description = "品牌接口")
+@Tag(name = "品牌管理", description = "管理后台：品牌 CRUD 操作")
 @RestController
 @RequestMapping("/v1/brand")
 public class BrandController {

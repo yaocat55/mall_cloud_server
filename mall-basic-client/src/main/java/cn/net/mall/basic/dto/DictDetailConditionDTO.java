@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @date 2024-03-25 21:41:03
  */
-@Schema(name = "部门查询条件实体")
+@Schema(description = "部门查询条件实体")
 @Data
 public class DictDetailConditionDTO extends RequestPageEntity {
 
@@ -21,79 +21,79 @@ public class DictDetailConditionDTO extends RequestPageEntity {
      * 数据字典名称
      */
     @NotEmpty(message = "数据字典名称不能为空")
-    @Schema(name = "数据字典名称")
+    @Schema(description = "数据字典名称", example = "-")
     private String dictName;
 
 
     /**
      * ID
      */
-    @Schema(name = "ID")
+    @Schema(description = "ID", example = "1")
     private Long id;
 
     /**
      * 数据字典id
      */
-    @Schema(name = "数据字典id")
+    @Schema(description = "数据字典id", example = "0")
     private Long dictId;
 
     /**
      * 数据字典id集合
      */
-    @Schema(name = "数据字典id集合")
+    @Schema(description = "数据字典id集合", example = "0")
     private List<Long> dictIdList;
 
     /**
      * 值
      */
-    @Schema(name = "值")
+    @Schema(description = "值", example = "-")
     private String value;
 
     /**
      * 文本
      */
-    @Schema(name = "文本")
+    @Schema(description = "文本", example = "标签")
     private String label;
 
     /**
      * 创建人ID
      */
-    @Schema(name = "创建人ID")
+    @Schema(description = "创建人ID", example = "1")
     private Long createUserId;
 
     /**
      * 创建人名称
      */
-    @Schema(name = "创建人名称")
+    @Schema(description = "创建人名称", example = "admin")
     private String createUserName;
 
     /**
      * 创建日期
      */
-    @Schema(name = "创建日期")
+    @Schema(description = "创建日期", example = "2024-01-01 00:00:00")
     private Date createTime;
 
     /**
      * 修改人ID
      */
-    @Schema(name = "修改人ID")
+    @Schema(description = "修改人ID", example = "1")
     private Long updateUserId;
 
     /**
      * 修改人名称
      */
-    @Schema(name = "修改人名称")
+    @Schema(description = "修改人名称", example = "admin")
     private String updateUserName;
 
     /**
      * 修改时间
      */
-    @Schema(name = "修改时间")
+    @Schema(description = "修改时间", example = "2024-01-01 00:00:00")
     private Date updateTime;
 
     /**
      * 是否删除 1：已删除 0：未删除
      */
-    @Schema(name = "是否删除 1：已删除 0：未删除")
+    @Schema(description = "是否删除 1：已删除 0：未删除", example = "0")
     private Integer isDel;
 }

@@ -14,6 +14,6 @@ public class ProductViewRecordEntity extends UserProductEntity {
     /**
      * 访问次数
      */
-    @Schema(name = "访问次数")
+    @Schema(description = "访问次数", example = "0")
     private int viewCount;
 }

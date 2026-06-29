@@ -6,42 +6,42 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-@Schema(name = "优惠券DTO")
+@Schema(description = "优惠券DTO")
 public class CouponDTO {
-    @Schema(name ="优惠券发放系统ID")
+    @Schema(description = "优惠券发放系统ID", example = "1")
     private Long id;
 
-    @Schema(name ="优惠券系统ID")
+    @Schema(description = "优惠券系统ID", example = "1")
     private Long couponId;
 
-    @Schema(name ="优惠券名称")
+    @Schema(description = "优惠券名称", example = "测试数据")
     private String name;
 
-    @Schema(name ="用户ID")
+    @Schema(description = "用户ID", example = "1")
     private Long userId;
 
-    @Schema(name ="商品ID")
+    @Schema(description = "商品ID", example = "1")
     private Long productId;
     
-    @Schema(name ="商品名称")
+    @Schema(description = "商品名称", example = "-")
     private String productName;
 
-    @Schema(name ="类型")
+    @Schema(description = "类型", example = "1")
     private Integer type;
 
-    @Schema(name ="金额")
+    @Schema(description = "金额", example = "99.99")
     private BigDecimal amount;
     
-    @Schema(name ="有效天数")
+    @Schema(description = "有效天数", example = "0")
     private Integer validDays;
     
-    @Schema(name ="使用开始时间")
+    @Schema(description = "使用开始时间", example = "-")
     private String useStartTimeStr;
     
-    @Schema(name ="使用结束时间")
+    @Schema(description = "使用结束时间", example = "-")
     private String useEndTimeStr;
     
-    @Schema(name ="当前用户是否已领取")
+    @Schema(description = "当前用户是否已领取", example = "false")
     private Boolean currentUserReceived;
     
     // Add other fields if necessary from CouponWebEntity

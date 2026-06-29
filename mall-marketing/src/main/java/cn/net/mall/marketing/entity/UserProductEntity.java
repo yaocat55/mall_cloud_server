@@ -29,31 +29,31 @@ public class UserProductEntity extends BaseEntity {
     /**
      * 用户名称
      */
-    @Schema(name = "用户名称")
+    @Schema(description = "用户名称", example = "admin")
     private String userName;
 
     /**
      * 商品名称
      */
-    @Schema(name = "商品名称")
+    @Schema(description = "商品名称", example = "-")
     private String productName;
 
     /**
      * 规格
      */
-    @Schema(name = "规格")
+    @Schema(description = "规格", example = "型号")
     private String model;
 
     /**
      * 价格
      */
-    @Schema(name = "价格")
+    @Schema(description = "价格", example = "99.99")
     private BigDecimal price;
 
     /**
      * 封面
      */
-    @Schema(name = "封面")
+    @Schema(description = "封面", example = "https://example.com/cover.png")
     private String coverUrl;
 
     /**

@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @date 2024-08-27 17:37:52
  */
-@Tag(name = "首页商品操作", description = "首页商品接口")
+@Tag(name = "首页商品管理", description = "管理后台：首页推荐商品配置")
 @AllArgsConstructor
 @RestController
 @RequestMapping("/v1/indexProduct")

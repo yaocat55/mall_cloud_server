@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Tag(name = "商品浏览记录操作", description = "商品浏览记录接口")
+@Tag(name = "浏览记录管理", description = "管理后台：用户浏览记录")
 @AllArgsConstructor
 @RestController
 @RequestMapping("/v1/productViewRecord")

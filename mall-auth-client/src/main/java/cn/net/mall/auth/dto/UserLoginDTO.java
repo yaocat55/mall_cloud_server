@@ -8,7 +8,7 @@ import lombok.Data;
 /**
  * 用户登录实体
  */
-@Schema(name = "用户登录实体")
+@Schema(description = "用户登录实体")
 @Data
 public class UserLoginDTO {
 
@@ -16,21 +16,21 @@ public class UserLoginDTO {
      * 唯一标识
      */
     @NotBlank(message = "唯一标识不能为空")
-    @Schema(name = "唯一标识")
+    @Schema(description = "唯一标识", example = "abc123def456")
     private String uuid;
 
     /**
      * 用户名称
      */
     @NotBlank(message = "用户名称不能为空")
-    @Schema(name = "用户名称")
+    @Schema(description = "用户名称", example = "admin")
     private String username;
 
     /**
      * 密码
      */
     @NotBlank(message = "密码不能为空")
-    @Schema(name = "密码")
+    @Schema(description = "密码", example = "123456")
     @NotBlank
     private String password;
 
@@ -38,6 +38,6 @@ public class UserLoginDTO {
      * 验证码
      */
     @NotBlank(message = "验证码不能为空")
-    @Schema(name = "验证码")
+    @Schema(description = "验证码", example = "CODE_001")
     private String code;
 }

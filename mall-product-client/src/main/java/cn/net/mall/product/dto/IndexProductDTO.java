@@ -13,7 +13,7 @@ import java.math.BigDecimal;
  *
  * @date 2024-08-27 17:37:52
  */
-@Schema(name = "首页商品实体")
+@Schema(description = "首页商品实体")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -23,42 +23,42 @@ public class IndexProductDTO extends BaseEntity {
     /**
      * 商品ID
      */
-    @Schema(name = "商品ID")
+    @Schema(description = "商品ID", example = "1")
     private Long productId;
 
     /**
      * 商品名称
      */
-    @Schema(name = "商品名称")
+    @Schema(description = "商品名称", example = "-")
     private String productName;
 
     /**
      * 规格
      */
-    @Schema(name = "规格")
+    @Schema(description = "规格", example = "型号")
     private String model;
 
     /**
      * 价格
      */
-    @Schema(name = "价格")
+    @Schema(description = "价格", example = "99.99")
     private BigDecimal price;
 
     /**
      * 封面
      */
-    @Schema(name = "封面")
+    @Schema(description = "封面", example = "-")
     private String cover;
 
     /**
      * 排序
      */
-    @Schema(name = "排序")
+    @Schema(description = "排序", example = "1")
     private Integer sort;
 
     /**
      * 商品类型 1: 热门商品 2: 最新商品 3：秒杀商品
      */
-    @Schema(name = "商品类型 1: 热门商品 2: 最新商品 3：秒杀商品")
+    @Schema(description = "商品类型 1: 热门商品 2: 最新商品 3：秒杀商品", example = "1")
     private Integer type;
 }

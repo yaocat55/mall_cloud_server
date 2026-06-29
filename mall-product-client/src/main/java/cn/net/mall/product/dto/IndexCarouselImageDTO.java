@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
  *
  * @date 2024-08-21 18:34:11
  */
-@Schema(name = "首页轮播图实体")
+@Schema(description = "首页轮播图实体")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -21,12 +21,12 @@ public class IndexCarouselImageDTO extends BaseEntity {
 	/**
 	 * 图片url
 	 */
-	@Schema(name = "图片url")
+	@Schema(description = "图片url", example = "https://example.com/image.png")
 	private String url;
 
 	/**
 	 * 排序
 	 */
-	@Schema(name = "排序")
+	@Schema(description = "排序", example = "1")
 	private Integer sort;
 }

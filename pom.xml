@@ -27,6 +27,8 @@
         <module>mall-pay-client</module>
         <module>mall-recommend</module>
         <module>mall-message</module>
+        <module>mall-admin-api</module>
+        <module>mall-mobile-api</module>
     </modules>
 
     <name>mall-cloud</name>
@@ -43,6 +45,7 @@
         <java.version>17</java.version>
         <jedis.version>3.3.0</jedis.version>
         <springdoc.openapi.swagger>2.6.0</springdoc.openapi.swagger>
+        <knife4j.version>4.5.0</knife4j.version>
         <fastjson.version>1.2.83</fastjson.version>
         <druid.version>1.2.16</druid.version>
         <hutool.version>5.8.7</hutool.version>
@@ -161,6 +164,17 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc.openapi.swagger}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+            <version>${knife4j.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springdoc</groupId>
+                    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <!--Mysql依赖包-->
         <dependency>
@@ -257,7 +271,7 @@
         <dependency>
             <groupId>cn.net.mall</groupId>
             <artifactId>mall-redis-spring-boot-starter</artifactId>
-            <version>1.0.0</version>
+            <version>2.1.2</version>
         </dependency>
     </dependencies>
 </dependencyManagement>

@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @date 2024-01-08 17:18:18
  */
-@Schema(name = "角色菜单关联查询条件实体")
+@Schema(description = "角色菜单关联查询条件实体")
 @Data
 public class RoleMenuConditionEntity extends RequestPageEntity {
 
@@ -19,19 +19,19 @@ public class RoleMenuConditionEntity extends RequestPageEntity {
     /**
      * ID
      */
-    @Schema(name = "ID")
+    @Schema(description = "ID", example = "1")
     private Long id;
 
     /**
      * 角色ID
      */
-    @Schema(name = "角色ID")
+    @Schema(description = "角色ID", example = "1")
     private Long roleId;
 
     /**
      * 菜单ID
      */
-    @Schema(name = "菜单ID")
+    @Schema(description = "菜单ID", example = "1")
     private Long menuId;
 
     /**

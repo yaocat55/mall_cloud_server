@@ -17,7 +17,7 @@ public class PayWebDTO {
     /**
      * 订单code
      */
-    @Schema(description = "订单code")
+    @Schema(description = "订单code", example = "TC202401010001")
     @NotBlank(message = "tradeCode不能为空")
     private String tradeCode;
 }

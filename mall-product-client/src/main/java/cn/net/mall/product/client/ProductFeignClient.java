@@ -17,6 +17,15 @@ import java.util.List;
 import static cn.net.mall.product.constant.AppConstant.PRODUCT_SERVICE_NAME;
 
 
+/**
+ * 商品/购物车 Feign 客户端
+ * <p>
+ * <b>调用方：</b>
+ * <ul>
+ *   <li>order-service（订单服务）— 下单、购物车相关操作</li>
+ *   <li>recommend-service（推荐服务）— 商品数据查询</li>
+ * </ul>
+ */
 @FeignClient(value = PRODUCT_SERVICE_NAME, contextId = "productFeignClient")
 public interface ProductFeignClient {
 
@@ -26,7 +35,7 @@ public interface ProductFeignClient {
      * @param ids 商品ID
      * @return 商品信息
      */
-    @Operation(summary = "通过id查询商品信息", description = "通过id查询商品信息")
+    @Operation(summary = "批量查询商品基本信息", description = "由 order-service、recommend-service 通过 Feign 调用，根据ID集合批量获取商品基本信息")
     @GetMapping("/v1/product/findByIds")
     List<ProductDTO> findByIds(List<Long> ids);
 
@@ -36,7 +45,7 @@ public interface ProductFeignClient {
      * @param id 系统ID
      * @return 商品详情信息
      */
-    @Operation(summary = "通过id查询商品详情信息", description = "通过id查询商品详情信息")
+    @Operation(summary = "查询商品详情信息", description = "由 order-service 通过 Feign 调用，根据ID查询商品详情（不含评价、价格、规格）")
     @GetMapping("/v1/product/findDetailById")
     ProductDetailDTO findDetailById(Long id);
 
@@ -126,7 +135,7 @@ public interface ProductFeignClient {
      * @param ids 购物车ID
      * @return 购物车信息
      */
-    @Operation(summary = "通过id集合批量查询购物车信息", description = "通过id集合批量查询购物车信息")
+    @Operation(summary = "批量查询购物车信息", description = "由 order-service 通过 Feign 调用，根据ID集合批量获取购物车商品信息")
     @PostMapping("/v1/shoppingCart/findByIds")
     List<ShoppingCartDTO> findShoppingCartByIds(@RequestBody List<Long> ids);
 
@@ -154,7 +163,7 @@ public interface ProductFeignClient {
      * @param shoppingCartConditionDTO 条件
      * @return 购物车商品列表
      */
-    @Operation(summary = "根据条件搜索购物车商品列表", description = "根据条件搜索购物车商品列表")
+    @Operation(summary = "查询购物车商品列表", description = "由 order-service 通过 Feign 调用，根据条件获取购物车商品信息用于下单确认")
     @PostMapping("/v1/shoppingCart/getShoppingCartProduct")
     ShoppingCartBuyDTO getShoppingCartProduct(@RequestBody ShoppingCartConditionDTO shoppingCartConditionDTO);
 
@@ -173,7 +182,7 @@ public interface ProductFeignClient {
      *
      * @param items 购物车项（含productId与quantity）
      */
-    @Operation(summary = "批量扣减商品库存", description = "批量扣减商品库存")
+    @Operation(summary = "批量扣减商品库存", description = "由 order-service 提交订单时通过 Feign 调用，批量扣减商品库存")
     @PostMapping("/v1/product/reduceStockBatch")
     void reduceStockBatch(@RequestBody List<ShoppingCartDTO> items);
 }

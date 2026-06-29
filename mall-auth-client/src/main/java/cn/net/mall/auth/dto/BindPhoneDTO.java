@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
  *
  * @date 2025/5/28 18:39
  */
-@Schema(name = "绑定手机号实体")
+@Schema(description = "绑定手机号实体")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

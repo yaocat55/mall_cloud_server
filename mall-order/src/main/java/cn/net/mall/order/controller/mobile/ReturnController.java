@@ -16,6 +16,7 @@ import cn.net.mall.order.service.OrderReturnApplyService;
 import cn.net.mall.order.entity.OrderReturnVoucherEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -104,7 +105,8 @@ public class ReturnController {
 
     @GetMapping("/detail/{code}")
     @Operation(summary = "查看退货申请详情")
-    public OrderReturnApplyDTO detail(@PathVariable("code") String code) {
+    public OrderReturnApplyDTO detail(@Parameter(description = "退货单编码")
+    @PathVariable("code") String code) {
         return orderReturnApplyService.getDetailByCode(code);
     }
 }

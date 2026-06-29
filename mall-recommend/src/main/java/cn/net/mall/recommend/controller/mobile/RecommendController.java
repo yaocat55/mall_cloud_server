@@ -6,6 +6,7 @@ import cn.net.mall.util.FillUserUtil;
 import cn.net.mall.entity.auth.JwtUserEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,14 +33,17 @@ public class RecommendController {
 
     @Operation(summary = "基于商品的相似推荐", description = "根据商品ID推荐相似商品")
     @GetMapping("/byItem")
-    public List<ProductSearchResultDTO> recommendByItem(@RequestParam("productId") Long productId,
-                                                        @RequestParam(value = "topN", required = false) Integer topN) {
+    public List<ProductSearchResultDTO> recommendByItem(@Parameter(description = "商品ID")
+    @RequestParam("productId") Long productId,
+                                                        @Parameter(description = "返回数量")
+    @RequestParam(value = "topN", required = false) Integer topN) {
         return recommendService.recommendByItem(productId, topN);
     }
 
     @Operation(summary = "基于相同爱好的用户推荐", description = "根据当前用户的相似用户推荐其喜欢的商品")
     @GetMapping("/byUser")
-    public List<ProductSearchResultDTO> recommendByUser(@RequestParam(value = "topN", required = false) Integer topN) {
+    public List<ProductSearchResultDTO> recommendByUser(@Parameter(description = "返回数量")
+    @RequestParam(value = "topN", required = false) Integer topN) {
         JwtUserEntity jwt = FillUserUtil.getCurrentUserInfoOrNull();
         Long userId = jwt == null ? null : jwt.getId();
         if (userId == null) {

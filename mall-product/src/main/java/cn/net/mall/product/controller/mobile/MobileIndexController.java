@@ -19,6 +19,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 移动端首页相关接口
  */
-@Tag(name = "移动端首页相关接口", description = "移动端首页相关接口")
+@Tag(name = "移动端-首页", description = "移动端：首页展示、轮播图、推荐")
 @AllArgsConstructor
 @RestController
 @RequestMapping("/v1/mobile/index")
@@ -71,7 +72,8 @@ public class MobileIndexController {
     @Operation(summary = "获取首页商品列表", description = "获取首页商品列表")
     @GetMapping("/getIndexProductList")
     @SuppressWarnings("unchecked")
-    public List<IndexProductDTO> getIndexProductList(@RequestParam("type") int type) {
+    public List<IndexProductDTO> getIndexProductList(@Parameter(description = "商品类型")
+    @RequestParam("type") int type) {
         List<IndexProductDTO> result = mobileCacheService.getIndexProductList(type);
         if (result != null) {
             return result;
@@ -126,7 +128,8 @@ public class MobileIndexController {
     @NoLogin
     @Operation(summary = "查询公告详情", description = "查询公告详情")
     @GetMapping("/getIndexNoticeDetail")
-    public IndexNoticeDetailDTO getIndexNoticeDetail(@RequestParam("id") Long id) {
+    public IndexNoticeDetailDTO getIndexNoticeDetail(@Parameter(description = "公告ID")
+    @RequestParam("id") Long id) {
         IndexNoticeDetailWebEntity indexNoticeDetailEntity = indexNoticeService.getIndexNoticeDetail(id);
         if (Objects.nonNull(indexNoticeDetailEntity)) {
             return BeanUtil.toBean(indexNoticeDetailEntity, IndexNoticeDetailDTO.class);

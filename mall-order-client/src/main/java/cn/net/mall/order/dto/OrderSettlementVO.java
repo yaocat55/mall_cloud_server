@@ -28,18 +28,18 @@ public class OrderSettlementVO implements Serializable {
     @Schema(description = "结算项集合")
     private List<OrderSettlementItemDTO> items;
 
-    @Schema(description = "总金额")
+    @Schema(description = "总金额", example = "0")
     private BigDecimal totalMoney;
 
-    @Schema(description = "最终支付金额")
+    @Schema(description = "最终支付金额", example = "0")
     private BigDecimal finalMoney;
 
-    @Schema(description = "优惠金额")
+    @Schema(description = "优惠金额", example = "0")
     private BigDecimal subtractMoney;
 
-    @Schema(description = "商品件数")
+    @Schema(description = "商品件数", example = "0")
     private Integer totalCount;
 
-    @Schema(description = "结算确认Token/Code")
+    @Schema(description = "结算确认Token/Code", example = "TC202401010001")
     private String tradeCode;
 }

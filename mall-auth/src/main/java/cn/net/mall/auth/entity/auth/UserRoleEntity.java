@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
  *
  * @date 2024-01-08 17:18:19
  */
-@Schema(name = "用户角色关联实体")
+@Schema(description = "用户角色关联实体")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -21,12 +21,12 @@ public class UserRoleEntity extends BaseEntity {
     /**
      * 用户ID
      */
-    @Schema(name = "用户ID")
+    @Schema(description = "用户ID", example = "1")
     private Long userId;
 
     /**
      * 角色ID
      */
-    @Schema(name = "角色ID")
+    @Schema(description = "角色ID", example = "1")
     private Long roleId;
 }

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
  *
  * @date 2024-07-07 15:14:11
  */
-@Schema(name = "商品详情实体")
+@Schema(description = "商品详情 DTO")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -20,12 +20,12 @@ public class ProductDetailDTO extends BaseEntity {
     /**
      * 商品ID
      */
-    @Schema(name = "商品ID")
+    @Schema(description = "商品ID", example = "1")
     private Long productId;
 
     /**
      * 商品详情
      */
-    @Schema(name = "商品详情")
+    @Schema(description = "商品详情", example = "-")
     private String detail;
 }

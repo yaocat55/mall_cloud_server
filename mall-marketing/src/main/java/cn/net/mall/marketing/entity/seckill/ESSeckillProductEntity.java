@@ -9,48 +9,48 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.util.Date;
 
-@Schema(name = "秒杀商品实体")
+@Schema(description = "秒杀商品实体")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class ESSeckillProductEntity extends EsBaseEntity {
 
-    @Schema(name = "分类名称")
+    @Schema(description = "分类名称", example = "-")
     private String categoryName;
 
-    @Schema(name = "单位名称")
+    @Schema(description = "单位名称", example = "-")
     private String unitName;
 
-    @Schema(name = "品牌名称")
+    @Schema(description = "品牌名称", example = "-")
     private String brandName;
 
-    @Schema(name = "商品名称")
+    @Schema(description = "商品名称", example = "测试数据")
     private String name;
 
-    @Schema(name = "规格")
+    @Schema(description = "规格", example = "型号")
     private String model;
 
-    @Schema(name = "原价")
+    @Schema(description = "原价", example = "99.99")
     private BigDecimal costPrice;
 
-    @Schema(name = "商品ID")
+    @Schema(description = "商品ID", example = "1")
     private Long productId;
 
-    @Schema(name = "预扣库存")
+    @Schema(description = "预扣库存", example = "0")
     private Integer withHoldQuantity;
 
-    @Schema(name = "实际剩余库存")
+    @Schema(description = "实际剩余库存", example = "100")
     private Integer remainQuantity;
 
-    @Schema(name = "秒杀价格")
+    @Schema(description = "秒杀价格", example = "99.99")
     private BigDecimal price;
 
-    @Schema(name = "秒杀开始时间")
+    @Schema(description = "秒杀开始时间", example = "2024-01-01")
     private Date startTime;
 
-    @Schema(name = "秒杀结束时间")
+    @Schema(description = "秒杀结束时间", example = "2024-01-01")
     private Date endTime;
 
-    @Schema(name = "封面图片")
+    @Schema(description = "封面图片", example = "-")
     private String cover;
 }

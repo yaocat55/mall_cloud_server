@@ -10,6 +10,6 @@ import java.io.Serializable;
 public class CouponReceiveDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "优惠券发放ID")
+    @Schema(description = "优惠券发放ID", example = "1")
     private Long id;
 }

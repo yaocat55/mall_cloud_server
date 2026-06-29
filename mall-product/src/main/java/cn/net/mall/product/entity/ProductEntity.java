@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @date 2024-05-09 14:43:56
  */
-@Schema(name = "商品实体")
+@Schema(description = "商品实体")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -26,125 +26,125 @@ public class ProductEntity extends BaseProductEntity {
     /**
      * 商品组ID
      */
-    @Schema(name = "商品组ID")
+    @Schema(description = "商品组ID", example = "0")
     private Long productGroupId;
 
     /**
      * 分类ID
      */
     @NotNull(message = "分类ID不能为空")
-    @Schema(name = "分类ID")
+    @Schema(description = "分类ID", example = "0")
     private Long categoryId;
 
     /**
      * 分类名称
      */
-    @Schema(name = "分类名称")
+    @Schema(description = "分类名称", example = "-")
     private String categoryName;
 
     /**
      * 品牌ID
      */
     @NotNull(message = "品牌ID不能为空")
-    @Schema(name = "品牌ID")
+    @Schema(description = "品牌ID", example = "0")
     private Long brandId;
 
     /**
      * 品牌名称
      */
-    @Schema(name = "品牌名称")
+    @Schema(description = "品牌名称", example = "-")
     private String brandName;
 
     /**
      * 单位ID
      */
     @NotNull(message = "单位ID不能为空")
-    @Schema(name = "单位ID")
+    @Schema(description = "单位ID", example = "0")
     private Long unitId;
 
     /**
      * 单位名称
      */
-    @Schema(name = "单位名称")
+    @Schema(description = "单位名称", example = "-")
     private String unitName;
 
     /**
      * 商品名称
      */
     @NotEmpty(message = "商品名称不能为空")
-    @Schema(name = "商品名称")
+    @Schema(description = "商品名称", example = "测试数据")
     @ValidSensitiveWordField
     private String name;
 
     /**
      * 规格
      */
-    @Schema(name = "规格")
+    @Schema(description = "规格", example = "型号")
     @ValidSensitiveWordField
     private String model;
 
     /**
      * 规格hash值
      */
-    @Schema(name = "规格hash值")
+    @Schema(description = "规格hash值", example = "-")
     private String hash;
 
     /**
      * 数量
      */
     @NotNull(message = "数量不能为空")
-    @Schema(name = "数量")
+    @Schema(description = "数量", example = "10")
     private Integer quantity;
 
     /**
      * 剩余库存
      */
-    @Schema(name = "剩余库存")
+    @Schema(description = "剩余库存", example = "100")
     private Integer remainQuantity;
 
     /**
      * 库存
      */
-    @Schema(name = "库存")
+    @Schema(description = "库存", example = "100")
     private Integer stock;
 
     /**
      * 销量
      */
-    @Schema(name = "销量")
+    @Schema(description = "销量", example = "0")
     private Integer saleCount;
 
     /**
      * 价格
      */
     @NotNull(message = "数量不能为空")
-    @Schema(name = "价格")
+    @Schema(description = "价格", example = "99.99")
     private BigDecimal price;
 
     /**
      * 封面图片url
      */
-    @Schema(name = "封面图片url")
+    @Schema(description = "封面图片url", example = "https://example.com/cover.png")
     private String coverUrl;
 
     /**
      * 商品组属性集合
      */
     @Size(message = "商品组集合不能为空")
-    @Schema(name = "商品组集合")
+    @Schema(description = "商品组集合")
     private List<AttributeValueEntity> spuAttributeEntityList;
 
     /**
      * 商品属性集合
      */
     @Size(message = "商品属性集合不能为空")
-    @Schema(name = "商品属性集合")
+    @Schema(description = "商品属性集合")
     private List<AttributeValueEntity> skuAttributeEntityList;
 
     /**
      * 商品图片
      */
-    @Schema(name = "商品图片")
+    @Schema(description = "商品图片")
     private List<ProductPhotoEntity> productPhotoEntityList;
 
     /**

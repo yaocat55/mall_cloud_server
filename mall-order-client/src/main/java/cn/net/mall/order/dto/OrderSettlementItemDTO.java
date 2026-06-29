@@ -13,9 +13,9 @@ import java.io.Serializable;
 public class OrderSettlementItemDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "购物车ID")
+    @Schema(description = "购物车ID", example = "0")
     private Long shoppingCartId;
 
-    @Schema(description = "优惠券ID")
+    @Schema(description = "优惠券ID", example = "1")
     private Long couponId;
 }

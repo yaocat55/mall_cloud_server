@@ -38,7 +38,7 @@ public class WebUserController {
     }
 
     @NoLogin
-    @Operation(summary = "获取用户信息", description = "获取用户信息")
+    @Operation(summary = "获取图形验证码", description = "获取图形验证码（base64图片）")
     @GetMapping(value = "/getCode")
     public CaptchaDTO getCode() {
         CaptchaEntity captchaEntity = userService.getCode();

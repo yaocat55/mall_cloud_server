@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
  *
  * @date 2024-01-08 17:18:18
  */
-@Schema(name = "菜单实体")
+@Schema(description = "菜单实体")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -23,49 +23,49 @@ public class MenuEntity extends BaseEntity {
      * 菜单名称
      */
     @ExcelProperty(value = "菜单名称", index = 0)
-    @Schema(name = "菜单名称")
+    @Schema(description = "菜单名称", example = "测试数据")
     private String name;
 
     /**
      * 上级菜单ID
      */
     @ExcelProperty(value = "上级菜单ID", index = 1)
-    @Schema(name = "上级菜单ID")
+    @Schema(description = "上级菜单ID", example = "0")
     private Long pid;
 
     /**
      * 排序
      */
     @ExcelProperty(value = "排序", index = 2)
-    @Schema(name = "排序")
+    @Schema(description = "排序", example = "1")
     private Integer sort;
 
     /**
      * 图标
      */
     @ExcelProperty(value = "图标", index = 3)
-    @Schema(name = "图标")
+    @Schema(description = "图标", example = "-")
     private String icon;
 
     /**
      * 路由
      */
     @ExcelProperty(value = "路由", index = 4)
-    @Schema(name = "路由")
+    @Schema(description = "路由", example = "-")
     private String path;
 
     /**
      * 是否隐藏
      */
     @ExcelProperty(value = "是否隐藏", index = 5)
-    @Schema(name = "是否隐藏")
+    @Schema(description = "是否隐藏", example = "false")
     private Boolean hidden;
 
     /**
      * 是否外链 1：是 0：否
      */
     @ExcelProperty(value = "是否外链", index = 6)
-    @Schema(name = "是否外链 1：是 0：否")
+    @Schema(description = "是否外链 1：是 0：否", example = "0")
     private Integer isLink;
 
 
@@ -73,27 +73,27 @@ public class MenuEntity extends BaseEntity {
      * 功能权限
      */
     @ExcelProperty(value = "功能权限", index = 7)
-    @Schema(name = "功能权限")
+    @Schema(description = "功能权限", example = "-")
     private String permission;
 
     /**
      * 类型 1：目录 2：菜单 3：按钮
      */
     @ExcelProperty(value = "类型", index = 8)
-    @Schema(name = "类型 1：目录 2：菜单 3：按钮")
+    @Schema(description = "类型 1：目录 2：菜单 3：按钮", example = "1")
     private Integer type;
 
     /**
      * 组件
      */
     @ExcelProperty(value = "组件", index = 9)
-    @Schema(name = "组件")
+    @Schema(description = "组件", example = "-")
     private String component;
 
     /**
      * url地址
      */
     @ExcelProperty(value = "url地址", index = 10)
-    @Schema(name = "url地址")
+    @Schema(description = "url地址", example = "https://example.com/image.png")
     private String url;
 }

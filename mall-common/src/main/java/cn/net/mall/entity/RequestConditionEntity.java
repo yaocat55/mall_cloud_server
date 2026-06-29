@@ -17,7 +17,7 @@ public class RequestConditionEntity extends RequestPageEntity {
     /**
      * 创建日期范围
      */
-    @Schema(name = "创建日期范围")
+    @Schema(description = "创建日期范围", example = "-")
     private List<String> betweenTime;
 
     /**

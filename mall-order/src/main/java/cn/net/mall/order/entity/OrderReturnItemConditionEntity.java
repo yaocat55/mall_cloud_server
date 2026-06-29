@@ -10,13 +10,13 @@ import lombok.EqualsAndHashCode;
 @Schema(description = "退货明细查询条件")
 public class OrderReturnItemConditionEntity extends RequestConditionEntity {
 
-    @Schema(description = "订单ID")
+    @Schema(description = "订单ID", example = "1")
     private Long orderId;
 
-    @Schema(description = "退货申请ID")
+    @Schema(description = "退货申请ID", example = "0")
     private Long returnApplyId;
 
-    @Schema(description = "订单明细ID")
+    @Schema(description = "订单明细ID", example = "0")
     private Long orderItemId;
 }
 

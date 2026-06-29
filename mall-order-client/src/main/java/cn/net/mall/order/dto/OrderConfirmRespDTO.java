@@ -9,30 +9,30 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-@Schema(name = "订单确认响应DTO")
+@Schema(description = "订单确认响应DTO")
 public class OrderConfirmRespDTO {
     
-    @Schema(name = "收货地址列表")
+    @Schema(description = "收货地址列表")
     private List<DeliveryAddressDTO> addressList;
     
-    @Schema(name = "默认收货地址")
+    @Schema(description = "默认收货地址")
     private DeliveryAddressDTO defaultAddress;
     
-    @Schema(name = "商品列表")
+    @Schema(description = "商品列表")
     private List<ShoppingCartDTO> items;
     
-    @Schema(name = "可用优惠券列表")
+    @Schema(description = "可用优惠券列表")
     private List<CouponDTO> coupons;
     
-    @Schema(name = "订单总金额")
+    @Schema(description = "订单总金额", example = "99.99")
     private BigDecimal totalAmount;
     
-    @Schema(name = "应付金额")
+    @Schema(description = "应付金额", example = "0")
     private BigDecimal payAmount;
     
-    @Schema(name = "优惠金额")
+    @Schema(description = "优惠金额", example = "0")
     private BigDecimal couponAmount;
 
-    @Schema(name = "订单确认Token")
+    @Schema(description = "订单确认Token", example = "TC202401010001")
     private String tradeCode;
 }

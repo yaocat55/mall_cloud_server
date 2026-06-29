@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
  *
  * @date 2024-09-29 11:18:18
  */
-@Schema(name = "用户web实体")
+@Schema(description = "用户web实体")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -26,33 +26,33 @@ public class UserWebEntity {
     /**
      * 头像url
      */
-    @Schema(name = "头像url")
+    @Schema(description = "头像url", example = "-")
     private String avatarUrl;
 
     /**
      * 邮箱
      */
     @NotEmpty(message = "邮箱不能为空")
-    @Schema(name = "邮箱")
+    @Schema(description = "邮箱", example = "admin@mall.com")
     private String email;
 
 
     /**
      * 用户名
      */
-    @Schema(name = "用户名")
+    @Schema(description = "用户名", example = "admin")
     private String userName;
 
 
     /**
      * 别名
      */
-    @Schema(name = "别名")
+    @Schema(description = "别名", example = "-")
     private String nickName;
 
     /**
      * 性别 1：男 2：女
      */
-    @Schema(name = "性别 1：男 2：女")
+    @Schema(description = "性别 1：男 2：女", example = "1")
     private Integer sex;
 }

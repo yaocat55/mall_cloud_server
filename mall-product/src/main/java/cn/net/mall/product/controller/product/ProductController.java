@@ -3,8 +3,6 @@ package cn.net.mall.product.controller.product;
 import cn.hutool.core.bean.BeanUtil;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.annotation.ValidSensitiveWord;
-import cn.net.mall.product.dto.ProductDTO;
-import cn.net.mall.product.dto.ProductDetailDTO;
 import cn.net.mall.product.dto.ProductSearchConditionDTO;
 import cn.net.mall.product.dto.ProductSearchResultDTO;
 import cn.net.mall.product.entity.ProductConditionEntity;
@@ -25,7 +23,7 @@ import java.util.Objects;
  *
  * @date 2024-05-09 14:43:56
  */
-@Tag(name = "商品操作", description = "商品接口")
+@Tag(name = "商品管理", description = "管理后台：商品 CRUD 操作")
 @RestController
 @RequestMapping("/v1/product")
 public class ProductController {
@@ -46,30 +44,6 @@ public class ProductController {
     @GetMapping("/findById")
     public ProductEntity findById(Long id) {
         return productService.findById(id);
-    }
-
-    /**
-     * 通过id集合批量查询商品信息
-     *
-     * @param ids 商品ID集合
-     * @return 商品信息
-     */
-    @Operation(summary = "通过id查询商品信息", description = "通过id查询商品信息")
-    @PostMapping("/findByIds")
-    public List<ProductDTO> findByIds(@RequestBody List<Long> ids) {
-        return productService.findByIds(ids);
-    }
-
-    /**
-     * 通过id查询商品详情信息
-     *
-     * @param id 系统ID
-     * @return 商品详情信息
-     */
-    @Operation(summary = "通过id查询商品详情信息", description = "通过id查询商品详情信息")
-    @GetMapping("/findDetailById")
-    public ProductDetailDTO findDetailById(Long id) {
-        return productService.findDetailById(id);
     }
 
     /**

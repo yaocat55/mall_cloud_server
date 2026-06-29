@@ -6,19 +6,19 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-@Schema(name = "订单确认请求DTO")
+@Schema(description = "订单确认请求DTO")
 public class OrderConfirmReqDTO {
-    @Schema(name = "购物车ID集合")
+    @Schema(description = "购物车ID集合")
     private List<OrderConfirmReqItemDTO> items;
     
-    @Schema(name = "选择的优惠券ID集合（订单级）")
+    @Schema(description = "选择的优惠券ID集合（订单级）", example = "0")
     private List<Long> couponIds;
 
     @Data
     static public class OrderConfirmReqItemDTO {
-        @Schema(name = "购物车ID")
+        @Schema(description = "购物车ID", example = "0")
         private Long shoppingCartId;
-        @Schema(name = "优惠券ID")
+        @Schema(description = "优惠券ID", example = "1")
         private Long couponId;
     }
 }

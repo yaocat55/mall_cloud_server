@@ -5,6 +5,7 @@ import cn.net.mall.auth.entity.shopping.web.DeliveryAddressWebEntity;
 import cn.net.mall.auth.service.shopping.DeliveryAddressService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -58,7 +59,8 @@ public class MobileDeliveryAddressController {
      */
     @Operation(summary = "获取收货地址详情", description = "获取收货地址详情")
     @GetMapping("/getDetail")
-    public DeliveryAddressWebEntity getDetail(@RequestParam("id") Long id) {
+    public DeliveryAddressWebEntity getDetail(@Parameter(description = "收货地址ID")
+    @RequestParam("id") Long id) {
         return deliveryAddressService.getDetail(id);
     }
 

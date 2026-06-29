@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @date 2024-01-08 17:18:19
  */
-@Schema(name = "用户角色关联查询条件实体")
+@Schema(description = "用户角色关联查询条件实体")
 @Data
 public class UserRoleConditionEntity extends RequestPageEntity {
 
@@ -19,24 +19,24 @@ public class UserRoleConditionEntity extends RequestPageEntity {
     /**
      * ID
      */
-    @Schema(name = "ID")
+    @Schema(description = "ID", example = "1")
     private Long id;
 
     /**
      * 用户ID
      */
-    @Schema(name = "用户ID")
+    @Schema(description = "用户ID", example = "1")
     private Long userId;
 
     /**
      * 用户ID集合
      */
-    @Schema(name = "用户ID集合")
+    @Schema(description = "用户ID集合", example = "0")
     private List<Long> userIdList;
 
     /**
      * 角色ID
      */
-    @Schema(name = "角色ID")
+    @Schema(description = "角色ID", example = "1")
     private Long roleId;
 }

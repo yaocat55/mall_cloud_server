@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
  *
  * @date 2024-05-09 14:43:55
  */
-@Schema(name = "品牌实体")
+@Schema(description = "品牌实体")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -21,6 +21,6 @@ public class BrandEntity extends BaseEntity {
     /**
      * 品牌名称
      */
-    @Schema(name = "品牌名称")
+    @Schema(description = "品牌名称", example = "测试数据")
     private String name;
 }

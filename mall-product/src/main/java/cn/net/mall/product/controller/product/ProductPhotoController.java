@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @date 2024-05-09 14:43:56
  */
-@Tag(name = "商品图片操作", description = "商品图片接口")
+@Tag(name = "商品图片管理", description = "管理后台：商品图片管理")
 @RestController
 @RequestMapping("/v1/productPhoto")
 public class ProductPhotoController {

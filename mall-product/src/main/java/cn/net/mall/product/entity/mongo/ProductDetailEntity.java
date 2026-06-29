@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * @date 2024-07-07 15:14:11
  */
 @Document(collection = "ProductDetailEntity")
-@Schema(name = "商品详情实体")
+@Schema(description = "商品详情实体")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -24,12 +24,12 @@ public class ProductDetailEntity extends BaseEntity {
      * 商品ID
      */
     @Indexed
-    @Schema(name = "商品ID")
+    @Schema(description = "商品ID", example = "1")
     private Long productId;
 
     /**
      * 商品详情
      */
-    @Schema(name = "商品详情")
+    @Schema(description = "商品详情", example = "-")
     private String detail;
 }
