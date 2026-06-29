@@ -1,6 +1,6 @@
 package cn.net.mall.marketing.controller.internal;
 
-import cn.net.mall.marketing.dto.OrderPriceCalculateReqDTO;
+import cn.net.mall.marketing.entity.web.OrderPriceCalculateReq;
 import cn.net.mall.marketing.service.CouponService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,7 +17,7 @@ public class CouponInternalController {
 
     @Operation(summary = "计算订单优惠价格", description = "内部服务：由 mall-order 下单时通过 Feign 调用，根据优惠券计算订单优惠金额")
     @PostMapping("/calculateOrderPrice")
-    public List<BigDecimal> calculateOrderPrice(@RequestBody OrderPriceCalculateReqDTO req) {
+    public List<BigDecimal> calculateOrderPrice(@RequestBody OrderPriceCalculateReq req) {
         return couponService.calculateOrderPrice(req);
     }
 

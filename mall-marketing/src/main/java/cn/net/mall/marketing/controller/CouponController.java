@@ -6,6 +6,7 @@ import cn.net.mall.marketing.entity.CouponEntity;
 import cn.net.mall.marketing.entity.web.CouponWebEntity;
 import cn.net.mall.marketing.dto.CouponReceiveDTO;
 import cn.net.mall.marketing.service.CouponService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
