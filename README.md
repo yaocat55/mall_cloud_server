@@ -22,20 +22,22 @@
 ## 📑 目录
 
 - [项目简介](#项目简介)
-- [功能概览](#功能概览)
 - [项目结构](#项目结构)
 - [系统架构](#系统架构)
   - [整体架构](#整体架构)
   - [服务依赖关系](#服务依赖关系)
   - [核心流程：下单 → 支付](#核心流程下单--支付)
   - [异步解耦：消息队列](#异步解耦消息队列)
-- [网关路由](#网关路由)
+- [前端开发指南](#前端开发指南)
+- [网关路由](docs/gateway-routes.md)
 - [基础设施](#基础设施)
-- [数据库设计](#数据库设计)
-- [快速开始](#快速开始)
+- [数据库设计](docs/database-design.md)
+- [快速开始](docs/quick-start.md)
 - [设计要点](#设计要点)
+- [注意事项](#注意事项)
 - [已知问题](#已知问题)
-- [多仓库拆分方案](#多仓库拆分方案)
+- [多仓库拆分方案](docs/repo-split-plan.md)
+- [Nacos 配置指南](docs/nacos-config-guide.md)
 
 ---
 
@@ -168,7 +170,13 @@ mall_cloud_server/
 │
 ├── docs/                          项目文档
 │   ├── frontend-api-mapping.md   前端 API ↔ 后端微服务映射手册
+│   ├── gateway-routes.md          网关路由与白名单
+│   ├── quick-start.md             快速开始
+│   ├── database-design.md         数据库设计
+│   ├── nacos-config-guide.md      Nacos 配置指南
+│   ├── repo-split-plan.md         多仓库拆分方案
 │   └── superpowers/              设计文档与实施计划
+```
 
 > [!NOTE]
 > `mall-admin-api` 和 `mall-mobile-api` 是 BFF（Backend For Frontend）层，为各前端提供聚合接口和统一文档入口，**前端重写只需看这两者的文档**。每个 `*-client` 模块定义该服务的 Feign 接口，供其他服务引入。业务配置全部托管在 Nacos 配置中心。
@@ -277,70 +285,15 @@ sequenceDiagram
 > - 允许**最终一致**（超时取消、浏览记录、定时任务）→ 异步 RocketMQ，服务间通过 Topic 解耦
 > - `mall-product` ↔ `mall-order` 之间存在**双向同步调用**，属于业务耦合，后续可考虑将订单状态变更改为异步事件
 
-
-
 ---
 
 ## 网关路由
 
-| 路径前缀 | 转发目标 | 备注 |
-|----------|----------|------|
-| `/api/admin/**` | `lb://mall-admin-api` | 【BFF】管理后台聚合（8090） |
-| `/api/mobile/**` | `lb://mall-mobile-api` | 【BFF】移动端聚合（8091） |
-| `/api/basic/**` | `lb://mall-basic-api` | 基础服务 |
-| `/api/auth/**` | `lb://mall-auth-api` | 认证服务 |
-| `/api/product/**` | `lb://mall-product-api` | 商品服务 |
-| `/api/marketing/**` | `lb://mall-marketing-api` | 营销服务 |
-| `/api/order/**` | `lb://mall-order-api` | 订单服务 |
-| `/api/pay/**` | `lb://mall-pay-api` | 支付服务 |
-| `/api/recommend/**` | `lb://mall-recommend-api` | 推荐服务 |
-| `/api/message/ws**` | `lb:ws://mall-message-api` | WebSocket 连接 |
-| `/api/message/**` | `lb://mall-message-api` | 消息服务 |
+网关统一入口 `http://localhost:8080`，按路径前缀转发到各微服务。
 
-**JWT 白名单（无需 Token）—— 完整列表（共 37 个路径）：**
+路由表包含 11 条转发规则（包括 BFF、业务服务、WebSocket），JWT 白名单共 37 个无需 Token 的路径，配置在 Nacos `mall-gateway-dev.yaml` 的 `gateway.filter.noAuth` 中。
 
-> 白名单配置在 Nacos `mall-gateway-dev.yaml` → `gateway.filter.noAuth` 中，一行逗号分隔。以下为按服务分类的格式化列表。
-
-```
-# mall-auth（认证相关）
-/api/auth/v1/web/user/getCode              /api/auth/v1/web/user/login
-/api/auth/v1/web/user/loginByPhone         /api/auth/v1/web/user/logout
-/api/auth/v1/web/user/info                 /api/auth/v1/web/user/resetPassword
-/api/auth/v1/mobile/user/register
-
-# mall-auth（菜单/角色/部门/岗位）
-/api/auth/v1/menu/searchByPage             /api/auth/v1/menu/insert
-/api/auth/v1/menu/update                   /api/auth/v1/menu/deleteByIds
-/api/auth/v1/role/all                      /api/auth/v1/dept/findById
-/api/auth/v1/dept/searchByPage             /api/auth/v1/dept/searchByTree
-/api/auth/v1/job/searchByPage              /api/auth/v1/job/deleteByIds
-/api/auth/v1/user/findByPhone              /api/auth/v1/test/testOpenFeign
-
-# mall-basic（文件/短信/敏感词）
-/api/basic/v1/file/upload                  /api/basic/v1/image/upload
-/api/basic/v1/commonSmsRecord/findSmsRecord
-/api/basic/v1/commonSensitiveWord/checkSensitiveWord
-
-# mall-product（移动端）
-/api/product/v1/mobile/product/searchProduct
-/api/product/v1/mobile/product/getDetail
-/api/product/v1/mobile/product/searchProductComment
-/api/product/v1/mobile/index/getIndexCarouselImageList
-/api/product/v1/mobile/index/getIndexProductList
-/api/product/v1/mobile/index/getIndexNoticeList
-/api/product/v1/mobile/index/searchIndexNoticeByPage
-/api/product/v1/mobile/index/getIndexNoticeDetail
-/api/product/v1/mobile/category/getCategoryByParentId
-
-# mall-product（管理端）
-/api/product/v1/category/searchByTree
-
-# mall-pay
-/api/pay/v1/mobile/pay/doPay               /api/pay/v1/mobile/pay/createQrCode
-```
-
-> [!WARNING]
-> 白名单托管在 Nacos `mall-gateway-dev.yaml` 的 `gateway.filter.noAuth` 中。各服务 `@NoLogin` 注解仅做标记，实际拦截在 Gateway 层。**当前 Gateway 行为为"验签但放行"**，身份校验由下游服务自行完成。如要启用 Gateway 层拦截，需确保白名单完整覆盖所有无需登录的接口。
+> 详见 [docs/gateway-routes.md](docs/gateway-routes.md)
 
 ---
 
@@ -366,240 +319,22 @@ sequenceDiagram
 
 ## 数据库设计
 
-### 部署拓扑
+项目包含 9 个数据库，其中 3 个服务使用了 ShardingSphere 分库分表（订单、推荐、消息各 8 库）。
 
-| 微服务 | 数据库 | 分片策略 | 说明 |
-|--------|--------|---------|------|
-| `mall-gateway` | 无 | — | 纯网关，无数据库 |
-| `mall-auth` | `mall_auth` | 单库 | 认证鉴权、RBAC、收货地址 |
-| `mall-basic` | `mall_basic` | 单库 | 字典、行政区域、图片、任务调度 |
-| `mall-product` | `mall_product` | 单库 | 商品中心、分类品牌、首页管理、购物车 |
-| `mall-marketing` | `mall_marketing` | 单库 | 优惠券、秒杀 |
-| `mall-order` | `mall_trade_0~7` | 8 库 × N 表 | 订单、订单项、收货地址 |
-| `mall-pay` | 无 | — | 纯支付 API 对接 |
-| `mall-recommend` | `mall_recommend_0~7` | 8 库 × 16/64 表 | 收藏、浏览历史 |
-| `mall-message` | `mall_message_0~7` | 8 库 × 64 表 | 站内通知 |
+| 服务 | 数据库 | 分片策略 |
+|------|--------|---------|
+| mall-auth | `mall_auth` | 单库 |
+| mall-order | `mall_trade_0~7` | 8 库 × 32/256 表 |
+| mall-recommend | `mall_recommend_0~7` | 8 库 × 16/64 表 |
+| mall-message | `mall_message_0~7` | 8 库 × 64 表 |
 
-### 各服务对应的表
-
-#### mall-auth（库：`mall_auth`）
-
-| 表名 | 说明 |
-|------|------|
-| `auth_user` | 系统用户 |
-| `auth_user_role` | 用户-角色关联 |
-| `auth_user_avatar` | 用户头像 |
-| `auth_role` | 角色 |
-| `auth_role_menu` | 角色-菜单关联 |
-| `auth_role_dept` | 角色-部门关联 |
-| `auth_menu` | 菜单权限 |
-| `auth_dept` | 部门 |
-| `auth_job` | 岗位 |
-| `delivery_address` | 用户收货地址 |
-
-#### mall-basic（库：`mall_basic`）
-
-| 表名 | 说明 |
-|------|------|
-| `common_dict` | 字典 |
-| `common_dict_detail` | 字典详情 |
-| `common_area` | 行政区域 |
-| `common_photo` | 图片资源 |
-| `common_photo_group` | 图片分组 |
-| `common_job` | Quartz 定时任务 |
-| `common_job_log` | 任务执行日志 |
-| `common_sms_record` | 短信发送记录 |
-| `common_sensitive_word` | 敏感词库 |
-| `common_task` | 异步任务 |
-
-#### mall-product（库：`mall_product`）
-
-| 表名 | 说明 |
-|------|------|
-| `product` | 商品 |
-| `product_detail` | 商品详情（富文本） |
-| `product_photo` | 商品图片 |
-| `product_comment` | 商品评价 |
-| `product_comment_photo` | 评价图片 |
-| `product_attribute` | 商品-属性关联 |
-| `product_group` | 商品分组 |
-| `product_group_attribute` | 分组-属性关联 |
-| `category` | 分类 |
-| `brand` | 品牌 |
-| `attribute` | 属性 |
-| `attribute_value` | 属性值 |
-| `unit` | 单位 |
-| `shopping_cart` | 购物车 |
-| `product_favorites` | 商品收藏（写操作） |
-| `product_view_record` | 浏览记录（写操作） |
-| `mall_index_carousel_image` | 首页轮播图 |
-| `mall_index_notice` | 首页公告 |
-| `mall_index_product` | 首页推荐商品 |
-
-> `product_favorites` 和 `product_view_record` 由 mall-product 写入，mall-recommend 通过 RocketMQ 异步消费后同步到分库分表做查询。
-
-#### mall-marketing（库：`mall_marketing`）
-
-| 表名 | 说明 |
-|------|------|
-| `coupon` | 优惠券定义 |
-| `coupon_user_receive` | 用户领券记录 |
-| `coupon_user_provide` | 用户发券记录 |
-| `seckill_product` | 秒杀商品 |
-
-#### mall-order（库：`mall_trade_0~7`，ShardingSphere 分库分表）
-
-| 逻辑表名 | 物理分片 | 说明 |
-|----------|---------|------|
-| `t_order` | 8 库 × 32 表 | 订单主表 |
-| `t_order_item` | 8 库 × 256 表 | 订单明细 |
-| `t_order_delivery_address` | 8 库 × 32 表 | 订单收货地址 |
-| `t_order_return_apply` | 每库 4 表 | 退货申请 |
-| `t_order_return_item` | 每库 8 表 | 退货明细 |
-| `t_order_return_voucher` | 每库 16 表 | 退货凭证 |
-
-#### mall-recommend（库：`mall_recommend_0~7`，ShardingSphere 分库分表）
-
-| 逻辑表名 | 物理分片 | 分片键 | 说明 |
-|----------|---------|--------|------|
-| `product_favorites` | 8 库 × 16 表 | `user_id` | 用户收藏 |
-| `product_view_record` | 8 库 × 64 表 | `user_id` | 浏览历史 |
-
-#### mall-message（库：`mall_message_0~7`，ShardingSphere 分库分表）
-
-| 逻辑表名 | 物理分片 | 分片键 | 说明 |
-|----------|---------|--------|------|
-| `common_notify` | 8 库 × 64 表 | `to_user_id` | 站内通知 |
-
-#### mall-pay / mall-gateway
-
-无数据库。
-
-> [!WARNING]
-> 分库分表的建表 SQL 位于各服务 `sql/` 目录下：`mall_trade_sharding.sql`（约 408 KB）、`mall_message_sharding.sql`、`mall_recommend_sharding.sql`。**务必通过脚本批量初始化，严禁逐表手动创建**。
+> 详见 [docs/database-design.md](docs/database-design.md)
 
 ---
 
 ## 快速开始
 
-### 第零步：配置文件准备
-
-> [!IMPORTANT]
-> 出于安全考虑，所有服务的 `application.yml` 已被 `.gitignore` 排除，仓库中仅提供 `.template` 模板文件。
-> **启动前必须将模板复制为实际配置文件：**
-
-```bash
-# 在项目根目录 mall_cloud_server/ 下执行以下命令，将模板复制为实际配置文件
-for dir in mall-gateway mall-auth mall-basic mall-product mall-order mall-pay mall-marketing mall-recommend mall-message; do
-  cp "$dir/src/main/resources/application.yml.template" "$dir/src/main/resources/application.yml"
-done
-```
-
-然后编辑各服务的 `application.yml`，将模板中的占位符替换为你自己的实际配置：
-
-| 占位符 | 说明 |
-|--------|------|
-| `your_mysql_password` | MySQL 数据库密码 |
-| `your_redis_host` / `your_redis_password` | Redis 地址和密码 |
-| `your_nacos_host` / `your_nacos_password` | Nacos 地址和密码 |
-| `your_jwt_secret_here` | JWT 签名密钥（请使用足够长度的随机字符串） |
-| `your_elasticsearch_password` | Elasticsearch 密码 |
-| `your_rocketmq_host` | RocketMQ NameServer 地址 |
-| `your_mongodb_host` / `your_mongodb_password` | MongoDB 地址和密码 |
-| `your_minio_host` / `your_minio_secret_key` | MinIO 地址和密钥 |
-| `your_alipay_app_id` / `your_alipay_private_key` / `your_alipay_public_key` | 支付宝沙箱应用配置 |
-| `your_aliyun_access_key_id` / `your_aliyun_access_key_secret` | 阿里云 SMS AccessKey |
-| `your_alipay_notify_url` | 支付宝异步通知回调地址 |
-
-### 环境检查
-
-| 依赖 | 版本要求 | 检查命令 |
-|------|---------|---------|
-| JDK | 17+ | `java -version` |
-| Maven | 3.8+ | `mvn -v` |
-| MySQL | 8.x | `mysql -u root -p -e "SELECT VERSION()"` |
-| Nacos | 2.x | 浏览器打开 `http://<your-server-ip>:8848/nacos` |
-| Redis | 6+ | `redis-cli -h <your-server-ip> -p 6379 PING` |
-| RocketMQ | 5.x | NameServer `<your-server-ip>:9876` 可连通 |
-| Elasticsearch | 7.17 | `curl http://<your-server-ip>:9200` |
-| MongoDB | 5+ | `mongosh <your-server-ip>:27017 --eval "db.version()"` |
-| MinIO | — | 浏览器打开 `http://<your-server-ip>:9002` |
-
-### 第一步：初始化数据库
-
-```sql
--- 1. 创建单库
-CREATE DATABASE IF NOT EXISTS mall_auth    DEFAULT CHARACTER SET utf8mb4;
-CREATE DATABASE IF NOT EXISTS mall_basic   DEFAULT CHARACTER SET utf8mb4;
-CREATE DATABASE IF NOT EXISTS mall_product DEFAULT CHARACTER SET utf8mb4;
-CREATE DATABASE IF NOT EXISTS mall_marketing DEFAULT CHARACTER SET utf8mb4;
-
--- 2. 创建分库（订单 8 库）
-CREATE DATABASE IF NOT EXISTS mall_trade_0 DEFAULT CHARACTER SET utf8mb4;
-CREATE DATABASE IF NOT EXISTS mall_trade_1 DEFAULT CHARACTER SET utf8mb4;
-CREATE DATABASE IF NOT EXISTS mall_trade_2 DEFAULT CHARACTER SET utf8mb4;
-CREATE DATABASE IF NOT EXISTS mall_trade_3 DEFAULT CHARACTER SET utf8mb4;
-CREATE DATABASE IF NOT EXISTS mall_trade_4 DEFAULT CHARACTER SET utf8mb4;
-CREATE DATABASE IF NOT EXISTS mall_trade_5 DEFAULT CHARACTER SET utf8mb4;
-CREATE DATABASE IF NOT EXISTS mall_trade_6 DEFAULT CHARACTER SET utf8mb4;
-CREATE DATABASE IF NOT EXISTS mall_trade_7 DEFAULT CHARACTER SET utf8mb4;
-
--- 3. 创建分库（消息 8 库）
-CREATE DATABASE IF NOT EXISTS mall_message_0 DEFAULT CHARACTER SET utf8mb4;
--- ... 依此类推至 mall_message_7
-
--- 4. 创建分库（推荐 8 库）
-CREATE DATABASE IF NOT EXISTS mall_recommend_0 DEFAULT CHARACTER SET utf8mb4;
--- ... 依此类推至 mall_recommend_7
-```
-
-```bash
-# 5. 初始化分库分表（订单服务 —— 约 408KB 建表脚本）
-#     在 MySQL 客户端中执行：
-mysql -u root -p < mall-order/src/main/resources/sql/mall_trade_sharding.sql
-```
-
-> [!WARNING]
-> 分库分表建表脚本非常大，务必用 `source` 或 `<` 重定向批量执行，**严禁逐表手动创建**。消息库和推荐库的建表 SQL 同样需要在对应库下执行。
-
-### 第二步：确认 Nacos 配置
-
-业务配置全部托管在 Nacos，本地只保留 bootstrap 骨架。启动前确认以下 Nacos 配置项存在且正确：
-
-```
-Namespace: mall
-Group:     mall-cloud
-
-配置列表（每个服务一个 YAML）：
-  mall-auth-dev.yaml         mall-basic-dev.yaml
-  mall-product-dev.yaml      mall-order-dev.yaml
-  mall-pay-dev.yaml           mall-marketing-dev.yaml
-  mall-recommend-dev.yaml    mall-message-dev.yaml
-  mall-gateway-dev.yaml
-```
-
-> 至少需要保证各配置中的 **数据库连接串**、**Redis 地址**、**RocketMQ NameServer** 指向你的实际环境。
-
-### 第三步：构建项目
-
-```bash
-# 在项目根目录 mall_cloud_server/ 下执行
-
-# 方案 A：一次性全量构建（推荐首次）
-mvn clean package -DskipTests
-
-# 方案 B：仅构建修改过的模块（增量）
-mvn clean package -DskipTests -pl mall-gateway -am
-
-# 方案 C：IDEA 内构建
-# 右侧 Maven 面板 → mall_cloud → Lifecycle → clean → package
-```
-
-构建产物位于各模块的 `target/` 目录下，如 `mall-gateway/target/mall-gateway.jar`。
-
-### 第四步：启动服务
-
-**启动必须遵循以下顺序，否则 Feign 客户端注册会出现找不到服务的报错。**
+**启动顺序（严格按以下顺序）：**
 
 ```
 外部依赖（先确保以下中间件已启动）
@@ -612,157 +347,22 @@ mvn clean package -DskipTests -pl mall-gateway -am
   └── MongoDB     → 基本服务依赖
         │
         ▼
-微服务启动顺序（严格按以下顺序）
+微服务启动顺序
   │
-  ├── ① mall-gateway     → 网关入口，路由转发（不依赖其他微服务）
-  ├── ② mall-auth        → 认证服务，注册到 Nacos 为 mall-auth-api
-  ├── ② mall-basic       → 基础服务，可和 auth 并行启动，注册为 mall-basic-api
-  ├── ③ mall-product     → 商品服务，依赖 basic（Feign 调用 AreaFeignClient）
-  ├── ④ mall-order       → 订单服务，依赖 product（Feign 调用 ProductFeignClient）
-  ├── ④ mall-marketing   → 营销服务，依赖 product/auth/basic
-  ├── ④ mall-pay         → 支付服务，依赖 order（Feign 调用 OrderFeignClient，无数据库）
-  ├── ⑤ mall-recommend   → 推荐服务，依赖 product
-  ├── ⑤ mall-message     → 消息推送，依赖 auth
-  ├── ⑥ mall-admin-api   → 【BFF】管理后台聚合，依赖 auth/basic/product/order/marketing
-  └── ⑥ mall-mobile-api  → 【BFF】移动端聚合，依赖 auth/basic/product/order/marketing/pay
-
-最后启动 mall-admin-api &amp; mall-mobile-api（BFF 服务）
+  ├── ① mall-gateway     → 网关入口
+  ├── ② mall-auth        → 认证服务
+  ├── ② mall-basic       → 基础服务（可与 auth 并行）
+  ├── ③ mall-product     → 商品服务
+  ├── ④ mall-order       → 订单服务
+  ├── ④ mall-marketing   → 营销服务
+  ├── ④ mall-pay         → 支付服务
+  ├── ⑤ mall-recommend   → 推荐服务
+  ├── ⑤ mall-message     → 消息推送
+  ├── ⑥ mall-admin-api   → 【BFF】管理后台聚合
+  └── ⑥ mall-mobile-api  → 【BFF】移动端聚合
 ```
 
-#### 方式 A：IDEA 启动（开发推荐）
-
-每个服务模块下找到 `*Application.java` 主类，右键 → Run：
-
-| 服务 | 主类 | 模块目录 |
-|------|------|---------|
-| Gateway | `GatewayApplication` | `mall-gateway` |
-| Auth | `AuthApiApplication` | `mall-auth` |
-| Basic | `BasicApiApplication` | `mall-basic` |
-| Product | `ProductApiApplication` | `mall-product` |
-| Order | `OrderApiApplication` | `mall-order` |
-| Pay | `PayApiApplication` | `mall-pay` |
-| Marketing | `MarketingApiApplication` | `mall-marketing` |
-| Recommend | `RecommendApiApplication` | `mall-recommend` |
-| Message | `MessageApplication` | `mall-message` |
-| **Admin BFF** | **`AdminApiApplication`** | **`mall-admin-api`** |
-| **Mobile BFF** | **`MobileApiApplication`** | **`mall-mobile-api`** |
-
-> **IDEA 编译注意**：如果启动报 `-parameters` 相关错误，在 `File → Settings → Build, Execution, Deployment → Compiler → Java Compiler` 的 "Additional command line parameters" 中填入 `-parameters`。
-
-> **IDEA Run Configurations 只显示部分服务**：右键根 `pom.xml` → Maven → Reload Project 即可刷新。
-
-#### 方式 B：Maven 命令行启动
-
-```bash
-# ───── 阶段 ①：编译依赖并启动 auth（测试单个服务时用） ─────
-mvn compile -pl mall-auth -am          # 先编译依赖
-mvn -pl mall-auth spring-boot:run      # 再启动
-
-# ───── 阶段 ②：编译依赖并启动 basic ─────
-mvn compile -pl mall-basic -am
-mvn -pl mall-basic spring-boot:run
-
-# ───── 阶段 ③：编译依赖并启动 product ─────
-mvn compile -pl mall-product -am
-mvn -pl mall-product spring-boot:run
-
-# ───── 阶段 ④：编译依赖并启动 order/pay/marketing ─────
-mvn compile -pl mall-order -am
-mvn -pl mall-order spring-boot:run
-
-# ───── 阶段 ⑤：编译依赖并启动 recommend/message ─────
-mvn compile -pl mall-recommend -am
-mvn -pl mall-recommend spring-boot:run
-```
-
-#### 方式 C：打包后 JAR 启动（部署用）
-
-```bash
-mvn clean package -DskipTests
-
-# 严格按启动顺序
-java -jar mall-gateway/target/mall-gateway.jar &        # ① 网关
-java -jar mall-auth/target/mall-auth.jar &               # ② 认证
-java -jar mall-basic/target/mall-basic.jar &             # ② 基础
-sleep 15                                                  # 等 auth/basic 注册完毕
-java -jar mall-product/target/mall-product.jar &         # ③ 商品
-sleep 10
-java -jar mall-order/target/mall-order.jar &             # ④ 订单
-java -jar mall-pay/target/mall-pay.jar &                 # ④ 支付
-java -jar mall-marketing/target/mall-marketing.jar &     # ④ 营销
-sleep 10
-java -jar mall-recommend/target/mall-recommend.jar &     # ⑤ 推荐
-java -jar mall-message/target/mall-message.jar &         # ⑤ 消息
-```
-
-#### 方式 D：一键脚本启动（本地开发推荐）
-
-编译 + 启动全部 9 个服务，一次搞定：
-
-```bash
-# 首次使用（先编译再启动）
-bash deploy/start-local.sh --build
-
-# 后续（只启动，跳过编译）
-bash deploy/start-local.sh
-
-# 启动后实时查看 Gateway 日志（Ctrl+C 停止所有）
-bash deploy/start-local.sh --tail
-```
-
-**Windows 用户**：双击 `deploy\start-local.bat` 即可，首次会自动编译，每个服务运行在独立的 cmd 窗口中。
-
-**一键停止：**
-
-```bash
-bash deploy/stop-local.sh        # Linux / Git Bash
-deploy\stop-local.bat            # Windows（双击）
-```
-
-> 启动脚本会自动为 auth、basic、product、marketing 分配本地端口（8021–8024），避免端口冲突。日志输出在 `logs/` 目录下。
-
-```bash
-# 1. 检查 Nacos 注册状态
-#    浏览器打开 http://<your-server-ip>:8848/nacos → 服务管理 → 服务列表
-#    确认以下 9 个服务均在"健康实例"列表中：
-#      mall-gateway / mall-auth-api / mall-basic-api / mall-product-api
-#      mall-order-api / mall-pay-api / mall-marketing-api
-#      mall-recommend-api / mall-message-api
-
-# 2. 验证网关健康检查
-curl http://localhost:8080/actuator/health
-
-# 3. 获取短信验证码（白名单接口，无需 Token）
-curl -X POST http://localhost:8080/api/auth/v1/web/user/getCode \
-  -H "Content-Type: application/json" \
-  -d '{"phone": "13800138000"}'
-
-# 4. 验证需要鉴权的接口（会返回 401 说明鉴权链正常工作）
-curl http://localhost:8080/api/product/v1/product/list
-
-# 5. 测试 WebSocket 连接
-#     浏览器控制台：
-#     const ws = new WebSocket('ws://localhost:8080/api/message/ws');
-#     ws.onopen = () => console.log('WebSocket 连接成功');
-```
-
-### 端口总览
-
-所有服务的端口统一在本地 `application.yml` 中通过 `server.port` 指定，不再依赖 Nacos 远程配置。
-
-| 服务 | 端口 | 说明 |
-|------|:----:|------|
-| mall-gateway | 8080 | 网关统一入口 |
-| **mall-admin-api** | **8090** | **【BFF】管理后台聚合** |
-| **mall-mobile-api** | **8091** | **【BFF】移动端聚合** |
-| mall-auth | 8021 | 用户认证与 RBAC 权限 |
-| mall-basic | 8022 | 文件、短信、敏感词等基础服务 |
-| mall-product | 8023 | 商品、分类与搜索 |
-| mall-marketing | 8024 | 营销活动与优惠 |
-| mall-order | 8026 | 订单与购物车 |
-| mall-pay | 8027 | 支付与退款 |
-| mall-recommend | 8028 | 商品推荐与热门 |
-| mall-message | 8029 | 消息与 WebSocket |
+> 详见 [docs/quick-start.md](docs/quick-start.md) —— 包含配置文件准备、环境检查、数据库初始化、Nacos 配置确认、四种启动方式（IDEA / Maven 命令行 / JAR 包 / 一键脚本）、端口总览、验证步骤
 
 ---
 
@@ -921,91 +521,7 @@ Gateway 已配置全局 CORS（允许所有 Origin）。如果仍然报跨域，
 
 所有服务的业务配置托管在 Nacos 配置中心，本地只保留 Nacos 连接信息。通过环境变量切换环境。
 
-```yaml
-# application.yml.template — 提交到仓库，CI/CD 使用
-spring:
-  profiles:
-    active: ${SPRING_PROFILES_ACTIVE:dev}         # 环境变量切换 dev/prod
-  cloud:
-    nacos:
-      config:
-        server-addr: ${NACOS_ADDR:your_nacos_host:8848}
-        namespace: ${NACOS_NAMESPACE:mall}         # 不同环境不同命名空间
-  config:
-    import: nacos:${spring.application.name}.yaml   # dataId 固定，namespace 隔离
-```
-
-**环境切换：**
-
-| 变量 | 本地 dev（不设） | 生产 |
-|------|----------------|------|
-| `SPRING_PROFILES_ACTIVE` | `dev`（默认） | `prod` |
-| `NACOS_NAMESPACE` | `mall`（默认） | `mall-prod` |
-| Nacos dataId | `mall-auth-api.yaml`（不变） | `mall-auth-api.yaml`（不变） |
-
-**Nacos 创建指南：**
-
-在 Nacos 控制台先建 namespace、再建配置：
-
-```
-① 创建命名空间
-   命名空间ID: mall（自动生成，不填则由 Nacos 分配）
-   命名空间名称: mall
-   描述: 本地开发环境
-
-② 创建 group
-   默认使用 mall-cloud，不需要在 Nacos 上创建，在配置中指定即可
-
-③ 创建配置（每个服务一条）
-   以 mall-auth 为例：
-     Data ID:    mall-auth-api.yaml
-     Group:      mall-cloud
-     配置格式:   YAML
-     配置内容:   根据下面每张表复制
-
-④ 多环境方案（企业级做法）
-   生产环境再建一个 namespace：mall-prod（命名空间ID 不同）
-   同一份 dataId，不同 namespace，配置内容不同
-   启动时设 NACOS_NAMESPACE=mall-prod 完成切换
-```
-
-> 强烈建议 dataId 不加 `-dev`/`-prod` 后缀，用 namespace 隔离环境。
-
-**本地开发：** 复制 template → `application.yml`（gitignored），填入 Nacos 地址和密码即可。所有数据库、Redis 等配置从 Nacos 拉取，无需写在本地。
-
-> ⚠️ 如果本地 Nacos 中已有 `mall-xxx-api-dev.yaml`（带 `-dev` 后缀），在复制 template 后将 `config.import` 改回 `mall-xxx-api-dev.yaml` 保持兼容，后续再迁移到无后缀命名。
-
-**Nacos 配置清单：**
-
-本地 `application.yml` 使用 `spring.config.import` 直连 Nacos 拉取配置。公共配置（Redis、JWT密钥、Actuator）抽取到 `common.yaml` 统一管理，各服务通过 `shared-configs` 自动引用，无需重复配置。
-
-本地 Nacos 建议统一 namespace 为 `mall`，Group 为 `mall-cloud`。每个服务一个 dataId，内容根据模板中的 `your_*` 占位符配置：
-
-| 服务 | 服务说明 | Nacos dataId | 需配置的内容 |
-|------|---------|-------------|-------------|
-| — | **公共配置（所有服务共享）** | `common.yaml` | Redis、JWT tokenSecret、Actuator/Prometheus 监控 |
-| mall-gateway | 统一网关入口：路由转发、CORS、Sentinel 流控 | `mall-gateway-dev.yaml` | 无（仅网关特有配置） |
-| mall-auth | 用户与权限管理：登录注册、RBAC 权限、收货地址管理、鉴权 Starter | `mall-auth-api-dev.yaml` | 数据源(datasource) |
-| mall-basic | 基础服务：字典、区域、文件(MinIO)、短信、敏感词、定时任务(Quartz)、Ollama AI | `mall-basic-api-dev.yaml` | 数据源、MongoDB、MinIO、阿里云短信 |
-| mall-product | 商品中心：商品CRUD、分类/品牌/属性、购物车、MySQL+ES双写、首页管理 | `mall-product-api-dev.yaml` | 数据源、ES、RocketMQ |
-| mall-order | 订单交易：下单→支付→发货→收货→评价 全生命周期、ShardingSphere(8库)、ES搜索 | `mall-order-api-dev.yaml` | ES、RocketMQ、ShardingSphere |
-| mall-pay | 支付服务：支付宝沙箱对接、二维码生成(ZXing)。**无数据库** | `mall-pay-api-dev.yaml` | 支付宝参数(沙箱appId/密钥) |
-| mall-marketing | 营销中心：优惠券发放/核销、秒杀商品、优惠金额试算 | `mall-marketing-api-dev.yaml` | 数据源 |
-| mall-recommend | 智能推荐：商品推荐(Mahout)、收藏管理、浏览历史、ShardingSphere(8库) | `mall-recommend-api-dev.yaml` | RocketMQ、ShardingSphere |
-| mall-message | 消息推送：WebSocket + STOMP 实时推送、站内通知、ShardingSphere(8库) | `mall-message-api-dev.yaml` | ShardingSphere |
-
-**配置文件示例（mall-auth）：**
-
-```yaml
-# Nacos → mall 命名空间 → mall-cloud group → dataId: mall-auth-api-dev.yaml
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/mall_auth?useSSL=false&allowPublicKeyRetrieval=true
-    username: root
-    password: your_password
-```
-
-> 公共配置（Redis、JWT密钥、Actuator）已统一在 `common.yaml` 中通过 `shared-configs` 引用，各服务的 dataId 中不再需要重复填写。每个 `application.yml.template` 里标记为 `your_*` 的占位符，均在 Nacos 上配置。
+> 详见 [docs/nacos-config-guide.md](docs/nacos-config-guide.md) —— 包含数据 ID 清单、环境切换、创建指南、配置文件示例
 
 **日志 & 链路追踪**
 
@@ -1104,59 +620,11 @@ Gateway 验 JWT 签名后**全放行**，不拦截任何请求，身份校验全
 
 当前为单仓库（Monorepo），适合 1-2 个团队协作。若团队规模扩大，可按以下方案拆分。
 
-### 方案一：10 仓库（细粒度）
+**方案一（10 仓库）：** 每个团队独立负责一个服务 + client JAR，通过 Nexus/Artifactory 发布版本。版本管理规则：加字段 → 小版本，改/删字段 → 大版本。
 
-每个团队独立负责一个服务 + 其 client JAR，通过 Nexus/Artifactory 发布版本。
+**方案二（3 仓库）：** 将耦合紧密的服务放在同一仓库，降低版本协调成本：`mall-foundation`（common/gateway/auth）、`mall-business`（basic/product/order/pay/marketing）、`mall-enhancement`（recommend/message）。
 
-| 仓库 | 包含模块 | 团队 |
-|------|---------|------|
-| `mall-common` | mall-common | 基建团队 |
-| `mall-gateway` | mall-gateway | 基建团队 |
-| `mall-auth` | mall-auth + mall-auth-client + mall-auth-api-starter | 权限团队 |
-| `mall-basic` | mall-basic + mall-basic-client | 基础服务团队 |
-| `mall-product` | mall-product + mall-product-client | 商品团队 |
-| `mall-marketing` | mall-marketing + mall-marketing-client | 营销团队 |
-| `mall-order` | mall-order + mall-order-client | 订单团队 |
-| `mall-pay` | mall-pay + mall-pay-client | 支付团队 |
-| `mall-recommend` | mall-recommend | 推荐团队 |
-| `mall-message` | mall-message | 消息团队 |
-
-**版本管理规则：**
-
-- **加字段** → 小版本升级（1.0.0 → 1.1.0），消费方无需改代码
-- **改/删字段** → 大版本升级（1.0.0 → 2.0.0），消费方必须配合
-
-**协作成本：**
-
-```
-mall-product-client v1.0.1 ──→ Nexus
-                                    │
-                    ┌───────────────┴───────────────┐
-                    ▼                               ▼
-          mall-order（更新依赖版本）        mall-recommend（保持旧版本）
-```
-
-每个团队独立发布 client 版本，消费方按需升级。`mall-order-client` 依赖 3 个上游 client（product、auth、marketing），订单团队需要关注 3 个上游的版本变更。
-
-### 方案二：3 仓库（折中）
-
-将耦合紧密的服务放在同一仓库，降低版本协调成本。
-
-| 仓库 | 包含模块 | 说明 |
-|------|---------|------|
-| `mall-foundation` | mall-common + mall-gateway + mall-auth | 基础设施，变动少，稳定版本 |
-| `mall-business` | mall-basic + mall-product + mall-order + mall-pay + mall-marketing + 各自 client | 核心业务，联动频繁，放一起省去跨仓库版本协调 |
-| `mall-enhancement` | mall-recommend + mall-message | 边缘业务，独立迭代 |
-
-**适用场景：**
-
-| 方案 | 适用阶段 |
-|------|---------|
-| 当前 Monorepo | 1-2 个团队，快速迭代 |
-| 3 仓库 | 2-4 个团队（推荐过渡方案） |
-| 10 仓库 | 5 个以上独立团队 |
-
-> 建议先走 3 仓库，等团队扩张到自然边界时再拆 10 仓库。过早拆分会增加版本管理和 CI/CD 成本，而非提高效率。
+> 详见 [docs/repo-split-plan.md](docs/repo-split-plan.md)
 
 ---
 
