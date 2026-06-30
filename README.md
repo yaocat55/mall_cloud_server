@@ -47,7 +47,9 @@
 
 - 🚪 统一 API 网关，JWT 鉴权 + Sentinel 流控
 - 🔐 RBAC 权限模型（用户 → 角色 → 菜单 / 部门）
-- 📦 19 个 Maven 模块，11 个独立部署微服务 + 6 个 Feign 客户端 + 2 个 BFF 聚合层
+- 📦 19 个 Maven 模块，11 个独立部署微服务 + 7 个 Feign 客户端 + 2 个 BFF 聚合层
+- 📄 Swagger 3 三层分组（📱 mobile / ⚙️ admin / 🔗 internal），各服务文档独立展示
+- 🎯 BFF 层统一前端入口，重写前端只需看 BFF 文档
 - 🔄 MySQL + Elasticsearch 双写，ShardingSphere 分库分表
 - ⚡ RocketMQ 延迟消息驱动订单超时取消，异步解耦浏览记录采集
 - 🔗 认证 SDK 自动透传用户上下文，Feign 调用零侵入
@@ -62,22 +64,25 @@
 
 | 项目 | 说明 |
 |------|------|
-| **统一入口** | `http://localhost:8080`（Gateway 端口） |
-| **路径规则** | `/api/{service}/v1/{controller}/{action}` |
-| **请求体** | `Content-Type: application/json` |
+| **前端统一入口** | `http://localhost:8080`（Gateway 端口） |
+| **管理后台（Web）** | → `mall-admin-api（8090 BFF）` |
+| **移动端（小程序）** | → `mall-mobile-api（8091 BFF）` |
+| **BFF 路径前缀** | `/api/admin/**` 和 `/api/mobile/**` |
 | **认证方式** | `Authorization: Bearer {token}`（登录后获取） |
-| **无需 Token** | 白名单接口（见下方网关路由章节）直接调用 |
+
+> **前端重写只看 BFF 文档**：`mall-admin-api/doc.html` 和 `mall-mobile-api/doc.html` 聚合了所有前端需要的接口，底层微服务文档（auth、product、order 等）仅限后端调试使用。
 
 ### 认证流程
 
 ```
-① POST /api/auth/v1/web/user/login  { "username":"admin", "password":"xxx" }
-   → 返回 { "token": "eyJhbGciOi..." }
+① 前端 → POST /api/mobile/v1/auth/login  （走 BFF 层）
+    BFF → Feign → mall-auth 认证服务
+    → 返回 { "token": "eyJhbGciOi..." }
 
-② 后续请求在 Header 中携带：
+② 后续请求 Header：
    Authorization: Bearer eyJhbGciOi...
 
-③ Token 过期 → 接口返回 401 → 前端跳转登录页
+③ Token 过期 → 接口返回 401 → 跳转登录页
 ```
 
 ### API 文档入口
@@ -157,12 +162,18 @@ mall_cloud_server/
 ├── mall-marketing-client/         营销服务 Feign 接口 & DTO
 │
 ├── mall-admin-api/                【BFF】管理后台聚合服务（8090）
+│   └── 聚合用户/商品/订单等编辑页数据
 ├── mall-mobile-api/               【BFF】移动端聚合服务（8091）
+│   └── 聚合首页/商品详情/下单页数据
 │
-└── docs/                          项目文档
+├── docs/                          项目文档
+│   ├── frontend-api-mapping.md   前端 API ↔ 后端微服务映射手册
+│   └── superpowers/              设计文档与实施计划
 
 > [!NOTE]
-> `mall-admin-api` 和 `mall-mobile-api` 是 BFF（Backend For Frontend）层，为各前端提供聚合接口和统一文档入口。每个 `*-client` 模块定义该服务的 Feign 接口，供其他服务引入。业务配置全部托管在 Nacos 配置中心。
+> `mall-admin-api` 和 `mall-mobile-api` 是 BFF（Backend For Frontend）层，为各前端提供聚合接口和统一文档入口，**前端重写只需看这两者的文档**。每个 `*-client` 模块定义该服务的 Feign 接口，供其他服务引入。业务配置全部托管在 Nacos 配置中心。
+>
+> 每个业务模块在 `controller/internal/` 包下存放仅供微服务间 Feign 调用的接口，URL 以 `/v1/internal/` 开头，与前端接口物理隔离。
 
 ---
 
@@ -180,19 +191,24 @@ mall_cloud_server/
   └──────────────────────────┘
         │
         ▼
-  ┌──────────────────────────────────────────────────┐
-  │  BFF 聚合层（统一前端入口 & 数据聚合）              │
-  │  ├── mall-admin-api (8090) — 管理后台文档/接口     │
-  │  └── mall-mobile-api (8091) — 移动端文档/接口      │
-  └──────────────────────────────────────────────────┘
+  ┌──────────────────────────────────────────────────────┐
+  │  BFF 聚合层（前端唯一入口，按页面聚合数据）            │
+  │  ├── mall-admin-api  (8090) — 管理后台 Web 端        │
+  │  │   └── 聚合：用户编辑页/商品编辑页/订单管理         │
+  │  └── mall-mobile-api (8091) — 移动端小程序           │
+  │      └── 已聚合：首页/商品详情/下单预览               │
+  └──────────────────────────────────────────────────────┘
         │
         ▼
-  ┌──────────────────────────┐
-  │  9 个业务微服务            │
-  │  auth / basic / product  │
-  │  order / pay / marketing │
-  │  recommend / message     │
-  └──────────────────────────┘
+  ┌──────────────────────────────────────────────┐
+  │  9 个业务微服务（每服务 3 层 Swagger 分组）    │
+  │  ├── 📱 mobile — 前端接口（经 BFF 转发）      │
+  │  ├── ⚙️ admin  — 管理后台接口（经 BFF 转发）   │
+  │  └── 🔗 internal — Feign 内部接口            │
+  │                                             │
+  │  auth / basic / product / order / pay       │
+  │  marketing / recommend / message            │
+  └──────────────────────────────────────────────┘
         │
         ▼
   ┌──────────────────────────┐
@@ -794,24 +810,37 @@ curl http://localhost:8080/api/product/v1/product/list
 
 ---
 
-### API 文档（Knife4j + Swagger）
+### API 文档（Knife4j + Swagger 3 三层分组）
 
-每个服务独立提供 API 文档，集成 Knife4j 增强皮肤，支持 mobile / admin 分组：
+每个服务提供 Swagger 3 / Knife4j 文档，按三层分组：
 
-| 服务 | Knife4j 地址 | Swagger 地址（原生） | 分组 |
-|------|-------------|-------------------|------|
-| **mall-admin-api** 🆕 | **`http://localhost:8090/doc.html`** | **`http://localhost:8090/swagger-ui.html`** | **admin（前端入口）** |
-| **mall-mobile-api** 🆕 | **`http://localhost:8091/doc.html`** | **`http://localhost:8091/swagger-ui.html`** | **mobile（前端入口）** |
-| mall-auth | `http://localhost:8021/doc.html` | `http://localhost:8021/swagger-ui.html` | mobile / admin |
-| mall-basic | `http://localhost:8022/doc.html` | `http://localhost:8022/swagger-ui.html` | mobile / admin |
-| mall-product | `http://localhost:8023/doc.html` | `http://localhost:8023/swagger-ui.html` | mobile / admin |
-| mall-marketing | `http://localhost:8024/doc.html` | `http://localhost:8024/swagger-ui.html` | admin |
-| mall-order | `http://localhost:8026/doc.html` | `http://localhost:8026/swagger-ui.html` | mobile |
-| mall-pay | `http://localhost:8027/doc.html` | `http://localhost:8027/swagger-ui.html` | mobile |
-| mall-recommend | `http://localhost:8028/doc.html` | `http://localhost:8028/swagger-ui.html` | mobile / admin |
-| mall-message | `http://localhost:8029/doc.html` | `http://localhost:8029/swagger-ui.html` | admin |
+| 分组 | 含义 | 使用者 |
+|------|------|--------|
+| 📱 mobile | 移动端前端接口 | 小程序（经 BFF 转发） |
+| ⚙️ admin | 管理后台接口 | 管理后台（经 BFF 转发） |
+| 🔗 internal | 内部微服务 Feign 接口 | **后端开发**调试微服务间调用 |
 
-> **BFF 是前端唯一需要关注的文档入口**，聚合了对应前端所需的所有接口。后端服务文档仅限内部调试。访问 `/doc.html` 使用 Knife4j 增强界面（推荐），`/swagger-ui.html` 保留原生 Swagger UI。
+**前端开发者只需关注 BFF 文档：**
+
+| 服务 | Knife4j 地址 | 适用前端 |
+|------|-------------|---------|
+| **mall-admin-api** | **`http://localhost:8090/doc.html`** | **管理后台 Web** |
+| **mall-mobile-api** | **`http://localhost:8091/doc.html`** | **移动端小程序** |
+
+**后端开发者各服务文档（三层分组）：**
+
+| 服务 | Knife4j 地址 | 三层分组 |
+|------|-------------|---------|
+| mall-auth | `http://localhost:8021/doc.html` | 📱 mobile / ⚙️ admin / 🔗 internal |
+| mall-basic | `http://localhost:8022/doc.html` | 📱 mobile / ⚙️ admin / 🔗 internal |
+| mall-product | `http://localhost:8023/doc.html` | 📱 mobile / ⚙️ admin / 🔗 internal |
+| mall-order | `http://localhost:8026/doc.html` | 📱 mobile / 🔗 internal |
+| mall-pay | `http://localhost:8027/doc.html` | 📱 mobile / 🔗 internal |
+| mall-marketing | `http://localhost:8024/doc.html` | ⚙️ admin / 🔗 internal |
+| mall-message | `http://localhost:8029/doc.html` | ⚙️ admin |
+| mall-recommend | `http://localhost:8028/doc.html` | 📱 mobile / ⚙️ admin |
+
+> **BFF 是前端唯一需要关注的文档入口**，聚合了对应前端所需的所有接口。底层微服务的 `mobile/admin` 分组仅经 BFF 透传调用，`internal` 分组仅用于后端 Feign 调试。访问 `/doc.html` 使用 Knife4j 增强界面（推荐）。
 
 ### 常见启动问题
 
@@ -1132,3 +1161,5 @@ mall-product-client v1.0.1 ──→ Nexus
 ---
 
 > 在线查看此文档可获得最佳体验（Mermaid 图表自动渲染）。本地 IDE 需安装 Mermaid 插件。
+>
+> 相关文档：`docs/frontend-api-mapping.md` — 前端 API 与后端微服务完整映射手册
