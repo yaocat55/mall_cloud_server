@@ -1,13 +1,18 @@
 package cn.net.mall.product.client;
 
 import cn.net.mall.annotation.NoLogin;
+import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.product.dto.CategoryDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Map;
 
 import static cn.net.mall.product.constant.AppConstant.PRODUCT_SERVICE_NAME;
 
@@ -29,4 +34,20 @@ public interface CategoryFeignClient {
     @Operation(summary = "根据父分类ID查询分类列表", description = "根据父分类ID查询分类列表")
     @GetMapping("/v1/mobile/category/getCategoryByParentId")
     List<CategoryDTO> getCategoryByParentId(@RequestParam("parentId") Long parentId);
+
+    @Operation(summary = "分页查询分类（管理端）")
+    @PostMapping("/v1/category/searchByPage")
+    ResponsePageEntity<?> searchByPage(@RequestBody Map<String, Object> condition);
+
+    @Operation(summary = "新增分类（管理端）")
+    @PostMapping("/v1/category/insert")
+    int insert(@RequestBody Object entity);
+
+    @Operation(summary = "修改分类（管理端）")
+    @PostMapping("/v1/category/update")
+    int update(@RequestBody Object entity);
+
+    @Operation(summary = "删除分类（管理端）")
+    @PostMapping("/v1/category/deleteByIds")
+    int deleteByIds(@RequestBody @NotNull List<Long> ids);
 }
