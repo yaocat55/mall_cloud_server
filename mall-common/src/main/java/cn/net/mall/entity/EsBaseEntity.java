@@ -2,6 +2,7 @@ package cn.net.mall.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
@@ -20,6 +21,7 @@ public class EsBaseEntity implements Serializable {
     /**
      * ID
      */
+    @Schema(description = "系统ID")
     private String id;
 
     /**

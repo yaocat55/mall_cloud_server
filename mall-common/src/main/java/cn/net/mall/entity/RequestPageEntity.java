@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.net.mall.exception.BusinessException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
@@ -27,16 +28,19 @@ public class RequestPageEntity implements Serializable {
     /**
      * 页码，默认从一页开始
      */
+    @Schema(description = "页码")
     private Integer pageNo = 1;
 
     /**
      * 每页大小，默认一页查询10条数据
      */
+    @Schema(description = "每页条数")
     private Integer pageSize = DEFAULT_PAGE_SIZE;
 
     /**
      * 排序字段
      */
+    @Schema(description = "排序字段")
     private List<String> sortField;
 
 

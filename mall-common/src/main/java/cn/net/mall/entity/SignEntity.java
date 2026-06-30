@@ -2,6 +2,7 @@ package cn.net.mall.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
@@ -19,10 +20,12 @@ public class SignEntity implements Serializable {
     /**
      * 时间戳
      */
+    @Schema(description = "timestamp")
     private Long timestamp;
 
     /**
      * 签名
      */
+    @Schema(description = "sign")
     private String sign;
 }
