@@ -1,5 +1,6 @@
 package cn.net.mall.basic.client;
 
+import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.basic.dto.DictDetailConditionDTO;
 import cn.net.mall.basic.dto.DictDetailDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Map;
 
 import static cn.net.mall.basic.constant.AppConstant.BASIC_SERVICE_NAME;
 
@@ -36,5 +38,21 @@ public interface DictFeignClient {
     @Operation(summary = "根据条件查询数据字典详情列表", description = "内部Feign调用：根据字典编码等条件查询字典明细列表")
     @PostMapping("/v1/dictDetail/searchDictDetail")
     List<DictDetailDTO> searchDictDetail(@RequestBody @NotNull DictDetailConditionDTO dictDetailConditionDTO);
+
+    @Operation(summary = "分页查询字典（管理端）")
+    @PostMapping("/v1/dict/searchByPage")
+    ResponsePageEntity<?> searchByPage(@RequestBody Map<String, Object> condition);
+
+    @Operation(summary = "新增字典（管理端）")
+    @PostMapping("/v1/dict/insert")
+    int insert(@RequestBody Object entity);
+
+    @Operation(summary = "修改字典（管理端）")
+    @PostMapping("/v1/dict/update")
+    int update(@RequestBody Object entity);
+
+    @Operation(summary = "删除字典（管理端）")
+    @PostMapping("/v1/dict/deleteByIds")
+    int deleteByIds(@RequestBody @NotNull List<Long> ids);
 
 }

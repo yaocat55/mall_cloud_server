@@ -22,14 +22,14 @@ public class AdminMarketingController {
 
     @Operation(summary = "分页查询优惠券", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/coupon/page")
-    public ResponsePageEntity<?> searchCouponPage(@RequestBody Map<String, Object> c) { return null; }
+    public ResponsePageEntity<?> searchCouponPage(@RequestBody Map<String, Object> c) { return marketingFeignClient.searchByPage(c); }
     @Operation(summary = "新增优惠券", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/coupon/insert")
-    public int insertCoupon(@RequestBody Object e) { return 0; }
+    public int insertCoupon(@RequestBody Object e) { return marketingFeignClient.insert(e); }
     @Operation(summary = "修改优惠券", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/coupon/update")
-    public int updateCoupon(@RequestBody Object e) { return 0; }
+    public int updateCoupon(@RequestBody Object e) { return marketingFeignClient.update(e); }
     @Operation(summary = "删除优惠券", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/coupon/delete")
-    public int deleteCoupon(@RequestBody @NotNull List<Long> ids) { return 0; }
+    public int deleteCoupon(@RequestBody @NotNull List<Long> ids) { return marketingFeignClient.deleteByIds(ids); }
 }

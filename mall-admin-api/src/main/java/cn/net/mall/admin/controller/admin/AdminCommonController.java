@@ -24,27 +24,27 @@ public class AdminCommonController {
 
     @Operation(summary = "分页查询区域", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/area/page")
-    public ResponsePageEntity<?> searchAreaPage(@RequestBody Map<String, Object> c) { return null; }
+    public ResponsePageEntity<?> searchAreaPage(@RequestBody Map<String, Object> c) { return areaFeignClient.searchByPage(c); }
     @Operation(summary = "新增区域", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/area/insert")
-    public int insertArea(@RequestBody Object e) { return 0; }
+    public int insertArea(@RequestBody Object e) { return areaFeignClient.insert(e); }
     @Operation(summary = "修改区域", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/area/update")
-    public int updateArea(@RequestBody Object e) { return 0; }
+    public int updateArea(@RequestBody Object e) { return areaFeignClient.update(e); }
     @Operation(summary = "删除区域", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/area/delete")
-    public int deleteArea(@RequestBody @NotNull List<Long> ids) { return 0; }
+    public int deleteArea(@RequestBody @NotNull List<Long> ids) { return areaFeignClient.deleteByIds(ids); }
 
     @Operation(summary = "分页查询字典", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/dict/page")
-    public ResponsePageEntity<?> searchDictPage(@RequestBody Map<String, Object> c) { return null; }
+    public ResponsePageEntity<?> searchDictPage(@RequestBody Map<String, Object> c) { return dictFeignClient.searchByPage(c); }
     @Operation(summary = "新增字典", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/dict/insert")
-    public int insertDict(@RequestBody Object e) { return 0; }
+    public int insertDict(@RequestBody Object e) { return dictFeignClient.insert(e); }
     @Operation(summary = "修改字典", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/dict/update")
-    public int updateDict(@RequestBody Object e) { return 0; }
+    public int updateDict(@RequestBody Object e) { return dictFeignClient.update(e); }
     @Operation(summary = "删除字典", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/dict/delete")
-    public int deleteDict(@RequestBody @NotNull List<Long> ids) { return 0; }
+    public int deleteDict(@RequestBody @NotNull List<Long> ids) { return dictFeignClient.deleteByIds(ids); }
 }

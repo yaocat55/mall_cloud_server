@@ -4,13 +4,16 @@ import cn.net.mall.marketing.dto.CouponDTO;
 import cn.net.mall.marketing.dto.CouponReceiveDTO;
 import cn.net.mall.marketing.dto.OrderPriceCalculateReqDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import cn.net.mall.entity.ResponsePageEntity;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import static cn.net.mall.marketing.constant.AppConstant.MARKETING_SERVICE_NAME;
 
@@ -65,4 +68,21 @@ public interface MarketingFeignClient {
     @Operation(summary = "领取优惠券", description = "由 mall-mobile-api(BFF) 调用，领取指定优惠券")
     @PostMapping("/v1/coupon/receiveCoupon")
     void receiveCoupon(@RequestBody CouponReceiveDTO req);
+
+    @Operation(summary = "分页查询优惠券（管理端）")
+    @PostMapping("/v1/coupon/searchByPage")
+    ResponsePageEntity<?> searchByPage(@RequestBody Map<String, Object> condition);
+
+    @Operation(summary = "新增优惠券（管理端）")
+    @PostMapping("/v1/coupon/insert")
+    int insert(@RequestBody Object entity);
+
+    @Operation(summary = "修改优惠券（管理端）")
+    @PostMapping("/v1/coupon/update")
+    int update(@RequestBody Object entity);
+
+    @Operation(summary = "删除优惠券（管理端）")
+    @PostMapping("/v1/coupon/deleteByIds")
+    int deleteByIds(@RequestBody @NotNull List<Long> ids);
+
 }
