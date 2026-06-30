@@ -7,10 +7,11 @@ import cn.net.mall.basic.client.AreaFeignClient;
 import cn.net.mall.basic.client.UploadFeignClient;
 import cn.net.mall.basic.dto.AreaDTO;
 import cn.net.mall.basic.dto.FileDTO;
+import cn.net.mall.mobile.dto.UserProfileDTO;
 import cn.net.mall.order.client.OrderFeignClient;
 import cn.net.mall.product.client.IndexFeignClient;
-import cn.net.mall.product.dto.IndexProductDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,16 +36,20 @@ public class MobileUserController {
     private final OrderFeignClient orderFeignClient;
     private final IndexFeignClient indexFeignClient;
 
-    @Operation(summary = "获取用户中心聚合数据", description = "用户信息 + 各状态订单数量 + 推荐商品，一次接口返回")
+    @Operation(summary = "获取用户中心聚合数据",
+               description = "聚合用户基本信息 + 各状态订单数量 + 推荐商品列表，一次接口返回用户中心所需全部数据\n\n"
+                           + "**注意事项：**\n"
+                           + "- 需携带 Bearer Token（Authorization 请求头）",
+               security = @SecurityRequirement(name = "Bearer Token"))
     @GetMapping("/profile")
-    public Map<String, Object> getProfile() {
-        Map<String, Object> result = new LinkedHashMap<>();
-        try { result.put("user", userFeignClient.getUserDetail());
-        } catch (Exception e) { log.warn("获取用户详情失败", e); result.put("user", null); }
-        try { result.put("orderCounts", orderFeignClient.getUserOrderTradeCount());
-        } catch (Exception e) { log.warn("获取订单统计失败", e); result.put("orderCounts", null); }
-        try { result.put("recommendProducts", indexFeignClient.getIndexProductList(0));
-        } catch (Exception e) { log.warn("获取推荐商品失败", e); result.put("recommendProducts", Collections.emptyList()); }
+    public UserProfileDTO getProfile() {
+        UserProfileDTO result = new UserProfileDTO();
+        try { result.setUser(userFeignClient.getUserDetail());
+        } catch (Exception e) { log.warn("获取用户详情失败", e); }
+        try { result.setOrderCounts(orderFeignClient.getUserOrderTradeCount());
+        } catch (Exception e) { log.warn("获取订单统计失败", e); }
+        try { result.setRecommendProducts(indexFeignClient.getIndexProductList(0));
+        } catch (Exception e) { log.warn("获取推荐商品失败", e); }
         return result;
     }
 
