@@ -12,8 +12,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "商品评论图片")
 
 public class ProductCommentPhotoEntity extends BaseEntity {
+    @Schema(description = "comment Id")
     private Long commentId;
+    @Schema(description = "商品ID")
     private Long productId;
+    @Schema(description = "url")
     private String url;
+    @Schema(description = "排序")
     private Integer sort;
 }

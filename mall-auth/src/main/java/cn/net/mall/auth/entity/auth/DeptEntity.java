@@ -43,5 +43,6 @@ public class DeptEntity extends BaseEntity {
 	/**
 	 * 角色ID
 	 */
+	@Schema(description = "角色ID")
 	private Long roleId;
 }

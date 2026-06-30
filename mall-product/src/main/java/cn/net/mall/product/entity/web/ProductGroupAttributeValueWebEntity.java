@@ -16,11 +16,13 @@ public class ProductGroupAttributeValueWebEntity {
     /**
      * 系统ID
      */
+    @Schema(description = "系统ID")
     private Long id;
 
     /**
      * 属性值
      */
+    @Schema(description = "值")
     private String value;
 
 }

@@ -16,10 +16,12 @@ public class FileDTO {
     /**
      * 文件名称
      */
+    @Schema(description = "文件名")
     private String fileName;
 
     /**
      * 下载地址
      */
+    @Schema(description = "下载地址")
     private String downloadUrl;
 }

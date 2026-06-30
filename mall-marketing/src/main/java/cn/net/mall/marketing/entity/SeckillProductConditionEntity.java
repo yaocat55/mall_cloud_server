@@ -27,6 +27,7 @@ public class SeckillProductConditionEntity extends RequestConditionEntity {
     /**
      * ID集合
      */
+    @Schema(description = "系统ID列表")
     private List<Long> idList;
 
     /**

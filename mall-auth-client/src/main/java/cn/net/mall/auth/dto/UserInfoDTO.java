@@ -21,15 +21,18 @@ public class UserInfoDTO {
     /**
      * 用户ID
      */
+    @Schema(description = "系统ID")
     private Long id;
 
     /**
      * 用户名
      */
+    @Schema(description = "用户名")
     private String username;
 
     /**
      * 角色信息
      */
+    @Schema(description = "roles")
     private List<String> roles;
 }

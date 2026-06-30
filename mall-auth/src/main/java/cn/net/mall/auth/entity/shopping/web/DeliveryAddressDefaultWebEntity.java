@@ -23,5 +23,6 @@ public class DeliveryAddressDefaultWebEntity {
      * 系统ID
      */
     @NotNull(message = "系统ID不能为空")
+    @Schema(description = "系统ID")
     private Long id;
 }

@@ -26,6 +26,7 @@ public class UserAvatarConditionEntity extends RequestPageEntity {
     /**
      * 系统编号集合
      */
+    @Schema(description = "系统ID列表")
     private List<Long> idList;
 
     /**

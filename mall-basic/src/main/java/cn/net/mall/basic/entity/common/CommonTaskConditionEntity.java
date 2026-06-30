@@ -52,6 +52,7 @@ public class CommonTaskConditionEntity extends RequestPageEntity {
     /**
      * 执行状态集合
      */
+    @Schema(description = "状态列表")
     private List<Integer> statusList;
 
     /**

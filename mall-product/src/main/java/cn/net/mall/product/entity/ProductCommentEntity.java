@@ -18,46 +18,55 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class ProductCommentEntity extends BaseEntity {
 
+    @Schema(description = "用户名")
     private String userName;
 
     /**
      * 订单ID
      */
+    @Schema(description = "订单ID")
     private Long orderId;
 
 
     /**
      * 父评论ID
      */
+    @Schema(description = "上级ID")
     private Long parentId;
 
     /**
      * 商品ID
      */
+    @Schema(description = "商品ID")
     private Long productId;
 
     /**
      * 用户ID
      */
+    @Schema(description = "用户ID")
     private Long userId;
 
     /**
      * 评论内容
      */
+    @Schema(description = "内容")
     private String content;
 
     /**
      * 评分
      */
+    @Schema(description = "rating")
     private Integer rating;
 
     /**
      * 评论类型
      */
+    @Schema(description = "类型")
     private Integer type;
 
     /**
      * 图片地址
      */
+    @Schema(description = "头像URL")
     private String avatarUrl;
 }

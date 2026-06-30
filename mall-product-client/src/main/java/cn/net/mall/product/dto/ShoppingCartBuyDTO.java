@@ -19,11 +19,13 @@ public class ShoppingCartBuyDTO {
     /**
      * 购物车中的优惠券商品列表
      */
+    @Schema(description = "coupon Group Product Web Entity List")
     private List<CouponGroupProductDTO> couponGroupProductWebEntityList;
 
     /**
      * 总金额
      */
+    @Schema(description = "total Money")
     private BigDecimal totalMoney = BigDecimal.ZERO;
 
     /**
@@ -34,5 +36,6 @@ public class ShoppingCartBuyDTO {
     /**
      * 优惠金额
      */
+    @Schema(description = "优惠金额")
     private BigDecimal subtractMoney = BigDecimal.ZERO;
 }

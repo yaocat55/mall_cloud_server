@@ -32,6 +32,7 @@ public class ProductAttributeConditionEntity extends RequestPageEntity {
     /**
      * 商品ID集合
      */
+    @Schema(description = "商品ID列表")
     private List<Long> productIdList;
 
     /**

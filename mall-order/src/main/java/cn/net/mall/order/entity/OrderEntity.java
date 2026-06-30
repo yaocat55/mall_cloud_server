@@ -77,19 +77,19 @@ public class OrderEntity extends BaseEntity {
     /**
      * 总金额
      */
-    @NotNull(message = "总金额不能为空")
-    @Schema(description = "总金额", example = "99.99")
-    @MinMoney(value = 0, message = "总金额不能小于0")
-    @MaxMoney(value = 100000, message = "总金额必须小于100000")
+@NotNull(message = "总金额不能为空")
+@Schema(description = "总金额", example = "99.99")
+@MinMoney(value = 0, message = "总金额不能小于0")
+@MaxMoney(value = 100000, message = "总金额必须小于100000")
     private BigDecimal totalAmount;
 
     /**
      * 付款金额
      */
-    @NotNull(message = "付款金额不能为空")
-    @Schema(description = "付款金额", example = "99.99")
-    @MinMoney(value = 0, message = "付款金额不能小于0")
-    @MaxMoney(value = 100000, message = "付款金额必须小于100000")
+@NotNull(message = "付款金额不能为空")
+@Schema(description = "付款金额", example = "99.99")
+@MinMoney(value = 0, message = "付款金额不能小于0")
+@MaxMoney(value = 100000, message = "付款金额必须小于100000")
     private BigDecimal paymentAmount;
 
     /**

@@ -16,10 +16,12 @@ public class CouponUserEntity extends UserProductEntity {
     /**
      * 优惠券ID
      */
+    @Schema(description = "优惠券ID")
     private Long couponId;
 
     /**
      * 优惠券名称
      */
+    @Schema(description = "coupon Name")
     private String couponName;
 }

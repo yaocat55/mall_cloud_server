@@ -22,22 +22,26 @@ public class ShoppingCartProductDTO {
     /**
      * 唯一标识
      */
+    @Schema(description = "唯一标识")
     private String uuid;
 
     /**
      * 系统ID
      */
+    @Schema(description = "系统ID")
     private Long id;
 
     /**
      * 商品ID
      */
     @NotNull(message = "商品ID不能为空")
+    @Schema(description = "商品ID")
     private Long productId;
 
     /**
      * 用户ID
      */
+    @Schema(description = "用户ID")
     private Long userId;
 
     /**
@@ -80,30 +84,36 @@ public class ShoppingCartProductDTO {
      * 数量
      */
     @NotNull(message = "数量不能为空")
+    @Schema(description = "数量")
     private Integer quantity;
 
     /**
      * 库存
      */
+    @Schema(description = "库存")
     private Integer stock;
 
     /**
      * 总金额
      */
+    @Schema(description = "总金额")
     private BigDecimal totalAmount;
 
     /**
      * 支付金额
      */
+    @Schema(description = "支付金额")
     private BigDecimal payAmount;
 
     /**
      * 创建时间
      */
+    @Schema(description = "创建时间")
     private Date createTime;
 
     /**
      * 是否选中
      */
+    @Schema(description = "checked")
     private boolean checked;
 }

@@ -16,5 +16,6 @@ public class SeckillProductDetailEntity extends ESSeckillProductEntity {
     @Schema(description = "商品详情", example = "-")
     private String detail;
 
+    @Schema(description = "swiper")
     private List<String> swiper;
 }

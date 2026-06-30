@@ -21,10 +21,12 @@ public class ProductCheckEntity {
     /**
      * 分类列表
      */
+    @Schema(description = "category Entities")
     private List<CategoryEntity> categoryEntities;
 
     /**
      * 品牌列表
      */
+    @Schema(description = "brand Entities")
     private List<BrandEntity> brandEntities;
 }

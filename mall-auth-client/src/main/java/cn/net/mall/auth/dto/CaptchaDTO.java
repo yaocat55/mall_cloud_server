@@ -18,10 +18,12 @@ public class CaptchaDTO {
     /**
      * 唯一标识
      */
+    @Schema(description = "唯一标识")
     private String uuid;
 
     /**
      * 验证码图片
      */
+    @Schema(description = "图片(base64)")
     private String img;
 }

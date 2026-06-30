@@ -18,16 +18,19 @@ public class ProductGroupAttributeWebEntity {
     /**
      * 属性
      */
+    @Schema(description = "系统ID")
     private Long id;
 
     /**
      * 属性名称
      */
+    @Schema(description = "名称")
     private String name;
 
     /**
      * 属性值集合
      */
+    @Schema(description = "值列表")
     private List<ProductGroupAttributeValueWebEntity> valueList;
 
 }

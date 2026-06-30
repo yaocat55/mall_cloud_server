@@ -21,6 +21,7 @@ public class UserWebEntity {
     /**
      * 系统ID
      */
+    @Schema(description = "系统ID")
     private Long id;
 
     /**

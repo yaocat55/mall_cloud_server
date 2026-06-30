@@ -80,17 +80,20 @@ public class ProductWebEntity extends EsBaseEntity {
      * 销量
      */
     @Field(type = FieldType.Keyword)
+    @Schema(description = "销量")
     private String saleQuantity;
 
     /**
      * 评价数量
      */
+    @Schema(description = "comment Count")
     private String commentCount;
 
     /**
      * 好评率
      */
     @Field(type = FieldType.Keyword)
+    @Schema(description = "positive Rating")
     private String positiveRating;
 
     /**

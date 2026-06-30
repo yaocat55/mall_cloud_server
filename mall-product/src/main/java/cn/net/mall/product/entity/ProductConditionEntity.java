@@ -147,5 +147,6 @@ public class ProductConditionEntity extends RequestConditionEntity {
     /**
      * 逻辑删除ID，默认是0，表示未删除
      */
+    @Schema(description = "del Id")
     private Long delId;
 }

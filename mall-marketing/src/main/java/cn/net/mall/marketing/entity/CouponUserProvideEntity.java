@@ -18,6 +18,7 @@ public class CouponUserProvideEntity extends CouponUserEntity {
     /**
      * 有效状态 1:有效 0:无效
      */
+    @Schema(description = "valid Status")
     private Integer validStatus;
 
     /**

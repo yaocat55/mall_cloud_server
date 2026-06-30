@@ -22,30 +22,36 @@ public class CommonAreaEntity extends BaseEntity {
 	/**
 	 * 上一级ID
 	 */
+	@Schema(description = "上级ID")
 	private Long parentId;
 
 	/**
 	 * 名称
 	 */
+	@Schema(description = "名称")
 	private String name;
 
 	/**
 	 * 拼音
 	 */
+	@Schema(description = "pinyin")
 	private String pinyin;
 
 	/**
 	 * 全称
 	 */
+	@Schema(description = "full Name")
 	private String fullName;
 
 	/**
 	 * 行政编码
 	 */
+	@Schema(description = "编码")
 	private String code;
 
 	/**
 	 * 级别
 	 */
+	@Schema(description = "等级")
 	private Integer level;
 }

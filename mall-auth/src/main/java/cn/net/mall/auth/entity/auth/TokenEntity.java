@@ -14,8 +14,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class TokenEntity {
 
+    @Schema(description = "用户名")
     private String username;
+    @Schema(description = "令牌")
     private String token;
+    @Schema(description = "roles")
     private List<String> roles;
+    @Schema(description = "expires In")
     private int expiresIn;
 }

@@ -20,25 +20,30 @@ public class ProductGroupEntity extends BaseProductEntity {
     /**
      * 商品组名称
      */
+    @Schema(description = "名称")
     private String name;
 
     /**
      * 规格
      */
+    @Schema(description = "model")
     private String model;
 
     /**
      * hash值
      */
+    @Schema(description = "hash")
     private String hash;
 
     /**
      * 是否新创建的商品组
      */
+    @Schema(description = "is New")
     private Boolean isNew;
 
     /**
      * 逻辑删除ID，默认是0，表示未删除
      */
+    @Schema(description = "del Id")
     private Long delId;
 }

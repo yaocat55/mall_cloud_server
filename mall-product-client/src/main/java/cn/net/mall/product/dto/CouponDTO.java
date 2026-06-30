@@ -10,8 +10,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "优惠券信息")
 
 public class CouponDTO {
+    @Schema(description = "系统ID")
     private Long id;
+    @Schema(description = "类型")
     private Integer type;
+    @Schema(description = "min Product Count")
     private Integer minProductCount;
     // 添加其他可能需要的字段，根据 ShoppingCartService 的使用情况
 }

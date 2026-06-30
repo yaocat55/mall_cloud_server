@@ -23,11 +23,13 @@ public class OrderTradeProductCommentWebEntity {
      * 订单code
      */
     @NotEmpty(message = "订单Code不能为空")
+    @Schema(description = "交易编号")
     private String tradeCode;
 
     /**
      * 评价集合
      */
     @NotEmpty(message = "评价集合不能为空")
+    @Schema(description = "product Comment Web Entity List")
     private List<ProductCommentWebEntity> productCommentWebEntityList;
 }

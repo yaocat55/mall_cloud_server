@@ -92,10 +92,12 @@ public class RoleConditionEntity extends RequestConditionEntity {
     /**
      * id集合
      */
+    @Schema(description = "系统ID列表")
     private List<Long> idList;
 
     /**
      * 查询条件
      */
+    @Schema(description = "blurry")
     private String blurry;
 }

@@ -37,5 +37,6 @@ public class RoleMenuConditionEntity extends RequestPageEntity {
     /**
      * 角色ID集合
      */
+    @Schema(description = "角色ID列表")
     private List<Long> roleIdList;
 }

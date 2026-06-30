@@ -19,11 +19,13 @@ public class UserProductEntity extends BaseEntity {
      * 商品ID
      */
     @NotNull(message = "商品ID不能为空")
+    @Schema(description = "商品ID")
     private Long productId;
 
     /**
      * 用户ID
      */
+    @Schema(description = "用户ID")
     private Long userId;
 
     /**
@@ -59,5 +61,6 @@ public class UserProductEntity extends BaseEntity {
     /**
      * 库存
      */
+    @Schema(description = "库存")
     private Integer stock;
 }

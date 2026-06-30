@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "商品收藏")
 
 public class ProductFavoritesEntity extends BaseEntity {
+    @Schema(description = "用户ID")
     private Long userId;
+    @Schema(description = "商品ID")
     private Long productId;
 }

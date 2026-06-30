@@ -22,15 +22,18 @@ public class ProductGroupAttributeEntity extends BaseEntity {
 	/**
 	 * 商品组ID
 	 */
+	@Schema(description = "product Group Id")
 	private Long productGroupId;
 
 	/**
 	 * 属性ID
 	 */
+	@Schema(description = "attribute Id")
 	private Long attributeId;
 
 	/**
 	 * 属性值ID
 	 */
+	@Schema(description = "attribute Value Id")
 	private Long attributeValueId;
 }

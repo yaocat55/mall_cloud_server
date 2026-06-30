@@ -22,20 +22,24 @@ public class CouponUserReceiveEntity extends CouponUserEntity {
     /**
      * 使用状态 1:已使用 0:未使用
      */
+    @Schema(description = "use Status")
     private Integer useStatus;
 
     /**
      * 使用时间
      */
+    @Schema(description = "use Time")
     private Date useTime;
 
     /**
      * 优惠券实体
      */
+    @Schema(description = "coupon Entity")
     private CouponEntity couponEntity;
 
     /**
      * 优惠券发放实体
      */
+    @Schema(description = "coupon User Provide Entity")
     private CouponUserProvideEntity couponUserProvideEntity;
 }

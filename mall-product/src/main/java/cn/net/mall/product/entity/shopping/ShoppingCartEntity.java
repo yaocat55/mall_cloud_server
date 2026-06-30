@@ -26,10 +26,12 @@ public class ShoppingCartEntity extends UserProductEntity {
      * 数量
      */
     @NotNull(message = "数量不能为空")
+    @Schema(description = "数量")
     private Integer quantity;
 
     /**
      * 总金额
      */
+    @Schema(description = "总金额")
     private BigDecimal totalAmount;
 }

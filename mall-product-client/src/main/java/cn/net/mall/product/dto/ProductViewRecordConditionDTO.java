@@ -10,20 +10,24 @@ public class ProductViewRecordConditionDTO extends RequestConditionEntity {
     /**
      * ID
      */
+    @Schema(description = "系统ID")
     private Long id;
 
     /**
      * 用户ID
      */
+    @Schema(description = "用户ID")
     private Long userId;
 
     /**
      * 商品ID
      */
+    @Schema(description = "商品ID")
     private Long productId;
 
     /**
      * 是否删除 1：已删除 0：未删除
      */
+    @Schema(description = "是否删除 0:未删除 1:已删除")
     private Integer isDel;
 }

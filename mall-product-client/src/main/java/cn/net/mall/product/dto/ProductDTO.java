@@ -128,31 +128,37 @@ public class ProductDTO {
     /**
      * 是否新创建的商品
      */
+    @Schema(description = "是否新品")
     private Boolean isNew;
 
     /**
      * 属性值组合
      */
+    @Schema(description = "attribute Value Ids")
     private String attributeValueIds;
 
     /**
      * 封面图片
      */
+    @Schema(description = "封面图URL")
     private List<String> cover;
 
     /**
      * 轮播图
      */
+    @Schema(description = "轮播图列表")
     private List<String> swiper;
 
     /**
      * 详情
      */
+    @Schema(description = "detail")
     private String detail;
 
     /**
      * 逻辑删除ID，默认是0，表示未删除
      */
+    @Schema(description = "del Id")
     private Long delId;
 
     /**
