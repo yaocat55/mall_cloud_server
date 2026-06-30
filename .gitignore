@@ -9,6 +9,9 @@ target
 logs
 *.DS_Store
 
+# Design docs — internal brainstorming, not part of project documentation
+docs/superpowers/
+
 # Sensitive configuration files — copy .template and fill in your own values
 **/application.yml
 **/application-*.yml
