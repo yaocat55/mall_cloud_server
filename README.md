@@ -553,12 +553,12 @@ Gateway 已配置全局 CORS（允许所有 Origin）。如果仍然报跨域，
 
 详见 [docs/架构改进建议.md](docs/架构改进建议.md)，当前主要问题：
 
-| 优先级 | 问题 | 摘要 |
-|--------|------|------|
-| P0 | JWT 鉴权重复查 Redis | Gateway 验签后全放行，各服务重复查 Redis 恢复用户上下文 |
-| P1 | 认证模块功能不完整 | 缺用户状态管理、多设备策略、登录安全、三方登录 |
-| P2 | 用户表未分离 | 移动端用户和管理员共用同一张表、同一个登录接口 |
-| P2 | product_favorites 同步不明确 | mall-product 和 mall-recommend 之间缺少数据同步路径 |
+| 优先级 | 问题数 | 核心 |
+|--------|:------:|------|
+| P0 | 4 | JWT 查 Redis、库存回滚、敏感信息、.idea 清理 |
+| P1 | 6 | 零测试、无异常处理、BFF 缺 scanBasePackages、缺 template、Feign 无超时 |
+| P2 | 8 | 用户表未分离、认证不全、同步不明确、DTO 缺 @Schema、缺 client 模块 |
+| P3 | 3 | Maven Wrapper、启动脚本、Docker 环境 |
 
 ---
 
