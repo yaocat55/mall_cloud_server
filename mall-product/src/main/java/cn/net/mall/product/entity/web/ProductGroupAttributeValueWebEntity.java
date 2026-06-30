@@ -1,6 +1,7 @@
 package cn.net.mall.product.entity.web;
 
 import lombok.Data;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 商品组属性值web实体
@@ -8,6 +9,8 @@ import lombok.Data;
  * @date 2024/9/7 下午3:24
  */
 @Data
+@Schema(description = "ProductGroupAttributeValue信息")
+
 public class ProductGroupAttributeValueWebEntity {
 
     /**

@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.util.Date;
 import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 优惠券查询条件实体
@@ -12,6 +13,8 @@ import java.util.List;
  * @date 2024-09-13 15:38:33
  */
 @Data
+@Schema(description = "优惠券")
+
 public class CouponConditionEntity extends RequestConditionEntity {
 
     /**

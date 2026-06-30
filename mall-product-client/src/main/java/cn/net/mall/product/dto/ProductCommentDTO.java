@@ -4,6 +4,7 @@ import cn.net.mall.annotation.ValidSensitiveWordField;
 import lombok.Data;
 
 import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 商品评价实体
@@ -11,6 +12,8 @@ import java.util.List;
  * @date 2024/9/6 下午12:23
  */
 @Data
+@Schema(description = "商品评论")
+
 public class ProductCommentDTO {
 
     /**

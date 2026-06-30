@@ -8,6 +8,7 @@ import cn.net.mall.entity.BaseEntity;
 
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 购物车实体
@@ -17,6 +18,8 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Schema(description = "购物车")
+
 public class ShoppingCartEntity extends UserProductEntity {
 
     /**

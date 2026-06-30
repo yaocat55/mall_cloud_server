@@ -4,8 +4,11 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Data
+@Schema(description = "订单商品评价")
+
 public class OrderTradeProductCommentDTO {
     private String tradeCode;
     private Long orderId;

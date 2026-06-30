@@ -4,6 +4,7 @@ import cn.net.mall.entity.RequestConditionEntity;
 import lombok.Data;
 
 import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 商品组属性查询条件实体
@@ -11,6 +12,8 @@ import java.util.List;
  * @date 2024-09-07 17:28:48
  */
 @Data
+@Schema(description = "商品分组属性")
+
 public class ProductGroupAttributeConditionEntity extends RequestConditionEntity {
 
     /**

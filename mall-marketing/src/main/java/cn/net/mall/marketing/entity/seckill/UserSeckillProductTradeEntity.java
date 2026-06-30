@@ -5,8 +5,11 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Data
+@Schema(description = "UserSeckillProductTrade信息")
+
 public class UserSeckillProductTradeEntity extends SignEntity {
 
     private Long tradeId;

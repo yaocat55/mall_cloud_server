@@ -3,6 +3,7 @@ package cn.net.mall.product.dto;
 import lombok.Data;
 
 import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 
 /**
@@ -11,6 +12,8 @@ import java.util.List;
  * @date 2024/9/3 下午4:32
  */
 @Data
+@Schema(description = "商品详情信息")
+
 public class ProductDetailInfoDTO extends ProductDTO {
 
     /**

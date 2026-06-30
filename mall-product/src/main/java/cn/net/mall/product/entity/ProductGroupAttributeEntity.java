@@ -4,6 +4,7 @@ import cn.net.mall.entity.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 商品组属性实体 该项目是知识星球：java突击队 的内部项目
@@ -13,6 +14,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Schema(description = "商品分组属性")
+
 public class ProductGroupAttributeEntity extends BaseEntity {
 
 

@@ -4,6 +4,7 @@ import cn.net.mall.entity.RequestConditionEntity;
 import lombok.Data;
 import java.util.List;
 import java.math.BigDecimal;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 购物车查询条件实体
@@ -11,6 +12,8 @@ import java.math.BigDecimal;
  * @date 2024-08-30 18:03:40
  */
 @Data
+@Schema(description = "购物车")
+
 public class ShoppingCartConditionEntity extends RequestConditionEntity {
 
     /**

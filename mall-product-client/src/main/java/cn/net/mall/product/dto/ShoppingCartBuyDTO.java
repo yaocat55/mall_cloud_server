@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 购物车实体
@@ -11,6 +12,8 @@ import java.util.List;
  * @date 2024/9/11 下午4:29
  */
 @Data
+@Schema(description = "购物车结算")
+
 public class ShoppingCartBuyDTO {
 
     /**

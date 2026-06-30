@@ -4,6 +4,7 @@ import cn.net.mall.entity.RequestConditionEntity;
 import lombok.Data;
 
 import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 收货地址查询条件实体
@@ -11,6 +12,8 @@ import java.util.List;
  * @date 2024-09-01 10:02:01
  */
 @Data
+@Schema(description = "收货地址")
+
 public class DeliveryAddressConditionEntity extends RequestConditionEntity {
 
     /**

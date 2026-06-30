@@ -4,6 +4,7 @@ import cn.net.mall.entity.RequestConditionEntity;
 import lombok.Data;
 
 import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 首页公告查询条件实体
@@ -11,6 +12,8 @@ import java.util.List;
  * @date 2024-10-03 15:58:40
  */
 @Data
+@Schema(description = "首页公告")
+
 public class IndexNoticeConditionEntity extends RequestConditionEntity {
 
    /**

@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 购物车查询条件实体
@@ -12,6 +13,8 @@ import java.util.List;
  * @date 2024-08-30 18:03:40
  */
 @Data
+@Schema(description = "购物车信息")
+
 public class ShoppingCartConditionDTO extends RequestConditionEntity {
 
     /**

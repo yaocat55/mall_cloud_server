@@ -3,6 +3,7 @@ package cn.net.mall.product.dto;
 import lombok.Data;
 
 import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 优惠券商品组
@@ -10,6 +11,8 @@ import java.util.List;
  * @date 2024/9/18 下午6:16
  */
 @Data
+@Schema(description = "优惠券分组商品")
+
 public class CouponGroupProductDTO {
 
     /**

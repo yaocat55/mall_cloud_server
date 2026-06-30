@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.util.Date;
 import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 短信发送记录查询条件实体
@@ -12,6 +13,8 @@ import java.util.List;
  * @date 2024-11-08 13:03:15
  */
 @Data
+@Schema(description = "短信发送记录")
+
 public class CommonSmsRecordConditionEntity extends RequestConditionEntity {
 
    /**

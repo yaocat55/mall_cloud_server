@@ -4,6 +4,7 @@ import cn.net.mall.entity.RequestConditionEntity;
 import lombok.Data;
 
 import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 商品评论查询条件实体
@@ -11,6 +12,8 @@ import java.util.List;
  * @date 2024-08-31 15:50:38
  */
 @Data
+@Schema(description = "商品评论")
+
 public class ProductCommentConditionEntity extends RequestConditionEntity {
 
     /**

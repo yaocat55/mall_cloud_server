@@ -1,11 +1,14 @@
 package cn.net.mall.product.dto;
 
 import lombok.Data;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 优惠券Web实体 (Mock for ShoppingCart)
  */
 @Data
+@Schema(description = "优惠券信息")
+
 public class CouponDTO {
     private Long id;
     private Integer type;

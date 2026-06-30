@@ -5,8 +5,11 @@ import lombok.Data;
 
 import java.util.Date;
 import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Data
+@Schema(description = "商品评论图片")
+
 public class ProductCommentPhotoConditionEntity extends RequestPageEntity {
     private Long id;
     private Long commentId;

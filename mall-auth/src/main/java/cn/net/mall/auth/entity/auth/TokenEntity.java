@@ -5,10 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Schema(description = "Token令牌")
+
 public class TokenEntity {
 
     private String username;

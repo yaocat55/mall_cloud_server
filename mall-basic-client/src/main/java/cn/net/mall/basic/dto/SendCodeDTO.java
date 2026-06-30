@@ -4,12 +4,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 
 /**
  * 发送验证码请求DTO
  */
 @Data
+@Schema(description = "发送验证码请求")
+
 public class SendCodeDTO {
     /**
      * 手机号

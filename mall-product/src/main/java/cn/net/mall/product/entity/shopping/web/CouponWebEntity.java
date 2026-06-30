@@ -2,11 +2,14 @@ package cn.net.mall.product.entity.shopping.web;
 
 import lombok.Data;
 import java.math.BigDecimal;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 优惠券Web实体 (Mock for ShoppingCart)
  */
 @Data
+@Schema(description = "优惠券")
+
 public class CouponWebEntity {
     private Long id;
     private Integer type;

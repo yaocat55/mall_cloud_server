@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import jakarta.validation.constraints.NotNull;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 收货地址实体
@@ -14,6 +15,8 @@ import jakarta.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Schema(description = "默认收货地址请求")
+
 public class DeliveryAddressDefaultWebEntity {
 
     /**

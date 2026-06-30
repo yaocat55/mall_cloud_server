@@ -4,6 +4,7 @@ import cn.net.mall.entity.RequestConditionEntity;
 import lombok.Data;
 
 import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 地区查询条件实体
@@ -11,6 +12,8 @@ import java.util.List;
  * @date 2024-10-04 11:43:55
  */
 @Data
+@Schema(description = "行政区域")
+
 public class CommonAreaConditionEntity extends RequestConditionEntity {
 
    /**

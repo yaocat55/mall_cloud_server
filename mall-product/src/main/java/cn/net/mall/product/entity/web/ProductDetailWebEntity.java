@@ -4,6 +4,7 @@ import cn.net.mall.product.entity.ProductEntity;
 import lombok.Data;
 
 import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 
 /**
@@ -12,6 +13,8 @@ import java.util.List;
  * @date 2024/9/3 下午4:32
  */
 @Data
+@Schema(description = "ProductDetail信息")
+
 public class ProductDetailWebEntity extends ProductEntity {
 
     /**

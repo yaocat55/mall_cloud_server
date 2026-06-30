@@ -1,6 +1,7 @@
 package cn.net.mall.marketing.entity;
 
 import lombok.Data;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 优惠券用户实体
@@ -8,6 +9,8 @@ import lombok.Data;
  * @date 2024/9/13 下午6:32
  */
 @Data
+@Schema(description = "CouponUser信息")
+
 public class CouponUserEntity extends UserProductEntity {
 
     /**

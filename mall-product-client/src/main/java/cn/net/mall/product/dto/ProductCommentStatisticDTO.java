@@ -1,6 +1,7 @@
 package cn.net.mall.product.dto;
 
 import lombok.Data;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 商品评价统计实体
@@ -8,6 +9,8 @@ import lombok.Data;
  * @date 2024/9/6 下午3:41
  */
 @Data
+@Schema(description = "商品评论统计")
+
 public class ProductCommentStatisticDTO {
 
     /**

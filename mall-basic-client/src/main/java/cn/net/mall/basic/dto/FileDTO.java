@@ -1,6 +1,7 @@
 package cn.net.mall.basic.dto;
 
 import lombok.Data;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 文件对象
@@ -8,6 +9,8 @@ import lombok.Data;
  * @date 2024/5/5 下午5:21
  */
 @Data
+@Schema(description = "文件信息")
+
 public class FileDTO {
 
     /**

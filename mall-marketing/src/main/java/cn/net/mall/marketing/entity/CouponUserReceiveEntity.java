@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 优惠券领取实体 该项目是知识星球：java突击队 的内部项目
@@ -14,6 +15,8 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Schema(description = "CouponUserReceive信息")
+
 public class CouponUserReceiveEntity extends CouponUserEntity {
 
     /**

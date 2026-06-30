@@ -4,11 +4,14 @@ import cn.net.mall.entity.RequestConditionEntity;
 import lombok.Data;
 
 import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 订单收货地址查询条件实体
  */
 @Data
+@Schema(description = "订单配送地址")
+
 public class OrderDeliveryAddressConditionEntity extends RequestConditionEntity {
 
     /**

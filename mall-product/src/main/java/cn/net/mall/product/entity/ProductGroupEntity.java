@@ -3,6 +3,7 @@ package cn.net.mall.product.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 商品组实体 该项目是知识星球：java突击队 的内部项目
@@ -12,6 +13,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Schema(description = "商品分组")
+
 public class ProductGroupEntity extends BaseProductEntity {
 
     /**
