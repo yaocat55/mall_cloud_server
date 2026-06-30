@@ -2,90 +2,270 @@
 
 ## 配置管理
 
-所有服务的业务配置托管在 Nacos 配置中心，本地只保留 Nacos 连接信息。通过环境变量切换环境。
+所有服务的业务配置托管在 Nacos 配置中心，本地 `application.yml` 只保留 Nacos 连接信息。
 
 ```yaml
-# application.yml.template — 提交到仓库，CI/CD 使用
+# application.yml（已 gitignored，从 template 复制）
+server:
+  port: 8021
+
 spring:
-  profiles:
-    active: ${SPRING_PROFILES_ACTIVE:dev}         # 环境变量切换 dev/prod
+  application:
+    name: mall-auth-api
   cloud:
     nacos:
       config:
-        server-addr: ${NACOS_ADDR:your_nacos_host:8848}
-        namespace: ${NACOS_NAMESPACE:mall}         # 不同环境不同命名空间
+        server-addr: localhost:8848
+        namespace: your_namespace_id
+        group: mall-cloud
+        file-extension: yaml
+        username: nacos
+        password: nacos
+        shared-configs:
+          - data-id: common.yaml
+            group: mall-cloud
+            refresh: true
+      discovery:
+        server-addr: localhost:8848
+        namespace: your_namespace_id
+        group: mall-cloud
+        username: nacos
+        password: nacos
   config:
-    import: nacos:${spring.application.name}.yaml   # dataId 固定，namespace 隔离
+    import: nacos:mall-auth-api-dev.yaml    # 每个服务各自的配置文件
 ```
 
-### 环境切换
+### Nacos 配置结构
 
-| 变量 | 本地 dev（不设） | 生产 |
-|------|----------------|------|
-| `SPRING_PROFILES_ACTIVE` | `dev`（默认） | `prod` |
-| `NACOS_NAMESPACE` | `mall`（默认） | `mall-prod` |
-| Nacos dataId | `mall-auth-api.yaml`（不变） | `mall-auth-api.yaml`（不变） |
+```
+Namespace: your_namespace_id（如 7af60364-a045-4561-85a3-3f7a69de938d）
+Group:     mall-cloud
 
-### 创建指南
+配置文件清单：
+  common.yaml                  ← 公共配置，所有服务通过 shared-configs 引用
+  mall-auth-api-dev.yaml       ← 认证服务
+  mall-basic-api-dev.yaml      ← 基础服务
+  mall-product-api-dev.yaml    ← 商品服务
+  mall-order-api-dev.yaml      ← 订单服务
+  mall-pay-api-dev.yaml        ← 支付服务
+  mall-marketing-api-dev.yaml  ← 营销服务
+  mall-recommend-api-dev.yaml  ← 推荐服务
+  mall-message-api-dev.yaml    ← 消息推送
+  mall-gateway-dev.yaml        ← 网关（路由、白名单、Sentinel）
+```
 
-在 Nacos 控制台先建 namespace、再建配置：
+> 注意：dataId 带 `-dev` 后缀是当前现状。建议后续统一去掉后缀，使用 namespace 隔离环境。
+
+## 公共配置（common.yaml）
+
+所有服务共享，通过 `shared-configs` 自动引用：
+
+```yaml
+# Redis 缓存
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: your_redis_password
+      timeout: 50000
+
+# JWT 密钥（所有服务共用同一个）
+mall:
+  mgt:
+    tokenSecret: your_jwt_secret_here
+
+# Actuator / Prometheus 监控
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  endpoint:
+    health:
+      show-details: always
+```
+
+## 各服务 Nacos 配置清单
+
+### mall-auth-api-dev.yaml
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/mall_auth?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false
+    username: root
+    password: your_mysql_password
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: your_redis_password
+```
+
+### mall-basic-api-dev.yaml
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/mall_basic?serverTimezone=Asia/Shanghai
+    username: root
+    password: your_mysql_password
+  data:
+    mongodb:
+      host: your_mongo_host
+      port: 27017
+      username: mongodb
+      password: your_mongo_password
+
+aliyun:
+  sms:
+    access-key-id: your_aliyun_key
+    access-key-secret: your_aliyun_secret
+    sign-name: Java突击队
+
+minio:
+  endpoint: http://your_minio_host
+  port: 9002
+  bucketName: mall-dev
+  accessKey: your_minio_key
+  secretKey: your_minio_secret
+
+rocketmq:
+  name-server: your_rocketmq_host:9876
+  producer:
+    group: mall-basic-api-producer
+
+spring:
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        model: deepseek-r1:8b
+```
+
+### mall-product-api-dev.yaml
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/mall_product?serverTimezone=Asia/Shanghai
+    username: root
+    password: your_mysql_password
+  data:
+    mongodb:
+      host: your_mongo_host
+      port: 27017
+      username: mongodb
+      password: your_mongo_password
+  elasticsearch:
+    host: your_es_host
+    port: 9200
+    username: elastic
+    password: your_es_password
+  cache:
+    type: caffeine
+    caffeine:
+      spec: initialCapacity=50,maximumSize=500,expireAfterWrite=60s
+
+rocketmq:
+  name-server: your_rocketmq_host:9876
+  producer:
+    group: mall-product-api-producer
+```
+
+### mall-order-api-dev.yaml
+
+```yaml
+spring:
+  data:
+    mongodb:
+      host: your_mongo_host
+      port: 27017
+      username: mongodb
+      password: your_mongo_password
+  elasticsearch:
+    uris: http://your_es_host:9200
+    username: elastic
+    password: your_es_password
+
+rocketmq:
+  name-server: your_rocketmq_host:9876
+  producer:
+    group: mall-order-api-producer
+
+mall:
+  order:
+    orderTimeoutDelayLevel: 15    # RocketMQ 延迟等级
+```
+
+### mall-pay-api-dev.yaml
+
+```yaml
+mall:
+  pay:
+    alipay:
+      protocol: https
+      gatewayHost: openapi-sandbox.dl.alipaydev.com
+      signType: RSA2
+      appId: your_alipay_app_id
+      privateKey: your_alipay_private_key
+      publicKey: your_alipay_public_key
+      notifyUrl: http://your-domain.com/notify
+```
+
+### mall-marketing-api-dev.yaml
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/mall_marketing?serverTimezone=Asia/Shanghai
+    username: root
+    password: your_mysql_password
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: your_redis_password
+```
+
+### mall-recommend-api-dev.yaml / mall-message-api-dev.yaml
+
+较简单，仅含应用名、端口、MyBatis 配置和 ShardingSphere 配置。
+
+### mall-gateway-dev.yaml
+
+网关配置较特殊，含路由规则、CORS、Sentinel 和 JWT 白名单，建议直接从 Nacos 导出。
+
+## 创建指南
 
 ```
 ① 创建命名空间
-   命名空间ID: mall（自动生成，不填则由 Nacos 分配）
+   命名空间ID: 自动生成（如 7af60364-a045-4561-85a3-3f7a69de938d）
    命名空间名称: mall
    描述: 本地开发环境
 
 ② 创建 group
-   默认使用 mall-cloud，不需要在 Nacos 上创建，在配置中指定即可
+   group: mall-cloud（不需要在 Nacos 上创建，在配置中指定即可）
 
-③ 创建配置（每个服务一条）
-   以 mall-auth 为例：
-     Data ID:    mall-auth-api.yaml
-     Group:      mall-cloud
-     配置格式:   YAML
-     配置内容:   根据下面每张表复制
+③ 创建配置
+   先创建 common.yaml（公共配置）
+   再依次创建各服务的 xxx-api-dev.yaml
 
-④ 多环境方案（企业级做法）
-   生产环境再建一个 namespace：mall-prod（命名空间ID 不同）
-   同一份 dataId，不同 namespace，配置内容不同
-   启动时设 NACOS_NAMESPACE=mall-prod 完成切换
+④ 复制 template → application.yml
+   填入 Nacos 地址、命名空间ID、密码
 ```
 
-> 强烈建议 dataId 不加 `-dev`/`-prod` 后缀，用 namespace 隔离环境。
+## 本地 application.yml
 
-**本地开发：** 复制 template → `application.yml`（gitignored），填入 Nacos 地址和密码即可。所有数据库、Redis 等配置从 Nacos 拉取，无需写在本地。
+所有服务的本地 `application.yml` 已被 `.gitignore` 排除，从 `application.yml.template` 复制：
 
-> ⚠️ 如果本地 Nacos 中已有 `mall-xxx-api-dev.yaml`（带 `-dev` 后缀），在复制 template 后将 `config.import` 改回 `mall-xxx-api-dev.yaml` 保持兼容，后续再迁移到无后缀命名。
-
-## Nacos 配置清单
-
-本地 `application.yml` 使用 `spring.config.import` 直连 Nacos 拉取配置。公共配置（Redis、JWT密钥、Actuator）抽取到 `common.yaml` 统一管理，各服务通过 `shared-configs` 自动引用，无需重复配置。
-
-本地 Nacos 建议统一 namespace 为 `mall`，Group 为 `mall-cloud`。每个服务一个 dataId，内容根据模板中的 `your_*` 占位符配置：
-
-| 服务 | 服务说明 | Nacos dataId | 需配置的内容 |
-|------|---------|-------------|-------------|
-| — | **公共配置（所有服务共享）** | `common.yaml` | Redis、JWT tokenSecret、Actuator/Prometheus 监控 |
-| mall-gateway | 统一网关入口：路由转发、CORS、Sentinel 流控 | `mall-gateway-dev.yaml` | 无（仅网关特有配置） |
-| mall-auth | 用户与权限管理：登录注册、RBAC 权限、收货地址管理、鉴权 Starter | `mall-auth-api-dev.yaml` | 数据源(datasource) |
-| mall-basic | 基础服务：字典、区域、文件(MinIO)、短信、敏感词、定时任务(Quartz)、Ollama AI | `mall-basic-api-dev.yaml` | 数据源、MongoDB、MinIO、阿里云短信 |
-| mall-product | 商品中心：商品CRUD、分类/品牌/属性、购物车、MySQL+ES双写、首页管理 | `mall-product-api-dev.yaml` | 数据源、ES、RocketMQ |
-| mall-order | 订单交易：下单→支付→发货→收货→评价 全生命周期、ShardingSphere(8库)、ES搜索 | `mall-order-api-dev.yaml` | ES、RocketMQ、ShardingSphere |
-| mall-pay | 支付服务：支付宝沙箱对接、二维码生成(ZXing)。**无数据库** | `mall-pay-api-dev.yaml` | 支付宝参数(沙箱appId/密钥) |
-| mall-marketing | 营销中心：优惠券发放/核销、秒杀商品、优惠金额试算 | `mall-marketing-api-dev.yaml` | 数据源 |
-| mall-recommend | 智能推荐：商品推荐(Mahout)、收藏管理、浏览历史、ShardingSphere(8库) | `mall-recommend-api-dev.yaml` | RocketMQ、ShardingSphere |
-| mall-message | 消息推送：WebSocket + STOMP 实时推送、站内通知、ShardingSphere(8库) | `mall-message-api-dev.yaml` | ShardingSphere |
-
-## 配置文件示例
-
-```yaml
-# Nacos → mall 命名空间 → mall-cloud group → dataId: mall-auth-api-dev.yaml
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/mall_auth?useSSL=false&allowPublicKeyRetrieval=true
-    username: root
-    password: your_password
+```bash
+# 复制模板
+for dir in mall-gateway mall-auth mall-basic mall-product mall-order mall-pay \
+    mall-marketing mall-recommend mall-message mall-admin-api mall-mobile-api; do
+  cp "$dir/src/main/resources/application.yml.template" "$dir/src/main/resources/application.yml"
+done
 ```
 
-> 公共配置（Redis、JWT密钥、Actuator）已统一在 `common.yaml` 中通过 `shared-configs` 引用，各服务的 dataId 中不再需要重复填写。每个 `application.yml.template` 里标记为 `your_*` 的占位符，均在 Nacos 上配置。
+> 然后将 `application.yml` 中的 `your_*` 替换为实际的 Nacos 地址、命名空间ID 和密码。所有业务配置（数据库、Redis、ES 等）从 Nacos 拉取，无需写在本地。

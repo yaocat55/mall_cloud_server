@@ -1,0 +1,27 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: mall-admin-api
+  cloud:
+    nacos:
+      config:
+        server-addr: your_nacos_host:8848
+        namespace: ${NACOS_NAMESPACE:mall}
+        group: mall-cloud
+        file-extension: yaml
+        username: nacos
+        password: your_nacos_password
+        shared-configs:
+          - data-id: common.yaml
+            group: mall-cloud
+            refresh: true
+      discovery:
+        server-addr: your_nacos_host:8848
+        namespace: ${NACOS_NAMESPACE:mall}
+        group: mall-cloud
+        username: nacos
+        password: your_nacos_password
+  config:
+    import: nacos:mall-admin-api-dev.yaml
