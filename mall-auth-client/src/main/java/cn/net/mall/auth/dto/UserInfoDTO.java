@@ -1,5 +1,6 @@
 package cn.net.mall.auth.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,10 +8,11 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 /**
- * 用户信息实体
+ * 用户信息 DTO
  *
  * @date 2025/5/22 16:16
  */
+@Schema(description = "用户信息 DTO")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data

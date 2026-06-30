@@ -10,13 +10,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-
 /**
- * 部门树实体
+ * 部门树 DTO
+ * <p>
+ * 用于 mall-admin-api 通过 Feign 调用获取部门树数据
  *
  * @date 2024/1/27 下午5:28
  */
-@Schema(description = "部门树实体")
+@Schema(description = "部门树 DTO")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -64,7 +65,6 @@ public class DeptTreeDTO {
     @Schema(description = "是否叶子节点", example = "false")
     private Boolean leaf;
 
-
     /**
      * 是否有下一级
      */
@@ -86,6 +86,7 @@ public class DeptTreeDTO {
     /**
      * 子部门
      */
+    @Schema(description = "子部门")
     private List<DeptTreeDTO> children;
 
     /**

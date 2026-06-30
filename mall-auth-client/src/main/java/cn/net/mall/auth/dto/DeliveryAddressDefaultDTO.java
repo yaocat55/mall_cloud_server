@@ -4,12 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
- * 收货地址默认设置DTO
+ * 收货地址默认设置 DTO
  */
+@Schema(description = "收货地址默认设置 DTO")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

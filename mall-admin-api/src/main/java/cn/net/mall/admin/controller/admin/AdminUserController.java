@@ -1,8 +1,12 @@
 package cn.net.mall.admin.controller.admin;
 
 import cn.net.mall.auth.client.DeliveryAddressFeignClient;
+import cn.net.mall.auth.client.DeptFeignClient;
+import cn.net.mall.auth.client.JobFeignClient;
+import cn.net.mall.auth.client.RoleFeignClient;
 import cn.net.mall.auth.client.UserFeignClient;
 import cn.net.mall.auth.dto.*;
+import cn.net.mall.auth.dto.auth.DeptTreeDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -10,12 +14,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * 管理后台用户管理 BFF 控制器
  * <p>
- * 聚合用户信息、收货地址等数据，提供管理后台所需的用户管理接口
+ * 聚合用户信息、角色、部门、岗位等数据，提供管理后台所需的用户管理接口
  */
 @Slf4j
 @RestController
@@ -26,6 +30,9 @@ public class AdminUserController {
 
     private final UserFeignClient userFeignClient;
     private final DeliveryAddressFeignClient deliveryAddressFeignClient;
+    private final RoleFeignClient roleFeignClient;
+    private final DeptFeignClient deptFeignClient;
+    private final JobFeignClient jobFeignClient;
 
     // ==================== 用户信息 ====================
 
@@ -95,5 +102,49 @@ public class AdminUserController {
     @PostMapping("/deliveryAddress/setDefault")
     public void setDefaultDeliveryAddress(@RequestBody DeliveryAddressDefaultDTO deliveryAddressDefaultDTO) {
         deliveryAddressFeignClient.setDefaultDeliveryAddress(deliveryAddressDefaultDTO);
+    }
+
+    // ==================== 聚合接口 ====================
+
+    @Operation(summary = "获取用户编辑页数据",
+               description = "聚合用户基本信息 + 角色列表 + 部门树 + 岗位列表，支持管理后台用户编辑页面")
+    @GetMapping("/{id}/edit-data")
+    public Map<String, Object> getUserEditData(@PathVariable Long id) {
+        Map<String, Object> result = new LinkedHashMap<>();
+
+        // 1. 用户基本信息
+        try {
+            List<UserDTO> users = userFeignClient.findByIds(Collections.singletonList(id));
+            result.put("user", users != null && !users.isEmpty() ? users.get(0) : null);
+        } catch (Exception e) {
+            log.warn("获取用户信息失败, id={}", id, e);
+            result.put("user", null);
+        }
+
+        // 2. 所有角色（用于角色分配下拉框）
+        try {
+            result.put("roles", roleFeignClient.getAll());
+        } catch (Exception e) {
+            log.warn("获取角色列表失败", e);
+            result.put("roles", Collections.emptyList());
+        }
+
+        // 3. 部门树（用于部门选择）
+        try {
+            result.put("deptTree", deptFeignClient.searchByTree(Collections.emptyMap()));
+        } catch (Exception e) {
+            log.warn("获取部门树失败", e);
+            result.put("deptTree", Collections.emptyList());
+        }
+
+        // 4. 所有岗位（用于岗位分配下拉框）
+        try {
+            result.put("jobs", jobFeignClient.getAll());
+        } catch (Exception e) {
+            log.warn("获取岗位列表失败", e);
+            result.put("jobs", Collections.emptyList());
+        }
+
+        return result;
     }
 }

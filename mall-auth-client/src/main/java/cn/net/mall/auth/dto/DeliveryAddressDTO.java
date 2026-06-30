@@ -1,6 +1,7 @@
 package cn.net.mall.auth.dto;
 
 import cn.net.mall.annotation.ValidPhone;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,8 +11,9 @@ import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
- * 收货地址DTO
+ * 收货地址 DTO
  */
+@Schema(description = "收货地址 DTO")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

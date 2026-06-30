@@ -1,14 +1,16 @@
 package cn.net.mall.auth.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 /**
- * 重置密码
+ * 重置密码 DTO
  *
  * @date 2025/4/22 16:07
  */
+@Schema(description = "重置密码 DTO")
 @Data
 public class ResetPasswordDTO {
 

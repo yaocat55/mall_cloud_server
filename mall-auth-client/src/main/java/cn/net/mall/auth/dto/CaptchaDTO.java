@@ -1,5 +1,6 @@
 package cn.net.mall.auth.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
  *
  * @date 2024/1/15 下午4:29
  */
+@Schema(description = "图形验证码 DTO")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
