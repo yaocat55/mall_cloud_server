@@ -128,7 +128,7 @@ public class AdminUserController {
 
         // 2. 所有角色（用于角色分配下拉框）
         try {
-            result.setRoles(roleFeignClient.getAll());
+            result.setRoles(roleFeignClient.all());
         } catch (Exception e) {
             log.warn("获取角色列表失败", e);
             result.setRoles(Collections.emptyList());
@@ -144,7 +144,7 @@ public class AdminUserController {
 
         // 4. 所有岗位（用于岗位分配下拉框）
         try {
-            result.setJobs(jobFeignClient.getAll());
+            result.setJobs(jobFeignClient.all());
         } catch (Exception e) {
             log.warn("获取岗位列表失败", e);
             result.setJobs(Collections.emptyList());
