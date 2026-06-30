@@ -1,22 +1,27 @@
 package cn.net.mall.admin.controller.admin;
 
+import cn.net.mall.admin.dto.ProductEditDataDTO;
 import cn.net.mall.product.client.CategoryFeignClient;
 import cn.net.mall.product.client.ProductFeignClient;
 import cn.net.mall.product.dto.CategoryDTO;
-import cn.net.mall.product.dto.ProductDetailDTO;
 import cn.net.mall.product.dto.ProductDTO;
+import cn.net.mall.product.dto.ProductDetailDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 管理后台商品管理 BFF 控制器
  * <p>
  * 聚合商品详情、分类、品牌、单位等数据，提供管理后台所需的商品管理接口
+ * <p>
+ * <b>认证要求：</b>需携带 Bearer Token（登录后获取）
  */
 @Slf4j
 @RestController
@@ -29,55 +34,54 @@ public class AdminProductController {
     private final CategoryFeignClient categoryFeignClient;
 
     @Operation(summary = "获取商品编辑页数据",
-               description = "聚合商品详情 + 分类树 + 品牌列表 + 单位列表，支持管理后台商品编辑页面")
+               description = "聚合商品详情、分类树、品牌、单位，一次返回商品编辑页所需全部数据\n\n"
+                           + "**注意事项：**\n"
+                           + "- 需携带 Bearer Token（Authorization 请求头）\n"
+                           + "- 品牌和单位列表当前返回空数组（TODO）",
+               security = @SecurityRequirement(name = "Bearer Token"))
     @GetMapping("/{id}/edit-data")
-    public Map<String, Object> getProductEditData(@PathVariable Long id) {
-        Map<String, Object> result = new LinkedHashMap<>();
+    public ProductEditDataDTO getProductEditData(@PathVariable Long id) {
+        ProductEditDataDTO result = new ProductEditDataDTO();
 
         // 1. 商品基本信息
         try {
             List<ProductDTO> products = productFeignClient.findByIds(Collections.singletonList(id));
-            result.put("product", products != null && !products.isEmpty() ? products.get(0) : null);
+            result.setProduct(products != null && !products.isEmpty() ? products.get(0) : null);
         } catch (Exception e) {
             log.warn("获取商品基本信息失败, id={}", id, e);
-            result.put("product", null);
+            result.setProduct(null);
         }
 
         // 2. 商品详情
         try {
-            ProductDetailDTO detail = productFeignClient.findDetailById(id);
-            result.put("detail", detail);
+            result.setDetail(productFeignClient.findDetailById(id));
         } catch (Exception e) {
             log.warn("获取商品详情失败, id={}", id, e);
-            result.put("detail", null);
+            result.setDetail(null);
         }
 
-        // 3. 分类树（通过逐级查询父分类构建；TODO: 后续可增加分类树专用 Feign 接口）
+        // 3. 分类树
         try {
-            List<CategoryDTO> categories = buildCategoryTree();
-            result.put("categoryTree", categories);
+            result.setCategoryTree(buildCategoryTree());
         } catch (Exception e) {
             log.warn("获取分类树失败", e);
-            result.put("categoryTree", Collections.emptyList());
+            result.setCategoryTree(Collections.emptyList());
         }
 
         // 4. 品牌列表（TODO: 需在 product-client 中新增 BrandFeignClient）
-        result.put("brands", Collections.emptyList());
+        result.setBrands(Collections.emptyList());
 
         // 5. 单位列表（TODO: 需在 product-client 中新增 UnitFeignClient）
-        result.put("units", Collections.emptyList());
+        result.setUnits(Collections.emptyList());
 
         return result;
     }
 
     /**
      * 通过逐级查询构建简易分类树（仅两级深度）
-     * <p>
-     * TODO: 后续可替换为分类树专用 Feign 接口
      */
     private List<CategoryDTO> buildCategoryTree() {
         try {
-            // 查询顶级分类
             return categoryFeignClient.getCategoryByParentId(0L);
         } catch (Exception e) {
             log.warn("构建分类树失败", e);

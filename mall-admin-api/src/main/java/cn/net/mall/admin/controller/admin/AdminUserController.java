@@ -5,9 +5,11 @@ import cn.net.mall.auth.client.DeptFeignClient;
 import cn.net.mall.auth.client.JobFeignClient;
 import cn.net.mall.auth.client.RoleFeignClient;
 import cn.net.mall.auth.client.UserFeignClient;
+import cn.net.mall.admin.dto.UserEditDataDTO;
 import cn.net.mall.auth.dto.*;
 import cn.net.mall.auth.dto.auth.DeptTreeDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -107,42 +109,45 @@ public class AdminUserController {
     // ==================== 聚合接口 ====================
 
     @Operation(summary = "获取用户编辑页数据",
-               description = "聚合用户基本信息 + 角色列表 + 部门树 + 岗位列表，支持管理后台用户编辑页面")
+               description = "聚合用户基本信息 + 角色列表 + 部门树 + 岗位列表，支持管理后台用户编辑页面\n\n"
+                           + "**注意事项：**\n"
+                           + "- 需携带 Bearer Token（Authorization 请求头）",
+               security = @SecurityRequirement(name = "Bearer Token"))
     @GetMapping("/{id}/edit-data")
-    public Map<String, Object> getUserEditData(@PathVariable Long id) {
-        Map<String, Object> result = new LinkedHashMap<>();
+    public UserEditDataDTO getUserEditData(@PathVariable Long id) {
+        UserEditDataDTO result = new UserEditDataDTO();
 
         // 1. 用户基本信息
         try {
             List<UserDTO> users = userFeignClient.findByIds(Collections.singletonList(id));
-            result.put("user", users != null && !users.isEmpty() ? users.get(0) : null);
+            result.setUser(users != null && !users.isEmpty() ? users.get(0) : null);
         } catch (Exception e) {
             log.warn("获取用户信息失败, id={}", id, e);
-            result.put("user", null);
+            result.setUser(null);
         }
 
         // 2. 所有角色（用于角色分配下拉框）
         try {
-            result.put("roles", roleFeignClient.getAll());
+            result.setRoles(roleFeignClient.getAll());
         } catch (Exception e) {
             log.warn("获取角色列表失败", e);
-            result.put("roles", Collections.emptyList());
+            result.setRoles(Collections.emptyList());
         }
 
         // 3. 部门树（用于部门选择）
         try {
-            result.put("deptTree", deptFeignClient.searchByTree(Collections.emptyMap()));
+            result.setDeptTree(deptFeignClient.searchByTree(Collections.emptyMap()));
         } catch (Exception e) {
             log.warn("获取部门树失败", e);
-            result.put("deptTree", Collections.emptyList());
+            result.setDeptTree(Collections.emptyList());
         }
 
         // 4. 所有岗位（用于岗位分配下拉框）
         try {
-            result.put("jobs", jobFeignClient.getAll());
+            result.setJobs(jobFeignClient.getAll());
         } catch (Exception e) {
             log.warn("获取岗位列表失败", e);
-            result.put("jobs", Collections.emptyList());
+            result.setJobs(Collections.emptyList());
         }
 
         return result;
