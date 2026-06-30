@@ -549,70 +549,16 @@ Gateway 已配置全局 CORS（允许所有 Origin）。如果仍然报跨域，
 
 ---
 
-### ❌ 悬而未决（按优先级降序）
+### ❌ 悬而未决
 
-#### P0 — Gateway 鉴权链路不完整
+详见 [docs/架构改进建议.md](docs/架构改进建议.md)，当前主要问题：
 
-Gateway 验 JWT 签名后**全放行**，不拦截任何请求，身份校验全部依赖下游服务自行完成。同时每次请求每个服务重复查 Redis 恢复用户上下文。
-
-```
-外部请求 → Gateway（验 JWT 签名，不拦人）
-         → 下游服务（JwtTokenFilter / AuthApiInterceptor→查 Redis→恢复上下文）
-```
-
-**影响：** 安全基础缺失，鉴权形同虚设；全链路重复查 Redis 造成性能浪费。
-
-**建议：** 将 userId、角色写入 JWT claims，Gateway 做完整边界鉴权，Redis 仅用于黑名单（踢人）。
-
----
-
-#### P1 — 认证模块功能不完整
-
-`mall-auth` 仅实现了登录注册和 RBAC 基础模型，缺乏生产所需的关键功能：
-
-| 缺失功能 | 影响 |
-|---------|------|
-| 用户状态管理（禁用/冻结/锁定） | 无法踢人下线、封禁账号 |
-| 多设备登录策略 | 无单设备/多设备限制 |
-| 登录安全（失败锁定、异地检测） | 暴力破解无防护 |
-| OAuth2 / 三方登录 | 仅支持账号密码登录 |
-
----
-
-#### P2 — product_favorites 同步机制不明确
-
-`product_favorites` 数据分别存储在 mall-product 的单库和 mall-recommend 的分库分表中，**两个库之间的同步路径不存在**。推荐算法的收藏数据来源不明，用户操作与推荐服务所见不一致。
-
-**建议：** 明确同步路径（RocketMQ 或定时批处理），并定义最小消息契约替代共享表结构。
-
----
-
-#### P3 — Mobile / Admin API 混合部署（✅ 已修复）
-
-移动端和管理后台接口编译在同一个 JAR 中，无法独立扩缩容。
-
-| 服务 | Mobile 控制器 | Admin 控制器 |
-|------|-------------|-------------|
-| mall-product | `controller/mobile/` | `controller/product/`、`controller/shopping/` |
-| mall-auth | `controller/mobile/` | `controller/auth/`、`controller/web/` |
-| mall-basic | `controller/mobile/` | `controller/common/`、`controller/upload/` |
-
-**影响：** Mobile 流量远大于 Admin 但只能一起部署；Admin 接口与公网 Mobile 接口同进程暴露。
-
-**修复：** 新增 `mall-admin-api`（端口 8090）和 `mall-mobile-api`（端口 8091）两个 BFF 服务，实现前端入口分离。原服务内的 native 接口不再直接对外暴露，前端统一走 BFF 层。BFF 服务可独立扩缩容。
-
----
-
-#### P4 — Gateway 路由中存在无效转发（✅ 已修复）
-
-```yaml
-- id: mall-mobile-api
-  uri: lb://mall-mobile-api    # ⚠️ Nacos 中无此服务
-  predicates:
-    - Path=/api/mobile/**
-```
-
-**修复：** `mall-mobile-api` 服务现已实现并注册到 Nacos，`/api/mobile/**` 路由正常工作。同时新增了 `/api/admin/**` 路由指向 `mall-admin-api`。
+| 优先级 | 问题 | 摘要 |
+|--------|------|------|
+| P0 | JWT 鉴权重复查 Redis | Gateway 验签后全放行，各服务重复查 Redis 恢复用户上下文 |
+| P1 | 认证模块功能不完整 | 缺用户状态管理、多设备策略、登录安全、三方登录 |
+| P2 | 用户表未分离 | 移动端用户和管理员共用同一张表、同一个登录接口 |
+| P2 | product_favorites 同步不明确 | mall-product 和 mall-recommend 之间缺少数据同步路径 |
 
 ---
 
