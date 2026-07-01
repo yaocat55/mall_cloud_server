@@ -29,15 +29,15 @@
   - [核心流程：下单 → 支付](#核心流程下单--支付)
   - [异步解耦：消息队列](#异步解耦消息队列)
 - [前端开发指南](#前端开发指南)
-- [网关路由](docs/gateway-routes.md)
+- [网关路由](docs/网关路由.md)
 - [基础设施](#基础设施)
-- [数据库设计](docs/database-design.md)
-- [快速开始](docs/quick-start.md)
+- [数据库设计](docs/数据库设计.md)
+- [快速开始](docs/快速开始.md)
 - [设计要点](#设计要点)
 - [注意事项](#注意事项)
 - [已知问题](#已知问题)
-- [多仓库拆分方案](docs/repo-split-plan.md)
-- [Nacos 配置指南](docs/nacos-config-guide.md)
+- [多仓库拆分方案](docs/仓库拆分方案.md)
+- [Nacos 配置指南](docs/Nacos配置指南.md)
 
 ---
 
@@ -293,7 +293,7 @@ sequenceDiagram
 
 路由表包含 11 条转发规则（包括 BFF、业务服务、WebSocket），JWT 白名单共 37 个无需 Token 的路径，配置在 Nacos `mall-gateway-dev.yaml` 的 `gateway.filter.noAuth` 中。
 
-> 详见 [docs/gateway-routes.md](docs/gateway-routes.md)
+> 详见 [docs/网关路由.md](docs/网关路由.md)
 
 ---
 
@@ -328,7 +328,7 @@ sequenceDiagram
 | mall-recommend | `mall_recommend_0~7` | 8 库 × 16/64 表 |
 | mall-message | `mall_message_0~7` | 8 库 × 64 表 |
 
-> 详见 [docs/database-design.md](docs/database-design.md)
+> 详见 [docs/数据库设计.md](docs/数据库设计.md)
 
 ---
 
@@ -362,7 +362,7 @@ sequenceDiagram
   └── ⑥ mall-mobile-api  → 【BFF】移动端聚合
 ```
 
-> 详见 [docs/quick-start.md](docs/quick-start.md) —— 包含配置文件准备、环境检查、数据库初始化、Nacos 配置确认、四种启动方式（IDEA / Maven 命令行 / JAR 包 / 一键脚本）、端口总览、验证步骤
+> 详见 [docs/快速开始.md](docs/快速开始.md) —— 包含配置文件准备、环境检查、数据库初始化、Nacos 配置确认、四种启动方式（IDEA / Maven 命令行 / JAR 包 / 一键脚本）、端口总览、验证步骤
 
 ---
 
@@ -521,7 +521,7 @@ Gateway 已配置全局 CORS（允许所有 Origin）。如果仍然报跨域，
 
 所有服务的业务配置托管在 Nacos 配置中心，本地只保留 Nacos 连接信息。通过环境变量切换环境。
 
-> 详见 [docs/nacos-config-guide.md](docs/nacos-config-guide.md) —— 包含数据 ID 清单、环境切换、创建指南、配置文件示例
+> 详见 [docs/Nacos配置指南.md](docs/Nacos配置指南.md) —— 包含数据 ID 清单、环境切换、创建指南、配置文件示例
 
 **日志 & 链路追踪**
 
@@ -570,10 +570,10 @@ Gateway 已配置全局 CORS（允许所有 Origin）。如果仍然报跨域，
 
 **方案二（3 仓库）：** 将耦合紧密的服务放在同一仓库，降低版本协调成本：`mall-foundation`（common/gateway/auth）、`mall-business`（basic/product/order/pay/marketing）、`mall-enhancement`（recommend/message）。
 
-> 详见 [docs/repo-split-plan.md](docs/repo-split-plan.md)
+> 详见 [docs/仓库拆分方案.md](docs/仓库拆分方案.md)
 
 ---
 
 > 在线查看此文档可获得最佳体验（Mermaid 图表自动渲染）。本地 IDE 需安装 Mermaid 插件。
 >
-> 相关文档：`docs/frontend-api-mapping.md` — 前端 API 与后端微服务完整映射手册
+> 相关文档：`docs/前端接口映射.md` — 前端 API 与后端微服务完整映射手册
