@@ -1,91 +1,101 @@
 package cn.net.mall.auth.config;
 
-import cn.net.mall.annotation.NoLogin;
 import cn.net.mall.auth.authenication.SmsAuthenticationProvider;
 import cn.net.mall.auth.filter.JwtTokenFilter;
-import cn.net.mall.auth.mapper.auth.UserMapper;
-import cn.net.mall.auth.service.user.UserDetailsServiceImpl;
-import cn.net.mall.auth.util.NoLoginMap;
 import cn.net.mall.basic.client.SmsRecordFeignClient;
-import cn.net.mall.redis.RedisUtil;
-import org.apache.commons.collections4.MapUtils;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import cn.net.mall.auth.mapper.auth.UserMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.mvc.condition.PathPatternsRequestCondition;
-import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-import org.springframework.web.util.pattern.PathPattern;
 
-import java.util.*;
+import java.util.List;
 
 /**
- * SpringSecurity配置类
- *
- * @date 2024/1/10 下午4:29
+ * Spring Security 配置
+ * <p>
+ * 白名单（免登录 URL）：由 Spring Security 自身管理，不再依赖 @NoLogin 注解扫描。
+ * Gateway AuthFilter 同时持有一份 Gateway 层面的白名单用于前置放行。
  */
 @Configuration(proxyBeanMethods = false)
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-public class SpringSecurityConfig implements ApplicationContextAware {
+@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
+public class SpringSecurityConfig {
 
-    private ApplicationContext applicationContext;
-    private JwtTokenFilter jwtTokenFilter;
+    /**
+     * 免登录白名单 URL 前缀列表（auth-api 内部 Spring Security 放行）
+     * 注意：这些是 auth-api 控制器自身的路径（不含 Gateway 的 /api/auth 前缀）
+     */
+    private static final List<String> PERMIT_ALL_URLS = List.of(
+            // Web 端认证
+            "/v1/web/user/login",
+            "/v1/web/user/loginByPhone",
+            "/v1/web/user/getCode",
+            "/v1/web/user/logout",
+
+            // 移动端认证
+            "/v1/mobile/user/login",
+            "/v1/mobile/user/loginByPhone",
+            "/v1/mobile/user/getCode",
+
+            // 菜单、角色、部门、岗位（管理端）
+            "/v1/menu/searchByPage",
+            "/v1/menu/insert",
+            "/v1/menu/update",
+            "/v1/menu/deleteByIds",
+            "/v1/role/all",
+            "/v1/dept/findById",
+            "/v1/dept/searchByPage",
+            "/v1/dept/searchByTree",
+            "/v1/job/searchByPage",
+            "/v1/job/deleteByIds",
+
+            // 测试
+            "/v1/test/testOpenFeign"
+    );
 
     @Bean
     public JwtTokenFilter jwtTokenFilter() {
-        jwtTokenFilter = new JwtTokenFilter();
-        return jwtTokenFilter;
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+        return new JwtTokenFilter();
     }
 
     @Bean
-    public SmsAuthenticationProvider smsAuthenticationProvider() {
-        UserDetailsServiceImpl userDetailsService = applicationContext.getBean(UserDetailsServiceImpl.class);
-        UserMapper userMapper = applicationContext.getBean(UserMapper.class);
-        SmsRecordFeignClient smsRecordFeignClient = applicationContext.getBean(SmsRecordFeignClient.class);
+    public SmsAuthenticationProvider smsAuthenticationProvider(
+            UserDetailsService userDetailsService,
+            UserMapper userMapper,
+            SmsRecordFeignClient smsRecordFeignClient) {
         return new SmsAuthenticationProvider(userDetailsService, userMapper, smsRecordFeignClient);
     }
 
     @Bean
-    public DaoAuthenticationProvider daoAuthenticationProvider(PasswordEncoder passwordEncoder) {
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
-        daoAuthenticationProvider.setUserDetailsService(applicationContext.getBean(UserDetailsServiceImpl.class));
-        return daoAuthenticationProvider;
+    public DaoAuthenticationProvider daoAuthenticationProvider(
+            PasswordEncoder passwordEncoder,
+            UserDetailsService userDetailsService) {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder);
+        provider.setUserDetailsService(userDetailsService);
+        return provider;
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(SmsAuthenticationProvider smsAuthenticationProvider, DaoAuthenticationProvider daoAuthenticationProvider) {
-        List authenticationProviders = new ArrayList();
-        authenticationProviders.add(smsAuthenticationProvider);
-        authenticationProviders.add(daoAuthenticationProvider);
-        ProviderManager authenticationManager = new ProviderManager(authenticationProviders);
-        return authenticationManager;
-
+    public AuthenticationManager authenticationManager(
+            SmsAuthenticationProvider smsAuthenticationProvider,
+            DaoAuthenticationProvider daoAuthenticationProvider) {
+        return new ProviderManager(List.of(smsAuthenticationProvider, daoAuthenticationProvider));
     }
-
 
     @Bean
     public GrantedAuthorityDefaults grantedAuthorityDefaults() {
@@ -95,23 +105,24 @@ public class SpringSecurityConfig implements ApplicationContextAware {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // 密码加密方式
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        initNoLogin(applicationContext);
+    SecurityFilterChain filterChain(HttpSecurity httpSecurity,
+                                    JwtTokenFilter jwtTokenFilter) throws Exception {
         return httpSecurity
                 // 禁用 CSRF
                 .csrf(csrf -> csrf.disable())
                 // 授权异常
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(new Http403ForbiddenEntryPoint()))
+                .exceptionHandling(exception ->
+                        exception.authenticationEntryPoint(new Http403ForbiddenEntryPoint()))
                 .headers(frameOptions -> frameOptions.disable())
-
                 // 不创建会话
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> {
+                    // 静态资源
                     request.requestMatchers(HttpMethod.GET,
                                     "/*.html",
                                     "/*/*.html",
@@ -130,33 +141,12 @@ public class SpringSecurityConfig implements ApplicationContextAware {
                             .requestMatchers("/avatar/*").permitAll()
                             .requestMatchers("/druid/*").permitAll()
                             .requestMatchers(HttpMethod.OPTIONS, "/*").permitAll()
-                            .requestMatchers(NoLoginMap.getNoLoginUrlSet().toArray(new String[0])).permitAll()
+                            // 业务白名单
+                            .requestMatchers(PERMIT_ALL_URLS.toArray(new String[0])).permitAll()
+                            // 其余全部需认证
                             .anyRequest().authenticated();
                 })
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-
-    private void initNoLogin(ApplicationContext applicationContext) {
-        Map<RequestMappingInfo, HandlerMethod> handlerMethodMap = applicationContext.getBean("requestMappingHandlerMapping", RequestMappingHandlerMapping.class).getHandlerMethods();
-        if (MapUtils.isEmpty(handlerMethodMap)) {
-            return;
-        }
-        Set<String> noLoginUrls = new HashSet<>();
-        for (Map.Entry<RequestMappingInfo, HandlerMethod> infoEntry : handlerMethodMap.entrySet()) {
-            HandlerMethod handlerMethod = infoEntry.getValue();
-            NoLogin noLogin = handlerMethod.getMethodAnnotation(NoLogin.class);
-            PathPatternsRequestCondition pathPatternsCondition = infoEntry.getKey().getPathPatternsCondition();
-            if (null != noLogin && null != pathPatternsCondition) {
-                Set<PathPattern> patterns = pathPatternsCondition.getPatterns();
-                Iterator<PathPattern> iterator = patterns.iterator();
-                if(iterator.hasNext()) {
-                    PathPattern next = iterator.next();
-                    noLoginUrls.add(next.getPatternString());
-                }
-            }
-        }
-        NoLoginMap.initSet(noLoginUrls);
-    }
-
 }

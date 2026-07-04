@@ -1,10 +1,10 @@
 package cn.net.mall.gateway.filter;
 
-import cn.net.mall.redis.RedisUtil;
 import cn.net.mall.util.TokenUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -19,35 +19,34 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
  * 网关全局鉴权过滤器
  *
- * 功能：
+ * 职责明确：
  * 1. 白名单路径直接放行（登录、验证码等）
- * 2. JWT 签名校验 + 黑名单检查（Gateway 直连 Redis）
+ * 2. JWT 验签 + 过期校验
  * 3. 验签通过后将 userId / userName / roles 写入请求头透传下游
  *
- * 注意：
- * - 黑名单 Redis 不可用时降级为放行（非核心路径）
- * - 业务服务从 Header 取身份，不再查 Redis
+ * 不做的事：
+ * - 不查 Redis 黑名单（黑名单由 mall-auth 内部处理，仅针对 admin 接口）
+ * - 不拦截无效/过期 token（放行后由下游服务自行决定）
+ *
+ * 黑名单设计思路：
+ * C 端用户不需要踢人下线功能。异地登录应通过 mall-message 发通知提醒，而非强制踢人。
+ * Admin 端的踢人/权限变更可在 auth 服务内部校验，不需要 Gateway 层参与。
  */
 @Component
 @Slf4j
 public class AuthFilter implements GlobalFilter, Ordered {
 
-    @Value("${mall.mgt.tokenSecret:123456test}")
+    @Value("${mall.mgt.tokenSecret}")
     private String tokenSecret;
 
     @Value("${gateway.filter.noAuth:}")
     private String noAuth;
-
-    private final RedisUtil redisUtil;
-
-    public AuthFilter(RedisUtil redisUtil) {
-        this.redisUtil = redisUtil;
-    }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -64,25 +63,10 @@ public class AuthFilter implements GlobalFilter, Ordered {
         if (StringUtils.hasLength(token)) {
             try {
                 Claims claims = Jwts.parser()
-                        .setSigningKey(tokenSecret)
+                        .verifyWith(Keys.hmacShaKeyFor(tokenSecret.getBytes(StandardCharsets.UTF_8)))
                         .build()
                         .parseSignedClaims(token)
                         .getPayload();
-
-                // 查黑名单：token 是否被踢
-                String jti = claims.getId();
-                if (StringUtils.hasLength(jti)) {
-                    try {
-                        String blacklisted = redisUtil.get("blacklist:" + jti);
-                        if (blacklisted != null) {
-                            log.warn("黑名单 token 被拦截, jti={}", jti);
-                            return unauthorized(exchange, "token 已被踢下线");
-                        }
-                    } catch (Exception e) {
-                        // Redis 不可用时降级放行
-                        log.warn("黑名单 Redis 不可用，降级放行", e);
-                    }
-                }
 
                 // 透传身份到下游服务
                 ServerHttpRequest.Builder builder = request.mutate();
@@ -108,14 +92,8 @@ public class AuthFilter implements GlobalFilter, Ordered {
             }
         }
 
-        // 无 token 或验签失败均放行
+        // 无 token 或验签失败均放行，由下游服务决定是否拒绝
         return chain.filter(exchange);
-    }
-
-    private Mono<Void> unauthorized(ServerWebExchange exchange, String message) {
-        ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(HttpStatus.UNAUTHORIZED);
-        return response.setComplete();
     }
 
     private boolean isNoAuth(String requestUri) {

@@ -82,31 +82,41 @@ public class AdminProductController {
 
     // ========== 管理端 CRUD ==========
 
-    @Operation(summary = "分页查询商品列表", security = @SecurityRequirement(name = "Bearer Token"))
+    @Operation(summary = "分页查询商品列表",
+               description = "多条件分页查询商品列表，支持按名称、分类、状态等条件筛选",
+               security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/page")
     public ResponsePageEntity<?> searchByPage(@RequestBody Map<String, Object> condition) {
         return productFeignClient.searchByPage(condition);
     }
 
-    @Operation(summary = "查询商品详情", security = @SecurityRequirement(name = "Bearer Token"))
+    @Operation(summary = "查询商品详情",
+               description = "根据 ID 查询单个商品的完整信息",
+               security = @SecurityRequirement(name = "Bearer Token"))
     @GetMapping("/detail")
     public Object findById(@RequestParam("id") Long id) {
         return productFeignClient.findById(id);
     }
 
-    @Operation(summary = "新增商品", security = @SecurityRequirement(name = "Bearer Token"))
+    @Operation(summary = "新增商品",
+               description = "新增一条商品记录，包含基本信息、价格、库存等字段",
+               security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/insert")
     public void insert(@RequestBody Object entity) {
         productFeignClient.insert(entity);
     }
 
-    @Operation(summary = "修改商品", security = @SecurityRequirement(name = "Bearer Token"))
+    @Operation(summary = "修改商品",
+               description = "修改已有商品的信息，支持部分字段更新",
+               security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/update")
     public void update(@RequestBody Object entity) {
         productFeignClient.update(entity);
     }
 
-    @Operation(summary = "批量删除商品", security = @SecurityRequirement(name = "Bearer Token"))
+    @Operation(summary = "批量删除商品",
+               description = "根据 ID 列表批量删除商品，物理删除",
+               security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/delete")
     public int delete(@RequestBody @NotNull List<Long> ids) {
         return productFeignClient.deleteByIds(ids);

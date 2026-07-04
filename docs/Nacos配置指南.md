@@ -70,7 +70,7 @@ spring:
       password: your_redis_password
       timeout: 50000
 
-# JWT 密钥（所有服务共用同一个）
+# JWT 密钥（所有服务共用同一个。注意：由于 spring-cloud-alibaba shared-configs 加载 common.yaml 存在兼容性问题，密钥同时写入了各服务自己的配置文件中，修改时需同步更新三处）
 mall:
   mgt:
     tokenSecret: your_jwt_secret_here

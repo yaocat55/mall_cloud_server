@@ -1,7 +1,6 @@
 package cn.net.mall.pay.controller.mobile;
 
 import cn.hutool.extra.qrcode.QrCodeUtil;
-import cn.net.mall.annotation.NoLogin;
 import cn.net.mall.order.dto.OrderDTO;
 import cn.net.mall.pay.dto.PayWebDTO;
 import cn.net.mall.pay.integration.AliPayIntegration;
@@ -50,7 +49,6 @@ public class PayController {
      * @param response 响应
      * @throws Exception
      */
-    @NoLogin
     @PostMapping("/doPay")
     @Operation(summary = "支付接口")
     public void doPay(@RequestBody OrderDTO orderDTO, HttpServletResponse response) throws Exception {
@@ -65,7 +63,6 @@ public class PayController {
      * @return 二维码url
      * @throws Exception
      */
-    @NoLogin
     @PostMapping("/createQrCode")
     @Operation(summary = "创建支付二维码")
     public String createQrCode(@RequestBody OrderDTO orderDTO) throws Exception {

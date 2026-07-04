@@ -1,6 +1,5 @@
 package cn.net.mall.product.client;
 
-import cn.net.mall.annotation.NoLogin;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.product.dto.CategoryDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,7 +29,6 @@ public interface CategoryFeignClient {
      * @param parentId 父分类ID
      * @return 分类列表
      */
-    @NoLogin
     @Operation(summary = "根据父分类ID查询分类列表", description = "根据父分类ID查询分类列表")
     @GetMapping("/v1/mobile/category/getCategoryByParentId")
     List<CategoryDTO> getCategoryByParentId(@RequestParam("parentId") Long parentId);

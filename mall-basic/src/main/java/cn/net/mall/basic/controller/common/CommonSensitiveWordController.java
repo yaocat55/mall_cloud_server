@@ -1,6 +1,5 @@
 package cn.net.mall.basic.controller.common;
 
-import cn.net.mall.annotation.NoLogin;
 import cn.net.mall.basic.entity.common.CommonSensitiveWordConditionEntity;
 import cn.net.mall.basic.entity.common.CommonSensitiveWordEntity;
 import cn.net.mall.basic.service.common.CommonSensitiveWordService;
@@ -36,7 +35,6 @@ public class CommonSensitiveWordController {
      * @param commonSensitiveWordEntity 条件
      * @return 敏感词信息
      */
-    @NoLogin
     @Operation(summary = "校验敏感词", description = "校验敏感词")
     @PostMapping("/checkSensitiveWord")
     public void checkSensitiveWord(@RequestBody CommonSensitiveWordEntity commonSensitiveWordEntity) {

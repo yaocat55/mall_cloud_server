@@ -1,6 +1,5 @@
 package cn.net.mall.auth.client;
 
-import cn.net.mall.annotation.NoLogin;
 import cn.net.mall.auth.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -78,7 +77,6 @@ public interface UserFeignClient {
      * @param userLoginDTO 用户实体
      * @return 影响行数
      */
-    @NoLogin
     @Operation(summary = "用户登录",
                description = "Web端：用户账号密码登录，由 mall-admin-api 通过 Feign 调用")
     @PostMapping("/v1/web/user/login")
@@ -91,7 +89,6 @@ public interface UserFeignClient {
      * @param userPhoneLoginDTO 用户实体
      * @return 影响行数
      */
-    @NoLogin
     @Operation(summary = "用户手机号登录",
                description = "Web端：用户手机号+验证码登录，由 mall-admin-api 通过 Feign 调用")
     @PostMapping("/v1/web/user/loginByPhone")

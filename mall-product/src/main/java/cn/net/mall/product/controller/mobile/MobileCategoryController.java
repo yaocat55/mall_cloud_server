@@ -1,7 +1,6 @@
 package cn.net.mall.product.controller.mobile;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.net.mall.annotation.NoLogin;
 import cn.net.mall.product.cache.MobileCacheService;
 import cn.net.mall.product.dto.CategoryDTO;
 import cn.net.mall.product.service.CategoryService;
@@ -39,7 +38,6 @@ public class MobileCategoryController {
      * @param parentId 父分类ID
      * @return 分类列表
      */
-    @NoLogin
     @Operation(summary = "根据父分类ID查询分类列表", description = "根据父分类ID查询分类列表")
     @GetMapping("/getCategoryByParentId")
     public List<CategoryDTO> getCategoryByParentId(@Parameter(description = "父分类ID")

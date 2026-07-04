@@ -1,6 +1,5 @@
 package cn.net.mall.auth.controller.auth;
 
-import cn.net.mall.annotation.NoLogin;
 import cn.net.mall.auth.entity.auth.JobConditionEntity;
 import cn.net.mall.auth.entity.auth.JobEntity;
 import cn.net.mall.auth.service.auth.JobService;
@@ -46,7 +45,6 @@ public class JobController {
      * @param jobConditionEntity 条件
      * @return 岗位列表
      */
-    @NoLogin
     @Operation(summary = "根据条件查询岗位列表", description = "根据条件查询岗位列表")
     @PostMapping("/searchByPage")
     public ResponsePageEntity<JobEntity> searchByPage(@RequestBody JobConditionEntity jobConditionEntity) {
@@ -84,7 +82,6 @@ public class JobController {
      * @param ids 岗位ID
      * @return 影响行数
      */
-    @NoLogin
     @Operation(summary = "删除岗位", description = "删除岗位")
     @PostMapping("/deleteByIds")
     public int deleteByIds(@RequestBody @NotNull List<Long> ids) {

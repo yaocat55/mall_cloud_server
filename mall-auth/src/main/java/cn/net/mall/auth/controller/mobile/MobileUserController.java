@@ -2,7 +2,6 @@ package cn.net.mall.auth.controller.mobile;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
-import cn.net.mall.annotation.NoLogin;
 import cn.net.mall.auth.dto.BindPhoneDTO;
 import cn.net.mall.auth.dto.CaptchaDTO;
 import cn.net.mall.auth.dto.RegisterDTO;
@@ -37,7 +36,6 @@ public class MobileUserController {
      * @param registerDTO 注册信息
      * @return 注册结果
      */
-    @NoLogin
     @Operation(summary = "用户注册", description = "用户注册")
     @PostMapping("/register")
     public UserDTO register(@RequestBody @Validated RegisterDTO registerDTO) {

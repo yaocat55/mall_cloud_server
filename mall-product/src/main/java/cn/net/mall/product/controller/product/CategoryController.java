@@ -1,6 +1,5 @@
 package cn.net.mall.product.controller.product;
 
-import cn.net.mall.annotation.NoLogin;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.product.dto.CategoryTreeDTO;
 import cn.net.mall.product.entity.CategoryConditionEntity;
@@ -96,7 +95,6 @@ public class CategoryController {
 	 * @param categoryConditionEntity 条件
 	 * @return 分类树
 	 */
-	@NoLogin
 	@Operation(summary = "查询分类树", description =  "查询分类树")
 	@PostMapping("/searchByTree")
 	public List<CategoryTreeDTO> searchByTree(@RequestBody CategoryConditionEntity categoryConditionEntity) {

@@ -1,6 +1,5 @@
 package cn.net.mall.auth.controller.auth;
 
-import cn.net.mall.annotation.NoLogin;
 import cn.net.mall.auth.dto.auth.MenuTreeDTO;
 import cn.net.mall.auth.entity.auth.MenuConditionEntity;
 import cn.net.mall.auth.entity.auth.MenuEntity;
@@ -48,7 +47,6 @@ public class MenuController {
      * @param menuConditionEntity 条件
      * @return 菜单列表
      */
-    @NoLogin
     @Operation(summary = "根据条件查询菜单列表", description = "根据条件查询菜单列表")
     @PostMapping("/searchByPage")
     public ResponsePageEntity<MenuEntity> searchByPage(@RequestBody MenuConditionEntity menuConditionEntity) {
@@ -96,7 +94,6 @@ public class MenuController {
      * @param menuEntity 菜单实体
      * @return 影响行数
      */
-    @NoLogin
     @Operation(summary = "添加菜单", description = "添加菜单")
     @PostMapping("/insert")
     public int insert(@RequestBody MenuEntity menuEntity) {
@@ -109,7 +106,6 @@ public class MenuController {
      * @param menuEntity 菜单实体
      * @return 影响行数
      */
-    @NoLogin
     @Operation(summary = "修改菜单", description = "修改菜单")
     @PostMapping("/update")
     public int update(@RequestBody MenuEntity menuEntity) {
@@ -122,7 +118,6 @@ public class MenuController {
      * @param ids 菜单ID
      * @return 影响行数
      */
-    @NoLogin
     @Operation(summary = "删除菜单", description = "删除菜单")
     @PostMapping("/deleteByIds")
     public int deleteByIds(@RequestBody @NotNull List<Long> ids) {

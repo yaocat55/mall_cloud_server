@@ -5,7 +5,6 @@ import cn.net.mall.auth.dto.*;
 import cn.net.mall.auth.entity.auth.web.UserPhoneLoginWebEntity;
 import cn.net.mall.auth.entity.auth.web.UserWebEntity;
 import cn.net.mall.auth.service.auth.UserService;
-import cn.net.mall.annotation.NoLogin;
 import cn.net.mall.auth.entity.auth.AuthUserEntity;
 import cn.net.mall.auth.entity.auth.CaptchaEntity;
 import cn.net.mall.entity.auth.JwtUserEntity;
@@ -37,7 +36,6 @@ public class WebUserController {
         this.userService = userService;
     }
 
-    @NoLogin
     @Operation(summary = "获取图形验证码", description = "获取图形验证码（base64图片）")
     @GetMapping(value = "/getCode")
     public CaptchaDTO getCode() {
@@ -66,7 +64,6 @@ public class WebUserController {
      * @param userLoginDTO 用户实体
      * @return 影响行数
      */
-    @NoLogin
     @Operation(summary = "用户登录", description = "用户登录")
     @PostMapping("/login")
     public TokenDTO login(@Valid @RequestBody UserLoginDTO userLoginDTO) {
@@ -79,7 +76,6 @@ public class WebUserController {
      * @param userPhoneLoginDTO 用户实体
      * @return 影响行数
      */
-    @NoLogin
     @Operation(summary = "用户手机号登录", description = "用户手机号登录")
     @PostMapping("/loginByPhone")
     public TokenDTO loginByPhone(@Valid @RequestBody UserPhoneLoginDTO userPhoneLoginDTO) {
@@ -92,7 +88,6 @@ public class WebUserController {
      * @param request 请求
      * @return 影响行数
      */
-    @NoLogin
     @Operation(summary = "用户退出登录", description = "用户退出登录")
     @PostMapping("/logout")
     public void logout(HttpServletRequest request) {
@@ -104,7 +99,6 @@ public class WebUserController {
      *
      * @return 用户信息
      */
-    @NoLogin
     @Operation(summary = "获取用户信息", description = "获取用户信息")
     @GetMapping(value = "/info")
     public UserInfoDTO getUserInfo() {
@@ -119,7 +113,6 @@ public class WebUserController {
     /**
      * 重置密码
      */
-    @NoLogin
     @Operation(summary = "重置密码", description = "重置密码")
     @PostMapping("/resetPassword")
     public boolean resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO) {

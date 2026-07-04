@@ -1,6 +1,5 @@
 package cn.net.mall.product.client;
 
-import cn.net.mall.annotation.NoLogin;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.product.dto.*;
 import io.swagger.v3.oas.annotations.Operation;

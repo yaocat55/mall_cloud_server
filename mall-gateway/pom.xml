@@ -104,10 +104,20 @@
             <version>1.0.5</version>
         </dependency>
 
-        <!-- Gateway 直连 Redis 查黑名单 -->
+        <!-- JWT 验签（Gateway 独立持有，不依赖 mall-redis-starter 透传） -->
         <dependency>
-            <groupId>cn.net.mall</groupId>
-            <artifactId>mall-redis-spring-boot-starter</artifactId>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 

@@ -4,12 +4,13 @@ import cn.net.mall.constant.NumberConstant;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
@@ -96,18 +97,20 @@ public abstract class TokenUtil {
     /**
      * 生成带身份 claims 的 JWT（替代 TokenHelper.generateToken）
      * 使用 HS512 + 密钥字符串，与 mall-redis-spring-boot-starter 的 UserTokenHelper 兼容
+     * <p>
+     * 注意：密钥长度必须 ≥ 512 bits（64 个 ASCII 字符），否则 JJWT 0.12+ 会抛出 WeakKeyException
      */
     public static String generateToken(Long userId, String username, List<String> roles,
                                         String secret, int expireSeconds) {
         return Jwts.builder()
-                .setSubject(username)
+                .subject(username)
                 .claim("user_id", userId)
                 .claim("user_name", username)
                 .claim("roles", roles)
-                .setId(UuidUtil.getUuid())
-                .setIssuedAt(new Date())
-                .setExpiration(Date.from(Instant.now().plusSeconds(expireSeconds)))
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .id(UuidUtil.getUuid())
+                .issuedAt(new Date())
+                .expiration(Date.from(Instant.now().plusSeconds(expireSeconds)))
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)))
                 .compact();
     }
 
@@ -127,7 +130,7 @@ public abstract class TokenUtil {
         if (!StringUtils.hasLength(token)) return null;
         try {
             Jws<Claims> claimsJws = Jwts.parser()
-                    .setSigningKey(secret)
+                    .verifyWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)))
                     .build()
                     .parseSignedClaims(token);
             return claimsJws.getPayload();

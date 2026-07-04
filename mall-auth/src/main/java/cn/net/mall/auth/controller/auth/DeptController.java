@@ -1,6 +1,5 @@
 package cn.net.mall.auth.controller.auth;
 
-import cn.net.mall.annotation.NoLogin;
 import cn.net.mall.auth.dto.auth.DeptTreeDTO;
 import cn.net.mall.auth.entity.auth.DeptConditionEntity;
 import cn.net.mall.auth.entity.auth.DeptEntity;
@@ -35,7 +34,6 @@ public class DeptController {
      * @param id 系统ID
      * @return 部门信息
      */
-    @NoLogin
     @Operation(summary = "通过id查询部门信息", description = "通过id查询部门信息")
     @GetMapping("/findById")
     public DeptEntity findById(Long id) {
@@ -48,7 +46,6 @@ public class DeptController {
      * @param deptConditionEntity 条件
      * @return 部门列表
      */
-    @NoLogin
     @Operation(summary = "根据条件查询部门列表", description = "根据条件查询部门列表")
     @PostMapping("/searchByPage")
     public ResponsePageEntity<DeptTreeDTO> searchByPage(@RequestBody DeptConditionEntity deptConditionEntity) {
@@ -61,7 +58,6 @@ public class DeptController {
      * @param deptConditionEntity 条件
      * @return 部门树
      */
-    @NoLogin
     @Operation(summary = "查询部门树", description = "查询部门树")
     @PostMapping("/searchByTree")
     public List<DeptTreeDTO> searchByTree(@RequestBody DeptConditionEntity deptConditionEntity) {

@@ -9,6 +9,8 @@ spring:
     name: mall-gateway
   main:
     web-application-type: reactive
+  data:
+    redis:
       port: 6379
       password: your_redis_password
       timeout: 50000

@@ -1,6 +1,5 @@
 package cn.net.mall.basic.controller.upload;
 
-import cn.net.mall.annotation.NoLogin;
 import cn.net.mall.basic.dto.FileDTO;
 import cn.net.mall.exception.BusinessException;
 import cn.net.mall.basic.service.upload.UploadService;
@@ -46,14 +45,12 @@ public class UploadController {
         }
     }
 
-    @NoLogin
     @Operation(summary = "上传文件接口", description = "上传文件接口")
     @PostMapping(value = "/file/upload")
     public FileDTO fileUpload(MultipartFile file) throws Exception {
         return uploadService.upload(file, FILE, null);
     }
 
-    @NoLogin
     @Operation(summary = "上传图片接口", description = "上传图片接口")
     @PostMapping(value = "/image/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public FileDTO imageUpload(MultipartFile file) throws Exception {

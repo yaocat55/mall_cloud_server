@@ -1,6 +1,5 @@
 package cn.net.mall.auth.controller.auth;
 
-import cn.net.mall.annotation.NoLogin;
 import cn.net.mall.auth.entity.auth.RoleConditionEntity;
 import cn.net.mall.auth.entity.auth.RoleEntity;
 import cn.net.mall.auth.service.auth.RoleService;
@@ -58,7 +57,6 @@ public class RoleController {
      *
      * @return 角色列表
      */
-	@NoLogin
     @Operation(summary = "根据查询所有角色", description = "根据查询所有角色")
     @GetMapping("/all")
     public List<RoleEntity> all() {

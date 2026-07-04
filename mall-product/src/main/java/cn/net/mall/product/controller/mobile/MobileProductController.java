@@ -2,7 +2,6 @@ package cn.net.mall.product.controller.mobile;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.net.mall.annotation.ValidSensitiveWord;
-import cn.net.mall.annotation.NoLogin;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.product.dto.*;
 import cn.net.mall.product.entity.ProductCommentConditionEntity;
@@ -47,7 +46,6 @@ public class MobileProductController {
      * @param productSearchConditionDTO 条件
      * @return 商品列表
      */
-    @NoLogin
     @Operation(summary = "根据条件搜索商品列表", description = "根据条件搜索商品列表")
     @PostMapping("/searchProduct")
     public ResponsePageEntity<ProductSearchResultDTO> searchProduct(@RequestBody ProductSearchConditionDTO productSearchConditionDTO) {
@@ -77,7 +75,6 @@ public class MobileProductController {
      * @param productId 商品ID
      * @return 商品详情
      */
-    @NoLogin
     @Operation(summary = "获取商品详情", description = "获取商品详情")
     @GetMapping("/getDetail")
     public ProductDetailInfoDTO getDetail(@Parameter(description = "商品ID")
@@ -103,7 +100,6 @@ public class MobileProductController {
      * @param productCommentConditionDTO 条件
      * @return 商品评论列表
      */
-    @NoLogin
     @Operation(summary = "根据条件搜索商品评论列表", description = "根据条件搜索商品评论列表")
     @PostMapping("/searchProductComment")
     public ResponsePageEntity<ProductCommentDTO> searchProductComment(@RequestBody ProductCommentConditionDTO productCommentConditionDTO) {

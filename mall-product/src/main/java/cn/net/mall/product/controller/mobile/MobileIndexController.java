@@ -1,7 +1,6 @@
 package cn.net.mall.product.controller.mobile;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.net.mall.annotation.NoLogin;
 import cn.net.mall.entity.RequestPageEntity;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.product.cache.MobileCacheService;
@@ -51,7 +50,6 @@ public class MobileIndexController {
      *
      * @return 首页轮播图列表
      */
-    @NoLogin
     @Operation(summary = "首页轮播图列表", description = "首页轮播图列表")
     @GetMapping("/getIndexCarouselImageList")
     @SuppressWarnings("unchecked")
@@ -68,7 +66,6 @@ public class MobileIndexController {
      *
      * @return 首页商品列表
      */
-    @NoLogin
     @Operation(summary = "获取首页商品列表", description = "获取首页商品列表")
     @GetMapping("/getIndexProductList")
     @SuppressWarnings("unchecked")
@@ -86,7 +83,6 @@ public class MobileIndexController {
      *
      * @return 公告列表
      */
-    @NoLogin
     @Operation(summary = "获取首页公告列表", description = "获取首页公告列表")
     @GetMapping("/getIndexNoticeList")
     @SuppressWarnings("unchecked")
@@ -104,7 +100,6 @@ public class MobileIndexController {
      * @param requestPageEntity 条件
      * @return 公告列表
      */
-    @NoLogin
     @Operation(summary = "根据条件搜索公告列表", description = "根据条件搜索公告列表")
     @PostMapping("/searchIndexNoticeByPage")
     public ResponsePageEntity<IndexNoticeDTO> searchIndexNoticeByPage(@RequestBody RequestPageEntity requestPageEntity) {
@@ -125,7 +120,6 @@ public class MobileIndexController {
      * @param id 公告系统ID
      * @return 公告详情
      */
-    @NoLogin
     @Operation(summary = "查询公告详情", description = "查询公告详情")
     @GetMapping("/getIndexNoticeDetail")
     public IndexNoticeDetailDTO getIndexNoticeDetail(@Parameter(description = "公告ID")

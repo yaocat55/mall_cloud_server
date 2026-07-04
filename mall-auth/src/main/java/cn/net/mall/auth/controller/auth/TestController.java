@@ -1,6 +1,5 @@
 package cn.net.mall.auth.controller.auth;
 
-import cn.net.mall.annotation.NoLogin;
 import cn.net.mall.basic.client.DictFeignClient;
 import cn.net.mall.basic.dto.DictDetailConditionDTO;
 import cn.net.mall.basic.dto.DictDetailDTO;
@@ -23,7 +22,6 @@ public class TestController {
         this.dictFeignClient = dictFeignClient;
     }
 
-    @NoLogin
     @GetMapping("/testOpenFeign")
     public List<DictDetailDTO> testOpenFeign() {
         DictDetailConditionDTO dictDetailConditionDTO = new DictDetailConditionDTO();
