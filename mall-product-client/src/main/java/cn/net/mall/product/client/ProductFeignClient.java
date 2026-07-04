@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Map;
 
 import static cn.net.mall.product.constant.AppConstant.PRODUCT_SERVICE_NAME;
 
@@ -185,4 +186,54 @@ public interface ProductFeignClient {
     @Operation(summary = "批量扣减商品库存", description = "由 order-service 提交订单时通过 Feign 调用，批量扣减商品库存")
     @PostMapping("/v1/internal/product/reduceStockBatch")
     void reduceStockBatch(@RequestBody List<ShoppingCartDTO> items);
+
+    // ========== 管理端 CRUD ==========
+
+    /**
+     * 通过id查询商品信息
+     *
+     * @param id 商品ID
+     * @return 商品信息
+     */
+    @Operation(summary = "通过id查询商品信息（管理端）", description = "通过id查询商品信息")
+    @GetMapping("/v1/product/findById")
+    Object findById(@RequestParam("id") Long id);
+
+    /**
+     * 分页查询商品列表
+     *
+     * @param condition 查询条件
+     * @return 商品分页列表
+     */
+    @Operation(summary = "分页查询商品列表（管理端）", description = "分页查询商品列表")
+    @PostMapping("/v1/product/searchByPage")
+    ResponsePageEntity<?> searchByPage(@RequestBody Map<String, Object> condition);
+
+    /**
+     * 新增商品
+     *
+     * @param entity 商品实体
+     */
+    @Operation(summary = "新增商品（管理端）", description = "新增商品")
+    @PostMapping("/v1/product/insert")
+    void insert(@RequestBody Object entity);
+
+    /**
+     * 修改商品
+     *
+     * @param entity 商品实体
+     */
+    @Operation(summary = "修改商品（管理端）", description = "修改商品")
+    @PostMapping("/v1/product/update")
+    void update(@RequestBody Object entity);
+
+    /**
+     * 批量删除商品
+     *
+     * @param ids 商品ID集合
+     * @return 影响行数
+     */
+    @Operation(summary = "批量删除商品（管理端）", description = "批量删除商品")
+    @PostMapping("/v1/product/deleteByIds")
+    int deleteByIds(@RequestBody @NotNull List<Long> ids);
 }

@@ -103,6 +103,12 @@
             <artifactId>context-propagation</artifactId>
             <version>1.0.5</version>
         </dependency>
+
+        <!-- Gateway 直连 Redis 查黑名单 -->
+        <dependency>
+            <groupId>cn.net.mall</groupId>
+            <artifactId>mall-redis-spring-boot-starter</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

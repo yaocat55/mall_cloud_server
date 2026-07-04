@@ -1,5 +1,6 @@
 package cn.net.mall.admin.controller.admin;
 
+import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.admin.dto.ProductEditDataDTO;
 import cn.net.mall.product.client.CategoryFeignClient;
 import cn.net.mall.product.client.ProductFeignClient;
@@ -9,12 +10,14 @@ import cn.net.mall.product.dto.ProductDetailDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 管理后台商品管理 BFF 控制器
@@ -75,6 +78,38 @@ public class AdminProductController {
         result.setUnits(Collections.emptyList());
 
         return result;
+    }
+
+    // ========== 管理端 CRUD ==========
+
+    @Operation(summary = "分页查询商品列表", security = @SecurityRequirement(name = "Bearer Token"))
+    @PostMapping("/page")
+    public ResponsePageEntity<?> searchByPage(@RequestBody Map<String, Object> condition) {
+        return productFeignClient.searchByPage(condition);
+    }
+
+    @Operation(summary = "查询商品详情", security = @SecurityRequirement(name = "Bearer Token"))
+    @GetMapping("/detail")
+    public Object findById(@RequestParam("id") Long id) {
+        return productFeignClient.findById(id);
+    }
+
+    @Operation(summary = "新增商品", security = @SecurityRequirement(name = "Bearer Token"))
+    @PostMapping("/insert")
+    public void insert(@RequestBody Object entity) {
+        productFeignClient.insert(entity);
+    }
+
+    @Operation(summary = "修改商品", security = @SecurityRequirement(name = "Bearer Token"))
+    @PostMapping("/update")
+    public void update(@RequestBody Object entity) {
+        productFeignClient.update(entity);
+    }
+
+    @Operation(summary = "批量删除商品", security = @SecurityRequirement(name = "Bearer Token"))
+    @PostMapping("/delete")
+    public int delete(@RequestBody @NotNull List<Long> ids) {
+        return productFeignClient.deleteByIds(ids);
     }
 
     /**

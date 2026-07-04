@@ -31,6 +31,7 @@ import cn.net.mall.util.TokenUtil;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.wf.captcha.ArithmeticCaptcha;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -331,9 +332,16 @@ public class UserService extends BaseService<UserEntity, UserConditionEntity> {
             AssertUtil.isTrue(userEntity.getValidStatus() == null || userEntity.getIsDel() == 0, "该账号已注销，无法登录");
             AssertUtil.isTrue(Boolean.TRUE.equals(userEntity.getValidStatus()), "该账号已注销，无法登录");
 
-            String token = tokenHelper.generateToken(jwtUserEntity);
             List<String> roles = jwtUserEntity.getAuthorities().stream()
                     .map(SimpleGrantedAuthority::getAuthority).collect(Collectors.toList());
+            String token = TokenUtil.generateToken(
+                    userEntity.getId(),
+                    jwtUserEntity.getUsername(),
+                    roles,
+                    tokenHelper.getTokenSecret(),
+                    tokenExpireTimeInRecord
+            );
+            saveUserTokenJti(userEntity.getId(), token);
             return new TokenDTO(jwtUserEntity.getUsername(), token, roles, tokenExpireTimeInRecord);
         } catch (Exception e) {
             log.info("登录失败：", e);
@@ -366,10 +374,17 @@ public class UserService extends BaseService<UserEntity, UserConditionEntity> {
             AssertUtil.isTrue(userEntity.getIsDel() == null || userEntity.getIsDel() == 0, "该账号已注销，无法登录");
             AssertUtil.isTrue(Boolean.TRUE.equals(userEntity.getValidStatus()), "该账号已注销，无法登录");
 
-            String token = tokenHelper.generateToken(jwtUserEntity);
-            redisUtil.del(getCaptchaKey(userLoginDTO.getUuid()));
             List<String> roles = jwtUserEntity.getAuthorities().stream()
                     .map(SimpleGrantedAuthority::getAuthority).collect(Collectors.toList());
+            String token = TokenUtil.generateToken(
+                    userEntity.getId(),
+                    jwtUserEntity.getUsername(),
+                    roles,
+                    tokenHelper.getTokenSecret(),
+                    tokenExpireTimeInRecord
+            );
+            redisUtil.del(getCaptchaKey(userLoginDTO.getUuid()));
+            saveUserTokenJti(userEntity.getId(), token);
 
             //todo 记录最后一次登录时间和地点
             return new TokenDTO(jwtUserEntity.getUsername(), token, roles, tokenExpireTimeInRecord);
@@ -391,7 +406,7 @@ public class UserService extends BaseService<UserEntity, UserConditionEntity> {
     public void logout(HttpServletRequest request) {
         String token = TokenUtil.getTokenForAuthorization(request);
         AssertUtil.hasLength(token, "请重新登录");
-        tokenHelper.delToken(token);
+        addToBlacklist(token);
     }
 
     public void cancelAccount(HttpServletRequest request) {
@@ -409,7 +424,7 @@ public class UserService extends BaseService<UserEntity, UserConditionEntity> {
         FillUserUtil.fillUpdateUserInfo(updateEntity);
         userMapper.update(updateEntity);
 
-        tokenHelper.delToken(token);
+        addToBlacklist(token);
     }
 
 
@@ -539,9 +554,17 @@ public class UserService extends BaseService<UserEntity, UserConditionEntity> {
             // 注册用户
             UserDTO userDTO = doRegister(registerDTO);
 
-            // 生成token
-            String token = userTokenHelper.generateToken(userDTO.getUserName(), JSONUtil.toJsonStr(userDTO));
+            // 生成token（新注册用户无角色）
+            List<String> roles = new ArrayList<>();
+            String token = TokenUtil.generateToken(
+                    userDTO.getId(),
+                    userDTO.getUserName(),
+                    roles,
+                    userTokenHelper.getTokenSecret(),
+                    tokenExpireTimeInRecord
+            );
             userDTO.setToken(token);
+            saveUserTokenJti(userDTO.getId(), token);
 
             return userDTO;
         } catch (Exception e) {
@@ -800,5 +823,46 @@ public class UserService extends BaseService<UserEntity, UserConditionEntity> {
     @Override
     protected BaseMapper getBaseMapper() {
         return userMapper;
+    }
+
+    // ==================== JWT 黑名单相关 ====================
+
+    /**
+     * 登录成功后，保存当前 token jti 映射（用于踢人）
+     */
+    private void saveUserTokenJti(Long userId, String token) {
+        try {
+            Claims claims = TokenUtil.parseClaimsFromToken(token, tokenHelper.getTokenSecret());
+            if (claims != null) {
+                redisUtil.set("user_token_jti:" + userId, claims.getId(), tokenExpireTimeInRecord);
+            }
+        } catch (Exception e) {
+            log.warn("保存 user_token_jti 失败 userId={}", userId, e);
+        }
+    }
+
+    /**
+     * 将 token 加入黑名单
+     */
+    private void addToBlacklist(String token) {
+        try {
+            Claims claims = TokenUtil.parseClaimsFromToken(token, tokenHelper.getTokenSecret());
+            if (claims != null) {
+                redisUtil.set("blacklist:" + claims.getId(), "1", tokenExpireTimeInRecord);
+            }
+        } catch (Exception e) {
+            log.warn("加入黑名单失败", e);
+        }
+    }
+
+    /**
+     * 踢人下线：将指定用户的当前 token 加入黑名单
+     */
+    public void kickOut(Long userId) {
+        String jti = redisUtil.get("user_token_jti:" + userId);
+        if (jti != null) {
+            redisUtil.set("blacklist:" + jti, "1", tokenExpireTimeInRecord);
+            redisUtil.del("user_token_jti:" + userId);
+        }
     }
 }

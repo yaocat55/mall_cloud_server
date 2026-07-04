@@ -53,8 +53,6 @@ class UserServiceLoginCancelTest {
     private AuthenticationManager authenticationManager;
     @MockBean
     private cn.net.mall.basic.client.SmsRecordFeignClient smsRecordFeignClient;
-    @MockBean
-    private UserTokenHelper userTokenHelper;
 
     @Test
     void should_throw_when_login_user_is_canceled_by_isDel() {

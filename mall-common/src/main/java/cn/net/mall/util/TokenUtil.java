@@ -1,11 +1,17 @@
 package cn.net.mall.util;
 
 import cn.net.mall.constant.NumberConstant;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 
@@ -85,5 +91,48 @@ public abstract class TokenUtil {
             return null;
         }
         return values[1];
+    }
+
+    /**
+     * 生成带身份 claims 的 JWT（替代 TokenHelper.generateToken）
+     * 使用 HS512 + 密钥字符串，与 mall-redis-spring-boot-starter 的 UserTokenHelper 兼容
+     */
+    public static String generateToken(Long userId, String username, List<String> roles,
+                                        String secret, int expireSeconds) {
+        return Jwts.builder()
+                .setSubject(username)
+                .claim("user_id", userId)
+                .claim("user_name", username)
+                .claim("roles", roles)
+                .setId(UuidUtil.getUuid())
+                .setIssuedAt(new Date())
+                .setExpiration(Date.from(Instant.now().plusSeconds(expireSeconds)))
+                .signWith(SignatureAlgorithm.HS512, secret)
+                .compact();
+    }
+
+    /**
+     * 从请求中解析 JWT claims
+     */
+    public static Claims parseClaims(HttpServletRequest request, String secret) {
+        String token = getTokenForAuthorization(request);
+        return parseClaimsFromToken(token, secret);
+    }
+
+    /**
+     * 从 token 字符串中解析 JWT claims
+     * 与 mall-redis-spring-boot-starter 的 UserTokenHelper.getClaimsFromToken 一致
+     */
+    public static Claims parseClaimsFromToken(String token, String secret) {
+        if (!StringUtils.hasLength(token)) return null;
+        try {
+            Jws<Claims> claimsJws = Jwts.parser()
+                    .setSigningKey(secret)
+                    .build()
+                    .parseSignedClaims(token);
+            return claimsJws.getPayload();
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

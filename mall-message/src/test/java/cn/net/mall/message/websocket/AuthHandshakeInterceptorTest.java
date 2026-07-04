@@ -1,7 +1,7 @@
 package cn.net.mall.message.websocket;
 
-import cn.net.mall.redis.TokenHelper;
 import cn.net.mall.redis.UserTokenHelper;
+import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.server.ServerHttpRequest;
@@ -10,16 +10,12 @@ import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.socket.WebSocketHandler;
 
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -33,12 +29,14 @@ public class AuthHandshakeInterceptorTest {
     @Test
     public void should_set_authentication_when_token_valid() {
         UserTokenHelper userTokenHelper = mock(UserTokenHelper.class);
-        TokenHelper tokenHelper = mock(TokenHelper.class);
-        AuthHandshakeInterceptor interceptor = new AuthHandshakeInterceptor(userTokenHelper, tokenHelper);
+        AuthHandshakeInterceptor interceptor = new AuthHandshakeInterceptor(userTokenHelper);
 
-        when(userTokenHelper.getUsernameFromToken("t1")).thenReturn("jack");
-        UserDetails userDetails = new User("jack", "pwd", Collections.emptyList());
-        when(tokenHelper.getUserDetailsFromUsername("jack")).thenReturn(userDetails);
+        Claims claims = mock(Claims.class);
+        when(claims.get("user_id", Long.class)).thenReturn(1L);
+        when(claims.get("user_name", String.class)).thenReturn("jack");
+        when(claims.get("roles", List.class)).thenReturn(List.of("ROLE_USER"));
+
+        when(userTokenHelper.getClaimsFromToken("t1")).thenReturn(claims);
 
         MockHttpServletRequest servletRequest = new MockHttpServletRequest("GET", "/ws");
         servletRequest.setQueryString("token=t1");
@@ -50,14 +48,13 @@ public class AuthHandshakeInterceptorTest {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         assertNotNull(authentication);
-        assertEquals(userDetails, authentication.getPrincipal());
+        assertEquals("jack", authentication.getName());
     }
 
     @Test
     public void should_not_set_authentication_when_token_missing() {
         UserTokenHelper userTokenHelper = mock(UserTokenHelper.class);
-        TokenHelper tokenHelper = mock(TokenHelper.class);
-        AuthHandshakeInterceptor interceptor = new AuthHandshakeInterceptor(userTokenHelper, tokenHelper);
+        AuthHandshakeInterceptor interceptor = new AuthHandshakeInterceptor(userTokenHelper);
 
         MockHttpServletRequest servletRequest = new MockHttpServletRequest("GET", "/ws");
         ServerHttpRequest request = new ServletServerHttpRequest(servletRequest);

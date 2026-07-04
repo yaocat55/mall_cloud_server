@@ -2,17 +2,23 @@ package cn.net.mall.message.service;
 
 import cn.net.mall.auth.client.UserFeignClient;
 import cn.net.mall.auth.dto.UserDTO;
+import cn.net.mall.entity.auth.JwtUserEntity;
 import cn.net.mall.message.entity.CommonNotifyEntity;
 import cn.net.mall.message.mapper.CommonNotifyMapper;
+import cn.net.mall.util.FillUserUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class MessagePushServiceTest {
+
+    private final JwtUserEntity testUser = new JwtUserEntity(1L, "admin", null, Collections.emptyList(), Collections.emptyList());
 
     @Test
     public void should_send_broadcast_when_pushToAll() {
@@ -25,7 +31,10 @@ public class MessagePushServiceTest {
         notify.setTitle("系统公告");
         notify.setContent("全员通知内容");
 
-        service.pushToAll(notify);
+        FillUserUtil.mockUser(() -> {
+            service.pushToAll(notify);
+            return null;
+        }, testUser);
 
         verify(mapper, times(1)).insert(any(CommonNotifyEntity.class));
         verify(messagingTemplate, times(1)).convertAndSend(eq("/topic/notify"), any(Object.class));
@@ -47,7 +56,10 @@ public class MessagePushServiceTest {
         userDTO.setUserName("jack");
         when(userFeignClient.findByIds(Collections.singletonList(1001L))).thenReturn(Collections.singletonList(userDTO));
 
-        service.pushToUser(notify);
+        FillUserUtil.mockUser(() -> {
+            service.pushToUser(notify);
+            return null;
+        }, testUser);
 
         verify(mapper, times(1)).insert(any(CommonNotifyEntity.class));
         verify(messagingTemplate, times(1)).convertAndSendToUser(eq("jack"), eq("/queue/notify"), any());

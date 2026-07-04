@@ -21,8 +21,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Map;
 
 import static cn.net.mall.order.constant.AppConstant.ORDER_SERVICE_NAME;
 
@@ -163,4 +165,44 @@ public interface OrderFeignClient {
     @Operation(summary = "查询退货列表")
     @PostMapping("/v1/mobile/trade/return/search")
     ResponsePageEntity<OrderReturnApplyDTO> searchReturn(@RequestBody OrderReturnConditionDTO condition);
+
+    // ========== 交易配送地址 (tradeDeliveryAddress) 管理端 ==========
+
+    @Operation(summary = "分页查询交易配送地址（管理端）")
+    @PostMapping("/v1/tradeDeliveryAddress/searchByPage")
+    ResponsePageEntity<?> searchDeliveryAddressPage(@RequestBody Map<String, Object> condition);
+
+    @Operation(summary = "新增交易配送地址（管理端）")
+    @PostMapping("/v1/tradeDeliveryAddress/insert")
+    int insertDeliveryAddress(@RequestBody Object entity);
+
+    @Operation(summary = "修改交易配送地址（管理端）")
+    @PostMapping("/v1/tradeDeliveryAddress/update")
+    int updateDeliveryAddress(@RequestBody Object entity);
+
+    @Operation(summary = "删除交易配送地址（管理端）")
+    @PostMapping("/v1/tradeDeliveryAddress/deleteByIds")
+    int deleteDeliveryAddressByIds(@RequestBody List<Long> ids);
+
+    @Operation(summary = "查询交易配送地址详情（管理端）")
+    @GetMapping("/v1/tradeDeliveryAddress/findById")
+    Object findDeliveryAddressById(@RequestParam("id") Long id);
+
+    // ========== 退货/退款 (return) 管理端 ==========
+
+    @Operation(summary = "分页查询退货列表（管理端）")
+    @PostMapping("/v1/trade/return/searchByPage")
+    ResponsePageEntity<?> searchReturnByPage(@RequestBody Map<String, Object> condition);
+
+    @Operation(summary = "审批退货（管理端）")
+    @PostMapping("/v1/trade/return/approve")
+    int approveReturn(@RequestBody Object entity);
+
+    @Operation(summary = "拒绝退货（管理端）")
+    @PostMapping("/v1/trade/return/reject")
+    int rejectReturn(@RequestBody Object entity);
+
+    @Operation(summary = "查询退货详情（管理端）")
+    @GetMapping("/v1/trade/return/findById")
+    Object findReturnById(@RequestParam("id") Long id);
 }

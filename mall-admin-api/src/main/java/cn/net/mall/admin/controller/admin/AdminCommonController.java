@@ -2,14 +2,20 @@ package cn.net.mall.admin.controller.admin;
 
 import cn.net.mall.basic.client.AreaFeignClient;
 import cn.net.mall.basic.client.DictFeignClient;
+import cn.net.mall.basic.client.UploadFeignClient;
+import cn.net.mall.basic.dto.FileDTO;
 import cn.net.mall.entity.ResponsePageEntity;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +27,7 @@ import java.util.Map;
 public class AdminCommonController {
     private final AreaFeignClient areaFeignClient;
     private final DictFeignClient dictFeignClient;
+    private final UploadFeignClient uploadFeignClient;
 
     @Operation(summary = "分页查询区域", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/area/page")
@@ -47,4 +54,5 @@ public class AdminCommonController {
     @Operation(summary = "删除字典", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/dict/delete")
     public int deleteDict(@RequestBody @NotNull List<Long> ids) { return dictFeignClient.deleteByIds(ids); }
+// ========== 文件上传 ==========    @Operation(summary = "上传图片", description = "上传单张图片到 MinIO 文件服务器，返回可访问的图片 URL", security = @SecurityRequirement(name = "Bearer Token"))    @PostMapping(value = "/image/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)    public FileDTO uploadImage(@Parameter(description = "图片文件（支持 jpg/png/gif/webp 格式）") MultipartFile file) throws Exception {        return uploadFeignClient.imageUpload(file);    }
 }

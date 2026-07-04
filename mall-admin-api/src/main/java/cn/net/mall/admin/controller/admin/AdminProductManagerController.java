@@ -35,6 +35,10 @@ public class AdminProductManagerController {
     @PostMapping("/category/delete")
     public int deleteCategory(@RequestBody @NotNull List<Long> ids) { return categoryFeignClient.deleteByIds(ids); }
 
+    @Operation(summary = "查询分类树", description = "按层级查询分类树结构，用于分类选择器", security = @SecurityRequirement(name = "Bearer Token"))
+    @PostMapping("/category/tree")
+    public List<?> getCategoryTree(@RequestBody Map<String, Object> c) { return categoryFeignClient.searchByTree(c); }
+
     @Operation(summary = "分页查询品牌", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/brand/page")
     public ResponsePageEntity<?> searchBrandPage(@RequestBody Map<String, Object> c) { return brandFeignClient.searchByPage(c); }
