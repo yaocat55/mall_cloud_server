@@ -1,7 +1,7 @@
 package cn.net.mall.order.dto;
 
 import cn.net.mall.marketing.dto.CouponDTO;
-import cn.net.mall.auth.dto.DeliveryAddressDTO;
+import cn.net.mall.admin.dto.DeliveryAddressDTO;
 import cn.net.mall.product.dto.ShoppingCartDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

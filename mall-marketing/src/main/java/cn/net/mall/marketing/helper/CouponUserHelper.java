@@ -1,7 +1,7 @@
 package cn.net.mall.marketing.helper;
 
-import cn.net.mall.auth.client.UserFeignClient;
-import cn.net.mall.auth.dto.UserDTO;
+import cn.net.mall.admin.client.UserFeignClient;
+import cn.net.mall.admin.dto.UserDTO;
 import cn.net.mall.marketing.entity.CouponConditionEntity;
 import cn.net.mall.marketing.entity.CouponEntity;
 import cn.net.mall.marketing.entity.CouponUserEntity;

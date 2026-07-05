@@ -20,12 +20,12 @@ import java.util.stream.Collectors;
 
 /**
  * 内部购物车接口
- * <p>
- * <b>调用方：</b>
- * <ul>
- *   <li>order-service（订单服务）— 查询购物车商品信息用于下单确认</li>
- * </ul>
- * <b>不对外暴露</b>，仅限服务间 Feign 调用
+ * 
+* **调用方：**
+ * 
+*   - order-service（订单服务）— 查询购物车商品信息用于下单确认
+ * 
+* **不对外暴露**，仅限服务间 Feign 调用
  */
 @Tag(name = "内部服务-购物车", description = "内部微服务：order-service 通过 Feign 调用")
 @RestController

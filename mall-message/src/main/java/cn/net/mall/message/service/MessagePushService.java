@@ -1,7 +1,7 @@
 package cn.net.mall.message.service;
 
-import cn.net.mall.auth.client.UserFeignClient;
-import cn.net.mall.auth.dto.UserDTO;
+import cn.net.mall.admin.client.UserFeignClient;
+import cn.net.mall.admin.dto.UserDTO;
 import cn.net.mall.message.entity.CommonNotifyEntity;
 import cn.net.mall.message.mapper.CommonNotifyMapper;
 import cn.net.mall.util.FillUserUtil;

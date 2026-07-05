@@ -16,13 +16,13 @@ import static cn.net.mall.basic.constant.AppConstant.BASIC_SERVICE_NAME;
 
 /**
  * [Service] Feign 客户端
- * <p>
- * <b>调用方：</b>
- * <ul>
- *   <li>mall-auth（权限服务）— 查询短信发送记录</li>
- *   <li>mall-admin-api（管理后台）— 短信发送记录管理</li>
- * </ul>
- *
+ * 
+* **调用方：**
+ * 
+*   - mall-auth（权限服务）— 查询短信发送记录
+ *   - mall-admin-api（管理后台）— 短信发送记录管理
+ * 
+*
  * @date 2025/5/17 12:24
  */
 @FeignClient(value = BASIC_SERVICE_NAME, contextId = "smsRecordFeignClient")

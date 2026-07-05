@@ -11,8 +11,6 @@
 
     <modules>
         <module>mall-common</module>
-        <module>mall-auth</module>
-        <module>mall-auth-client</module>
         <module>mall-product</module>
         <module>mall-product-client</module>
         <module>mall-auth-api-starter</module>
@@ -27,8 +25,12 @@
         <module>mall-pay-client</module>
         <module>mall-recommend</module>
         <module>mall-message</module>
-        <module>mall-admin-api</module>
-        <module>mall-mobile-api</module>
+        <module>mall-admin-bff</module>
+        <module>mall-mobile-bff</module>
+        <module>mall-customer</module>
+        <module>mall-customer-client</module>
+        <module>mall-admin</module>
+        <module>mall-admin-client</module>
     </modules>
 
     <name>mall-cloud</name>
@@ -75,13 +77,14 @@
         <surefire.skip>true</surefire.skip>
 
         <!-- client 模块独立版本号 -->
-        <mall-auth-client.version>1.0.0</mall-auth-client.version>
         <mall-basic-client.version>1.0.0</mall-basic-client.version>
         <mall-marketing-client.version>1.0.0</mall-marketing-client.version>
         <mall-product-client.version>1.0.0</mall-product-client.version>
         <mall-order-client.version>1.0.0</mall-order-client.version>
         <mall-pay-client.version>1.0.0</mall-pay-client.version>
         <mall-auth-api-starter.version>1.0.0</mall-auth-api-starter.version>
+        <mall-customer-client.version>1.0.0</mall-customer-client.version>
+        <mall-admin-client.version>1.0.0</mall-admin-client.version>
     </properties>
 
 <dependencyManagement>

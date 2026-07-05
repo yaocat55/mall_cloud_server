@@ -13,8 +13,8 @@ import java.util.List;
 
 /**
  * 库存回滚消费者
- * <p>
- * 当 mall-order 下单失败时，发送补偿消息回滚已扣减的库存。
+ * 
+* 当 mall-order 下单失败时，发送补偿消息回滚已扣减的库存。
  */
 @Slf4j
 @Component

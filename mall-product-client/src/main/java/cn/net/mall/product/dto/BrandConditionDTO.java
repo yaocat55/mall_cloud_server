@@ -9,8 +9,8 @@ import java.util.List;
 
 /**
  * 品牌查询条件 DTO
- * <p>
- * 用于 mall-admin-api 通过 Feign 调用查询品牌列表
+ * 
+* 用于 mall-admin-api 通过 Feign 调用查询品牌列表
  */
 @Schema(description = "品牌查询条件 DTO")
 @Data

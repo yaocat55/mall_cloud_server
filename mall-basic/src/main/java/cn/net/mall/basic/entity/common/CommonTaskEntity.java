@@ -52,8 +52,8 @@ public class CommonTaskEntity extends BaseEntity {
      * 业务类型
      * 任务类型时通用excel导出时
      * 1：菜单 2：部门 3：角色 4：用户
-     * <p>
-     * 任务类型时发邮件时
+     * 
+* 任务类型时发邮件时
      * 1：异地登录
      */
     @Schema(description = "业务类型 1：菜单 2：部门 3：角色 4：用户", example = "0")

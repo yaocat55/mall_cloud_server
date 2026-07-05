@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 
 /**
  * 品牌 DTO
- * <p>
- * 用于 mall-admin-api 通过 Feign 调用获取品牌数据
+ * 
+* 用于 mall-admin-api 通过 Feign 调用获取品牌数据
  */
 @Schema(description = "品牌 DTO")
 @AllArgsConstructor

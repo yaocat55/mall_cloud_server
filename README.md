@@ -49,7 +49,7 @@
 
 - 🚪 统一 API 网关，JWT 鉴权 + Sentinel 流控
 - 🔐 RBAC 权限模型（用户 → 角色 → 菜单 / 部门）
-- 📦 19 个 Maven 模块，11 个独立部署微服务 + 7 个 Feign 客户端 + 2 个 BFF 聚合层
+- 📦 24 个 Maven 模块，13 个独立部署微服务 + 10 个 Feign 客户端 + 2 个 BFF 聚合层
 - 📄 Swagger 3 三层分组（📱 mobile / ⚙️ admin / 🔗 internal），各服务文档独立展示
 - 🎯 BFF 层统一前端入口，重写前端只需看 BFF 文档
 - 🔄 MySQL + Elasticsearch 双写，ShardingSphere 分库分表
@@ -67,12 +67,12 @@
 | 项目 | 说明 |
 |------|------|
 | **前端统一入口** | `http://localhost:8080`（Gateway 端口） |
-| **管理后台（Web）** | → `mall-admin-api（8090 BFF）` |
-| **移动端（小程序）** | → `mall-mobile-api（8091 BFF）` |
+| **管理后台（Web）** | → `mall-admin-bff（8090 BFF）` |
+| **移动端（小程序）** | → `mall-mobile-bff（8091 BFF）` |
 | **BFF 路径前缀** | `/api/admin/**` 和 `/api/mobile/**` |
 | **认证方式** | `Authorization: Bearer {token}`（登录后获取） |
 
-> **前端重写只看 BFF 文档**：`mall-admin-api/doc.html` 和 `mall-mobile-api/doc.html` 聚合了所有前端需要的接口，底层微服务文档（auth、product、order 等）仅限后端调试使用。
+> **前端重写只看 BFF 文档**：`mall-admin-bff/doc.html` 和 `mall-mobile-bff/doc.html` 聚合了所有前端需要的接口，底层微服务文档（auth、product、order 等）仅限后端调试使用。
 
 ### 认证流程
 
@@ -93,9 +93,11 @@
 
 | 服务 | Knife4j 页面 | OpenAPI 地址 | 适用前端 |
 |------|-------------|-------------|---------|
-| **mall-admin-api** 🆕 | `http://localhost:8090/doc.html` | `http://localhost:8080/api/admin/v3/api-docs` | **管理后台**（Web） |
-| **mall-mobile-api** 🆕 | `http://localhost:8091/doc.html` | `http://localhost:8080/api/mobile/v3/api-docs` | **移动端**（小程序） |
-| mall-auth | `http://localhost:8021/doc.html` | `http://localhost:8080/api/auth/v3/api-docs` | 内部 |
+| **mall-admin-bff** 🆕 | `http://localhost:8090/doc.html` | `http://localhost:8080/api/admin/v3/api-docs` | **管理后台**（Web） |
+| **mall-mobile-bff** 🆕 | `http://localhost:8091/doc.html` | `http://localhost:8080/api/mobile/v3/api-docs` | **移动端**（小程序） |
+| mall-auth | `http://localhost:8021/doc.html` | `http://localhost:8080/api/auth/v3/api-docs` | JWT 基础设施 |
+| mall-admin | `http://localhost:8030/doc.html` | `http://localhost:8080/api/admin-api/v3/api-docs` | 内部 |
+| mall-customer | `http://localhost:8025/doc.html` | `http://localhost:8080/api/customer/v3/api-docs` | 内部 |
 | mall-basic | `http://localhost:8022/doc.html` | `http://localhost:8080/api/basic/v3/api-docs` | 内部 |
 | mall-product | `http://localhost:8023/doc.html` | `http://localhost:8080/api/product/v3/api-docs` | 内部 |
 | mall-order | `http://localhost:8026/doc.html` | `http://localhost:8080/api/order/v3/api-docs` | 内部 |
@@ -119,6 +121,9 @@
 
 | 业务域 | 服务 | 核心能力 |
 |--------|------|---------|
+| 🏛️ 认证基础设施 | `mall-auth` | JWT 签发 + Redis 黑名单（无数据库） |
+| 👑 Admin 管理 | `mall-admin` | Admin 登录/注册、用户管理、RBAC 权限 |
+| 👤 客户中心 | `mall-customer` | C 端注册登录、会员信息管理 |
 | 🔐 认证授权 | `mall-auth` | 登录注册、RBAC 权限（用户/角色/菜单/部门/岗位）、Caffeine 本地缓存 |
 | 🏗️ 基础服务 | `mall-basic` | 字典管理、行政区域、文件上传（MinIO）、短信（阿里云 SMS）、敏感词过滤、AI 对话（Ollama）、Quartz 定时任务 |
 | 🛒 商品中心 | `mall-product` | 商品 CRUD、分类/品牌/属性体系、MySQL+ES 双写搜索、购物车、首页管理（轮播图/公告/推荐） |
@@ -144,12 +149,18 @@ mall_cloud_server/
 ├── mall-gateway/                  网关层
 │   └── Spring Cloud Gateway + JWT 校验 + CORS + Sentinel
 │
-├── mall-auth/                     认证服务（登录、RBAC 权限）
-├── mall-auth-client/              认证服务 Feign 接口 & DTO
 ├── mall-auth-api-starter/         认证 SDK（JWT 解析、用户上下文透传）
 │
 ├── mall-basic/                    基础服务（字典、短信、文件、Quartz）
 ├── mall-basic-client/             基础服务 Feign 接口 & DTO
+│
+├── mall-admin/                    Admin 业务服务（用户/RBAC/收货地址）
+├── mall-admin-client/             Admin 业务服务 Feign 接口 & DTO
+├── mall-admin-bff/                【BFF】管理后台聚合（8090）
+│
+├── mall-customer/                 C 端客户服务（注册/登录/会员信息）
+├── mall-customer-client/          C 端客户服务 Feign 接口 & DTO
+├── mall-mobile-bff/               【BFF】移动端聚合（8091）
 │
 ├── mall-product/                  商品服务（商品、分类、品牌、购物车、ES 搜索）
 ├── mall-product-client/           商品服务 Feign 接口 & DTO
@@ -163,10 +174,8 @@ mall_cloud_server/
 ├── mall-marketing/                营销服务（优惠券、秒杀）
 ├── mall-marketing-client/         营销服务 Feign 接口 & DTO
 │
-├── mall-admin-api/                【BFF】管理后台聚合服务（8090）
-│   └── 聚合用户/商品/订单等编辑页数据
-├── mall-mobile-api/               【BFF】移动端聚合服务（8091）
-│   └── 聚合首页/商品详情/下单页数据
+├── mall-recommend/                推荐服务（Mahout）
+├── mall-message/                  消息推送（WebSocket）
 │
 ├── docs/                          项目文档
 │   ├── frontend-api-mapping.md   前端 API ↔ 后端微服务映射手册
@@ -179,7 +188,7 @@ mall_cloud_server/
 ```
 
 > [!NOTE]
-> `mall-admin-api` 和 `mall-mobile-api` 是 BFF（Backend For Frontend）层，为各前端提供聚合接口和统一文档入口，**前端重写只需看这两者的文档**。每个 `*-client` 模块定义该服务的 Feign 接口，供其他服务引入。业务配置全部托管在 Nacos 配置中心。
+> `mall-admin-bff` 和 `mall-mobile-bff` 是 BFF（Backend For Frontend）层，为各前端提供聚合接口和统一文档入口，**前端重写只需看这两者的文档**。每个 `*-client` 模块定义该服务的 Feign 接口，供其他服务引入。业务配置全部托管在 Nacos 配置中心。
 >
 > 每个业务模块在 `controller/internal/` 包下存放仅供微服务间 Feign 调用的接口，URL 以 `/v1/internal/` 开头，与前端接口物理隔离。
 
@@ -201,9 +210,9 @@ mall_cloud_server/
         ▼
   ┌──────────────────────────────────────────────────────┐
   │  BFF 聚合层（前端唯一入口，按页面聚合数据）            │
-  │  ├── mall-admin-api  (8090) — 管理后台 Web 端        │
+  │  ├── mall-admin-bff  (8090) — 管理后台 Web 端        │
   │  │   └── 聚合：用户编辑页/商品编辑页/订单管理         │
-  │  └── mall-mobile-api (8091) — 移动端小程序           │
+  │  └── mall-mobile-bff (8091) — 移动端小程序           │
   │      └── 已聚合：首页/商品详情/下单预览               │
   └──────────────────────────────────────────────────────┘
         │
@@ -214,8 +223,9 @@ mall_cloud_server/
   │  ├── ⚙️ admin  — 管理后台接口（经 BFF 转发）   │
   │  └── 🔗 internal — Feign 内部接口            │
   │                                             │
-  │  auth / basic / product / order / pay       │
-  │  marketing / recommend / message            │
+  │  auth / admin / customer / basic        │
+  │  product / order / pay / marketing          │
+  │  recommend / message                        │
   └──────────────────────────────────────────────┘
         │
         ▼
@@ -358,8 +368,8 @@ sequenceDiagram
   ├── ④ mall-pay         → 支付服务
   ├── ⑤ mall-recommend   → 推荐服务
   ├── ⑤ mall-message     → 消息推送
-  ├── ⑥ mall-admin-api   → 【BFF】管理后台聚合
-  └── ⑥ mall-mobile-api  → 【BFF】移动端聚合
+  ├── ⑥ mall-admin-bff   → 【BFF】管理后台聚合
+  └── ⑥ mall-mobile-bff  → 【BFF】移动端聚合
 ```
 
 > 详见 [docs/快速开始.md](docs/快速开始.md) —— 包含配置文件准备、环境检查、数据库初始化、Nacos 配置确认、四种启动方式（IDEA / Maven 命令行 / JAR 包 / 一键脚本）、端口总览、验证步骤
@@ -399,14 +409,20 @@ sequenceDiagram
 | 服务 | 组件扫描 | Feign 扫描 |
 |------|----------|------------|
 | mall-gateway | `cn.net.mall.gateway` | — |
-| mall-auth | `cn.net.mall.auth` | `cn.net.mall.basic` |
+| mall-auth | `cn.net.mall.auth` | —（无 Feign 调用）|
+| mall-admin | `cn.net.mall.admin` | `cn.net.mall.basic`, `cn.net.mall.admin.client`|
+| mall-customer | `cn.net.mall.customer` | `cn.net.mall.basic`, `cn.net.mall.customer.client`|
 | mall-basic | `cn.net.mall.basic` | `cn.net.mall.auth` |
 | mall-product | `cn.net.mall.product` | `basic`, `auth` |
 | mall-marketing | `cn.net.mall.marketing` | `basic`, `auth`, `product` |
 | mall-order | `cn.net.mall.order` | `order`, `product.client`, `marketing.client`, `auth.client` |
 | mall-pay | `cn.net.mall.pay` | `pay`, `order.client` |
 | mall-recommend | `cn.net.mall.recommend` | 具体 client 包 |
-| mall-message | `cn.net.mall.message` | `message`, `auth.client` |
+| mall-message | `cn.net.mall.message` | `message`, `admin.client` |
+| mall-customer | `cn.net.mall.customer` | `basic`, `customer.client` |
+| mall-admin | `cn.net.mall.admin` | `basic`, `admin.client` |
+| mall-admin-bff | `cn.net.mall.admin` | `basic`, `admin.client`, `product.client` |
+| mall-mobile-bff | `cn.net.mall.mobile` | `basic`, `customer.client`, `product.client` |
 
 ---
 
@@ -424,14 +440,16 @@ sequenceDiagram
 
 | 服务 | Knife4j 地址 | 适用前端 |
 |------|-------------|---------|
-| **mall-admin-api** | **`http://localhost:8090/doc.html`** | **管理后台 Web** |
-| **mall-mobile-api** | **`http://localhost:8091/doc.html`** | **移动端小程序** |
+| **mall-admin-bff** | **`http://localhost:8090/doc.html`** | **管理后台 Web** |
+| **mall-mobile-bff** | **`http://localhost:8091/doc.html`** | **移动端小程序** |
 
 **后端开发者各服务文档（三层分组）：**
 
 | 服务 | Knife4j 地址 | 三层分组 |
 |------|-------------|---------|
-| mall-auth | `http://localhost:8021/doc.html` | 📱 mobile / ⚙️ admin / 🔗 internal |
+| mall-auth | `http://localhost:8021/doc.html` | JWT 黑名单 |
+| mall-admin | `http://localhost:8030/doc.html` | ⚙️ admin / 🔗 internal |
+| mall-customer | `http://localhost:8025/doc.html` | 📱 mobile / 🔗 internal |
 | mall-basic | `http://localhost:8022/doc.html` | 📱 mobile / ⚙️ admin / 🔗 internal |
 | mall-product | `http://localhost:8023/doc.html` | 📱 mobile / ⚙️ admin / 🔗 internal |
 | mall-order | `http://localhost:8026/doc.html` | 📱 mobile / 🔗 internal |

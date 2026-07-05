@@ -19,13 +19,13 @@ import static cn.net.mall.product.constant.AppConstant.PRODUCT_SERVICE_NAME;
 
 /**
  * 商品/购物车 Feign 客户端
- * <p>
- * <b>调用方：</b>
- * <ul>
- *   <li>order-service（订单服务）— 下单、购物车相关操作</li>
- *   <li>recommend-service（推荐服务）— 商品数据查询</li>
- * </ul>
- */
+ * 
+* **调用方：**
+ * 
+*   - order-service（订单服务）— 下单、购物车相关操作
+ *   - recommend-service（推荐服务）— 商品数据查询
+ * 
+*/
 @FeignClient(value = PRODUCT_SERVICE_NAME, contextId = "productFeignClient")
 public interface ProductFeignClient {
 

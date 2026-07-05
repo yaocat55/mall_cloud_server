@@ -16,8 +16,8 @@ import static cn.net.mall.product.constant.AppConstant.PRODUCT_SERVICE_NAME;
 
 /**
  * 商品评论 Feign 客户端（管理端）
- * <p>
- * 提供商品评论的管理端 CRUD 操作，由 mall-admin-api 通过 Feign 调用。
+ * 
+* 提供商品评论的管理端 CRUD 操作，由 mall-admin-api 通过 Feign 调用。
  */
 @FeignClient(value = PRODUCT_SERVICE_NAME, contextId = "commentFeignClient")
 public interface CommentFeignClient {

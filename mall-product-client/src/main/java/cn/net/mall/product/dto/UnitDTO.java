@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 
 /**
  * 单位 DTO
- * <p>
- * 用于 mall-admin-api 通过 Feign 调用获取单位数据
+ * 
+* 用于 mall-admin-api 通过 Feign 调用获取单位数据
  */
 @Schema(description = "单位 DTO")
 @AllArgsConstructor

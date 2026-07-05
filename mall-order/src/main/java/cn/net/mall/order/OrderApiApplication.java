@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication(scanBasePackages = {"cn.net.mall.order"})
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = {"cn.net.mall.order", "cn.net.mall.product.client", "cn.net.mall.marketing.client", "cn.net.mall.auth.client"})
+@EnableFeignClients(basePackages = {"cn.net.mall.order", "cn.net.mall.product.client", "cn.net.mall.marketing.client", "cn.net.mall.admin.client"})
 @MapperScan("cn.net.mall.order.mapper")
 @EnableAsync
 public class OrderApiApplication {

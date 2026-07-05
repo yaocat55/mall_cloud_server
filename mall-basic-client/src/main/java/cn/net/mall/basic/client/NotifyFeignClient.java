@@ -15,13 +15,13 @@ import java.util.List;
 
 /**
  * [Service] Feign 客户端
- * <p>
- * <b>调用方：</b>
- * <ul>
- *   <li>mall-admin-api（管理后台）— 消息通知管理</li>
- * </ul>
- * <p>
- * 映射至 mall-message 服务
+ * 
+* **调用方：**
+ * 
+*   - mall-admin-api（管理后台）— 消息通知管理
+ * 
+* 
+* 映射至 mall-message 服务
  *
  * @date 2025/7/3
  */

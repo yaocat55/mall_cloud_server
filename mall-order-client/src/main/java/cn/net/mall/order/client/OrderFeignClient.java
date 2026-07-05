@@ -30,44 +30,48 @@ import static cn.net.mall.order.constant.AppConstant.ORDER_SERVICE_NAME;
 
 /**
  * 订单服务 Feign 客户端
- * <p>
- * <b>调用方：</b>
- * <ul>
- *   <li>mall-pay（支付服务）— 支付回调时查询订单信息</li>
- *   <li>mall-mobile-api（BFF 服务）— 移动端接口聚合</li>
- * </ul>
- */
+ * 
+* **调用方：**
+ * 
+*   - mall-pay（支付服务）— 支付回调时查询订单信息
+ *   - mall-mobile-api（BFF 服务）— 移动端接口聚合
+ * 
+*/
 @FeignClient(value = ORDER_SERVICE_NAME, contextId = "orderFeignClient")
 public interface OrderFeignClient {
 
     /**
      * 创建订单
-     * <p>调用方：mall-mobile-api（BFF 服务）</p>
-     */
+     * 
+调用方：mall-mobile-api（BFF 服务）
+*/
     @Operation(summary = "创建订单", description = "由 mall-mobile-api(BFF) 调用，创建新订单")
     @PostMapping("/v1/internal/trade/create")
     Long create(@RequestBody OrderDTO orderDTO);
 
     /**
      * 根据 ID 查询订单
-     * <p>调用方：mall-pay（支付服务）</p>
-     */
+     * 
+调用方：mall-pay（支付服务）
+*/
     @Operation(summary = "根据ID查询订单", description = "由 mall-pay 调用，根据订单ID获取订单信息")
     @GetMapping("/v1/mobile/trade/getDetail/{id}")
     OrderDTO findById(@PathVariable("id") Long id);
 
     /**
      * 分页查询订单
-     * <p>调用方：mall-mobile-api（BFF 服务）</p>
-     */
+     * 
+调用方：mall-mobile-api（BFF 服务）
+*/
     @Operation(summary = "分页查询订单", description = "由 mall-mobile-api(BFF) 调用，分页查询订单列表")
     @PostMapping("/v1/mobile/trade/search")
     ResponsePageEntity<OrderDTO> search(@RequestBody OrderConditionDTO orderConditionDTO);
 
     /**
      * 修改订单
-     * <p>调用方：mall-mobile-api（BFF 服务）</p>
-     */
+     * 
+调用方：mall-mobile-api（BFF 服务）
+*/
     @Operation(summary = "修改订单", description = "由 mall-mobile-api(BFF) 调用，修改订单信息")
     @PostMapping("/v1/mobile/trade/update")
     int update(@RequestBody OrderDTO orderDTO);
@@ -95,8 +99,9 @@ public interface OrderFeignClient {
 
     /**
      * 获取用户订单数量统计
-     * <p>调用方：mall-mobile-api（BFF 服务）</p>
-     */
+     * 
+调用方：mall-mobile-api（BFF 服务）
+*/
     @Operation(summary = "获取用户订单数量统计", description = "由 mall-mobile-api(BFF) 调用")
     @GetMapping("/v1/mobile/trade/getUserOrderCount")
     OrderTradeCountDTO getUserOrderCount();
@@ -138,16 +143,18 @@ public interface OrderFeignClient {
 
     /**
      * 根据编码查询订单详情
-     * <p>调用方：mall-pay（支付服务）— 支付回调时根据订单编码获取详情</p>
-     */
+     * 
+调用方：mall-pay（支付服务）— 支付回调时根据订单编码获取详情
+*/
     @Operation(summary = "根据编码查询订单详情", description = "由 mall-pay 支付回调时调用，根据订单编码获取详情")
     @GetMapping("/v1/internal/trade/getDetailByCode/{code}")
     TradeDetailDTO getDetailByCode(@PathVariable("code") String code);
 
     /**
      * 根据编码查询订单
-     * <p>调用方：mall-pay（支付服务）— 支付回调时根据订单编码获取基本信息</p>
-     */
+     * 
+调用方：mall-pay（支付服务）— 支付回调时根据订单编码获取基本信息
+*/
     @Operation(summary = "根据编码查询订单", description = "由 mall-pay 支付回调时调用，根据订单编码获取基本信息")
     @GetMapping("/v1/internal/trade/getTrade/{code}")
     OrderDTO getTrade(@PathVariable("code") String code);

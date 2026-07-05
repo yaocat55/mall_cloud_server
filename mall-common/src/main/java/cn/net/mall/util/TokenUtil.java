@@ -43,8 +43,8 @@ public abstract class TokenUtil {
 
     /**
      * 从authorization中解析token
-     * <p>
-     * authorization字符串是下面这样的：
+     * 
+* authorization字符串是下面这样的：
      * Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdXNhbiIsImV4cCI6MTcwNTAzOTA3N30.DZV6CZYGla74CZaXU1sqnX9R_x5YxfTM-DWObURn3Uhr1E88XsOxOz8F_MDfh8AaVFm87zlGXAENC8soZNz0Qw
      *
      * @param request 用户请求
@@ -57,8 +57,8 @@ public abstract class TokenUtil {
 
     /**
      * 从authorization中解析token
-     * <p>
-     * authorization字符串是下面这样的：
+     * 
+* authorization字符串是下面这样的：
      * Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdXNhbiIsImV4cCI6MTcwNTAzOTA3N30.DZV6CZYGla74CZaXU1sqnX9R_x5YxfTM-DWObURn3Uhr1E88XsOxOz8F_MDfh8AaVFm87zlGXAENC8soZNz0Qw
      *
      * @param request 用户请求
@@ -70,6 +70,16 @@ public abstract class TokenUtil {
         if (!CollectionUtils.isEmpty(params)) {
             authorization = params.get(0);
         }
+        return parserToken(authorization);
+    }
+
+    /**
+     * 从 authorization 字符串中解析 token（去除 "Bearer " 前缀）
+     *
+     * @param authorization Authorization 头字符串
+     * @return token
+     */
+    public static String getTokenFromAuthorization(String authorization) {
         return parserToken(authorization);
     }
 
@@ -97,8 +107,8 @@ public abstract class TokenUtil {
     /**
      * 生成带身份 claims 的 JWT（替代 TokenHelper.generateToken）
      * 使用 HS512 + 密钥字符串，与 mall-redis-spring-boot-starter 的 UserTokenHelper 兼容
-     * <p>
-     * 注意：密钥长度必须 ≥ 512 bits（64 个 ASCII 字符），否则 JJWT 0.12+ 会抛出 WeakKeyException
+     * 
+* 注意：密钥长度必须 ≥ 512 bits（64 个 ASCII 字符），否则 JJWT 0.12+ 会抛出 WeakKeyException
      */
     public static String generateToken(Long userId, String username, List<String> roles,
                                         String secret, int expireSeconds) {

@@ -17,14 +17,14 @@ import static cn.net.mall.basic.constant.AppConstant.BASIC_SERVICE_NAME;
 
 /**
  * [Service] Feign 客户端
- * <p>
- * <b>调用方：</b>
- * <ul>
- *   <li>mall-admin-api（管理后台）— 字典详情配置管理</li>
- *   <li>mall-auth（权限服务）— 查询字典详情</li>
- *   <li>mall-product（商品服务）— 查询字典详情</li>
- * </ul>
- *
+ * 
+* **调用方：**
+ * 
+*   - mall-admin-api（管理后台）— 字典详情配置管理
+ *   - mall-auth（权限服务）— 查询字典详情
+ *   - mall-product（商品服务）— 查询字典详情
+ * 
+*
  * @date 2025/7/3
  */
 @FeignClient(value = BASIC_SERVICE_NAME, contextId = "dictDetailFeignClient")

@@ -1,8 +1,8 @@
 package cn.net.mall.basic.service.common;
 
 import cn.hutool.core.util.BooleanUtil;
-import cn.net.mall.auth.client.UserFeignClient;
-import cn.net.mall.auth.dto.UserDTO;
+import cn.net.mall.admin.client.UserFeignClient;
+import cn.net.mall.admin.dto.UserDTO;
 import cn.net.mall.basic.dto.SendCodeDTO;
 import cn.net.mall.basic.entity.common.CommonSmsRecordEntity;
 import cn.net.mall.basic.mapper.common.CommonSmsRecordMapper;

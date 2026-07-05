@@ -76,9 +76,23 @@ spring:
             - Path=/api/auth/**
           filters:
             - StripPrefix=2
+        - id: mall-customer-api
+          uri: lb://mall-customer-api
+          order: 8002
+          predicates:
+            - Path=/api/customer/**
+          filters:
+            - StripPrefix=2
+        - id: mall-admin-api
+          uri: lb://mall-admin-api
+          order: 8003
+          predicates:
+            - Path=/api/admin-svc/**
+          filters:
+            - StripPrefix=2
         - id: mall-product-api
           uri: lb://mall-product-api
-          order: 8002
+          order: 8004
           predicates:
             - Path=/api/product/**
           filters:
@@ -90,15 +104,15 @@ spring:
             - Path=/api/marketing/**
           filters:
             - StripPrefix=2
-        - id: mall-admin-api
-          uri: lb://mall-admin-api
+        - id: mall-admin-bff
+          uri: lb://mall-admin-bff
           order: 8005
           predicates:
             - Path=/api/admin/**
           filters:
             - StripPrefix=2
-        - id: mall-mobile-api
-          uri: lb://mall-mobile-api
+        - id: mall-mobile-bff
+          uri: lb://mall-mobile-bff
           order: 8006
           predicates:
             - Path=/api/mobile/**

@@ -11,13 +11,13 @@ import static cn.net.mall.basic.constant.AppConstant.BASIC_SERVICE_NAME;
 
 /**
  * [Service] Feign 客户端
- * <p>
- * <b>调用方：</b>
- * <ul>
- *   <li>mall-auth（权限服务）— 上传文件/图片</li>
- *   <li>mall-product（商品服务）— 上传文件/图片</li>
- * </ul>
- *
+ * 
+* **调用方：**
+ * 
+*   - mall-auth（权限服务）— 上传文件/图片
+ *   - mall-product（商品服务）— 上传文件/图片
+ * 
+*
  * @date 2025/5/27 17:09
  */
 @FeignClient(value = BASIC_SERVICE_NAME, contextId = "uploadFeignClient")

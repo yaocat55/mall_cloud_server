@@ -12,13 +12,13 @@ import java.util.List;
 
 /**
  * 内部商品接口
- * <p>
- * <b>调用方：</b>
- * <ul>
- *   <li>order-service（订单服务）— 下单时查询商品信息</li>
- *   <li>recommend-service（推荐服务）— 获取商品数据构建推荐列表</li>
- * </ul>
- * <b>不对外暴露</b>，仅限服务间 Feign 调用
+ * 
+* **调用方：**
+ * 
+*   - order-service（订单服务）— 下单时查询商品信息
+ *   - recommend-service（推荐服务）— 获取商品数据构建推荐列表
+ * 
+* **不对外暴露**，仅限服务间 Feign 调用
  */
 @Tag(name = "内部服务-商品", description = "内部微服务：order-service、recommend-service 通过 Feign 调用")
 @RestController

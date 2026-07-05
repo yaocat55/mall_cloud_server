@@ -111,8 +111,8 @@
         </dependency>
         <dependency>
             <groupId>cn.net.mall</groupId>
-            <artifactId>mall-auth-client</artifactId>
-            <version>${mall-auth-client.version}</version>
+            <artifactId>mall-admin-client</artifactId>
+            <version>${mall-admin-client.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

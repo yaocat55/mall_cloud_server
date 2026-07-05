@@ -17,12 +17,12 @@ import static cn.net.mall.basic.constant.AppConstant.BASIC_SERVICE_NAME;
 
 /**
  * [Service] Feign 客户端
- * <p>
- * <b>调用方：</b>
- * <ul>
- *   <li>mall-admin-api（管理后台）— 定时任务日志查询</li>
- * </ul>
- *
+ * 
+* **调用方：**
+ * 
+*   - mall-admin-api（管理后台）— 定时任务日志查询
+ * 
+*
  * @date 2025/7/3
  */
 @FeignClient(value = BASIC_SERVICE_NAME, contextId = "jobLogFeignClient")

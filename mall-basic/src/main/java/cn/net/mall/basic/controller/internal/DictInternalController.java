@@ -10,8 +10,8 @@ import java.util.List;
 
 /**
  * 内部字典接口
- * <p>
- * <b>调用方：</b>所有模块通过 Feign 调用，查询字典明细数据
+ * 
+* **调用方：**所有模块通过 Feign 调用，查询字典明细数据
  */
 @Tag(name = "内部服务-字典", description = "内部微服务：所有模块通过 Feign 调用，查询字典数据")
 @RestController
