@@ -21,13 +21,11 @@ public class SignEntity implements Serializable {
      * 时间戳
      */
     @Schema(description = "timestamp", example = "0")
-    @Schema(description = "timestamp", example = "0")
     private Long timestamp;
 
     /**
      * 签名
      */
-    @Schema(description = "sign", example = "string")
     @Schema(description = "sign", example = "string")
     private String sign;
 }

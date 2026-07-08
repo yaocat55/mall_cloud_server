@@ -21,7 +21,6 @@ public class EsBaseEntity implements Serializable {
     /**
      * ID
      */
-    @Schema(description = "系统ID", example = "string")
     @Schema(description = "id", example = "string")
     private String id;
 
