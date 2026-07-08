@@ -396,6 +396,42 @@ public class UserService extends BaseService<UserEntity, UserConditionEntity> {
         }
     }
 
+    /**
+     * 测试登录 —— 跳过图形验证码校验，仅限内部测试使用。
+     *
+     * 与 {@link #login} 的唯一区别：不校验图形验证码。
+     * 调用方：{@link cn.net.mall.admin.controller.internal.UserInternalController#testLogin}
+     */
+    public TokenDTO testLogin(UserLoginDTO userLoginDTO) {
+        try {
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(userLoginDTO.getUsername(), userLoginDTO.getPassword());
+            Authentication authentication = authenticationManager.authenticate(authenticationToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            JwtUserEntity jwtUserEntity = (JwtUserEntity) (authentication.getPrincipal());
+            UserEntity userEntity = userMapper.findByUserName(jwtUserEntity.getUsername());
+            AssertUtil.notNull(userEntity, "该用户不存在");
+            AssertUtil.isTrue(userEntity.getIsDel() == null || userEntity.getIsDel() == 0, "该账号已注销，无法登录");
+            AssertUtil.isTrue(Boolean.TRUE.equals(userEntity.getValidStatus()), "该账号已注销，无法登录");
+
+            List<String> roles = jwtUserEntity.getAuthorities().stream()
+                    .map(SimpleGrantedAuthority::getAuthority).collect(Collectors.toList());
+            String token = TokenUtil.generateToken(
+                    userEntity.getId(),
+                    jwtUserEntity.getUsername(),
+                    roles,
+                    tokenHelper.getTokenSecret(),
+                    tokenExpireTimeInRecord
+            );
+            return new TokenDTO(jwtUserEntity.getUsername(), token, roles, tokenExpireTimeInRecord);
+        } catch (Exception e) {
+            log.info("测试登录失败：", e);
+            if (e instanceof BusinessException) {
+                throw e;
+            }
+            throw new BusinessException(ASSERT_ERROR_CODE, "用户名或密码错误");
+        }
+    }
 
     /**
      * 用户登出

@@ -1,12 +1,9 @@
 package cn.net.mall.util;
 
 import cn.net.mall.exception.BusinessException;
-import org.springframework.lang.Nullable;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * 断言工具
@@ -32,38 +29,40 @@ public abstract class AssertUtil {
         }
     }
 
-    public static void isNull(@Nullable Object object, String message) {
+    public static void isNull(Object object, String message) {
         if (object != null) {
             throw new BusinessException(ASSERT_ERROR_CODE, message);
         }
     }
 
-    public static void notNull(@Nullable Object object, String message) {
+    public static void notNull(Object object, String message) {
         if (object == null) {
             throw new BusinessException(ASSERT_ERROR_CODE, message);
         }
     }
 
-    public static void hasLength(@Nullable String text, String message) {
-        if (!StringUtils.hasLength(text)) {
+    public static void hasLength(String text, String message) {
+        if (text == null || text.isEmpty()) {
             throw new BusinessException(ASSERT_ERROR_CODE, message);
         }
     }
 
-    public static void notEmpty(@Nullable Collection<?> collection, String message) {
-        if (CollectionUtils.isEmpty(collection)) {
+    public static void notEmpty(Collection<?> collection, String message) {
+        if (collection == null || collection.isEmpty()) {
             throw new BusinessException(ASSERT_ERROR_CODE, message);
         }
     }
 
-    public static void notEmpty(@Nullable Object[] array, String message) {
-        if (ObjectUtils.isEmpty(array)) {
+    public static void notEmpty(Object[] array, String message) {
+        if (array == null || array.length == 0) {
             throw new BusinessException(ASSERT_ERROR_CODE, message);
         }
     }
 
-    public static void doesNotContain(@Nullable String textToSearch, String substring, String message) {
-        if (StringUtils.hasLength(textToSearch) && StringUtils.hasLength(substring) && textToSearch.contains(substring)) {
+    public static void doesNotContain(String textToSearch, String substring, String message) {
+        if (textToSearch != null && !textToSearch.isEmpty()
+                && substring != null && !substring.isEmpty()
+                && textToSearch.contains(substring)) {
             throw new BusinessException(ASSERT_ERROR_CODE, message);
         }
     }

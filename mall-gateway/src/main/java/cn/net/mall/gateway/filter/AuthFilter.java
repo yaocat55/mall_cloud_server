@@ -88,19 +88,38 @@ public class AuthFilter implements GlobalFilter, Ordered {
 
                 return chain.filter(exchange.mutate().request(builder.build()).build());
             } catch (JwtException e) {
-                log.warn("JWT 验签失败（已放行，由下游服务拦截）: {}", e.getMessage());
+                log.warn("JWT 验签失败，返回 401: {}", e.getMessage());
+                ServerHttpResponse response = exchange.getResponse();
+                response.setStatusCode(HttpStatus.UNAUTHORIZED);
+                return response.setComplete();
             }
         }
 
-        // 无 token 或验签失败均放行，由下游服务决定是否拒绝
-        return chain.filter(exchange);
+        // 无 token → 返回 401
+        log.warn("未携带 token，返回 401, uri={}", uri.getPath());
+        ServerHttpResponse response = exchange.getResponse();
+        response.setStatusCode(HttpStatus.UNAUTHORIZED);
+        return response.setComplete();
     }
 
     private boolean isNoAuth(String requestUri) {
         if (StringUtils.hasLength(noAuth)) {
+            // 去掉 query string，只取路径部分
+            String path = requestUri.contains("?") ? requestUri.substring(0, requestUri.indexOf("?")) : requestUri;
+
             for (String url : noAuth.split(",")) {
-                if (requestUri.startsWith(url)) {
-                    return true;
+                url = url.trim();
+                if (url.isEmpty()) continue;
+                if (url.endsWith("/")) {
+                    // 末尾带 / → 前缀匹配（适用于整段都是公开接口的路径）
+                    if (path.startsWith(url)) {
+                        return true;
+                    }
+                } else {
+                    // 末尾不带 / → 精确匹配（适用于与保护接口混在同一前缀下的公开接口）
+                    if (path.equals(url)) {
+                        return true;
+                    }
                 }
             }
         }

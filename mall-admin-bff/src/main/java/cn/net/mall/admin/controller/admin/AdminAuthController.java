@@ -84,4 +84,11 @@ public class AdminAuthController {
     public void updateUser(@Valid @RequestBody UpdateUserDTO updateUserDTO) {
         userFeignClient.updateUser(updateUserDTO);
     }
+
+    @Operation(summary = "测试登录（跳过验证码）",
+               description = "内部测试：跳过图形验证码，直接使用账号密码登录获取token。仅限开发/测试环境使用。")
+    @PostMapping("/testLogin")
+    public TokenDTO testLogin(@Valid @RequestBody UserLoginDTO userLoginDTO) {
+        return userFeignClient.testLogin(userLoginDTO);
+    }
 }

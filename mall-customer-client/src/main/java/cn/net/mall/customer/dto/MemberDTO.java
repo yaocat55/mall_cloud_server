@@ -1,4 +1,4 @@
-package cn.net.mall.customer.client.dto;
+package cn.net.mall.customer.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

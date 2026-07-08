@@ -4,7 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.net.mall.basic.client.SmsRecordFeignClient;
 import cn.net.mall.basic.dto.SmsRecordConditionDTO;
 import cn.net.mall.basic.dto.SmsRecordDTO;
-import cn.net.mall.customer.client.dto.*;
+import cn.net.mall.customer.dto.*;
 import cn.net.mall.customer.entity.CustomerEntity;
 import cn.net.mall.customer.mapper.CustomerMapper;
 import cn.net.mall.enums.SmsTypeEnum;
@@ -29,8 +29,15 @@ import java.util.List;
 @Service
 public class CustomerService {
     private static final String CAPTCHA_KEY_PREFIX = "captcha:";
-    private static final String BLACKLIST_PREFIX = "blacklist:";
-    private static final String USER_JTI_PREFIX = "user_token_jti:";
+
+    // ========== C端 token 管理（已废弃，改用 JWT 过期机制） ==========
+    // C 端用户登出时前端清除本地 token 即可，无需服务端做黑名单。
+    // Admin 端才需要 Redis 黑名单来做强制踢人/权限变更。
+    // 保留代码片段以便后续如有 C 端黑名单需求可快速恢复。
+
+    // private static final String BLACKLIST_PREFIX = "blacklist:";
+    // private static final String USER_JTI_PREFIX = "user_token_jti:";
+
     private static final String TOKEN_SECRET_DEFAULT = "123456test";
 
     @Value("${mall.mgt.tokenExpireTimeInRecord:3600}")
@@ -103,6 +110,9 @@ public class CustomerService {
     }
 
     public void logout(String authorization) {
+        // C 端：前端清除本地 token 即可，不写入 Redis 黑名单
+        // （保留原 blacklist 逻辑参考）
+        /*
         if (StringUtils.hasLength(authorization)) {
             String token = TokenUtil.getTokenFromAuthorization(authorization);
             try {
@@ -117,6 +127,7 @@ public class CustomerService {
                 log.warn("登出时解析 token 失败", e);
             }
         }
+        */
     }
 
     public String getCaptchaKey(String uuid) {
@@ -150,6 +161,9 @@ public class CustomerService {
                 member.getId(), member.getNickName(),
                 Collections.singletonList("ROLE_MEMBER"),
                 tokenSecret(), tokenExpireTimeInRecord);
+        // C 端：不记录 jti 映射，依赖 JWT 自身过期机制
+        // （如果以后需要 C 端 token 主动失效，恢复下面这段）
+        /*
         try {
             Claims claims = TokenUtil.parseClaimsFromToken(token, tokenSecret());
             if (claims != null) {
@@ -158,6 +172,7 @@ public class CustomerService {
         } catch (Exception e) {
             log.warn("存储 jti 映射失败", e);
         }
+        */
         MemberDTO dto = new MemberDTO();
         BeanUtil.copyProperties(member, dto);
         dto.setToken(token);

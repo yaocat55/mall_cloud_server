@@ -1,4 +1,4 @@
-package cn.net.mall.admin;
+package cn.net.mall.mobile;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,8 +12,9 @@ import org.springframework.web.client.RestTemplate;
 @EnableDiscoveryClient
 @EnableFeignClients(basePackages = {"cn.net.mall.admin.client", "cn.net.mall.basic.client",
         "cn.net.mall.product.client", "cn.net.mall.marketing.client",
-        "cn.net.mall.order.client", "cn.net.mall.pay.client"})
-public class AdminApiApplication {
+        "cn.net.mall.order.client", "cn.net.mall.pay.client",
+        "cn.net.mall.customer.client"})
+public class MobileBffApplication {
 
     @Bean
     @LoadBalanced
@@ -22,6 +23,6 @@ public class AdminApiApplication {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(AdminApiApplication.class, args);
+        SpringApplication.run(MobileBffApplication.class, args);
     }
 }

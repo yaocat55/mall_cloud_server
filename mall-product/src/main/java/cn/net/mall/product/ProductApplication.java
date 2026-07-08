@@ -1,25 +1,26 @@
-package cn.net.mall.recommend;
+package cn.net.mall.product;
 
 import org.apache.rocketmq.spring.autoconfigure.RocketMQAutoConfiguration;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Import;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
-@EnableScheduling
-@SpringBootApplication(scanBasePackages = "cn.net.mall.recommend")
-@MapperScan("cn.net.mall.recommend.mapper")
-@EnableFeignClients(basePackages = {
-        "cn.net.mall.product.client",
-        "cn.net.mall.recommend.support"
-})
+/**
+ * @date 2024/1/3 下午3:44
+ */
+@EnableFeignClients(basePackages = {"cn.net.mall.basic","cn.net.mall.admin.client"})
 @EnableDiscoveryClient
+@MapperScan("cn.net.mall.product.mapper")
+@EnableCaching
 @Import(RocketMQAutoConfiguration.class)
-public class RecommendApiApplication {
+@SpringBootApplication(scanBasePackages = {"cn.net.mall.product"})
+public class ProductApplication {
+
     public static void main(String[] args) {
-        SpringApplication.run(RecommendApiApplication.class, args);
+        SpringApplication.run(ProductApplication.class, args);
     }
 }

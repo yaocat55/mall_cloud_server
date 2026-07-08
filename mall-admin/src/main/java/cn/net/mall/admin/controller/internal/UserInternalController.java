@@ -1,7 +1,9 @@
 package cn.net.mall.admin.controller.internal;
 
+import cn.net.mall.admin.dto.TokenDTO;
 import cn.net.mall.admin.dto.UserAvatarDTO;
 import cn.net.mall.admin.dto.UserDTO;
+import cn.net.mall.admin.dto.UserLoginDTO;
 import cn.net.mall.admin.entity.auth.UserEntity;
 import cn.net.mall.admin.service.auth.UserService;
 import cn.hutool.core.bean.BeanUtil;
@@ -57,5 +59,18 @@ public class UserInternalController {
     @PostMapping("/updateAvatar")
     public void updateAvatar(@RequestBody @Valid UserAvatarDTO dto) {
         userService.updateAvatar(dto);
+    }
+
+    /**
+     * 测试登录 —— 跳过图形验证码，仅限内部测试使用。
+     *
+     * 生产环境请走 {@link cn.net.mall.admin.controller.web.WebUserController#login}
+     * 的正常流程（需先调用 /getCode 获取验证码）。
+     */
+    @Operation(summary = "测试登录（跳过验证码）",
+               description = "内部测试：跳过图形验证码校验，仅限开发/测试环境使用，勿暴露到生产环境")
+    @PostMapping("/testLogin")
+    public TokenDTO testLogin(@RequestBody UserLoginDTO userLoginDTO) {
+        return userService.testLogin(userLoginDTO);
     }
 }

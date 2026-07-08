@@ -1,6 +1,7 @@
 package cn.net.mall.util;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * BigDecimal 工具类
@@ -21,7 +22,7 @@ public abstract class BigDecimalUtil {
      * @return 四舍五入后的值
      */
     public static BigDecimal round(BigDecimal value, int scale) {
-        return value.setScale(scale, BigDecimal.ROUND_HALF_UP);
+        return value.setScale(scale, RoundingMode.HALF_UP);
     }
 
     /**
@@ -32,6 +33,6 @@ public abstract class BigDecimalUtil {
      * @return 四舍五入后的字符串
      */
     public static String roundToString(BigDecimal value, int scale) {
-        return String.valueOf(value.setScale(scale, BigDecimal.ROUND_HALF_UP));
+        return String.valueOf(value.setScale(scale, RoundingMode.HALF_UP));
     }
 }

@@ -1,25 +1,28 @@
 package cn.net.mall.util;
 
 import cn.net.mall.exception.BusinessException;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 时间格式工具
  *
  * @date 2024/1/24 上午11:47
  */
-@Slf4j
 public abstract class DateFormatUtil {
+
+    private static final Logger log = Logger.getLogger(DateFormatUtil.class.getName());
 
     public static final String YYYY_MM_DD = "yyyy-MM-dd";
     public static final String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
     public static final String YYYYMMDD = "yyyyMMdd";
     public static final String YYYYMMDDHHMMSS = "yyyyMMddHHmmss";
+
+    private static final int BAD_REQUEST_CODE = 400;
 
     private DateFormatUtil() {
 
@@ -86,8 +89,8 @@ public abstract class DateFormatUtil {
         try {
             return simpleDateFormat.parse(time);
         } catch (ParseException e) {
-            log.info("时间转换错误，原因：", e);
-            throw new BusinessException(HttpStatus.BAD_REQUEST.value(), "时间转换错误");
+            log.log(Level.WARNING, "时间转换错误", e);
+            throw new BusinessException(BAD_REQUEST_CODE, "时间转换错误");
         }
     }
 }

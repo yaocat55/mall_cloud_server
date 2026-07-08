@@ -49,7 +49,7 @@
 
 - 🚪 统一 API 网关，JWT 鉴权 + Sentinel 流控
 - 🔐 RBAC 权限模型（用户 → 角色 → 菜单 / 部门）
-- 📦 24 个 Maven 模块，13 个独立部署微服务 + 10 个 Feign 客户端 + 2 个 BFF 聚合层
+- 📦 21 个 Maven 模块，12 个独立部署微服务 + 7 个 Feign 客户端 + 1 个认证 SDK
 - 📄 Swagger 3 三层分组（📱 mobile / ⚙️ admin / 🔗 internal），各服务文档独立展示
 - 🎯 BFF 层统一前端入口，重写前端只需看 BFF 文档
 - 🔄 MySQL + Elasticsearch 双写，ShardingSphere 分库分表
@@ -77,14 +77,18 @@
 ### 认证流程
 
 ```
-① 前端 → POST /api/mobile/v1/auth/login  （走 BFF 层）
-    BFF → Feign → mall-auth 认证服务
+① C 端用户 → POST /api/mobile/v1/auth/login  （走 BFF 层）
+    BFF → Feign → mall-customer 客户服务
     → 返回 { "token": "eyJhbGciOi..." }
 
-② 后续请求 Header：
+② Admin 用户 → POST /api/admin/v1/auth/login  （走 BFF 层）
+    BFF → Feign → mall-admin 管理服务
+    → 返回 { "token": "eyJhbGciOi..." }
+
+③ 后续请求 Header：
    Authorization: Bearer eyJhbGciOi...
 
-③ Token 过期 → 接口返回 401 → 跳转登录页
+④ Token 过期 → 接口返回 401 → 跳转登录页
 ```
 
 ### API 文档入口
@@ -95,7 +99,6 @@
 |------|-------------|-------------|---------|
 | **mall-admin-bff** 🆕 | `http://localhost:8090/doc.html` | `http://localhost:8080/api/admin/v3/api-docs` | **管理后台**（Web） |
 | **mall-mobile-bff** 🆕 | `http://localhost:8091/doc.html` | `http://localhost:8080/api/mobile/v3/api-docs` | **移动端**（小程序） |
-| mall-auth | `http://localhost:8021/doc.html` | `http://localhost:8080/api/auth/v3/api-docs` | JWT 基础设施 |
 | mall-admin | `http://localhost:8030/doc.html` | `http://localhost:8080/api/admin-api/v3/api-docs` | 内部 |
 | mall-customer | `http://localhost:8025/doc.html` | `http://localhost:8080/api/customer/v3/api-docs` | 内部 |
 | mall-basic | `http://localhost:8022/doc.html` | `http://localhost:8080/api/basic/v3/api-docs` | 内部 |
@@ -121,10 +124,8 @@
 
 | 业务域 | 服务 | 核心能力 |
 |--------|------|---------|
-| 🏛️ 认证基础设施 | `mall-auth` | JWT 签发 + Redis 黑名单（无数据库） |
-| 👑 Admin 管理 | `mall-admin` | Admin 登录/注册、用户管理、RBAC 权限 |
+| 👑 Admin 管理 | `mall-admin` | Admin 登录/注册、用户管理、RBAC 权限（用户/角色/菜单/部门/岗位）、JWT 黑名单、Caffeine 本地缓存 |
 | 👤 客户中心 | `mall-customer` | C 端注册登录、会员信息管理 |
-| 🔐 认证授权 | `mall-auth` | 登录注册、RBAC 权限（用户/角色/菜单/部门/岗位）、Caffeine 本地缓存 |
 | 🏗️ 基础服务 | `mall-basic` | 字典管理、行政区域、文件上传（MinIO）、短信（阿里云 SMS）、敏感词过滤、AI 对话（Ollama）、Quartz 定时任务 |
 | 🛒 商品中心 | `mall-product` | 商品 CRUD、分类/品牌/属性体系、MySQL+ES 双写搜索、购物车、首页管理（轮播图/公告/推荐） |
 | 📋 订单交易 | `mall-order` | 下单→支付→发货→收货→评价 全生命周期、退货退款、ES 订单搜索、**分库分表（8库）** |
@@ -139,12 +140,16 @@
 
 ```
 mall_cloud_server/
-├── mall-common/                   公共 Starter 模块
+├── mall-common/                   基础设施核心（工具类、统一响应、异常处理、自动配置）
 │   ├── 实体基类 (BaseEntity / 分页)
 │   ├── 工具类 (雪花 ID / Token / MD5 / Excel)
 │   ├── 全局响应包装 & 异常处理
-│   ├── 敏感词脱敏
-│   └── 基础设施自动配置 (Redis / Feign / 全局异常)
+│   ├── Redis 工具类 + Token 校验（自动配置）
+│   ├── 雪花算法分布式 ID（自动配置）
+│   ├── 敏感词脱敏（自动配置）
+│   ├── 敏感词校验注解 / AOP
+│   ├── 自定义校验注解 (手机号/金额)
+│   └── MyBatis 基类 (BaseMapper / BaseService / UserInterceptor)
 │
 ├── mall-gateway/                  网关层
 │   └── Spring Cloud Gateway + JWT 校验 + CORS + Sentinel
@@ -223,7 +228,7 @@ mall_cloud_server/
   │  ├── ⚙️ admin  — 管理后台接口（经 BFF 转发）   │
   │  └── 🔗 internal — Feign 内部接口            │
   │                                             │
-  │  auth / admin / customer / basic        │
+  │  admin / customer / basic        │
   │  product / order / pay / marketing          │
   │  recommend / message                        │
   └──────────────────────────────────────────────┘
@@ -244,11 +249,12 @@ mall_cloud_server/
 > 实线箭头 = 编译期引入 `*-client` 模块 + 运行时 OpenFeign 调用。
 > 每次调用自动透传 JWT，下游通过 `AuthApiInterceptor` 还原用户信息。
 
-| 调用方 ↓ / 被调方 → | auth | basic | product | order | marketing |
+| 调用方 ↓ / 被调方 → | admin | basic | product | order | marketing |
 |:---|:---:|:---:|:---:|:---:|:---:|
-| **mall-auth** | — | SMS/字典/上传 | — | — | — |
+| **mall-admin** | — | SMS/字典/上传 | — | — | — |
+| **mall-customer** | — | SMS | — | — | — |
 | **mall-basic** | 用户信息 | — | — | — | — |
-| **mall-product** | 用户信息 | 字典/区域 | — | 订单操作 | — |
+| **mall-product** | 用户信息 | 字典/区域 | — | — | — |
 | **mall-order** | 用户/地址 | — | 商品/库存/购物车 | — | 优惠券 |
 | **mall-pay** | — | — | — | 订单状态 | — |
 | **mall-marketing** | 用户信息 | 上传/字典 | 商品信息 | — | — |
@@ -333,7 +339,7 @@ sequenceDiagram
 
 | 服务 | 数据库 | 分片策略 |
 |------|--------|---------|
-| mall-auth | `mall_auth` | 单库 |
+| mall-admin | `mall_auth` | 单库 |
 | mall-order | `mall_trade_0~7` | 8 库 × 32/256 表 |
 | mall-recommend | `mall_recommend_0~7` | 8 库 × 16/64 表 |
 | mall-message | `mall_message_0~7` | 8 库 × 64 表 |
@@ -357,19 +363,20 @@ sequenceDiagram
   └── MongoDB     → 基本服务依赖
         │
         ▼
-微服务启动顺序
+微服务启动顺序（按层启动，同层可并行）
   │
-  ├── ① mall-gateway     → 网关入口
-  ├── ② mall-auth        → 认证服务
-  ├── ② mall-basic       → 基础服务（可与 auth 并行）
-  ├── ③ mall-product     → 商品服务
-  ├── ④ mall-order       → 订单服务
-  ├── ④ mall-marketing   → 营销服务
-  ├── ④ mall-pay         → 支付服务
-  ├── ⑤ mall-recommend   → 推荐服务
-  ├── ⑤ mall-message     → 消息推送
-  ├── ⑥ mall-admin-bff   → 【BFF】管理后台聚合
-  └── ⑥ mall-mobile-bff  → 【BFF】移动端聚合
+  ├── ① mall-gateway     → GatewayApplication      网关入口
+  ├── ① mall-basic       → BasicApplication        基础服务（字典/短信/文件）
+  ├── ① mall-admin       → AdminApplication        Admin 业务（登录/RBAC）
+  ├── ① mall-customer    → CustomerApplication     C 端客户（注册/登录）
+  ├── ② mall-product     → ProductApplication      商品服务
+  ├── ③ mall-order       → OrderApplication        订单服务
+  ├── ③ mall-marketing   → MarketingApplication    营销服务
+  ├── ③ mall-pay         → PayApplication          支付服务
+  ├── ④ mall-recommend   → RecommendApplication    推荐服务
+  ├── ④ mall-message     → MessageApplication      消息推送
+  ├── ⑤ mall-admin-bff   → AdminBffApplication     【BFF】管理后台聚合
+  └── ⑤ mall-mobile-bff  → MobileBffApplication    【BFF】移动端聚合
 ```
 
 > 详见 [docs/快速开始.md](docs/快速开始.md) —— 包含配置文件准备、环境检查、数据库初始化、Nacos 配置确认、四种启动方式（IDEA / Maven 命令行 / JAR 包 / 一键脚本）、端口总览、验证步骤
@@ -409,20 +416,17 @@ sequenceDiagram
 | 服务 | 组件扫描 | Feign 扫描 |
 |------|----------|------------|
 | mall-gateway | `cn.net.mall.gateway` | — |
-| mall-auth | `cn.net.mall.auth` | —（无 Feign 调用）|
-| mall-admin | `cn.net.mall.admin` | `cn.net.mall.basic`, `cn.net.mall.admin.client`|
-| mall-customer | `cn.net.mall.customer` | `cn.net.mall.basic`, `cn.net.mall.customer.client`|
-| mall-basic | `cn.net.mall.basic` | `cn.net.mall.auth` |
-| mall-product | `cn.net.mall.product` | `basic`, `auth` |
-| mall-marketing | `cn.net.mall.marketing` | `basic`, `auth`, `product` |
-| mall-order | `cn.net.mall.order` | `order`, `product.client`, `marketing.client`, `auth.client` |
+| mall-admin | `cn.net.mall.admin` | `cn.net.mall.basic`, `cn.net.mall.admin.client` |
+| mall-customer | `cn.net.mall.customer` | `cn.net.mall.basic`, `cn.net.mall.customer.client` |
+| mall-basic | `cn.net.mall.basic` | `cn.net.mall.admin.client` |
+| mall-product | `cn.net.mall.product` | `cn.net.mall.basic`, `cn.net.mall.admin.client` |
+| mall-marketing | `cn.net.mall.marketing` | `cn.net.mall.basic`, `cn.net.mall.admin.client`, `cn.net.mall.product.client` |
+| mall-order | `cn.net.mall.order` | `cn.net.mall.order`, `cn.net.mall.product.client`, `cn.net.mall.marketing.client`, `cn.net.mall.admin.client` |
 | mall-pay | `cn.net.mall.pay` | `pay`, `order.client` |
-| mall-recommend | `cn.net.mall.recommend` | 具体 client 包 |
-| mall-message | `cn.net.mall.message` | `message`, `admin.client` |
-| mall-customer | `cn.net.mall.customer` | `basic`, `customer.client` |
-| mall-admin | `cn.net.mall.admin` | `basic`, `admin.client` |
-| mall-admin-bff | `cn.net.mall.admin` | `basic`, `admin.client`, `product.client` |
-| mall-mobile-bff | `cn.net.mall.mobile` | `basic`, `customer.client`, `product.client` |
+| mall-recommend | `cn.net.mall.recommend` | `cn.net.mall.product.client`, `cn.net.mall.recommend.support` |
+| mall-message | `cn.net.mall.message` | `cn.net.mall.message`, `cn.net.mall.admin.client` |
+| mall-admin-bff | `cn.net.mall.admin` | `cn.net.mall.admin.client`, `cn.net.mall.basic.client`, `cn.net.mall.product.client`, `cn.net.mall.marketing.client`, `cn.net.mall.order.client`, `cn.net.mall.pay.client` |
+| mall-mobile-bff | `cn.net.mall.mobile` | `cn.net.mall.admin.client`, `cn.net.mall.basic.client`, `cn.net.mall.customer.client`, `cn.net.mall.product.client`, `cn.net.mall.marketing.client`, `cn.net.mall.order.client`, `cn.net.mall.pay.client` |
 
 ---
 
@@ -447,7 +451,6 @@ sequenceDiagram
 
 | 服务 | Knife4j 地址 | 三层分组 |
 |------|-------------|---------|
-| mall-auth | `http://localhost:8021/doc.html` | JWT 黑名单 |
 | mall-admin | `http://localhost:8030/doc.html` | ⚙️ admin / 🔗 internal |
 | mall-customer | `http://localhost:8025/doc.html` | 📱 mobile / 🔗 internal |
 | mall-basic | `http://localhost:8022/doc.html` | 📱 mobile / ⚙️ admin / 🔗 internal |
@@ -545,7 +548,7 @@ Gateway 已配置全局 CORS（允许所有 Origin）。如果仍然报跨域，
 
 - **SkyWalking Java Agent** 附加在 JVM 启动参数中，自动拦截所有服务的 HTTP/Feign/JDBC 调用，无需 Maven 依赖即可实现分布式链路追踪
 - `apm-toolkit` 系列依赖（`apm-toolkit-trace`、`apm-toolkit-logback-1.x`）仅用于日志中输出 TraceId 和 gRPC 日志上报，不影响核心追踪能力
-- `mall-gateway`、`mall-auth`、`mall-basic`、`mall-product` 显式引入 toolkit，其余服务依赖 agent 自动追踪
+- `mall-gateway`、`mall-admin`、`mall-basic`、`mall-product` 显式引入 toolkit，其余服务依赖 agent 自动追踪
 
 ---
 
@@ -586,7 +589,7 @@ Gateway 已配置全局 CORS（允许所有 Origin）。如果仍然报跨域，
 
 **方案一（10 仓库）：** 每个团队独立负责一个服务 + client JAR，通过 Nexus/Artifactory 发布版本。版本管理规则：加字段 → 小版本，改/删字段 → 大版本。
 
-**方案二（3 仓库）：** 将耦合紧密的服务放在同一仓库，降低版本协调成本：`mall-foundation`（common/gateway/auth）、`mall-business`（basic/product/order/pay/marketing）、`mall-enhancement`（recommend/message）。
+**方案二（3 仓库）：** 将耦合紧密的服务放在同一仓库，降低版本协调成本：`mall-foundation`（common/gateway/admin）、`mall-business`（basic/product/order/pay/marketing）、`mall-enhancement`（recommend/message）。
 
 > 详见 [docs/仓库拆分方案.md](docs/仓库拆分方案.md)
 

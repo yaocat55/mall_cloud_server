@@ -10,8 +10,8 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication(scanBasePackages = {"cn.net.mall.pay"}, exclude = {DataSourceAutoConfiguration.class})
 @EnableDiscoveryClient
 @EnableFeignClients(basePackages = {"cn.net.mall.pay", "cn.net.mall.order.client"})
-public class PayApiApplication {
+public class PayApplication {
     public static void main(String[] args) {
-        SpringApplication.run(PayApiApplication.class, args);
+        SpringApplication.run(PayApplication.class, args);
     }
 }

@@ -4,6 +4,8 @@ import cn.net.mall.admin.authenication.SmsAuthenticationProvider;
 import cn.net.mall.admin.filter.JwtTokenFilter;
 import cn.net.mall.basic.client.SmsRecordFeignClient;
 import cn.net.mall.admin.mapper.auth.UserMapper;
+import cn.net.mall.redis.RedisUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -40,6 +42,9 @@ public class SpringSecurityConfig {
      * 注意：这些是 auth-api 控制器自身的路径（不含 Gateway 的 /api/auth 前缀）
      */
     private static final List<String> PERMIT_ALL_URLS = List.of(
+            // 内部 Feign 调用（不校验 JWT，由上游 Gateway 透传身份）
+            "/v1/internal/**",
+
             // Web 端认证
             "/v1/web/user/login",
             "/v1/web/user/loginByPhone",
@@ -67,9 +72,15 @@ public class SpringSecurityConfig {
             "/v1/test/testOpenFeign"
     );
 
+    /**
+     * JWT 认证过滤器。
+     *
+     * 直接注入 tokenSecret 和 RedisUtil，通过 TokenUtil.parseClaimsFromToken 验签，
+     * 避免依赖 TokenHelper bean（需要 SpringUtil 从容器查找，存在 bean 未注册的风险）。
+     */
     @Bean
-    public JwtTokenFilter jwtTokenFilter() {
-        return new JwtTokenFilter();
+    public JwtTokenFilter jwtTokenFilter(@Value("${mall.mgt.tokenSecret}") String tokenSecret, RedisUtil redisUtil) {
+        return new JwtTokenFilter(tokenSecret, redisUtil);
     }
 
     @Bean
@@ -143,6 +154,8 @@ public class SpringSecurityConfig {
                             .requestMatchers(HttpMethod.OPTIONS, "/*").permitAll()
                             // 业务白名单
                             .requestMatchers(PERMIT_ALL_URLS.toArray(new String[0])).permitAll()
+                            // 内部 Feign 调用
+                            .requestMatchers("/v1/internal/**").permitAll()
                             // 其余全部需认证
                             .anyRequest().authenticated();
                 })

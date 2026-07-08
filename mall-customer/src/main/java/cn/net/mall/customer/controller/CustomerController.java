@@ -1,6 +1,6 @@
 package cn.net.mall.customer.controller;
 
-import cn.net.mall.customer.client.dto.*;
+import cn.net.mall.customer.dto.*;
 import cn.net.mall.customer.service.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -67,7 +67,7 @@
         <lombok.verison>1.18.30</lombok.verison>
         <mysql.version>8.0.33</mysql.version>
         <spring.data.version>2.7.18</spring.data.version>
-        <redisson.version>3.34.1</redisson.version>
+        <fastjson2.version>2.0.52</fastjson2.version>
         <feign.okhttp.version>13.1</feign.okhttp.version>
         <jackson.datatype.version>2.17.2</jackson.datatype.version>
         <skywalking.version>9.0.0</skywalking.version>
@@ -89,14 +89,6 @@
 
 <dependencyManagement>
     <dependencies>
-        <!-- 内部 BOM 引用（GitHub Packages） -->
-        <dependency>
-            <groupId>cn.net.mall</groupId>
-            <artifactId>mall-cloud-bom</artifactId>
-            <version>2.1.0</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-alibaba-dependencies</artifactId>
@@ -231,11 +223,6 @@
             <version>${mybatis.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.redisson</groupId>
-            <artifactId>redisson-spring-boot-starter</artifactId>
-            <version>${redisson.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -275,9 +262,26 @@
             <version>1.3.2</version>
         </dependency>
         <dependency>
-            <groupId>cn.net.mall</groupId>
-            <artifactId>mall-redis-spring-boot-starter</artifactId>
-            <version>2.1.2</version>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.12.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.fastjson2</groupId>
+            <artifactId>fastjson2</artifactId>
+            <version>${fastjson2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.12.6</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.12.6</version>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 </dependencyManagement>

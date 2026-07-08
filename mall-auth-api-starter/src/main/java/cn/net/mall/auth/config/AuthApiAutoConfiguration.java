@@ -3,6 +3,7 @@ package cn.net.mall.auth.config;
 import cn.net.mall.auth.AuthApiConfigurer;
 import cn.net.mall.auth.interceptor.AuthApiInterceptor;
 import cn.net.mall.auth.interceptor.FeignAuthInterceptor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -17,8 +18,8 @@ import org.springframework.context.annotation.Import;
 public class AuthApiAutoConfiguration {
 
     @Bean
-    public AuthApiInterceptor authApiInterceptor() {
-        return new AuthApiInterceptor();
+    public AuthApiInterceptor authApiInterceptor(@Value("${mall.mgt.tokenSecret:}") String tokenSecret) {
+        return new AuthApiInterceptor(tokenSecret);
     }
 
     @Bean

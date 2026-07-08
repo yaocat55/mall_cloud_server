@@ -19,12 +19,6 @@
             <artifactId>mall-common</artifactId>
             <version>1.0.0</version>
         </dependency>
-
-        <dependency>
-            <groupId>cn.net.mall</groupId>
-            <artifactId>mall-web-spring-boot-starter</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>cn.net.mall</groupId>
             <artifactId>mall-pay-client</artifactId>

@@ -13,8 +13,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableFeignClients(basePackages = {"cn.net.mall.order", "cn.net.mall.product.client", "cn.net.mall.marketing.client", "cn.net.mall.admin.client"})
 @MapperScan("cn.net.mall.order.mapper")
 @EnableAsync
-public class OrderApiApplication {
+public class OrderApplication {
     public static void main(String[] args) {
-        SpringApplication.run(OrderApiApplication.class, args);
+        SpringApplication.run(OrderApplication.class, args);
     }
 }

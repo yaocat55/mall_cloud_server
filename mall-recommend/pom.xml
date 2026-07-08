@@ -57,15 +57,12 @@
             <artifactId>mall-common</artifactId>
             <version>1.0.0</version>
         </dependency>
+
         <dependency>
-            <groupId>cn.net.mall</groupId>
-            <artifactId>mall-web-spring-boot-starter</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
-        <dependency>
-            <groupId>cn.net.mall</groupId>
-            <artifactId>mall-redis-spring-boot-starter</artifactId>
-            <version>2.1.2</version>
-        </dependency>
+
         <dependency>
             <groupId>cn.net.mall</groupId>
             <artifactId>mall-auth-api-starter</artifactId>

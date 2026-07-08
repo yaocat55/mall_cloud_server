@@ -1,0 +1,28 @@
+{
+  "properties": [
+    {
+      "name": "mall.mgt.tokenSecret",
+      "type": "java.lang.String",
+      "description": "JWT 签名密钥，用于 UserTokenHelper 生成/验证 Token。所有微服务必须使用同一个密钥",
+      "defaultValue": "123456test"
+    },
+    {
+      "name": "mall.mgt.tokenExpireTimeInRecord",
+      "type": "java.lang.Integer",
+      "description": "Token 过期时间（秒）",
+      "defaultValue": 3600
+    },
+    {
+      "name": "mall.redis.connectionMinimumIdleSize",
+      "type": "java.lang.Integer",
+      "description": "Redisson 连接池最小空闲连接数",
+      "defaultValue": 10
+    },
+    {
+      "name": "mall.redis.connectionTimeout",
+      "type": "java.lang.Integer",
+      "description": "Redisson 连接超时（毫秒）",
+      "defaultValue": 150000
+    }
+  ]
+}

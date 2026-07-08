@@ -3,7 +3,7 @@ package cn.net.mall.mobile.controller.mobile;
 import cn.net.mall.basic.client.SmsFeignClient;
 import cn.net.mall.basic.dto.SendCodeDTO;
 import cn.net.mall.customer.client.MemberFeignClient;
-import cn.net.mall.customer.client.dto.*;
+import cn.net.mall.customer.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;

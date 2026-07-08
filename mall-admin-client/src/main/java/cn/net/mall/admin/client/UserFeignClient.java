@@ -36,7 +36,7 @@ public interface UserFeignClient {
     @Operation(summary = "批量查询用户信息",
                description = "内部服务：由 mall-admin-api 通过 Feign 调用，根据ID集合批量查询用户信息")
     @PostMapping("/v1/internal/user/findByIds")
-    List findByIds(@RequestBody List ids);
+    List<UserDTO> findByIds(@RequestBody List<Long> ids);
 
     /**
      * 通过手机号查询用户信息
@@ -56,7 +56,7 @@ public interface UserFeignClient {
      */
     @Operation(summary = "获取动态验证码",
                description = "内部服务：获取图形验证码（base64图片），由 mall-admin-api 调用")
-    @GetMapping(value = "/v1/web/user/code")
+    @GetMapping(value = "/v1/web/user/getCode")
     CaptchaDTO getCode();
 
     /**
@@ -145,4 +145,14 @@ public interface UserFeignClient {
                description = "内部服务：更新用户基本信息，由 mall-admin-api 通过 Feign 调用")
     @PostMapping("/v1/web/user/updateUser")
     void updateUser(@RequestBody @Valid UpdateUserDTO updateUserDTO);
+
+    /**
+     * 测试登录（跳过验证码）
+     *
+     * 仅限开发/测试环境使用，生产环境请走 login() 正常流程
+     */
+    @Operation(summary = "测试登录",
+               description = "内部测试：跳过图形验证码校验，仅限开发/测试环境使用")
+    @PostMapping("/v1/internal/user/testLogin")
+    TokenDTO testLogin(@RequestBody @Valid UserLoginDTO userLoginDTO);
 }

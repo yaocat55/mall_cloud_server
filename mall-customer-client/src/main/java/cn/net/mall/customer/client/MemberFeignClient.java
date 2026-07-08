@@ -1,6 +1,6 @@
 package cn.net.mall.customer.client;
 
-import cn.net.mall.customer.client.dto.*;
+import cn.net.mall.customer.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;

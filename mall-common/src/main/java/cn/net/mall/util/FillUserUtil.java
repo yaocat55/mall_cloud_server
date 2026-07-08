@@ -3,7 +3,6 @@ package cn.net.mall.util;
 import cn.net.mall.entity.BaseEntity;
 import cn.net.mall.entity.auth.JwtUserEntity;
 import cn.net.mall.exception.BusinessException;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +21,8 @@ public abstract class FillUserUtil {
     private static final Long DEFAULT_USER_ID = 1L;
     private static final String DEFAULT_USER_NAME = "系统管理员";
     private static final String ANONYMOUS_USER = "anonymousUser";
+
+    private static final int FORBIDDEN_CODE = 403;
 
     private FillUserUtil() {
     }
@@ -198,7 +199,7 @@ public abstract class FillUserUtil {
      */
     public static void checkUserLoginStatus(Object userInfo) {
         if (Objects.isNull(userInfo)) {
-            throw new BusinessException(HttpStatus.FORBIDDEN.value(), "当前登录状态过期");
+            throw new BusinessException(FORBIDDEN_CODE, "当前登录状态过期");
         }
     }
 }

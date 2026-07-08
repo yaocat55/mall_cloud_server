@@ -8,6 +8,7 @@ import cn.net.mall.basic.entity.common.CommonSmsRecordEntity;
 import cn.net.mall.basic.mapper.common.CommonSmsRecordMapper;
 import cn.net.mall.basic.util.SmsUtil;
 import cn.net.mall.enums.SmsTypeEnum;
+import cn.net.mall.redis.RedisUtil;
 import cn.net.mall.util.AssertUtil;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,8 @@ import java.util.Date;
 @Service
 public class SmsService {
 
+    private static final String SMS_LIMIT_PREFIX = "sms:limit:";
+    private static final int SMS_LIMIT_SECONDS = 60;
 
     @Value("${aliyun.sms.registerTemplateCode}")
     private String registerTemplateCode;
@@ -35,15 +38,23 @@ public class SmsService {
     private final UserFeignClient userFeignClient;
     private final SmsUtil smsUtil;
     private final CommonSmsRecordMapper commonSmsRecordMapper;
+    private final RedisUtil redisUtil;
 
-    public SmsService(UserFeignClient userFeignClient, SmsUtil smsUtil, CommonSmsRecordMapper commonSmsRecordMapper) {
+    public SmsService(UserFeignClient userFeignClient, SmsUtil smsUtil, CommonSmsRecordMapper commonSmsRecordMapper, RedisUtil redisUtil) {
         this.userFeignClient = userFeignClient;
         this.smsUtil = smsUtil;
         this.commonSmsRecordMapper = commonSmsRecordMapper;
+        this.redisUtil = redisUtil;
     }
 
     public void sendSmsCode(SendCodeDTO sendCodeDTO) {
         String phone = sendCodeDTO.getPhone();
+
+        // 频率限制：同一手机号 60 秒内只能发一次
+        String limitKey = SMS_LIMIT_PREFIX + phone;
+        String exists = redisUtil.get(limitKey);
+        AssertUtil.isNull(exists, "发送过于频繁，请稍后再试");
+        redisUtil.set(limitKey, "1", SMS_LIMIT_SECONDS);
         Integer type = sendCodeDTO.getType();
 
         // 生成6位随机验证码

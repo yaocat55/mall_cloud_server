@@ -1,6 +1,5 @@
 package cn.net.mall.entity.auth;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +15,7 @@ public class JwtUserEntity implements UserDetails {
 
     private Long id;
     private String username;
-    @JsonIgnore
+    // @JsonIgnore — omitted to keep this module Jackson-free; consumers add it
     private String password;
     private List<SimpleGrantedAuthority> authorities;
     private List<String> roles;
