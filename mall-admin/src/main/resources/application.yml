@@ -1,0 +1,35 @@
+server:
+  port: 8030
+
+spring:
+  application:
+    name: mall-admin-api
+  cloud:
+    nacos:
+      config:
+        server-addr: localhost:8848
+        namespace: 7af60364-a045-4561-85a3-3f7a69de938d
+        group: mall-cloud
+        file-extension: yaml
+        username: nacos
+        password: nacos
+      discovery:
+        server-addr: localhost:8848
+        namespace: 7af60364-a045-4561-85a3-3f7a69de938d
+        group: mall-cloud
+        username: nacos
+        password: nacos
+  config:
+    import: nacos:mall-admin-api-dev.yaml
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+  packages-to-scan: cn.net.mall.admin
+  show-actuator: false
+  cache:
+    disabled: true

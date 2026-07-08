@@ -1,0 +1,44 @@
+server:
+  port: 8090
+
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
+      - cn.net.mall.config.RedisAutoConfiguration
+  application:
+    name: mall-admin-bff
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: 7af60364-a045-4561-85a3-3f7a69de938d
+        group: mall-cloud
+        username: nacos
+        password: nacos
+      config:
+        server-addr: localhost:8848
+        namespace: 7af60364-a045-4561-85a3-3f7a69de938d
+        group: mall-cloud
+        username: nacos
+        password: nacos
+        import-check:
+          enabled: false
+  config:
+    import: nacos:mall-admin-bff-dev.yaml?group=mall-cloud
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
+  packages-to-scan: cn.net.mall.admin
+  show-actuator: false
+  cache:
+    disabled: true
