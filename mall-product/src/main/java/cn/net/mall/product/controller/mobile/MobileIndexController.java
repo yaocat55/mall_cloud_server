@@ -62,6 +62,22 @@ public class MobileIndexController {
     }
 
     /**
+     * 获取首页轮播图列表（内部 Feign 调用）
+     *
+     * @return 首页轮播图列表
+     */
+    @Operation(summary = "首页轮播图列表（内部）", description = "由微服务内部 Feign 调用，获取首页轮播图列表")
+    @GetMapping("/v1/internal/index/carouselList")
+    @SuppressWarnings("unchecked")
+    public List<IndexCarouselImageDTO> getIndexCarouselImageListInternal() {
+        List<IndexCarouselImageDTO> result = mobileCacheService.getIndexCarouselImageList();
+        if (result != null) {
+            return result;
+        }
+        return indexCarouselImageService.getIndexCarouselImageList();
+    }
+
+    /**
      * 获取首页商品列表
      *
      * @return 首页商品列表
@@ -79,6 +95,23 @@ public class MobileIndexController {
     }
 
     /**
+     * 获取首页商品列表（内部 Feign 调用）
+     *
+     * @return 首页商品列表
+     */
+    @Operation(summary = "获取首页商品列表（内部）", description = "由微服务内部 Feign 调用，获取首页商品列表")
+    @GetMapping("/v1/internal/index/productList")
+    @SuppressWarnings("unchecked")
+    public List<IndexProductDTO> getIndexProductListInternal(@Parameter(description = "商品类型")
+    @RequestParam("type") int type) {
+        List<IndexProductDTO> result = mobileCacheService.getIndexProductList(type);
+        if (result != null) {
+            return result;
+        }
+        return indexProductService.getIndexProductList(type);
+    }
+
+    /**
      * 获取首页公告列表
      *
      * @return 公告列表
@@ -87,6 +120,22 @@ public class MobileIndexController {
     @GetMapping("/getIndexNoticeList")
     @SuppressWarnings("unchecked")
     public List<IndexNoticeDTO> getIndexNoticeList() {
+        List<IndexNoticeDTO> result = mobileCacheService.getIndexNoticeList();
+        if (result != null) {
+            return result;
+        }
+        return indexNoticeService.getIndexNoticeList();
+    }
+
+    /**
+     * 获取首页公告列表（内部 Feign 调用）
+     *
+     * @return 公告列表
+     */
+    @Operation(summary = "获取首页公告列表（内部）", description = "由微服务内部 Feign 调用，获取首页公告列表")
+    @GetMapping("/v1/internal/index/noticeList")
+    @SuppressWarnings("unchecked")
+    public List<IndexNoticeDTO> getIndexNoticeListInternal() {
         List<IndexNoticeDTO> result = mobileCacheService.getIndexNoticeList();
         if (result != null) {
             return result;

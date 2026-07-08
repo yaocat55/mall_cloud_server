@@ -13,10 +13,10 @@ import java.util.List;
 @FeignClient(name = "susan-mall-marketing")
 public interface MarketingFeignClient {
 
-    @GetMapping("/v1/coupon/getUserCouponList")
+    @GetMapping("/v1/internal/coupon/userList")
     List<CouponDTO> getUserCouponList();
 
-    @GetMapping("/v1/coupon/getObtainableCouponList")
+    @GetMapping("/v1/internal/coupon/obtainableList")
     List<CouponDTO> getObtainableCouponList();
 
     @PostMapping("/v1/internal/coupon/calculateOrderPrice")

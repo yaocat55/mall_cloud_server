@@ -93,12 +93,32 @@ public class CouponController {
     }
 
     /**
+     * 获取可领取的优惠券列表（内部 Feign 调用）
+     *
+     * @return 优惠券列表
+     */
+    @GetMapping("/v1/internal/coupon/obtainableList")
+    public List<CouponWebEntity> getObtainableCouponListInternal() {
+        return couponService.getObtainableCouponList();
+    }
+
+    /**
      * 获取某用户已经领取的优惠券列表
      *
      * @return 商品列表
      */
     @GetMapping("/getUserCouponList")
     public List<CouponWebEntity> getUserCouponList() {
+        return couponService.getUserCouponList();
+    }
+
+    /**
+     * 获取某用户已经领取的优惠券列表（内部 Feign 调用）
+     *
+     * @return 商品列表
+     */
+    @GetMapping("/v1/internal/coupon/userList")
+    public List<CouponWebEntity> getUserCouponListInternal() {
         return couponService.getUserCouponList();
     }
 

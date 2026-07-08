@@ -74,7 +74,7 @@ public class ShoppingCartController {
 		return shoppingCartService.update(shoppingCartEntity);
 	}
 
-	/**
+    /**
      * 添加购物车
      *
      * @param shoppingCartDTO 购物车信息
@@ -82,6 +82,17 @@ public class ShoppingCartController {
      */
     @PostMapping("/addShoppingCart")
     public Boolean addShoppingCart(@RequestBody ShoppingCartDTO shoppingCartDTO) {
+        return shoppingCartService.addShoppingCart(shoppingCartDTO);
+    }
+
+    /**
+     * 添加购物车（内部 Feign 调用）
+     *
+     * @param shoppingCartDTO 购物车信息
+     * @return 是否新增
+     */
+    @PostMapping("/v1/internal/shoppingCart/add")
+    public Boolean addShoppingCartInternal(@RequestBody ShoppingCartDTO shoppingCartDTO) {
         return shoppingCartService.addShoppingCart(shoppingCartDTO);
     }
 
@@ -96,6 +107,16 @@ public class ShoppingCartController {
     }
 
     /**
+     * 修改购物车（内部 Feign 调用）
+     *
+     * @param shoppingCartDTO 购物车信息
+     */
+    @PostMapping("/v1/internal/shoppingCart/update")
+    public void updateShoppingCartInternal(@RequestBody ShoppingCartDTO shoppingCartDTO) {
+        shoppingCartService.updateShoppingCart(shoppingCartDTO);
+    }
+
+    /**
      * 批量删除购物车
      *
      * @param ids 购物车ID集合
@@ -103,6 +124,17 @@ public class ShoppingCartController {
      */
     @PostMapping("/deleteShoppingCart")
     public int deleteShoppingCart(@RequestBody @NotNull List<Long> ids) {
+        return shoppingCartService.deleteByIds(ids);
+    }
+
+    /**
+     * 批量删除购物车（内部 Feign 调用）
+     *
+     * @param ids 购物车ID集合
+     * @return 影响行数
+     */
+    @PostMapping("/v1/internal/shoppingCart/delete")
+    public int deleteShoppingCartInternal(@RequestBody @NotNull List<Long> ids) {
         return shoppingCartService.deleteByIds(ids);
     }
 }

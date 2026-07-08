@@ -77,7 +77,7 @@ public interface ProductFeignClient {
      * @return 商品详情
      */
     @Operation(summary = "获取商品详情", description = "获取商品详情")
-    @GetMapping("/v1/mobile/product/getDetail")
+    @GetMapping("/v1/internal/product/getDetail")
     ProductDetailInfoDTO getDetail(@RequestParam("productId") Long productId);
 
     /**
@@ -126,7 +126,7 @@ public interface ProductFeignClient {
      * @return 分类列表
      */
     @Operation(summary = "根据父分类ID查询分类列表", description = "根据父分类ID查询分类列表")
-    @GetMapping("/v1/mobile/category/getCategoryByParentId")
+    @GetMapping("/v1/internal/category/getByParentId")
     List<CategoryDTO> getCategoryByParentId(@RequestParam("parentId") Long parentId);
 
     /**
@@ -145,7 +145,7 @@ public interface ProductFeignClient {
      * @param shoppingCartDTO 购物车信息
      */
     @Operation(summary = "添加购物车", description = "添加购物车")
-    @PostMapping("/v1/shoppingCart/addShoppingCart")
+    @PostMapping("/v1/internal/shoppingCart/add")
     Boolean addShoppingCart(@RequestBody ShoppingCartDTO shoppingCartDTO);
 
     /**
@@ -154,7 +154,7 @@ public interface ProductFeignClient {
      * @param shoppingCartDTO 购物车信息
      */
     @Operation(summary = "修改购物车", description = "修改购物车")
-    @PostMapping("/v1/shoppingCart/updateShoppingCart")
+    @PostMapping("/v1/internal/shoppingCart/update")
     void updateShoppingCart(@RequestBody ShoppingCartDTO shoppingCartDTO);
 
     /**
@@ -174,7 +174,7 @@ public interface ProductFeignClient {
      * @return 影响行数
      */
     @Operation(summary = "批量删除购物车", description = "批量删除购物车")
-    @PostMapping("/v1/shoppingCart/deleteShoppingCart")
+    @PostMapping("/v1/internal/shoppingCart/delete")
     int deleteShoppingCart(@RequestBody List<Long> ids);
 
     /**

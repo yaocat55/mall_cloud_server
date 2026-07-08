@@ -31,7 +31,7 @@ public interface IndexFeignClient {
      * @return 首页轮播图列表
      */
     @Operation(summary = "首页轮播图列表", description = "首页轮播图列表")
-    @GetMapping("/v1/mobile/index/getIndexCarouselImageList")
+    @GetMapping("/v1/internal/index/carouselList")
     List<IndexCarouselImageDTO> getIndexCarouselImageList();
 
     /**
@@ -40,7 +40,7 @@ public interface IndexFeignClient {
      * @return 首页公告列表
      */
     @Operation(summary = "获取首页公告列表", description = "获取首页公告列表")
-    @GetMapping("/v1/mobile/index/getIndexNoticeList")
+    @GetMapping("/v1/internal/index/noticeList")
     List<IndexNoticeDTO> getIndexNoticeList();
 
     /**
@@ -69,6 +69,6 @@ public interface IndexFeignClient {
      * @return 首页商品列表
      */
     @Operation(summary = "获取首页商品列表", description = "获取首页商品列表")
-    @GetMapping("/v1/mobile/index/getIndexProductList")
+    @GetMapping("/v1/internal/index/productList")
     List<IndexProductDTO> getIndexProductList(@RequestParam("type") int type);
 }

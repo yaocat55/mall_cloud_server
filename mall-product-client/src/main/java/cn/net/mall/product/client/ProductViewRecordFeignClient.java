@@ -17,7 +17,7 @@ import static cn.net.mall.product.constant.AppConstant.PRODUCT_SERVICE_NAME;
 public interface ProductViewRecordFeignClient {
 
     @Operation(summary = "根据条件查询商品浏览记录列表", description = "根据条件查询商品浏览记录列表")
-    @PostMapping("/v1/productViewRecord/searchByPage")
+    @PostMapping("/v1/internal/productViewRecord/searchByPage")
     ResponsePageEntity<ProductViewRecordDTO> searchByPage(@RequestBody ProductViewRecordConditionDTO condition);
 
     @Operation(summary = "新增浏览记录（管理端）", description = "新增一条商品浏览记录")
@@ -33,6 +33,6 @@ public interface ProductViewRecordFeignClient {
     int deleteByIds(@RequestBody @NotNull List<Long> ids);
 
     @Operation(summary = "仅返回商品浏览记录数据列表（无总数）", description = "仅返回商品浏览记录数据列表（无总数）")
-    @PostMapping("/v1/productViewRecord/searchList")
+    @PostMapping("/v1/internal/productViewRecord/searchList")
     java.util.List<ProductViewRecordDTO> searchList(@RequestBody ProductViewRecordConditionDTO condition);
 }

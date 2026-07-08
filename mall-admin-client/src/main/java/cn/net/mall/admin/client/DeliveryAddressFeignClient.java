@@ -40,7 +40,7 @@ public interface DeliveryAddressFeignClient {
      */
     @Operation(summary = "获取某用户收货地址列表",
                description = "移动端：获取当前用户收货地址列表，由 mall-admin-api 通过 Feign 调用")
-    @GetMapping("/v1/mobile/deliveryAddress/getUserDeliveryAddressList")
+    @GetMapping("/v1/internal/deliveryAddress/getList")
     List getUserDeliveryAddressList();
 
     /**
@@ -61,7 +61,7 @@ public interface DeliveryAddressFeignClient {
      */
     @Operation(summary = "批量删除收货地址",
                description = "移动端：批量删除收货地址，由 mall-admin-api 通过 Feign 调用")
-    @PostMapping("/v1/mobile/deliveryAddress/deleteByIds")
+    @PostMapping("/v1/internal/deliveryAddress/delete")
     int deleteByIds(@RequestBody List ids);
 
     /**
@@ -71,6 +71,6 @@ public interface DeliveryAddressFeignClient {
      */
     @Operation(summary = "保存收货地址",
                description = "移动端：新增或更新收货地址，由 mall-admin-api 通过 Feign 调用")
-    @PostMapping("/v1/mobile/deliveryAddress/save")
+    @PostMapping("/v1/internal/deliveryAddress/save")
     void save(@RequestBody DeliveryAddressDTO deliveryAddressDTO);
 }

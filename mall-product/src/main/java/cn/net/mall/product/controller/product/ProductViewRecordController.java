@@ -31,9 +31,23 @@ public class ProductViewRecordController {
         return ResponsePageEntity.build(condition, total, data);
     }
 
+    @Operation(summary = "根据条件查询商品浏览记录列表（内部 Feign 调用）", description = "由微服务内部 Feign 调用，根据条件查询商品浏览记录列表")
+    @PostMapping("/v1/internal/productViewRecord/searchByPage")
+    public ResponsePageEntity<ProductViewRecordEntity> searchByPageInternal(@RequestBody @NotNull ProductViewRecordConditionEntity condition) {
+        List<ProductViewRecordEntity> data = productViewRecordMapper.searchByCondition(condition);
+        int total = productViewRecordMapper.searchCount(condition);
+        return ResponsePageEntity.build(condition, total, data);
+    }
+
     @Operation(summary = "仅返回商品浏览记录数据列表（无总数）", description = "仅返回商品浏览记录数据列表（无总数）")
     @PostMapping("/searchList")
     public List<ProductViewRecordEntity> searchList(@RequestBody @NotNull ProductViewRecordConditionEntity condition) {
+        return productViewRecordMapper.searchByCondition(condition);
+    }
+
+    @Operation(summary = "仅返回商品浏览记录数据列表（内部 Feign 调用，无总数）", description = "由微服务内部 Feign 调用，仅返回商品浏览记录数据列表（无总数）")
+    @PostMapping("/v1/internal/productViewRecord/searchList")
+    public List<ProductViewRecordEntity> searchListInternal(@RequestBody @NotNull ProductViewRecordConditionEntity condition) {
         return productViewRecordMapper.searchByCondition(condition);
     }
 }

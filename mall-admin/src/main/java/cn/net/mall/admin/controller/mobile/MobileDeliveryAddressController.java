@@ -53,6 +53,41 @@ public class MobileDeliveryAddressController {
     }
 
     /**
+     * 获取某用户收货地址列表（内部 Feign 调用）
+     *
+     * @return 收货地址列表
+     */
+    @Operation(summary = "获取某用户收货地址列表（内部）", description = "由微服务内部 Feign 调用，获取某用户收货地址列表")
+    @GetMapping("/v1/internal/deliveryAddress/getList")
+    public List<DeliveryAddressWebEntity> getUserDeliveryAddressListInternal() {
+        return deliveryAddressService.getUserDeliveryAddressList();
+    }
+
+    /**
+     * 批量删除收货地址（内部 Feign 调用）
+     *
+     * @param ids 收货地址ID集合
+     * @return 影响行数
+     */
+    @Operation(summary = "批量删除收货地址（内部）", description = "由微服务内部 Feign 调用，批量删除收货地址")
+    @PostMapping("/v1/internal/deliveryAddress/delete")
+    public int deleteByIdsInternal(@RequestBody @NotNull List<Long> ids) {
+        return deliveryAddressService.deleteByIds(ids);
+    }
+
+    /**
+     * 保存收货地址（内部 Feign 调用）
+     *
+     * @param deliveryAddressWebEntity 收货地址实体
+     * @return 影响行数
+     */
+    @Operation(summary = "保存收货地址（内部）", description = "由微服务内部 Feign 调用，保存收货地址")
+    @PostMapping("/v1/internal/deliveryAddress/save")
+    public void saveInternal(@RequestBody @Valid DeliveryAddressWebEntity deliveryAddressWebEntity) {
+        deliveryAddressService.save(deliveryAddressWebEntity);
+    }
+
+    /**
      * 获取收货地址详情
      *
      * @return 收货地址详情

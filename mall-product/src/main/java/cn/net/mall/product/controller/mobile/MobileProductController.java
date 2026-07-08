@@ -82,6 +82,19 @@ public class MobileProductController {
         return BeanUtil.toBean(productService.getDetail(productId), ProductDetailInfoDTO.class);
     }
 
+    /**
+     * 获取商品详情（内部 Feign 调用）
+     *
+     * @param productId 商品ID
+     * @return 商品详情
+     */
+    @Operation(summary = "获取商品详情（内部）", description = "由微服务内部 Feign 调用，获取商品详情")
+    @GetMapping("/v1/internal/product/getDetail")
+    public ProductDetailInfoDTO getDetailInternal(@Parameter(description = "商品ID")
+    @RequestParam("productId") Long productId) {
+        return BeanUtil.toBean(productService.getDetail(productId), ProductDetailInfoDTO.class);
+    }
+
 
     /**
      * 收藏或取消收藏商品

@@ -48,4 +48,21 @@ public class MobileCategoryController {
         }
         return BeanUtil.copyToList(categoryService.getCategoryByParentId(parentId), CategoryDTO.class);
     }
+
+    /**
+     * 根据父分类ID查询分类列表（内部 Feign 调用）
+     *
+     * @param parentId 父分类ID
+     * @return 分类列表
+     */
+    @Operation(summary = "根据父分类ID查询分类列表（内部）", description = "由微服务内部 Feign 调用，根据父分类ID查询分类列表")
+    @GetMapping("/v1/internal/category/getByParentId")
+    public List<CategoryDTO> getCategoryByParentIdInternal(@Parameter(description = "父分类ID")
+    @RequestParam("parentId") Long parentId) {
+        List<CategoryDTO> result = mobileCacheService.getCategoryList(parentId);
+        if (result != null) {
+            return result;
+        }
+        return BeanUtil.copyToList(categoryService.getCategoryByParentId(parentId), CategoryDTO.class);
+    }
 }
