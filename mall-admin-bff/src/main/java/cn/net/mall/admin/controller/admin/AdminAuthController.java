@@ -46,13 +46,19 @@ public class AdminAuthController {
         return ApiResultUtil.success(userFeignClient.getCode());
     }
 
-    @Operation(summary = "获取当前用户信息", description = "获取当前登录用户的完整信息，包含角色权限")
+    @Operation(summary = "获取当前用户信息",
+               description = "获取当前登录用户的完整信息（含角色权限）。" +
+                       "无需请求参数，根据当前 token 识别用户身份。",
+               security = @io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "Bearer Token"))
     @GetMapping("/userInfo")
     public ApiResult<UserInfoDTO> getUserInfo() {
         return ApiResultUtil.success(userFeignClient.getUserInfo());
     }
 
-    @Operation(summary = "获取用户详情", description = "获取当前登录用户详情")
+    @Operation(summary = "获取用户详情",
+               description = "获取当前登录用户详情。" +
+                       "无需请求参数，根据当前 token 识别用户身份。",
+               security = @io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "Bearer Token"))
     @GetMapping("/userDetail")
     public ApiResult<UserDTO> getUserDetail() {
         return ApiResultUtil.success(userFeignClient.getUserDetail());
@@ -65,7 +71,8 @@ public class AdminAuthController {
     }
 
     @Operation(summary = "退出登录",
-               description = "将当前 token 加入 Redis 黑名单，实现登出",
+               description = "将当前 token 加入 Redis 黑名单，实现登出。" +
+                       "无需请求体，Bearer Token 由 Authorize 按钮统一注入，Feign 自动透传。",
                security = @io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/logout")
     public ApiResult<Void> logout() {
@@ -103,7 +110,9 @@ public class AdminAuthController {
     }
 
     @Operation(summary = "获取在线用户列表",
-               description = "查询当前登录状态未过期的管理端用户")
+               description = "查询当前登录状态未过期的管理端用户。" +
+                       "无需请求参数，根据当前 token 鉴权（仅管理员可查看）。",
+               security = @io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "Bearer Token"))
     @GetMapping("/onlineUsers")
     public ApiResult<List<UserDTO>> onlineUsers() {
         return ApiResultUtil.success(userFeignClient.onlineUsers());

@@ -1,6 +1,5 @@
 package cn.net.mall.admin.controller.admin;
 
-import cn.net.mall.admin.client.DeliveryAddressFeignClient;
 import cn.net.mall.admin.client.DeptFeignClient;
 import cn.net.mall.admin.client.JobFeignClient;
 import cn.net.mall.admin.client.RoleFeignClient;
@@ -30,11 +29,10 @@ import java.util.*;
 @RestController
 @RequestMapping("/admin/v1/user")
 @RequiredArgsConstructor
-@Tag(name = "管理后台-用户管理", description = "用户信息、收货地址等管理接口")
+@Tag(name = "管理后台-用户管理", description = "用户信息、角色、部门、岗位等管理接口")
 public class AdminUserController {
 
     private final UserFeignClient userFeignClient;
-    private final DeliveryAddressFeignClient deliveryAddressFeignClient;
     private final RoleFeignClient roleFeignClient;
     private final DeptFeignClient deptFeignClient;
     private final JobFeignClient jobFeignClient;
@@ -77,40 +75,6 @@ public class AdminUserController {
     @PostMapping("/bindPhone")
     public ApiResult<Void> bindPhone(@Valid @RequestBody BindPhoneDTO bindPhoneDTO) {
         userFeignClient.bindPhone(bindPhoneDTO);
-        return ApiResultUtil.success();
-    }
-
-    // ==================== 收货地址 ====================
-
-    @Operation(summary = "获取用户收货地址列表")
-    @GetMapping("/deliveryAddress/list")
-    public ApiResult<List<DeliveryAddressDTO>> getDeliveryAddressList() {
-        return ApiResultUtil.success(deliveryAddressFeignClient.getUserDeliveryAddressList());
-    }
-
-    @Operation(summary = "获取收货地址详情")
-    @GetMapping("/deliveryAddress/detail")
-    public ApiResult<DeliveryAddressDTO> getDeliveryAddressDetail(@RequestParam("id") Long id) {
-        return ApiResultUtil.success(deliveryAddressFeignClient.getDetail(id));
-    }
-
-    @Operation(summary = "保存收货地址")
-    @PostMapping("/deliveryAddress/save")
-    public ApiResult<Void> saveDeliveryAddress(@RequestBody DeliveryAddressDTO deliveryAddressDTO) {
-        deliveryAddressFeignClient.save(deliveryAddressDTO);
-        return ApiResultUtil.success();
-    }
-
-    @Operation(summary = "批量删除收货地址")
-    @PostMapping("/deliveryAddress/delete")
-    public ApiResult<Integer> deleteDeliveryAddress(@RequestBody List ids) {
-        return ApiResultUtil.success(deliveryAddressFeignClient.deleteByIds(ids));
-    }
-
-    @Operation(summary = "设置默认收货地址")
-    @PostMapping("/deliveryAddress/setDefault")
-    public ApiResult<Void> setDefaultDeliveryAddress(@RequestBody DeliveryAddressDefaultDTO deliveryAddressDefaultDTO) {
-        deliveryAddressFeignClient.setDefaultDeliveryAddress(deliveryAddressDefaultDTO);
         return ApiResultUtil.success();
     }
 

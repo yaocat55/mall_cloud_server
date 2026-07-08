@@ -1,7 +1,5 @@
 package cn.net.mall.admin.controller.admin;
 
-import cn.net.mall.admin.client.DeliveryAddressFeignClient;
-import cn.net.mall.admin.dto.DeliveryAddressDTO;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.product.client.CartFeignClient;
 import cn.net.mall.product.client.CommentFeignClient;
@@ -24,7 +22,7 @@ import java.util.Map;
 /**
  * 管理后台购物相关数据管理 BFF 控制器
  *
-* 聚合收货地址、商品评论、商品收藏、商品浏览记录、购物车等购物相关实体的 CRUD 操作，
+* 聚合商品评论、商品收藏、商品浏览记录、购物车等购物相关实体的 CRUD 操作，
  * 提供管理后台所需的统一管理接口。
  *
 * **认证要求：**需携带 Bearer Token（登录后获取）
@@ -33,58 +31,13 @@ import java.util.Map;
 @RestController
 @RequestMapping("/admin/v1/shopping")
 @RequiredArgsConstructor
-@Tag(name = "管理后台-购物相关数据", description = "收货地址、商品评论、商品收藏、商品浏览记录、购物车等数据管理接口，需携带 Bearer Token")
+@Tag(name = "管理后台-购物相关数据", description = "商品评论、商品收藏、商品浏览记录、购物车等数据管理接口，需携带 Bearer Token")
 public class AdminShoppingController {
 
-    private final DeliveryAddressFeignClient deliveryAddressFeignClient;
     private final CommentFeignClient commentFeignClient;
     private final FavoritesFeignClient favoritesFeignClient;
     private final ProductViewRecordFeignClient productViewRecordFeignClient;
     private final CartFeignClient cartFeignClient;
-
-    // ========== 收货地址 (deliveryAddress) ==========
-
-    @Operation(summary = "分页查询收货地址",
-               description = "管理端分页查询收货地址列表，支持按用户ID、收货人姓名、手机号等条件筛选",
-               security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/deliveryAddress/page")
-    public ApiResult<List> searchDeliveryAddressPage(@RequestBody Map c) {
-        return ApiResultUtil.success(deliveryAddressFeignClient.getUserDeliveryAddressList());
-    }
-
-    @Operation(summary = "新增收货地址",
-               description = "管理端新增收货地址，传入收货人信息、地址详情等字段",
-               security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/deliveryAddress/insert")
-    public ApiResult<Integer> insertDeliveryAddress(@RequestBody DeliveryAddressDTO e) {
-        deliveryAddressFeignClient.save(e);
-        return ApiResultUtil.success(1);
-    }
-
-    @Operation(summary = "修改收货地址",
-               description = "管理端修改收货地址，根据ID更新收货人信息、地址详情等字段",
-               security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/deliveryAddress/update")
-    public ApiResult<Integer> updateDeliveryAddress(@RequestBody DeliveryAddressDTO e) {
-        deliveryAddressFeignClient.save(e);
-        return ApiResultUtil.success(1);
-    }
-
-    @Operation(summary = "删除收货地址",
-               description = "管理端批量删除收货地址，根据ID列表物理删除",
-               security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/deliveryAddress/delete")
-    public ApiResult<Integer> deleteDeliveryAddress(@RequestBody @NotNull List ids) {
-        return ApiResultUtil.success(deliveryAddressFeignClient.deleteByIds(ids));
-    }
-
-    @Operation(summary = "查询收货地址详情",
-               description = "管理端根据ID查询收货地址详细信息",
-               security = @SecurityRequirement(name = "Bearer Token"))
-    @GetMapping("/deliveryAddress/detail")
-    public ApiResult<DeliveryAddressDTO> findDeliveryAddressById(@RequestParam("id") Long id) {
-        return ApiResultUtil.success(deliveryAddressFeignClient.getDetail(id));
-    }
 
     // ========== 商品评论 (productComment) ==========
 

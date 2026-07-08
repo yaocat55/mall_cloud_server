@@ -56,7 +56,9 @@ public class MobileAuthController {
         return ApiResultUtil.success();
     }
 
-    @Operation(summary = "退出登录")
+    @Operation(summary = "退出登录",
+               description = "将当前 token 加入 Redis 黑名单，实现登出。" +
+                       "无需请求体，Bearer Token 由 Authorize 按钮统一注入。")
     @PostMapping("/logout")
     public ApiResult<Void> logout(HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");

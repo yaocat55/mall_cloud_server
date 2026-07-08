@@ -56,12 +56,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             return;
         }
 
-        Set<String> permissionSet = roleEntities.stream()
-                .filter(x -> StringUtils.hasLength(x.getPermission())).map(RoleEntity::getPermission)
-                .collect(Collectors.toSet());
+        // 角色级权限：加 ROLE_ 前缀
+        roleEntities.stream()
+                .filter(x -> StringUtils.hasLength(x.getPermission()))
+                .forEach(x -> authorities.add(new SimpleGrantedAuthority("ROLE_" + x.getPermission())));
+
+        // 菜单级权限：逗号拆开，原样保留
+        Set<String> permissionSet = new HashSet<>();
         fillRoleMenu(roleEntities, permissionSet);
         if (CollectionUtils.isNotEmpty(permissionSet)) {
-            authorities.addAll(permissionSet.stream().map(x -> new SimpleGrantedAuthority(x)).collect(Collectors.toList()));
+            authorities.addAll(permissionSet.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
         }
     }
 

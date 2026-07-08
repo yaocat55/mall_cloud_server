@@ -110,8 +110,8 @@ public class SpringSecurityConfig {
 
     @Bean
     public GrantedAuthorityDefaults grantedAuthorityDefaults() {
-        // 去除 ROLE_ 前缀
-        return new GrantedAuthorityDefaults("");
+        // 恢复标准 ROLE_ 前缀：hasRole('admin') 匹配 "ROLE_admin"
+        return new GrantedAuthorityDefaults("ROLE_");
     }
 
     @Bean

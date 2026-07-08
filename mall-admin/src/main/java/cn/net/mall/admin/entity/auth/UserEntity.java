@@ -31,7 +31,6 @@ public class UserEntity extends BaseEntity {
     /**
      * 邮箱
      */
-    @NotEmpty(message = "邮箱不能为空")
     @Schema(description = "邮箱", example = "admin@mall.com")
     private String email;
 
