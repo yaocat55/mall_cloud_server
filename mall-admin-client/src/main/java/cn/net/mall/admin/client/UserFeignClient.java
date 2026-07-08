@@ -155,4 +155,12 @@ public interface UserFeignClient {
                description = "内部测试：跳过图形验证码校验，仅限开发/测试环境使用")
     @PostMapping("/v1/internal/user/testLogin")
     TokenDTO testLogin(@RequestBody @Valid UserLoginDTO userLoginDTO);
+
+    /**
+     * 获取在线用户列表
+     */
+    @Operation(summary = "获取在线用户列表",
+               description = "查询当前登录状态未过期的管理端用户")
+    @GetMapping("/v1/web/user/onlineUsers")
+    List<UserDTO> onlineUsers();
 }

@@ -91,4 +91,11 @@ public class AdminAuthController {
     public TokenDTO testLogin(@Valid @RequestBody UserLoginDTO userLoginDTO) {
         return userFeignClient.testLogin(userLoginDTO);
     }
+
+    @Operation(summary = "获取在线用户列表",
+               description = "查询当前登录状态未过期的管理端用户")
+    @GetMapping("/onlineUsers")
+    public List<UserDTO> onlineUsers() {
+        return userFeignClient.onlineUsers();
+    }
 }
