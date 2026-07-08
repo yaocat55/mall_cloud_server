@@ -41,19 +41,19 @@ public class AdminBasicController {
 
     @Operation(summary = "新增定时任务", description = "新增定时任务配置，包括任务名称、Cron表达式、调用目标等参数", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/job/insert")
-    public ApiResult<String> insertJob(@RequestBody CommonJobDTO entity) {
+    public ApiResult<Integer> insertJob(@RequestBody CommonJobDTO entity) {
         return ApiResultUtil.success(jobFeignClient.insert(entity));
     }
 
     @Operation(summary = "修改定时任务", description = "修改定时任务配置，支持更新任务名称、Cron表达式、调用目标等参数", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/job/update")
-    public ApiResult<String> updateJob(@RequestBody CommonJobDTO entity) {
+    public ApiResult<Integer> updateJob(@RequestBody CommonJobDTO entity) {
         return ApiResultUtil.success(jobFeignClient.update(entity));
     }
 
     @Operation(summary = "删除定时任务", description = "根据ID列表批量删除定时任务配置", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/job/delete")
-    public ApiResult<String> deleteJob(@RequestBody @NotNull List ids) {
+    public ApiResult<Integer> deleteJob(@RequestBody @NotNull List ids) {
         return ApiResultUtil.success(jobFeignClient.deleteByIds(ids));
     }
 
@@ -88,19 +88,19 @@ public class AdminBasicController {
 
     @Operation(summary = "新增定时任务日志", description = "新增定时任务执行日志记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/jobLog/insert")
-    public ApiResult<String> insertJobLog(@RequestBody CommonJobLogDTO entity) {
+    public ApiResult<Integer> insertJobLog(@RequestBody CommonJobLogDTO entity) {
         return ApiResultUtil.success(jobLogFeignClient.insert(entity));
     }
 
     @Operation(summary = "修改定时任务日志", description = "修改定时任务执行日志记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/jobLog/update")
-    public ApiResult<String> updateJobLog(@RequestBody CommonJobLogDTO entity) {
+    public ApiResult<Integer> updateJobLog(@RequestBody CommonJobLogDTO entity) {
         return ApiResultUtil.success(jobLogFeignClient.update(entity));
     }
 
     @Operation(summary = "删除定时任务日志", description = "根据ID列表批量删除定时任务日志", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/jobLog/delete")
-    public ApiResult<String> deleteJobLog(@RequestBody @NotNull List ids) {
+    public ApiResult<Integer> deleteJobLog(@RequestBody @NotNull List ids) {
         return ApiResultUtil.success(jobLogFeignClient.deleteByIds(ids));
     }
 
@@ -114,19 +114,19 @@ public class AdminBasicController {
 
     @Operation(summary = "新增图片", description = "新增图片记录，关联已上传的图片文件", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/photo/insert")
-    public ApiResult<String> insertPhoto(@RequestBody CommonPhotoDTO entity) {
+    public ApiResult<Integer> insertPhoto(@RequestBody CommonPhotoDTO entity) {
         return ApiResultUtil.success(photoFeignClient.insert(entity));
     }
 
     @Operation(summary = "修改图片", description = "修改图片记录信息，如图片名称、所属分组等", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/photo/update")
-    public ApiResult<String> updatePhoto(@RequestBody CommonPhotoDTO entity) {
+    public ApiResult<Integer> updatePhoto(@RequestBody CommonPhotoDTO entity) {
         return ApiResultUtil.success(photoFeignClient.update(entity));
     }
 
     @Operation(summary = "删除图片", description = "根据ID列表批量删除图片记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/photo/delete")
-    public ApiResult<String> deletePhoto(@RequestBody @NotNull List ids) {
+    public ApiResult<Integer> deletePhoto(@RequestBody @NotNull List ids) {
         return ApiResultUtil.success(photoFeignClient.deleteByIds(ids));
     }
 
@@ -140,19 +140,19 @@ public class AdminBasicController {
 
     @Operation(summary = "新增图片分组", description = "新增图片分组，用于对图片进行分类管理", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/photoGroup/insert")
-    public ApiResult<String> insertPhotoGroup(@RequestBody CommonPhotoGroupDTO entity) {
+    public ApiResult<Integer> insertPhotoGroup(@RequestBody CommonPhotoGroupDTO entity) {
         return ApiResultUtil.success(photoGroupFeignClient.insert(entity));
     }
 
     @Operation(summary = "修改图片分组", description = "修改图片分组信息，如分组名称、排序等", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/photoGroup/update")
-    public ApiResult<String> updatePhotoGroup(@RequestBody CommonPhotoGroupDTO entity) {
+    public ApiResult<Integer> updatePhotoGroup(@RequestBody CommonPhotoGroupDTO entity) {
         return ApiResultUtil.success(photoGroupFeignClient.update(entity));
     }
 
     @Operation(summary = "删除图片分组", description = "根据ID列表批量删除图片分组", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/photoGroup/delete")
-    public ApiResult<String> deletePhotoGroup(@RequestBody @NotNull List ids) {
+    public ApiResult<Integer> deletePhotoGroup(@RequestBody @NotNull List ids) {
         return ApiResultUtil.success(photoGroupFeignClient.deleteByIds(ids));
     }
 
@@ -166,19 +166,19 @@ public class AdminBasicController {
 
     @Operation(summary = "新增敏感词", description = "新增敏感词，添加到敏感词过滤库", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/sensitiveWord/insert")
-    public ApiResult<String> insertSensitiveWord(@RequestBody CommonSensitiveWordDTO entity) {
+    public ApiResult<Integer> insertSensitiveWord(@RequestBody CommonSensitiveWordDTO entity) {
         return ApiResultUtil.success(sensitiveWordFeignClient.insert(entity));
     }
 
     @Operation(summary = "修改敏感词", description = "修改敏感词内容或状态", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/sensitiveWord/update")
-    public ApiResult<String> updateSensitiveWord(@RequestBody CommonSensitiveWordDTO entity) {
+    public ApiResult<Integer> updateSensitiveWord(@RequestBody CommonSensitiveWordDTO entity) {
         return ApiResultUtil.success(sensitiveWordFeignClient.update(entity));
     }
 
     @Operation(summary = "删除敏感词", description = "根据ID列表批量删除敏感词", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/sensitiveWord/delete")
-    public ApiResult<String> deleteSensitiveWord(@RequestBody @NotNull List ids) {
+    public ApiResult<Integer> deleteSensitiveWord(@RequestBody @NotNull List ids) {
         return ApiResultUtil.success(sensitiveWordFeignClient.deleteByIds(ids));
     }
 
@@ -199,19 +199,19 @@ public class AdminBasicController {
 
     @Operation(summary = "新增短信记录", description = "新增短信发送记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/smsRecord/insert")
-    public ApiResult<String> insertSmsRecord(@RequestBody SmsRecordDTO entity) {
+    public ApiResult<Integer> insertSmsRecord(@RequestBody SmsRecordDTO entity) {
         return ApiResultUtil.success(smsRecordFeignClient.insert(entity));
     }
 
     @Operation(summary = "修改短信记录", description = "修改短信发送记录，如更新发送状态等", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/smsRecord/update")
-    public ApiResult<String> updateSmsRecord(@RequestBody SmsRecordDTO entity) {
+    public ApiResult<Integer> updateSmsRecord(@RequestBody SmsRecordDTO entity) {
         return ApiResultUtil.success(smsRecordFeignClient.update(entity));
     }
 
     @Operation(summary = "删除短信记录", description = "根据ID列表批量删除短信发送记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/smsRecord/delete")
-    public ApiResult<String> deleteSmsRecord(@RequestBody @NotNull List ids) {
+    public ApiResult<Integer> deleteSmsRecord(@RequestBody @NotNull List ids) {
         return ApiResultUtil.success(smsRecordFeignClient.deleteByIds(ids));
     }
 
@@ -225,19 +225,19 @@ public class AdminBasicController {
 
     @Operation(summary = "新增字典详情", description = "新增字典详情项，如字典标签、字典值、排序等", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/dictDetail/insert")
-    public ApiResult<String> insertDictDetail(@RequestBody DictDetailDTO entity) {
+    public ApiResult<Integer> insertDictDetail(@RequestBody DictDetailDTO entity) {
         return ApiResultUtil.success(dictDetailFeignClient.insert(entity));
     }
 
     @Operation(summary = "修改字典详情", description = "修改字典详情项，支持更新字典标签、字典值、排序等", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/dictDetail/update")
-    public ApiResult<String> updateDictDetail(@RequestBody DictDetailDTO entity) {
+    public ApiResult<Integer> updateDictDetail(@RequestBody DictDetailDTO entity) {
         return ApiResultUtil.success(dictDetailFeignClient.update(entity));
     }
 
     @Operation(summary = "删除字典详情", description = "根据ID列表批量删除字典详情项", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/dictDetail/delete")
-    public ApiResult<String> deleteDictDetail(@RequestBody @NotNull List ids) {
+    public ApiResult<Integer> deleteDictDetail(@RequestBody @NotNull List ids) {
         return ApiResultUtil.success(dictDetailFeignClient.deleteByIds(ids));
     }
 
@@ -267,19 +267,19 @@ public class AdminBasicController {
 
     @Operation(summary = "新增通知", description = "新增一条消息通知记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/notify/insert")
-    public ApiResult<String> insertNotify(@RequestBody CommonNotifyDTO entity) {
+    public ApiResult<Integer> insertNotify(@RequestBody CommonNotifyDTO entity) {
         return ApiResultUtil.success(notifyFeignClient.insert(entity));
     }
 
     @Operation(summary = "修改通知", description = "修改指定消息通知记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/notify/update")
-    public ApiResult<String> updateNotify(@RequestBody CommonNotifyDTO entity) {
+    public ApiResult<Integer> updateNotify(@RequestBody CommonNotifyDTO entity) {
         return ApiResultUtil.success(notifyFeignClient.update(entity));
     }
 
     @Operation(summary = "删除通知", description = "根据ID列表批量删除消息通知记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/notify/delete")
-    public ApiResult<String> deleteNotify(@RequestBody @NotNull List ids) {
+    public ApiResult<Integer> deleteNotify(@RequestBody @NotNull List ids) {
         return ApiResultUtil.success(notifyFeignClient.deleteByIds(ids));
     }
 }

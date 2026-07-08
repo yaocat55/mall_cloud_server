@@ -29,10 +29,10 @@ public class AdminOrderController {
     public ApiResult<ResponsePageEntity<?>> searchPage(@RequestBody OrderConditionDTO c) { return ApiResultUtil.success(orderFeignClient.search(c)); }
     @Operation(summary = "修改订单", description = "修改已有订单的信息，包括收货地址、备注等", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/update")
-    public ApiResult<String> update(@RequestBody OrderDTO dto) { return ApiResultUtil.success(orderFeignClient.update(dto)); }
+    public ApiResult<Integer> update(@RequestBody OrderDTO dto) { return ApiResultUtil.success(orderFeignClient.update(dto)); }
     @Operation(summary = "删除订单", description = "根据 ID 列表批量删除订单", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/delete")
-    public ApiResult<String> delete(@RequestBody @NotNull List ids) { return ApiResultUtil.success(orderFeignClient.delete(ids)); }
+    public ApiResult<Integer> delete(@RequestBody @NotNull List ids) { return ApiResultUtil.success(orderFeignClient.delete(ids)); }
 
     // ========== 交易配送地址 (tradeDeliveryAddress) ==========
 
@@ -42,15 +42,15 @@ public class AdminOrderController {
 
     @Operation(summary = "新增交易配送地址", description = "新增一条订单配送地址记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/deliveryAddress/insert")
-    public ApiResult<String> insertDeliveryAddress(@RequestBody Object e) { return ApiResultUtil.success(orderFeignClient.insertDeliveryAddress(e)); }
+    public ApiResult<Integer> insertDeliveryAddress(@RequestBody Object e) { return ApiResultUtil.success(orderFeignClient.insertDeliveryAddress(e)); }
 
     @Operation(summary = "修改交易配送地址", description = "修改已有订单配送地址的信息", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/deliveryAddress/update")
-    public ApiResult<String> updateDeliveryAddress(@RequestBody Object e) { return ApiResultUtil.success(orderFeignClient.updateDeliveryAddress(e)); }
+    public ApiResult<Integer> updateDeliveryAddress(@RequestBody Object e) { return ApiResultUtil.success(orderFeignClient.updateDeliveryAddress(e)); }
 
     @Operation(summary = "删除交易配送地址", description = "根据 ID 列表批量删除订单配送地址", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/deliveryAddress/delete")
-    public ApiResult<String> deleteDeliveryAddress(@RequestBody @NotNull List ids) { return ApiResultUtil.success(orderFeignClient.deleteDeliveryAddressByIds(ids)); }
+    public ApiResult<Integer> deleteDeliveryAddress(@RequestBody @NotNull List ids) { return ApiResultUtil.success(orderFeignClient.deleteDeliveryAddressByIds(ids)); }
 
     @Operation(summary = "查询交易配送地址详情", description = "根据 ID 查询单个配送地址的完整信息", security = @SecurityRequirement(name = "Bearer Token"))
     @GetMapping("/deliveryAddress/detail")
@@ -64,11 +64,11 @@ public class AdminOrderController {
 
     @Operation(summary = "审批退货", description = "审批通过退货/退款申请", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/return/approve")
-    public ApiResult<String> approveReturn(@RequestBody Object e) { return ApiResultUtil.success(orderFeignClient.approveReturn(e)); }
+    public ApiResult<Integer> approveReturn(@RequestBody Object e) { return ApiResultUtil.success(orderFeignClient.approveReturn(e)); }
 
     @Operation(summary = "拒绝退货", description = "驳回退货/退款申请", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/return/reject")
-    public ApiResult<String> rejectReturn(@RequestBody Object e) { return ApiResultUtil.success(orderFeignClient.rejectReturn(e)); }
+    public ApiResult<Integer> rejectReturn(@RequestBody Object e) { return ApiResultUtil.success(orderFeignClient.rejectReturn(e)); }
 
     @Operation(summary = "查询退货详情", description = "根据 ID 查询退货/退款申请的详细信息", security = @SecurityRequirement(name = "Bearer Token"))
     @GetMapping("/return/detail")

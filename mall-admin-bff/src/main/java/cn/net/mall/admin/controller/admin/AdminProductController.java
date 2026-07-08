@@ -123,7 +123,7 @@ public class AdminProductController {
                description = "根据 ID 列表批量删除商品，物理删除",
                security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/delete")
-    public ApiResult<String> delete(@RequestBody @NotNull List ids) {
+    public ApiResult<Integer> delete(@RequestBody @NotNull List ids) {
         return ApiResultUtil.success(productFeignClient.deleteByIds(ids));
     }
 

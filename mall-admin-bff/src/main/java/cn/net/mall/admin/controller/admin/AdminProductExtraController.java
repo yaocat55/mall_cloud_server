@@ -47,19 +47,19 @@ public class AdminProductExtraController {
 
     @Operation(summary = "新增属性", description = "新增一条属性记录，请求体包含属性名称、属性类型、排序等字段", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/attribute/insert")
-    public ApiResult<String> insertAttribute(@RequestBody Object e) {
+    public ApiResult<Integer> insertAttribute(@RequestBody Object e) {
         return ApiResultUtil.success(attributeFeignClient.insert(e));
     }
 
     @Operation(summary = "修改属性", description = "修改指定属性记录，根据 ID 更新属性名称、属性类型、排序等字段", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/attribute/update")
-    public ApiResult<String> updateAttribute(@RequestBody Object e) {
+    public ApiResult<Integer> updateAttribute(@RequestBody Object e) {
         return ApiResultUtil.success(attributeFeignClient.update(e));
     }
 
     @Operation(summary = "删除属性", description = "根据 ID 列表批量删除属性记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/attribute/delete")
-    public ApiResult<String> deleteAttribute(@RequestBody @NotNull List ids) {
+    public ApiResult<Integer> deleteAttribute(@RequestBody @NotNull List ids) {
         return ApiResultUtil.success(attributeFeignClient.deleteByIds(ids));
     }
 
@@ -73,19 +73,19 @@ public class AdminProductExtraController {
 
     @Operation(summary = "新增属性值", description = "新增一条属性值记录，请求体包含属性ID、属性值名称、排序等字段", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/attributeValue/insert")
-    public ApiResult<String> insertAttributeValue(@RequestBody Object e) {
+    public ApiResult<Integer> insertAttributeValue(@RequestBody Object e) {
         return ApiResultUtil.success(attributeValueFeignClient.insert(e));
     }
 
     @Operation(summary = "修改属性值", description = "修改指定属性值记录，根据 ID 更新属性值名称、排序等字段", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/attributeValue/update")
-    public ApiResult<String> updateAttributeValue(@RequestBody Object e) {
+    public ApiResult<Integer> updateAttributeValue(@RequestBody Object e) {
         return ApiResultUtil.success(attributeValueFeignClient.update(e));
     }
 
     @Operation(summary = "删除属性值", description = "根据 ID 列表批量删除属性值记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/attributeValue/delete")
-    public ApiResult<String> deleteAttributeValue(@RequestBody @NotNull List ids) {
+    public ApiResult<Integer> deleteAttributeValue(@RequestBody @NotNull List ids) {
         return ApiResultUtil.success(attributeValueFeignClient.deleteByIds(ids));
     }
 
@@ -99,19 +99,19 @@ public class AdminProductExtraController {
 
     @Operation(summary = "新增商品组", description = "新增一条商品组记录，请求体包含商品组名称、排序、状态等字段", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/productGroup/insert")
-    public ApiResult<String> insertProductGroup(@RequestBody Object e) {
+    public ApiResult<Integer> insertProductGroup(@RequestBody Object e) {
         return ApiResultUtil.success(productGroupFeignClient.insert(e));
     }
 
     @Operation(summary = "修改商品组", description = "修改指定商品组记录，根据 ID 更新商品组名称、排序、状态等字段", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/productGroup/update")
-    public ApiResult<String> updateProductGroup(@RequestBody Object e) {
+    public ApiResult<Integer> updateProductGroup(@RequestBody Object e) {
         return ApiResultUtil.success(productGroupFeignClient.update(e));
     }
 
     @Operation(summary = "删除商品组", description = "根据 ID 列表批量删除商品组记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/productGroup/delete")
-    public ApiResult<String> deleteProductGroup(@RequestBody @NotNull List ids) {
+    public ApiResult<Integer> deleteProductGroup(@RequestBody @NotNull List ids) {
         return ApiResultUtil.success(productGroupFeignClient.deleteByIds(ids));
     }
 
@@ -125,19 +125,19 @@ public class AdminProductExtraController {
 
     @Operation(summary = "新增首页公告", description = "新增一条首页公告记录，请求体包含公告标题、内容、排序、状态等字段", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/indexNotice/insert")
-    public ApiResult<String> insertIndexNotice(@RequestBody Object e) {
+    public ApiResult<Integer> insertIndexNotice(@RequestBody Object e) {
         return ApiResultUtil.success(indexNoticeFeignClient.insert(e));
     }
 
     @Operation(summary = "修改首页公告", description = "修改指定首页公告记录，根据 ID 更新公告标题、内容、排序、状态等字段", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/indexNotice/update")
-    public ApiResult<String> updateIndexNotice(@RequestBody Object e) {
+    public ApiResult<Integer> updateIndexNotice(@RequestBody Object e) {
         return ApiResultUtil.success(indexNoticeFeignClient.update(e));
     }
 
     @Operation(summary = "删除首页公告", description = "根据 ID 列表批量删除首页公告记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/indexNotice/delete")
-    public ApiResult<String> deleteIndexNotice(@RequestBody @NotNull List ids) {
+    public ApiResult<Integer> deleteIndexNotice(@RequestBody @NotNull List ids) {
         return ApiResultUtil.success(indexNoticeFeignClient.deleteByIds(ids));
     }
 
@@ -157,19 +157,19 @@ public class AdminProductExtraController {
 
     @Operation(summary = "新增首页商品", description = "新增一条首页商品记录，请求体包含商品ID、排序、状态等字段", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/indexProduct/insert")
-    public ApiResult<String> insertIndexProduct(@RequestBody Object e) {
+    public ApiResult<Integer> insertIndexProduct(@RequestBody Object e) {
         return ApiResultUtil.success(indexProductFeignClient.insert(e));
     }
 
     @Operation(summary = "修改首页商品", description = "修改指定首页商品记录，根据 ID 更新商品ID、排序、状态等字段", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/indexProduct/update")
-    public ApiResult<String> updateIndexProduct(@RequestBody Object e) {
+    public ApiResult<Integer> updateIndexProduct(@RequestBody Object e) {
         return ApiResultUtil.success(indexProductFeignClient.update(e));
     }
 
     @Operation(summary = "删除首页商品", description = "根据 ID 列表批量删除首页商品记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/indexProduct/delete")
-    public ApiResult<String> deleteIndexProduct(@RequestBody @NotNull List ids) {
+    public ApiResult<Integer> deleteIndexProduct(@RequestBody @NotNull List ids) {
         return ApiResultUtil.success(indexProductFeignClient.deleteByIds(ids));
     }
 
@@ -183,19 +183,19 @@ public class AdminProductExtraController {
 
     @Operation(summary = "新增首页轮播图", description = "新增一条首页轮播图记录，请求体包含图片地址、标题、排序、状态等字段", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/indexCarouselImage/insert")
-    public ApiResult<String> insertIndexCarouselImage(@RequestBody Object e) {
+    public ApiResult<Integer> insertIndexCarouselImage(@RequestBody Object e) {
         return ApiResultUtil.success(indexCarouselImageFeignClient.insert(e));
     }
 
     @Operation(summary = "修改首页轮播图", description = "修改指定首页轮播图记录，根据 ID 更新图片地址、标题、排序、状态等字段", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/indexCarouselImage/update")
-    public ApiResult<String> updateIndexCarouselImage(@RequestBody Object e) {
+    public ApiResult<Integer> updateIndexCarouselImage(@RequestBody Object e) {
         return ApiResultUtil.success(indexCarouselImageFeignClient.update(e));
     }
 
     @Operation(summary = "删除首页轮播图", description = "根据 ID 列表批量删除首页轮播图记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/indexCarouselImage/delete")
-    public ApiResult<String> deleteIndexCarouselImage(@RequestBody @NotNull List ids) {
+    public ApiResult<Integer> deleteIndexCarouselImage(@RequestBody @NotNull List ids) {
         return ApiResultUtil.success(indexCarouselImageFeignClient.deleteByIds(ids));
     }
 }

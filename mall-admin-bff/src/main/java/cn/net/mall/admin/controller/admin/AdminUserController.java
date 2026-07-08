@@ -103,7 +103,7 @@ public class AdminUserController {
 
     @Operation(summary = "批量删除收货地址")
     @PostMapping("/deliveryAddress/delete")
-    public ApiResult<String> deleteDeliveryAddress(@RequestBody List ids) {
+    public ApiResult<Integer> deleteDeliveryAddress(@RequestBody List ids) {
         return ApiResultUtil.success(deliveryAddressFeignClient.deleteByIds(ids));
     }
 

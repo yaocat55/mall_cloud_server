@@ -36,26 +36,26 @@ public class AdminCommonController {
     public ApiResult<ResponsePageEntity<?>> searchAreaPage(@RequestBody Map c) { return ApiResultUtil.success(areaFeignClient.searchByPage(c)); }
     @Operation(summary = "新增区域", description = "新增一条行政区域记录，包含区域名称、父区域、层级等", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/area/insert")
-    public ApiResult<String> insertArea(@RequestBody Object e) { return ApiResultUtil.success(areaFeignClient.insert(e)); }
+    public ApiResult<Integer> insertArea(@RequestBody Object e) { return ApiResultUtil.success(areaFeignClient.insert(e)); }
     @Operation(summary = "修改区域", description = "修改已有行政区域的信息", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/area/update")
-    public ApiResult<String> updateArea(@RequestBody Object e) { return ApiResultUtil.success(areaFeignClient.update(e)); }
+    public ApiResult<Integer> updateArea(@RequestBody Object e) { return ApiResultUtil.success(areaFeignClient.update(e)); }
     @Operation(summary = "删除区域", description = "根据 ID 列表批量删除行政区域", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/area/delete")
-    public ApiResult<String> deleteArea(@RequestBody @NotNull List ids) { return ApiResultUtil.success(areaFeignClient.deleteByIds(ids)); }
+    public ApiResult<Integer> deleteArea(@RequestBody @NotNull List ids) { return ApiResultUtil.success(areaFeignClient.deleteByIds(ids)); }
 
     @Operation(summary = "分页查询字典", description = "多条件分页查询数据字典列表，支持按字典类型等条件筛选", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/dict/page")
     public ApiResult<ResponsePageEntity<?>> searchDictPage(@RequestBody Map c) { return ApiResultUtil.success(dictFeignClient.searchByPage(c)); }
     @Operation(summary = "新增字典", description = "新增一条数据字典记录，包含字典编码、字典名称、字典值等", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/dict/insert")
-    public ApiResult<String> insertDict(@RequestBody Object e) { return ApiResultUtil.success(dictFeignClient.insert(e)); }
+    public ApiResult<Integer> insertDict(@RequestBody Object e) { return ApiResultUtil.success(dictFeignClient.insert(e)); }
     @Operation(summary = "修改字典", description = "修改已有数据字典的信息", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/dict/update")
-    public ApiResult<String> updateDict(@RequestBody Object e) { return ApiResultUtil.success(dictFeignClient.update(e)); }
+    public ApiResult<Integer> updateDict(@RequestBody Object e) { return ApiResultUtil.success(dictFeignClient.update(e)); }
     @Operation(summary = "删除字典", description = "根据 ID 列表批量删除数据字典", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/dict/delete")
-    public ApiResult<String> deleteDict(@RequestBody @NotNull List ids) { return ApiResultUtil.success(dictFeignClient.deleteByIds(ids)); }
+    public ApiResult<Integer> deleteDict(@RequestBody @NotNull List ids) { return ApiResultUtil.success(dictFeignClient.deleteByIds(ids)); }
 
     // ========== 文件上传 ==========
 

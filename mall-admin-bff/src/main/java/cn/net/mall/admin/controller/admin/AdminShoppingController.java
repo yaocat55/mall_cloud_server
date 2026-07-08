@@ -56,7 +56,7 @@ public class AdminShoppingController {
                description = "管理端新增收货地址，传入收货人信息、地址详情等字段",
                security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/deliveryAddress/insert")
-    public ApiResult<String> insertDeliveryAddress(@RequestBody DeliveryAddressDTO e) {
+    public ApiResult<Integer> insertDeliveryAddress(@RequestBody DeliveryAddressDTO e) {
         deliveryAddressFeignClient.save(e);
         return ApiResultUtil.success(1);
     }
@@ -65,7 +65,7 @@ public class AdminShoppingController {
                description = "管理端修改收货地址，根据ID更新收货人信息、地址详情等字段",
                security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/deliveryAddress/update")
-    public ApiResult<String> updateDeliveryAddress(@RequestBody DeliveryAddressDTO e) {
+    public ApiResult<Integer> updateDeliveryAddress(@RequestBody DeliveryAddressDTO e) {
         deliveryAddressFeignClient.save(e);
         return ApiResultUtil.success(1);
     }
@@ -74,7 +74,7 @@ public class AdminShoppingController {
                description = "管理端批量删除收货地址，根据ID列表物理删除",
                security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/deliveryAddress/delete")
-    public ApiResult<String> deleteDeliveryAddress(@RequestBody @NotNull List ids) {
+    public ApiResult<Integer> deleteDeliveryAddress(@RequestBody @NotNull List ids) {
         return ApiResultUtil.success(deliveryAddressFeignClient.deleteByIds(ids));
     }
 
@@ -100,7 +100,7 @@ public class AdminShoppingController {
                description = "管理端新增商品评论，传入评论内容、商品ID、评分等信息",
                security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/productComment/insert")
-    public ApiResult<String> insertComment(@RequestBody Object e) {
+    public ApiResult<Integer> insertComment(@RequestBody Object e) {
         return ApiResultUtil.success(commentFeignClient.insert(e));
     }
 
@@ -108,7 +108,7 @@ public class AdminShoppingController {
                description = "管理端修改商品评论，根据ID更新评论内容、评分等信息",
                security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/productComment/update")
-    public ApiResult<String> updateComment(@RequestBody Object e) {
+    public ApiResult<Integer> updateComment(@RequestBody Object e) {
         return ApiResultUtil.success(commentFeignClient.update(e));
     }
 
@@ -116,7 +116,7 @@ public class AdminShoppingController {
                description = "管理端批量删除商品评论，根据ID列表物理删除",
                security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/productComment/delete")
-    public ApiResult<String> deleteComment(@RequestBody @NotNull List ids) {
+    public ApiResult<Integer> deleteComment(@RequestBody @NotNull List ids) {
         return ApiResultUtil.success(commentFeignClient.deleteByIds(ids));
     }
 
@@ -142,7 +142,7 @@ public class AdminShoppingController {
                description = "管理端新增商品收藏，传入商品ID、用户ID等信息",
                security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/productFavorites/insert")
-    public ApiResult<String> insertFavorites(@RequestBody Object e) {
+    public ApiResult<Integer> insertFavorites(@RequestBody Object e) {
         return ApiResultUtil.success(favoritesFeignClient.insert(e));
     }
 
@@ -150,7 +150,7 @@ public class AdminShoppingController {
                description = "管理端修改商品收藏信息",
                security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/productFavorites/update")
-    public ApiResult<String> updateFavorites(@RequestBody Object e) {
+    public ApiResult<Integer> updateFavorites(@RequestBody Object e) {
         return ApiResultUtil.success(favoritesFeignClient.update(e));
     }
 
@@ -158,7 +158,7 @@ public class AdminShoppingController {
                description = "管理端批量删除商品收藏，根据ID列表物理删除",
                security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/productFavorites/delete")
-    public ApiResult<String> deleteFavorites(@RequestBody @NotNull List ids) {
+    public ApiResult<Integer> deleteFavorites(@RequestBody @NotNull List ids) {
         return ApiResultUtil.success(favoritesFeignClient.deleteByIds(ids));
     }
 
@@ -184,7 +184,7 @@ public class AdminShoppingController {
                description = "管理端新增商品浏览记录",
                security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/productViewRecord/insert")
-    public ApiResult<String> insertViewRecord(@RequestBody Object e) {
+    public ApiResult<Integer> insertViewRecord(@RequestBody Object e) {
         return ApiResultUtil.success(productViewRecordFeignClient.insert(e));
     }
 
@@ -192,7 +192,7 @@ public class AdminShoppingController {
                description = "管理端修改商品浏览记录，根据ID更新记录信息",
                security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/productViewRecord/update")
-    public ApiResult<String> updateViewRecord(@RequestBody Object e) {
+    public ApiResult<Integer> updateViewRecord(@RequestBody Object e) {
         return ApiResultUtil.success(productViewRecordFeignClient.update(e));
     }
 
@@ -200,7 +200,7 @@ public class AdminShoppingController {
                description = "管理端批量删除商品浏览记录，根据ID列表物理删除",
                security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/productViewRecord/delete")
-    public ApiResult<String> deleteViewRecord(@RequestBody @NotNull List ids) {
+    public ApiResult<Integer> deleteViewRecord(@RequestBody @NotNull List ids) {
         return ApiResultUtil.success(productViewRecordFeignClient.deleteByIds(ids));
     }
 
@@ -218,7 +218,7 @@ public class AdminShoppingController {
                description = "管理端新增购物车记录，传入商品ID、数量、用户ID等信息",
                security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/shoppingCart/insert")
-    public ApiResult<String> insertCart(@RequestBody Object e) {
+    public ApiResult<Integer> insertCart(@RequestBody Object e) {
         return ApiResultUtil.success(cartFeignClient.insert(e));
     }
 
@@ -226,7 +226,7 @@ public class AdminShoppingController {
                description = "管理端修改购物车记录，根据ID更新商品数量等信息",
                security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/shoppingCart/update")
-    public ApiResult<String> updateCart(@RequestBody Object e) {
+    public ApiResult<Integer> updateCart(@RequestBody Object e) {
         return ApiResultUtil.success(cartFeignClient.update(e));
     }
 
@@ -234,7 +234,7 @@ public class AdminShoppingController {
                description = "管理端批量删除购物车记录，根据ID列表物理删除",
                security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/shoppingCart/delete")
-    public ApiResult<String> deleteCart(@RequestBody @NotNull List ids) {
+    public ApiResult<Integer> deleteCart(@RequestBody @NotNull List ids) {
         return ApiResultUtil.success(cartFeignClient.deleteByIds(ids));
     }
 

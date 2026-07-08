@@ -103,7 +103,7 @@ public class MobileUserController {
 
     @Operation(summary = "删除收货地址")
     @PostMapping("/address/delete")
-    public ApiResult<String> deleteAddress(@RequestBody List ids) {
+    public ApiResult<Integer> deleteAddress(@RequestBody List ids) {
         return ApiResultUtil.success(deliveryAddressFeignClient.deleteByIds(ids));
     }
 

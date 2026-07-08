@@ -45,7 +45,7 @@ public class MobileCartController {
 
     @Operation(summary = "删除购物车商品")
     @PostMapping("/delete")
-    public ApiResult<String> delete(@RequestBody List ids) {
+    public ApiResult<Integer> delete(@RequestBody List ids) {
         return ApiResultUtil.success(productFeignClient.deleteShoppingCart(ids));
     }
 }

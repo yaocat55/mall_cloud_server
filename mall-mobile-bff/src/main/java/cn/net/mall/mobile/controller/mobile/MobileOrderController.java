@@ -82,7 +82,7 @@ public class MobileOrderController {
 
     @Operation(summary = "申请退款")
     @PostMapping("/return/apply")
-    public ApiResult<String> applyReturn(@RequestBody OrderReturnApplyDTO dto) {
+    public ApiResult<Long> applyReturn(@RequestBody OrderReturnApplyDTO dto) {
         return ApiResultUtil.success(orderFeignClient.applyReturn(dto));
     }
 
