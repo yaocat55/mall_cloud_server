@@ -163,4 +163,12 @@ public interface UserFeignClient {
                description = "查询当前登录状态未过期的管理端用户")
     @GetMapping("/v1/web/user/onlineUsers")
     List<UserDTO> onlineUsers();
+
+    /**
+     * 退出登录
+     */
+    @Operation(summary = "退出登录",
+               description = "将当前 token 加入 Redis 黑名单")
+    @PostMapping("/v1/web/user/logout")
+    void logout();
 }

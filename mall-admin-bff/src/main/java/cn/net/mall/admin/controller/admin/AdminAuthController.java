@@ -64,9 +64,12 @@ public class AdminAuthController {
         return ApiResultUtil.success();
     }
 
-    @Operation(summary = "退出登录")
+    @Operation(summary = "退出登录",
+               description = "将当前 token 加入 Redis 黑名单，实现登出",
+               security = @io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/logout")
     public ApiResult<Void> logout() {
+        userFeignClient.logout();
         return ApiResultUtil.success();
     }
 
