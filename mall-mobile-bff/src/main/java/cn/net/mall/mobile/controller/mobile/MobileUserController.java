@@ -13,6 +13,8 @@ import cn.net.mall.basic.dto.FileDTO;
 import cn.net.mall.mobile.dto.UserProfileDTO;
 import cn.net.mall.order.client.OrderFeignClient;
 import cn.net.mall.product.client.IndexFeignClient;
+import cn.net.mall.util.ApiResult;
+import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,7 +47,7 @@ public class MobileUserController {
                            + "- 需携带 Bearer Token（Authorization 请求头）",
                security = @SecurityRequirement(name = "Bearer Token"))
     @GetMapping("/profile")
-    public UserProfileDTO getProfile() {
+    public ApiResult<UserProfileDTO> getProfile() {
         UserProfileDTO result = new UserProfileDTO();
         try { result.setUser(userFeignClient.getUserDetail());
         } catch (Exception e) { log.warn("获取用户详情失败", e); }
@@ -53,64 +55,68 @@ public class MobileUserController {
         } catch (Exception e) { log.warn("获取订单统计失败", e); }
         try { result.setRecommendProducts(indexFeignClient.getIndexProductList(0));
         } catch (Exception e) { log.warn("获取推荐商品失败", e); }
-        return result;
+        return ApiResultUtil.success(result);
     }
 
     @Operation(summary = "获取用户详情")
     @GetMapping("/detail")
-    public Object getUserDetail() {
-        return userFeignClient.getUserDetail();
+    public ApiResult<Object> getUserDetail() {
+        return ApiResultUtil.success(userFeignClient.getUserDetail());
     }
 
     @Operation(summary = "更新用户资料")
     @PostMapping("/update")
-    public void updateUser(@Valid @RequestBody UpdateUserDTO dto) {
+    public ApiResult<Void> updateUser(@Valid @RequestBody UpdateUserDTO dto) {
         userFeignClient.updateUser(dto);
+        return ApiResultUtil.success();
     }
 
     @Operation(summary = "更新头像", description = "上传头像图片并更新用户头像")
     @PostMapping(value = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void updateAvatar(@RequestParam("file") MultipartFile file) throws Exception {
+    public ApiResult<Void> updateAvatar(@RequestParam("file") MultipartFile file) throws Exception {
         FileDTO fileDTO = uploadFeignClient.imageUpload(file);
         UserAvatarDTO avatarDTO = new UserAvatarDTO();
         avatarDTO.setFileName(file.getOriginalFilename());
         avatarDTO.setFileUrl(fileDTO.getDownloadUrl());
         userFeignClient.updateAvatar(avatarDTO);
+        return ApiResultUtil.success();
     }
 
     @Operation(summary = "获取收货地址列表")
     @GetMapping("/address/list")
-    public List getAddressList() {
-        return deliveryAddressFeignClient.getUserDeliveryAddressList();
+    public ApiResult<List> getAddressList() {
+        return ApiResultUtil.success(deliveryAddressFeignClient.getUserDeliveryAddressList());
     }
 
     @Operation(summary = "获取收货地址详情")
     @GetMapping("/address/detail")
-    public DeliveryAddressDTO getAddressDetail(@RequestParam("id") Long id) {
-        return deliveryAddressFeignClient.getDetail(id);
+    public ApiResult<DeliveryAddressDTO> getAddressDetail(@RequestParam("id") Long id) {
+        return ApiResultUtil.success(deliveryAddressFeignClient.getDetail(id));
     }
 
     @Operation(summary = "保存收货地址")
     @PostMapping("/address/save")
-    public void saveAddress(@Valid @RequestBody DeliveryAddressDTO dto) {
+    public ApiResult<Void> saveAddress(@Valid @RequestBody DeliveryAddressDTO dto) {
         deliveryAddressFeignClient.save(dto);
+        return ApiResultUtil.success();
     }
 
     @Operation(summary = "删除收货地址")
     @PostMapping("/address/delete")
-    public int deleteAddress(@RequestBody List ids) {
-        return deliveryAddressFeignClient.deleteByIds(ids);
+    public ApiResult<String> deleteAddress(@RequestBody List ids) {
+        return ApiResultUtil.success(deliveryAddressFeignClient.deleteByIds(ids));
     }
 
     @Operation(summary = "设置默认收货地址")
     @PostMapping("/address/setDefault")
-    public void setDefaultAddress(@RequestBody DeliveryAddressDefaultDTO dto) {
+    public ApiResult<Void> setDefaultAddress(@RequestBody DeliveryAddressDefaultDTO dto) {
         deliveryAddressFeignClient.setDefaultDeliveryAddress(dto);
+        return ApiResultUtil.success();
     }
 
     @Operation(summary = "获取地区列表", description = "根据父级ID获取地区")
     @GetMapping("/area")
-    public List getArea(@RequestParam("parentId") Long parentId) {
-        return areaFeignClient.queryByParentId(parentId);
+    public ApiResult<List> getArea(@RequestParam("parentId") Long parentId) {
+        return ApiResultUtil.success(areaFeignClient.queryByParentId(parentId));
     }
 }

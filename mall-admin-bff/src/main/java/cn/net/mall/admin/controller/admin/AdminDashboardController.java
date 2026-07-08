@@ -1,6 +1,8 @@
 package cn.net.mall.admin.controller.admin;
 
 import cn.net.mall.admin.client.UserFeignClient;
+import cn.net.mall.util.ApiResult;
+import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +16,7 @@ import java.util.Map;
 
 /**
  * 管理后台仪表盘 BFF 控制器
- * 
+ *
 * 聚合各服务数据，生成仪表盘统计
  */
 @Slf4j
@@ -28,10 +30,10 @@ public class AdminDashboardController {
 
     @Operation(summary = "获取仪表盘统计数据", description = "聚合用户数、订单数等统计数据")
     @GetMapping("/stats")
-    public Map getStats() {
+    public ApiResult<Map> getStats() {
         Map stats = new LinkedHashMap<>();
         // 仪表盘统计数据 - 由前端具体需求决定
         stats.put("status", "ok");
-        return stats;
+        return ApiResultUtil.success(stats);
     }
 }

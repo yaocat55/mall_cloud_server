@@ -4,6 +4,8 @@ import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.product.client.CategoryFeignClient;
 import cn.net.mall.product.client.ProductFeignClient;
 import cn.net.mall.product.dto.*;
+import cn.net.mall.util.ApiResult;
+import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -29,7 +31,7 @@ public class MobileProductDetailController {
 
     @Operation(summary = "获取商品完整详情", description = "一次接口获取商品信息、评论列表、收藏状态，前端无需多次调用")
     @GetMapping("/{productId}/detail")
-    public Map getDetail(@PathVariable("productId") Long productId) {
+    public ApiResult<Map> getDetail(@PathVariable("productId") Long productId) {
         Map result = new LinkedHashMap<>();
 
         // 商品基本信息
@@ -52,42 +54,42 @@ public class MobileProductDetailController {
             result.put("comments", ResponsePageEntity.buildEmpty(new cn.net.mall.entity.RequestPageEntity()));
         }
 
-        return result;
+        return ApiResultUtil.success(result);
     }
 
     @Operation(summary = "搜索商品", description = "从ES搜索商品列表")
     @PostMapping("/search")
-    public ResponsePageEntity search(@RequestBody ProductSearchConditionDTO condition) {
-        return productFeignClient.searchFromES(condition);
+    public ApiResult<ResponsePageEntity> search(@RequestBody ProductSearchConditionDTO condition) {
+        return ApiResultUtil.success(productFeignClient.searchFromES(condition));
     }
 
     @Operation(summary = "查询商品评论", description = "分页查询商品评论（加载更多时调用）")
     @PostMapping("/comment/page")
-    public ResponsePageEntity searchComment(@RequestBody ProductCommentConditionDTO condition) {
-        return productFeignClient.searchProductComment(condition);
+    public ApiResult<ResponsePageEntity> searchComment(@RequestBody ProductCommentConditionDTO condition) {
+        return ApiResultUtil.success(productFeignClient.searchProductComment(condition));
     }
 
     @Operation(summary = "收藏/取消收藏商品")
     @PostMapping("/favorites/toggle")
-    public Boolean toggleFavorites(@RequestBody ProductFavoritesDTO dto) {
-        return productFeignClient.addOrCancelFavorites(dto);
+    public ApiResult<Boolean> toggleFavorites(@RequestBody ProductFavoritesDTO dto) {
+        return ApiResultUtil.success(productFeignClient.addOrCancelFavorites(dto));
     }
 
     @Operation(summary = "获取商品详情（简单）", description = "仅获取商品基本信息，不含评论和收藏状态")
     @GetMapping("/detail")
-    public ProductDetailInfoDTO getSimpleDetail(@RequestParam("productId") Long productId) {
-        return productFeignClient.getDetail(productId);
+    public ApiResult<ProductDetailInfoDTO> getSimpleDetail(@RequestParam("productId") Long productId) {
+        return ApiResultUtil.success(productFeignClient.getDetail(productId));
     }
 
     @Operation(summary = "获取分类列表", description = "根据父分类ID查询子分类")
     @GetMapping("/category")
-    public List getCategory(@RequestParam("parentId") Long parentId) {
-        return categoryFeignClient.getCategoryByParentId(parentId);
+    public ApiResult<List> getCategory(@RequestParam("parentId") Long parentId) {
+        return ApiResultUtil.success(categoryFeignClient.getCategoryByParentId(parentId));
     }
 
     @Operation(summary = "保存商品评论", description = "批量保存商品评价")
     @PostMapping("/comment/save")
-    public Boolean saveComment(@RequestBody OrderTradeProductCommentDTO dto) {
-        return productFeignClient.saveProductComment(dto);
+    public ApiResult<Boolean> saveComment(@RequestBody OrderTradeProductCommentDTO dto) {
+        return ApiResultUtil.success(productFeignClient.saveProductComment(dto));
     }
 }

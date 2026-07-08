@@ -7,6 +7,8 @@ import cn.net.mall.marketing.dto.CouponDTO;
 import cn.net.mall.order.client.OrderFeignClient;
 import cn.net.mall.order.dto.OrderConfirmReqDTO;
 import cn.net.mall.order.dto.OrderConfirmRespDTO;
+import cn.net.mall.util.ApiResult;
+import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +34,7 @@ public class MobileCheckoutController {
 
     @Operation(summary = "结算预览", description = "一次性获取订单确认信息 + 收货地址列表 + 可用优惠券")
     @PostMapping("/preview")
-    public Map preview(@RequestBody OrderConfirmReqDTO req) {
+    public ApiResult<Map> preview(@RequestBody OrderConfirmReqDTO req) {
         Map result = new LinkedHashMap<>();
 
         try {
@@ -56,6 +58,6 @@ public class MobileCheckoutController {
             result.put("availableCoupons", Collections.emptyList());
         }
 
-        return result;
+        return ApiResultUtil.success(result);
     }
 }

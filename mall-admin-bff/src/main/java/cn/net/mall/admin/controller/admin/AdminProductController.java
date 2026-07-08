@@ -8,6 +8,8 @@ import cn.net.mall.product.client.ProductFeignClient;
 import cn.net.mall.product.dto.CategoryDTO;
 import cn.net.mall.product.dto.ProductDTO;
 import cn.net.mall.product.dto.ProductDetailDTO;
+import cn.net.mall.util.ApiResult;
+import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,9 +24,9 @@ import java.util.Map;
 
 /**
  * 管理后台商品管理 BFF 控制器
- * 
+ *
 * 聚合商品详情、分类、品牌、单位等数据，提供管理后台所需的商品管理接口
- * 
+ *
 * **认证要求：**需携带 Bearer Token（登录后获取）
  */
 @Slf4j
@@ -44,7 +46,7 @@ public class AdminProductController {
                            + "- 品牌和单位列表当前返回空数组（TODO）",
                security = @SecurityRequirement(name = "Bearer Token"))
     @GetMapping("/{id}/edit-data")
-    public ProductEditDataDTO getProductEditData(@PathVariable Long id) {
+    public ApiResult<ProductEditDataDTO> getProductEditData(@PathVariable Long id) {
         ProductEditDataDTO result = new ProductEditDataDTO();
 
         // 1. 商品基本信息
@@ -78,7 +80,7 @@ public class AdminProductController {
         // 5. 单位列表（TODO: 需在 product-client 中新增 UnitFeignClient）
         result.setUnits(Collections.emptyList());
 
-        return result;
+        return ApiResultUtil.success(result);
     }
 
     // ========== 管理端 CRUD ==========
@@ -87,40 +89,42 @@ public class AdminProductController {
                description = "多条件分页查询商品列表，支持按名称、分类、状态等条件筛选",
                security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/page")
-    public ResponsePageEntity<?> searchByPage(@RequestBody Map condition) {
-        return productFeignClient.searchByPage(condition);
+    public ApiResult<ResponsePageEntity<?>> searchByPage(@RequestBody Map condition) {
+        return ApiResultUtil.success(productFeignClient.searchByPage(condition));
     }
 
     @Operation(summary = "查询商品详情",
                description = "根据 ID 查询单个商品的完整信息",
                security = @SecurityRequirement(name = "Bearer Token"))
     @GetMapping("/detail")
-    public Object findById(@RequestParam("id") Long id) {
-        return productFeignClient.findById(id);
+    public ApiResult<Object> findById(@RequestParam("id") Long id) {
+        return ApiResultUtil.success(productFeignClient.findById(id));
     }
 
     @Operation(summary = "新增商品",
                description = "新增一条商品记录，包含基本信息、价格、库存等字段",
                security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/insert")
-    public void insert(@RequestBody Object entity) {
+    public ApiResult<Void> insert(@RequestBody Object entity) {
         productFeignClient.insert(entity);
+        return ApiResultUtil.success();
     }
 
     @Operation(summary = "修改商品",
                description = "修改已有商品的信息，支持部分字段更新",
                security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/update")
-    public void update(@RequestBody Object entity) {
+    public ApiResult<Void> update(@RequestBody Object entity) {
         productFeignClient.update(entity);
+        return ApiResultUtil.success();
     }
 
     @Operation(summary = "批量删除商品",
                description = "根据 ID 列表批量删除商品，物理删除",
                security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/delete")
-    public int delete(@RequestBody @NotNull List ids) {
-        return productFeignClient.deleteByIds(ids);
+    public ApiResult<String> delete(@RequestBody @NotNull List ids) {
+        return ApiResultUtil.success(productFeignClient.deleteByIds(ids));
     }
 
     /**

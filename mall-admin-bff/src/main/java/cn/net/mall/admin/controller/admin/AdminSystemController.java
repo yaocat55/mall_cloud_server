@@ -6,6 +6,8 @@ import cn.net.mall.admin.client.*;
 import cn.net.mall.admin.dto.auth.DeptTreeDTO;
 import cn.net.mall.admin.dto.auth.MenuTreeDTO;
 import cn.net.mall.entity.ResponsePageEntity;
+import cn.net.mall.util.ApiResult;
+import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,68 +31,68 @@ public class AdminSystemController {
 
     @Operation(summary = "分页查询角色", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/role/page")
-    public ResponsePageEntity<?> searchRolePage(@RequestBody Map c) { return roleFeignClient.searchByPage(c); }
+    public ApiResult<ResponsePageEntity<?>> searchRolePage(@RequestBody Map c) { return ApiResultUtil.success(roleFeignClient.searchByPage(c)); }
     @Operation(summary = "查询所有角色", security = @SecurityRequirement(name = "Bearer Token"))
     @GetMapping("/role/all")
-    public List allRoles() { return roleFeignClient.all(); }
+    public ApiResult<List> allRoles() { return ApiResultUtil.success(roleFeignClient.all()); }
     @Operation(summary = "新增角色", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/role/insert")
-    public int insertRole(@RequestBody Object e) { return roleFeignClient.insert(e); }
+    public ApiResult<String> insertRole(@RequestBody Object e) { return ApiResultUtil.success(roleFeignClient.insert(e)); }
     @Operation(summary = "修改角色", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/role/update")
-    public int updateRole(@RequestBody Object e) { return roleFeignClient.update(e); }
+    public ApiResult<String> updateRole(@RequestBody Object e) { return ApiResultUtil.success(roleFeignClient.update(e)); }
     @Operation(summary = "删除角色", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/role/delete")
-    public int deleteRole(@RequestBody @NotNull List ids) { return roleFeignClient.deleteByIds(ids); }
+    public ApiResult<String> deleteRole(@RequestBody @NotNull List ids) { return ApiResultUtil.success(roleFeignClient.deleteByIds(ids)); }
 
     @Operation(summary = "分页查询菜单", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/menu/page")
-    public ResponsePageEntity<?> searchMenuPage(@RequestBody Map c) { return menuFeignClient.searchByPage(c); }
+    public ApiResult<ResponsePageEntity<?>> searchMenuPage(@RequestBody Map c) { return ApiResultUtil.success(menuFeignClient.searchByPage(c)); }
     @Operation(summary = "获取菜单树", security = @SecurityRequirement(name = "Bearer Token"))
     @GetMapping("/menu/tree")
-    public List getMenuTree() { return menuFeignClient.getMenuTree(); }
+    public ApiResult<List> getMenuTree() { return ApiResultUtil.success(menuFeignClient.getMenuTree()); }
     @Operation(summary = "查询菜单列表", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/menu/list")
-    public List getMenuList(@RequestBody Map c) { return menuFeignClient.getMenu(c); }
+    public ApiResult<List> getMenuList(@RequestBody Map c) { return ApiResultUtil.success(menuFeignClient.getMenu(c)); }
     @Operation(summary = "新增菜单", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/menu/insert")
-    public int insertMenu(@RequestBody Object e) { return menuFeignClient.insert(e); }
+    public ApiResult<String> insertMenu(@RequestBody Object e) { return ApiResultUtil.success(menuFeignClient.insert(e)); }
     @Operation(summary = "修改菜单", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/menu/update")
-    public int updateMenu(@RequestBody Object e) { return menuFeignClient.update(e); }
+    public ApiResult<String> updateMenu(@RequestBody Object e) { return ApiResultUtil.success(menuFeignClient.update(e)); }
     @Operation(summary = "删除菜单", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/menu/delete")
-    public int deleteMenu(@RequestBody @NotNull List ids) { return menuFeignClient.deleteByIds(ids); }
+    public ApiResult<String> deleteMenu(@RequestBody @NotNull List ids) { return ApiResultUtil.success(menuFeignClient.deleteByIds(ids)); }
 
     @Operation(summary = "分页查询部门", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/dept/page")
-    public ResponsePageEntity<?> searchDeptPage(@RequestBody Map c) { return deptFeignClient.searchByPage(c); }
+    public ApiResult<ResponsePageEntity<?>> searchDeptPage(@RequestBody Map c) { return ApiResultUtil.success(deptFeignClient.searchByPage(c)); }
     @Operation(summary = "查询部门树", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/dept/tree")
-    public List getDeptTree(@RequestBody Map p) { return deptFeignClient.searchByTree(p); }
+    public ApiResult<List> getDeptTree(@RequestBody Map p) { return ApiResultUtil.success(deptFeignClient.searchByTree(p)); }
     @Operation(summary = "新增部门", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/dept/insert")
-    public int insertDept(@RequestBody Object e) { return deptFeignClient.insert(e); }
+    public ApiResult<String> insertDept(@RequestBody Object e) { return ApiResultUtil.success(deptFeignClient.insert(e)); }
     @Operation(summary = "修改部门", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/dept/update")
-    public int updateDept(@RequestBody Object e) { return deptFeignClient.update(e); }
+    public ApiResult<String> updateDept(@RequestBody Object e) { return ApiResultUtil.success(deptFeignClient.update(e)); }
     @Operation(summary = "删除部门", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/dept/delete")
-    public int deleteDept(@RequestBody @NotNull List ids) { return deptFeignClient.deleteByIds(ids); }
+    public ApiResult<String> deleteDept(@RequestBody @NotNull List ids) { return ApiResultUtil.success(deptFeignClient.deleteByIds(ids)); }
 
     @Operation(summary = "分页查询岗位", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/job/page")
-    public ResponsePageEntity<?> searchJobPage(@RequestBody Map c) { return jobFeignClient.searchByPage(c); }
+    public ApiResult<ResponsePageEntity<?>> searchJobPage(@RequestBody Map c) { return ApiResultUtil.success(jobFeignClient.searchByPage(c)); }
     @Operation(summary = "查询所有岗位", security = @SecurityRequirement(name = "Bearer Token"))
     @GetMapping("/job/all")
-    public List allJobs() { return jobFeignClient.all(); }
+    public ApiResult<List> allJobs() { return ApiResultUtil.success(jobFeignClient.all()); }
     @Operation(summary = "新增岗位", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/job/insert")
-    public int insertJob(@RequestBody Object e) { return jobFeignClient.insert(e); }
+    public ApiResult<String> insertJob(@RequestBody Object e) { return ApiResultUtil.success(jobFeignClient.insert(e)); }
     @Operation(summary = "修改岗位", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/job/update")
-    public int updateJob(@RequestBody Object e) { return jobFeignClient.update(e); }
+    public ApiResult<String> updateJob(@RequestBody Object e) { return ApiResultUtil.success(jobFeignClient.update(e)); }
     @Operation(summary = "删除岗位", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/job/delete")
-    public int deleteJob(@RequestBody @NotNull List ids) { return jobFeignClient.deleteByIds(ids); }
+    public ApiResult<String> deleteJob(@RequestBody @NotNull List ids) { return ApiResultUtil.success(jobFeignClient.deleteByIds(ids)); }
 }

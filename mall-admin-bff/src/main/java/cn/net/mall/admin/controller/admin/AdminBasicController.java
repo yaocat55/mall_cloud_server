@@ -3,6 +3,8 @@ package cn.net.mall.admin.controller.admin;
 import cn.net.mall.basic.client.*;
 import cn.net.mall.basic.dto.*;
 import cn.net.mall.entity.ResponsePageEntity;
+import cn.net.mall.util.ApiResult;
+import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,245 +35,251 @@ public class AdminBasicController {
 
     @Operation(summary = "分页查询定时任务", description = "分页查询定时任务列表，支持按任务名称、任务状态等条件筛选", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/job/page")
-    public ResponsePageEntity searchJobPage(@RequestBody CommonJobConditionDTO condition) {
-        return jobFeignClient.searchByPage(condition);
+    public ApiResult<ResponsePageEntity> searchJobPage(@RequestBody CommonJobConditionDTO condition) {
+        return ApiResultUtil.success(jobFeignClient.searchByPage(condition));
     }
 
     @Operation(summary = "新增定时任务", description = "新增定时任务配置，包括任务名称、Cron表达式、调用目标等参数", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/job/insert")
-    public int insertJob(@RequestBody CommonJobDTO entity) {
-        return jobFeignClient.insert(entity);
+    public ApiResult<String> insertJob(@RequestBody CommonJobDTO entity) {
+        return ApiResultUtil.success(jobFeignClient.insert(entity));
     }
 
     @Operation(summary = "修改定时任务", description = "修改定时任务配置，支持更新任务名称、Cron表达式、调用目标等参数", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/job/update")
-    public int updateJob(@RequestBody CommonJobDTO entity) {
-        return jobFeignClient.update(entity);
+    public ApiResult<String> updateJob(@RequestBody CommonJobDTO entity) {
+        return ApiResultUtil.success(jobFeignClient.update(entity));
     }
 
     @Operation(summary = "删除定时任务", description = "根据ID列表批量删除定时任务配置", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/job/delete")
-    public int deleteJob(@RequestBody @NotNull List ids) {
-        return jobFeignClient.deleteByIds(ids);
+    public ApiResult<String> deleteJob(@RequestBody @NotNull List ids) {
+        return ApiResultUtil.success(jobFeignClient.deleteByIds(ids));
     }
 
     @Operation(summary = "立即执行定时任务", description = "立即触发一次定时任务执行，忽略Cron表达式设定的调度计划", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/job/runNow")
-    public void runNowJob(@RequestBody CommonJobDTO entity) {
+    public ApiResult<Void> runNowJob(@RequestBody CommonJobDTO entity) {
         jobFeignClient.runNow(entity);
+        return ApiResultUtil.success();
     }
 
     @Operation(summary = "暂停定时任务", description = "暂停指定定时任务，暂停后任务将不再按照Cron表达式执行", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/job/pause")
-    public void pauseJob(@RequestBody CommonJobDTO entity) {
+    public ApiResult<Void> pauseJob(@RequestBody CommonJobDTO entity) {
         jobFeignClient.pause(entity);
+        return ApiResultUtil.success();
     }
 
     @Operation(summary = "恢复定时任务", description = "恢复已暂停的定时任务，任务将重新按照Cron表达式执行", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/job/resume")
-    public void resumeJob(@RequestBody CommonJobDTO entity) {
+    public ApiResult<Void> resumeJob(@RequestBody CommonJobDTO entity) {
         jobFeignClient.resume(entity);
+        return ApiResultUtil.success();
     }
 
     // ============================== 定时任务日志管理 ==============================
 
     @Operation(summary = "分页查询定时任务日志", description = "分页查询定时任务执行日志，支持按任务名称、执行状态、执行时间等条件筛选", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/jobLog/page")
-    public ResponsePageEntity searchJobLogPage(@RequestBody CommonJobLogConditionDTO condition) {
-        return jobLogFeignClient.searchByPage(condition);
+    public ApiResult<ResponsePageEntity> searchJobLogPage(@RequestBody CommonJobLogConditionDTO condition) {
+        return ApiResultUtil.success(jobLogFeignClient.searchByPage(condition));
     }
 
     @Operation(summary = "新增定时任务日志", description = "新增定时任务执行日志记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/jobLog/insert")
-    public int insertJobLog(@RequestBody CommonJobLogDTO entity) {
-        return jobLogFeignClient.insert(entity);
+    public ApiResult<String> insertJobLog(@RequestBody CommonJobLogDTO entity) {
+        return ApiResultUtil.success(jobLogFeignClient.insert(entity));
     }
 
     @Operation(summary = "修改定时任务日志", description = "修改定时任务执行日志记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/jobLog/update")
-    public int updateJobLog(@RequestBody CommonJobLogDTO entity) {
-        return jobLogFeignClient.update(entity);
+    public ApiResult<String> updateJobLog(@RequestBody CommonJobLogDTO entity) {
+        return ApiResultUtil.success(jobLogFeignClient.update(entity));
     }
 
     @Operation(summary = "删除定时任务日志", description = "根据ID列表批量删除定时任务日志", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/jobLog/delete")
-    public int deleteJobLog(@RequestBody @NotNull List ids) {
-        return jobLogFeignClient.deleteByIds(ids);
+    public ApiResult<String> deleteJobLog(@RequestBody @NotNull List ids) {
+        return ApiResultUtil.success(jobLogFeignClient.deleteByIds(ids));
     }
 
     // ============================== 图片管理 ==============================
 
     @Operation(summary = "分页查询图片", description = "分页查询图片列表，支持按图片名称、分组、上传时间等条件筛选", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/photo/page")
-    public ResponsePageEntity searchPhotoPage(@RequestBody CommonPhotoConditionDTO condition) {
-        return photoFeignClient.searchByPage(condition);
+    public ApiResult<ResponsePageEntity> searchPhotoPage(@RequestBody CommonPhotoConditionDTO condition) {
+        return ApiResultUtil.success(photoFeignClient.searchByPage(condition));
     }
 
     @Operation(summary = "新增图片", description = "新增图片记录，关联已上传的图片文件", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/photo/insert")
-    public int insertPhoto(@RequestBody CommonPhotoDTO entity) {
-        return photoFeignClient.insert(entity);
+    public ApiResult<String> insertPhoto(@RequestBody CommonPhotoDTO entity) {
+        return ApiResultUtil.success(photoFeignClient.insert(entity));
     }
 
     @Operation(summary = "修改图片", description = "修改图片记录信息，如图片名称、所属分组等", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/photo/update")
-    public int updatePhoto(@RequestBody CommonPhotoDTO entity) {
-        return photoFeignClient.update(entity);
+    public ApiResult<String> updatePhoto(@RequestBody CommonPhotoDTO entity) {
+        return ApiResultUtil.success(photoFeignClient.update(entity));
     }
 
     @Operation(summary = "删除图片", description = "根据ID列表批量删除图片记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/photo/delete")
-    public int deletePhoto(@RequestBody @NotNull List ids) {
-        return photoFeignClient.deleteByIds(ids);
+    public ApiResult<String> deletePhoto(@RequestBody @NotNull List ids) {
+        return ApiResultUtil.success(photoFeignClient.deleteByIds(ids));
     }
 
     // ============================== 图片分组管理 ==============================
 
     @Operation(summary = "分页查询图片分组", description = "分页查询图片分组列表，支持按分组名称等条件筛选", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/photoGroup/page")
-    public ResponsePageEntity searchPhotoGroupPage(@RequestBody CommonPhotoGroupConditionDTO condition) {
-        return photoGroupFeignClient.searchByPage(condition);
+    public ApiResult<ResponsePageEntity> searchPhotoGroupPage(@RequestBody CommonPhotoGroupConditionDTO condition) {
+        return ApiResultUtil.success(photoGroupFeignClient.searchByPage(condition));
     }
 
     @Operation(summary = "新增图片分组", description = "新增图片分组，用于对图片进行分类管理", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/photoGroup/insert")
-    public int insertPhotoGroup(@RequestBody CommonPhotoGroupDTO entity) {
-        return photoGroupFeignClient.insert(entity);
+    public ApiResult<String> insertPhotoGroup(@RequestBody CommonPhotoGroupDTO entity) {
+        return ApiResultUtil.success(photoGroupFeignClient.insert(entity));
     }
 
     @Operation(summary = "修改图片分组", description = "修改图片分组信息，如分组名称、排序等", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/photoGroup/update")
-    public int updatePhotoGroup(@RequestBody CommonPhotoGroupDTO entity) {
-        return photoGroupFeignClient.update(entity);
+    public ApiResult<String> updatePhotoGroup(@RequestBody CommonPhotoGroupDTO entity) {
+        return ApiResultUtil.success(photoGroupFeignClient.update(entity));
     }
 
     @Operation(summary = "删除图片分组", description = "根据ID列表批量删除图片分组", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/photoGroup/delete")
-    public int deletePhotoGroup(@RequestBody @NotNull List ids) {
-        return photoGroupFeignClient.deleteByIds(ids);
+    public ApiResult<String> deletePhotoGroup(@RequestBody @NotNull List ids) {
+        return ApiResultUtil.success(photoGroupFeignClient.deleteByIds(ids));
     }
 
     // ============================== 敏感词管理 ==============================
 
     @Operation(summary = "分页查询敏感词", description = "分页查询敏感词列表，支持按敏感词内容等条件筛选", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/sensitiveWord/page")
-    public ResponsePageEntity searchSensitiveWordPage(@RequestBody CommonSensitiveWordConditionDTO condition) {
-        return sensitiveWordFeignClient.searchByPage(condition);
+    public ApiResult<ResponsePageEntity> searchSensitiveWordPage(@RequestBody CommonSensitiveWordConditionDTO condition) {
+        return ApiResultUtil.success(sensitiveWordFeignClient.searchByPage(condition));
     }
 
     @Operation(summary = "新增敏感词", description = "新增敏感词，添加到敏感词过滤库", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/sensitiveWord/insert")
-    public int insertSensitiveWord(@RequestBody CommonSensitiveWordDTO entity) {
-        return sensitiveWordFeignClient.insert(entity);
+    public ApiResult<String> insertSensitiveWord(@RequestBody CommonSensitiveWordDTO entity) {
+        return ApiResultUtil.success(sensitiveWordFeignClient.insert(entity));
     }
 
     @Operation(summary = "修改敏感词", description = "修改敏感词内容或状态", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/sensitiveWord/update")
-    public int updateSensitiveWord(@RequestBody CommonSensitiveWordDTO entity) {
-        return sensitiveWordFeignClient.update(entity);
+    public ApiResult<String> updateSensitiveWord(@RequestBody CommonSensitiveWordDTO entity) {
+        return ApiResultUtil.success(sensitiveWordFeignClient.update(entity));
     }
 
     @Operation(summary = "删除敏感词", description = "根据ID列表批量删除敏感词", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/sensitiveWord/delete")
-    public int deleteSensitiveWord(@RequestBody @NotNull List ids) {
-        return sensitiveWordFeignClient.deleteByIds(ids);
+    public ApiResult<String> deleteSensitiveWord(@RequestBody @NotNull List ids) {
+        return ApiResultUtil.success(sensitiveWordFeignClient.deleteByIds(ids));
     }
 
     @Operation(summary = "校验敏感词", description = "校验文本内容中是否包含敏感词，返回校验结果", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/sensitiveWord/check")
-    public void checkSensitiveWord(@RequestBody CommonSensitiveWordDTO entity) {
+    public ApiResult<Void> checkSensitiveWord(@RequestBody CommonSensitiveWordDTO entity) {
         sensitiveWordFeignClient.checkSensitiveWord(entity);
+        return ApiResultUtil.success();
     }
 
     // ============================== 短信记录管理 ==============================
 
     @Operation(summary = "分页查询短信记录", description = "分页查询短信发送记录，支持按手机号、发送时间、发送状态等条件筛选", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/smsRecord/page")
-    public ResponsePageEntity searchSmsRecordPage(@RequestBody CommonSmsRecordConditionDTO condition) {
-        return smsRecordFeignClient.searchByPage(condition);
+    public ApiResult<ResponsePageEntity> searchSmsRecordPage(@RequestBody CommonSmsRecordConditionDTO condition) {
+        return ApiResultUtil.success(smsRecordFeignClient.searchByPage(condition));
     }
 
     @Operation(summary = "新增短信记录", description = "新增短信发送记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/smsRecord/insert")
-    public int insertSmsRecord(@RequestBody SmsRecordDTO entity) {
-        return smsRecordFeignClient.insert(entity);
+    public ApiResult<String> insertSmsRecord(@RequestBody SmsRecordDTO entity) {
+        return ApiResultUtil.success(smsRecordFeignClient.insert(entity));
     }
 
     @Operation(summary = "修改短信记录", description = "修改短信发送记录，如更新发送状态等", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/smsRecord/update")
-    public int updateSmsRecord(@RequestBody SmsRecordDTO entity) {
-        return smsRecordFeignClient.update(entity);
+    public ApiResult<String> updateSmsRecord(@RequestBody SmsRecordDTO entity) {
+        return ApiResultUtil.success(smsRecordFeignClient.update(entity));
     }
 
     @Operation(summary = "删除短信记录", description = "根据ID列表批量删除短信发送记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/smsRecord/delete")
-    public int deleteSmsRecord(@RequestBody @NotNull List ids) {
-        return smsRecordFeignClient.deleteByIds(ids);
+    public ApiResult<String> deleteSmsRecord(@RequestBody @NotNull List ids) {
+        return ApiResultUtil.success(smsRecordFeignClient.deleteByIds(ids));
     }
 
     // ============================== 字典详情管理 ==============================
 
     @Operation(summary = "分页查询字典详情", description = "分页查询字典详情列表，支持按字典编码、字典标签等条件筛选", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/dictDetail/page")
-    public ResponsePageEntity searchDictDetailPage(@RequestBody DictDetailConditionDTO condition) {
-        return dictDetailFeignClient.searchByPage(condition);
+    public ApiResult<ResponsePageEntity> searchDictDetailPage(@RequestBody DictDetailConditionDTO condition) {
+        return ApiResultUtil.success(dictDetailFeignClient.searchByPage(condition));
     }
 
     @Operation(summary = "新增字典详情", description = "新增字典详情项，如字典标签、字典值、排序等", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/dictDetail/insert")
-    public int insertDictDetail(@RequestBody DictDetailDTO entity) {
-        return dictDetailFeignClient.insert(entity);
+    public ApiResult<String> insertDictDetail(@RequestBody DictDetailDTO entity) {
+        return ApiResultUtil.success(dictDetailFeignClient.insert(entity));
     }
 
     @Operation(summary = "修改字典详情", description = "修改字典详情项，支持更新字典标签、字典值、排序等", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/dictDetail/update")
-    public int updateDictDetail(@RequestBody DictDetailDTO entity) {
-        return dictDetailFeignClient.update(entity);
+    public ApiResult<String> updateDictDetail(@RequestBody DictDetailDTO entity) {
+        return ApiResultUtil.success(dictDetailFeignClient.update(entity));
     }
 
     @Operation(summary = "删除字典详情", description = "根据ID列表批量删除字典详情项", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/dictDetail/delete")
-    public int deleteDictDetail(@RequestBody @NotNull List ids) {
-        return dictDetailFeignClient.deleteByIds(ids);
+    public ApiResult<String> deleteDictDetail(@RequestBody @NotNull List ids) {
+        return ApiResultUtil.success(dictDetailFeignClient.deleteByIds(ids));
     }
 
     // ============================== 消息通知管理 ==============================
 
     @Operation(summary = "分页查询通知列表", description = "分页查询通知消息列表，支持按通知标题、推送状态、推送时间等条件筛选", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/notify/page")
-    public ResponsePageEntity searchNotifyPage(@RequestBody CommonNotifyConditionDTO condition) {
-        return notifyFeignClient.searchByPage(condition);
+    public ApiResult<ResponsePageEntity> searchNotifyPage(@RequestBody CommonNotifyConditionDTO condition) {
+        return ApiResultUtil.success(notifyFeignClient.searchByPage(condition));
     }
 
     @Operation(summary = "全员推送通知", description = "向所有用户推送消息通知", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/notify/push/all")
-    public void pushNotifyToAll(@RequestBody CommonNotifyDTO entity) {
+    public ApiResult<Void> pushNotifyToAll(@RequestBody CommonNotifyDTO entity) {
         notifyFeignClient.pushToAll(entity);
+        return ApiResultUtil.success();
     }
 
     @Operation(summary = "指定用户推送通知", description = "向指定用户推送消息通知", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/notify/push/user")
-    public void pushNotifyToUser(@RequestBody CommonNotifyDTO entity) {
+    public ApiResult<Void> pushNotifyToUser(@RequestBody CommonNotifyDTO entity) {
         notifyFeignClient.pushToUser(entity);
+        return ApiResultUtil.success();
     }
 
     // ============================== 消息通知管理 CRUD ==============================
 
     @Operation(summary = "新增通知", description = "新增一条消息通知记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/notify/insert")
-    public int insertNotify(@RequestBody CommonNotifyDTO entity) {
-        return notifyFeignClient.insert(entity);
+    public ApiResult<String> insertNotify(@RequestBody CommonNotifyDTO entity) {
+        return ApiResultUtil.success(notifyFeignClient.insert(entity));
     }
 
     @Operation(summary = "修改通知", description = "修改指定消息通知记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/notify/update")
-    public int updateNotify(@RequestBody CommonNotifyDTO entity) {
-        return notifyFeignClient.update(entity);
+    public ApiResult<String> updateNotify(@RequestBody CommonNotifyDTO entity) {
+        return ApiResultUtil.success(notifyFeignClient.update(entity));
     }
 
     @Operation(summary = "删除通知", description = "根据ID列表批量删除消息通知记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/notify/delete")
-    public int deleteNotify(@RequestBody @NotNull List ids) {
-        return notifyFeignClient.deleteByIds(ids);
+    public ApiResult<String> deleteNotify(@RequestBody @NotNull List ids) {
+        return ApiResultUtil.success(notifyFeignClient.deleteByIds(ids));
     }
 }

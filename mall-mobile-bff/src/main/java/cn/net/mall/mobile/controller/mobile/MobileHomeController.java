@@ -5,6 +5,8 @@ import cn.net.mall.entity.RequestPageEntity;
 import cn.net.mall.product.client.CategoryFeignClient;
 import cn.net.mall.product.client.IndexFeignClient;
 import cn.net.mall.product.dto.*;
+import cn.net.mall.util.ApiResult;
+import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +31,7 @@ public class MobileHomeController {
 
     @Operation(summary = "获取首页聚合数据", description = "一次接口获取轮播图、分类导航、公告、推荐商品等所有首页数据")
     @GetMapping("/index")
-    public Map getIndexData() {
+    public ApiResult<Map> getIndexData() {
         Map result = new LinkedHashMap<>();
         try {
             result.put("carouselList", indexFeignClient.getIndexCarouselImageList());
@@ -56,36 +58,36 @@ public class MobileHomeController {
             log.warn("获取推荐商品失败", e);
             result.put("productList", Collections.emptyList());
         }
-        return result;
+        return ApiResultUtil.success(result);
     }
 
     @Operation(summary = "获取轮播图列表")
     @GetMapping("/carousel")
-    public List getCarousel() {
-        return indexFeignClient.getIndexCarouselImageList();
+    public ApiResult<List> getCarousel() {
+        return ApiResultUtil.success(indexFeignClient.getIndexCarouselImageList());
     }
 
     @Operation(summary = "获取公告列表")
     @GetMapping("/notices")
-    public List getNotices() {
-        return indexFeignClient.getIndexNoticeList();
+    public ApiResult<List> getNotices() {
+        return ApiResultUtil.success(indexFeignClient.getIndexNoticeList());
     }
 
     @Operation(summary = "分页查询公告")
     @PostMapping("/notice/page")
-    public ResponsePageEntity searchNoticeByPage(@RequestBody RequestPageEntity req) {
-        return indexFeignClient.searchIndexNoticeByPage(req);
+    public ApiResult<ResponsePageEntity> searchNoticeByPage(@RequestBody RequestPageEntity req) {
+        return ApiResultUtil.success(indexFeignClient.searchIndexNoticeByPage(req));
     }
 
     @Operation(summary = "获取公告详情")
     @GetMapping("/notice/detail")
-    public IndexNoticeDetailDTO getNoticeDetail(@RequestParam("id") Long id) {
-        return indexFeignClient.getIndexNoticeDetail(id);
+    public ApiResult<IndexNoticeDetailDTO> getNoticeDetail(@RequestParam("id") Long id) {
+        return ApiResultUtil.success(indexFeignClient.getIndexNoticeDetail(id));
     }
 
     @Operation(summary = "获取首页商品列表", description = "按类型获取首页展示商品")
     @GetMapping("/products")
-    public List getIndexProducts(@RequestParam("type") int type) {
-        return indexFeignClient.getIndexProductList(type);
+    public ApiResult<List> getIndexProducts(@RequestParam("type") int type) {
+        return ApiResultUtil.success(indexFeignClient.getIndexProductList(type));
     }
 }

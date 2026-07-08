@@ -4,6 +4,8 @@ import cn.net.mall.product.client.ProductFeignClient;
 import cn.net.mall.product.dto.ShoppingCartBuyDTO;
 import cn.net.mall.product.dto.ShoppingCartConditionDTO;
 import cn.net.mall.product.dto.ShoppingCartDTO;
+import cn.net.mall.util.ApiResult;
+import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -24,25 +26,26 @@ public class MobileCartController {
 
     @Operation(summary = "添加购物车")
     @PostMapping("/add")
-    public Boolean add(@Valid @RequestBody ShoppingCartDTO dto) {
-        return productFeignClient.addShoppingCart(dto);
+    public ApiResult<Boolean> add(@Valid @RequestBody ShoppingCartDTO dto) {
+        return ApiResultUtil.success(productFeignClient.addShoppingCart(dto));
     }
 
     @Operation(summary = "获取购物车商品列表")
     @PostMapping("/list")
-    public ShoppingCartBuyDTO getList(@RequestBody ShoppingCartConditionDTO condition) {
-        return productFeignClient.getShoppingCartProduct(condition);
+    public ApiResult<ShoppingCartBuyDTO> getList(@RequestBody ShoppingCartConditionDTO condition) {
+        return ApiResultUtil.success(productFeignClient.getShoppingCartProduct(condition));
     }
 
     @Operation(summary = "更新购物车商品数量")
     @PostMapping("/update")
-    public void update(@Valid @RequestBody ShoppingCartDTO dto) {
+    public ApiResult<Void> update(@Valid @RequestBody ShoppingCartDTO dto) {
         productFeignClient.updateShoppingCart(dto);
+        return ApiResultUtil.success();
     }
 
     @Operation(summary = "删除购物车商品")
     @PostMapping("/delete")
-    public int delete(@RequestBody List ids) {
-        return productFeignClient.deleteShoppingCart(ids);
+    public ApiResult<String> delete(@RequestBody List ids) {
+        return ApiResultUtil.success(productFeignClient.deleteShoppingCart(ids));
     }
 }

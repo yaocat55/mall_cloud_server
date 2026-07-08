@@ -9,6 +9,8 @@ import cn.net.mall.admin.dto.UserEditDataDTO;
 import cn.net.mall.admin.dto.*;
 import cn.net.mall.admin.client.*;
 import cn.net.mall.admin.dto.auth.DeptTreeDTO;
+import cn.net.mall.util.ApiResult;
+import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,7 +23,7 @@ import java.util.*;
 
 /**
  * 管理后台用户管理 BFF 控制器
- * 
+ *
 * 聚合用户信息、角色、部门、岗位等数据，提供管理后台所需的用户管理接口
  */
 @Slf4j
@@ -41,70 +43,75 @@ public class AdminUserController {
 
     @Operation(summary = "通过ID查询用户信息", description = "批量通过ID查询用户信息")
     @GetMapping("/findByIds")
-    public List<UserDTO> findByIds(@RequestBody List<Long> ids) {
-        return userFeignClient.findByIds(ids);
+    public ApiResult<List<UserDTO>> findByIds(@RequestBody List<Long> ids) {
+        return ApiResultUtil.success(userFeignClient.findByIds(ids));
     }
 
     @Operation(summary = "通过手机号查询用户信息")
     @GetMapping("/findByPhone")
-    public UserDTO findByPhone(@RequestParam String phone) {
-        return userFeignClient.findByPhone(phone);
+    public ApiResult<UserDTO> findByPhone(@RequestParam String phone) {
+        return ApiResultUtil.success(userFeignClient.findByPhone(phone));
     }
 
     @Operation(summary = "用户注册")
     @PostMapping("/register")
-    public UserDTO register(@Valid @RequestBody RegisterDTO registerDTO) {
-        return userFeignClient.register(registerDTO);
+    public ApiResult<UserDTO> register(@Valid @RequestBody RegisterDTO registerDTO) {
+        return ApiResultUtil.success(userFeignClient.register(registerDTO));
     }
 
     @Operation(summary = "更新用户头像")
     @PostMapping("/updateAvatar")
-    public void updateAvatar(@Valid @RequestBody UserAvatarDTO userAvatarDTO) {
+    public ApiResult<Void> updateAvatar(@Valid @RequestBody UserAvatarDTO userAvatarDTO) {
         userFeignClient.updateAvatar(userAvatarDTO);
+        return ApiResultUtil.success();
     }
 
     @Operation(summary = "更新用户信息")
     @PostMapping("/updateUser")
-    public void updateUser(@Valid @RequestBody UpdateUserDTO updateUserDTO) {
+    public ApiResult<Void> updateUser(@Valid @RequestBody UpdateUserDTO updateUserDTO) {
         userFeignClient.updateUser(updateUserDTO);
+        return ApiResultUtil.success();
     }
 
     @Operation(summary = "绑定手机号")
     @PostMapping("/bindPhone")
-    public void bindPhone(@Valid @RequestBody BindPhoneDTO bindPhoneDTO) {
+    public ApiResult<Void> bindPhone(@Valid @RequestBody BindPhoneDTO bindPhoneDTO) {
         userFeignClient.bindPhone(bindPhoneDTO);
+        return ApiResultUtil.success();
     }
 
     // ==================== 收货地址 ====================
 
     @Operation(summary = "获取用户收货地址列表")
     @GetMapping("/deliveryAddress/list")
-    public List<DeliveryAddressDTO> getDeliveryAddressList() {
-        return deliveryAddressFeignClient.getUserDeliveryAddressList();
+    public ApiResult<List<DeliveryAddressDTO>> getDeliveryAddressList() {
+        return ApiResultUtil.success(deliveryAddressFeignClient.getUserDeliveryAddressList());
     }
 
     @Operation(summary = "获取收货地址详情")
     @GetMapping("/deliveryAddress/detail")
-    public DeliveryAddressDTO getDeliveryAddressDetail(@RequestParam("id") Long id) {
-        return deliveryAddressFeignClient.getDetail(id);
+    public ApiResult<DeliveryAddressDTO> getDeliveryAddressDetail(@RequestParam("id") Long id) {
+        return ApiResultUtil.success(deliveryAddressFeignClient.getDetail(id));
     }
 
     @Operation(summary = "保存收货地址")
     @PostMapping("/deliveryAddress/save")
-    public void saveDeliveryAddress(@RequestBody DeliveryAddressDTO deliveryAddressDTO) {
+    public ApiResult<Void> saveDeliveryAddress(@RequestBody DeliveryAddressDTO deliveryAddressDTO) {
         deliveryAddressFeignClient.save(deliveryAddressDTO);
+        return ApiResultUtil.success();
     }
 
     @Operation(summary = "批量删除收货地址")
     @PostMapping("/deliveryAddress/delete")
-    public int deleteDeliveryAddress(@RequestBody List ids) {
-        return deliveryAddressFeignClient.deleteByIds(ids);
+    public ApiResult<String> deleteDeliveryAddress(@RequestBody List ids) {
+        return ApiResultUtil.success(deliveryAddressFeignClient.deleteByIds(ids));
     }
 
     @Operation(summary = "设置默认收货地址")
     @PostMapping("/deliveryAddress/setDefault")
-    public void setDefaultDeliveryAddress(@RequestBody DeliveryAddressDefaultDTO deliveryAddressDefaultDTO) {
+    public ApiResult<Void> setDefaultDeliveryAddress(@RequestBody DeliveryAddressDefaultDTO deliveryAddressDefaultDTO) {
         deliveryAddressFeignClient.setDefaultDeliveryAddress(deliveryAddressDefaultDTO);
+        return ApiResultUtil.success();
     }
 
     // ==================== 聚合接口 ====================
@@ -115,7 +122,7 @@ public class AdminUserController {
                            + "- 需携带 Bearer Token（Authorization 请求头）",
                security = @SecurityRequirement(name = "Bearer Token"))
     @GetMapping("/{id}/edit-data")
-    public UserEditDataDTO getUserEditData(@PathVariable Long id) {
+    public ApiResult<UserEditDataDTO> getUserEditData(@PathVariable Long id) {
         UserEditDataDTO result = new UserEditDataDTO();
 
         // 1. 用户基本信息
@@ -151,6 +158,6 @@ public class AdminUserController {
             result.setJobs(Collections.emptyList());
         }
 
-        return result;
+        return ApiResultUtil.success(result);
     }
 }
