@@ -31,31 +31,31 @@ public class AdminAuthController {
     @Operation(summary = "登录", description = "账号密码登录，返回 token + 用户信息 + 菜单权限")
     @PostMapping("/login")
     public ApiResult<TokenDTO> login(@Valid @RequestBody UserLoginDTO userLoginDTO) {
-        return userFeignClient.login(userLoginDTO);
+        return ApiResultUtil.success(userFeignClient.login(userLoginDTO));
     }
 
     @Operation(summary = "手机号登录", description = "手机号验证码登录")
     @PostMapping("/loginByPhone")
     public ApiResult<TokenDTO> loginByPhone(@Valid @RequestBody UserPhoneLoginDTO userPhoneLoginDTO) {
-        return userFeignClient.loginByPhone(userPhoneLoginDTO);
+        return ApiResultUtil.success(userFeignClient.loginByPhone(userPhoneLoginDTO));
     }
 
     @Operation(summary = "获取验证码", description = "获取图形验证码")
     @GetMapping("/getCode")
     public ApiResult<CaptchaDTO> getCode() {
-        return userFeignClient.getCode();
+        return ApiResultUtil.success(userFeignClient.getCode());
     }
 
     @Operation(summary = "获取当前用户信息", description = "获取当前登录用户的完整信息，包含角色权限")
     @GetMapping("/userInfo")
     public ApiResult<UserInfoDTO> getUserInfo() {
-        return userFeignClient.getUserInfo();
+        return ApiResultUtil.success(userFeignClient.getUserInfo());
     }
 
     @Operation(summary = "获取用户详情", description = "获取当前登录用户详情")
     @GetMapping("/userDetail")
     public ApiResult<UserDTO> getUserDetail() {
-        return userFeignClient.getUserDetail();
+        return ApiResultUtil.success(userFeignClient.getUserDetail());
     }
 
     @Operation(summary = "获取菜单树", description = "获取当前用户有权限的菜单树")
@@ -73,7 +73,7 @@ public class AdminAuthController {
     @Operation(summary = "重置密码")
     @PostMapping("/resetPassword")
     public ApiResult<Boolean> resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO) {
-        return userFeignClient.resetPassword(resetPasswordDTO);
+        return ApiResultUtil.success(userFeignClient.resetPassword(resetPasswordDTO));
     }
 
     @Operation(summary = "更新用户头像",
@@ -81,7 +81,7 @@ public class AdminAuthController {
     @PostMapping("/updateAvatar")
     public ApiResult<Void> updateAvatar(@Valid @RequestBody UserAvatarDTO userAvatarDTO) {
         userFeignClient.updateAvatar(userAvatarDTO);
-        return ApiResult.success();
+        return ApiResultUtil.success();
     }
 
     @Operation(summary = "更新用户信息",
@@ -89,20 +89,20 @@ public class AdminAuthController {
     @PostMapping("/updateUser")
     public ApiResult<Void> updateUser(@Valid @RequestBody UpdateUserDTO updateUserDTO) {
         userFeignClient.updateUser(updateUserDTO);
-        return ApiResult.success();
+        return ApiResultUtil.success();
     }
 
     @Operation(summary = "测试登录（跳过验证码）",
                description = "内部测试：跳过图形验证码，直接使用账号密码登录获取token。仅限开发/测试环境使用。")
     @PostMapping("/testLogin")
     public ApiResult<TokenDTO> testLogin(@Valid @RequestBody UserLoginDTO userLoginDTO) {
-        return userFeignClient.testLogin(userLoginDTO);
+        return ApiResultUtil.success(userFeignClient.testLogin(userLoginDTO));
     }
 
     @Operation(summary = "获取在线用户列表",
                description = "查询当前登录状态未过期的管理端用户")
     @GetMapping("/onlineUsers")
     public ApiResult<List<UserDTO>> onlineUsers() {
-        return userFeignClient.onlineUsers();
+        return ApiResultUtil.success(userFeignClient.onlineUsers());
     }
 }
