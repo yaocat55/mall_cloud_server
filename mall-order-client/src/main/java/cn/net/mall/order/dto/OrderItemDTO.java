@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Schema(description = "订单明细传输对象")
+@Schema(description = "订单明细传输对象", example = "0")
 public class OrderItemDTO extends BaseEntity {
     @Schema(description = "订单ID", example = "1")
     private Long orderId;

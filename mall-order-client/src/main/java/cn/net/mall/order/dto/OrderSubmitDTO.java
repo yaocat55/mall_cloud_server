@@ -23,6 +23,6 @@ public class OrderSubmitDTO implements Serializable {
     @Schema(description = "备注", example = "备注")
     private String remark;
 
-    @Schema(description = "结算项集合")
+    @Schema(description = "结算项集合", example = "string")
     private List<OrderSettlementItemDTO> items;
 }

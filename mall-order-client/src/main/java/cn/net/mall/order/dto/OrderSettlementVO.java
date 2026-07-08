@@ -16,16 +16,16 @@ import java.util.List;
 public class OrderSettlementVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "收货地址")
+    @Schema(description = "收货地址", example = "string")
     private OrderDeliveryAddressDTO deliveryAddress;
 
-    @Schema(description = "订单明细")
+    @Schema(description = "订单明细", example = "string")
     private List<OrderItemDTO> orderItems;
 
-    @Schema(description = "订单优惠券信息")
+    @Schema(description = "订单优惠券信息", example = "string")
     private OrderCouponDTO orderCoupon;
 
-    @Schema(description = "结算项集合")
+    @Schema(description = "结算项集合", example = "string")
     private List<OrderSettlementItemDTO> items;
 
     @Schema(description = "总金额", example = "0")

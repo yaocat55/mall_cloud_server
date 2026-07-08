@@ -6,9 +6,9 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-@Schema(description = "订单确认请求DTO")
+@Schema(description = "订单确认请求DTO", example = "string")
 public class OrderConfirmReqDTO {
-    @Schema(description = "购物车ID集合")
+    @Schema(description = "购物车ID集合", example = "string")
     private List<OrderConfirmReqItemDTO> items;
     
     @Schema(description = "选择的优惠券ID集合（订单级）", example = "0")

@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-@Schema(description = "优惠券DTO")
+@Schema(description = "优惠券DTO", example = "0")
 public class CouponDTO {
     @Schema(description = "优惠券发放系统ID", example = "1")
     private Long id;

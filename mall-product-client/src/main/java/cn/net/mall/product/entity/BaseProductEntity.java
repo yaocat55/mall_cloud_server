@@ -17,24 +17,24 @@ public class BaseProductEntity extends BaseEntity {
     /**
      * 分类ID
      */
-    @Schema(description = "分类ID")
+    @Schema(description = "分类ID", example = "0")
     private Long categoryId;
 
     /**
      * 分类名称
      */
-    @Schema(description = "category Name")
+    @Schema(description = "category Name", example = "string")
     private String categoryName;
 
     /**
      * 单位ID
      */
-    @Schema(description = "单位ID")
+    @Schema(description = "单位ID", example = "0")
     private Long unitId;
 
     /**
      * 单位名称
      */
-    @Schema(description = "unit Name")
+    @Schema(description = "unit Name", example = "string")
     private String unitName;
 }

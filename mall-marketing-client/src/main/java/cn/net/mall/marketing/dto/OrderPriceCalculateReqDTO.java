@@ -9,10 +9,10 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-@Schema(description = "订单价格计算请求DTO")
+@Schema(description = "订单价格计算请求DTO", example = "string")
 public class OrderPriceCalculateReqDTO {
 
-    @Schema(description = "商品列表")
+    @Schema(description = "商品列表", example = "string")
     private List<Item> items;
 
     @Data

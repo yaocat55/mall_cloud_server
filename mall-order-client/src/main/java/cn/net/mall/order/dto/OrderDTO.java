@@ -11,7 +11,7 @@ import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Schema(description = "订单传输对象")
+@Schema(description = "订单传输对象", example = "string")
 public class OrderDTO extends BaseEntity {
     @Schema(description = "订单编码", example = "CODE_001")
     private String code;
@@ -31,8 +31,8 @@ public class OrderDTO extends BaseEntity {
     private BigDecimal payAmount;
     @Schema(description = "备注", example = "备注")
     private String remark;
-    @Schema(description = "订单明细列表")
+    @Schema(description = "订单明细列表", example = "string")
     private List<OrderItemDTO> orderItemList;
-    @Schema(description = "订单收货地址")
+    @Schema(description = "订单收货地址", example = "string")
     private OrderDeliveryAddressDTO orderDeliveryAddress;
 }

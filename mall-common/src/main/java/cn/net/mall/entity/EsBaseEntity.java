@@ -22,10 +22,12 @@ public class EsBaseEntity implements Serializable {
      * ID
      */
     @Schema(description = "系统ID", example = "string")
+    @Schema(description = "id", example = "string")
     private String id;
 
     /**
      * 数据
      */
+    @Schema(description = "data", example = "string")
     private Map<String, Object> data;
 }

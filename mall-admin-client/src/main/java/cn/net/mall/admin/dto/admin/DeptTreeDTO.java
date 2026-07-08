@@ -86,7 +86,7 @@ public class DeptTreeDTO {
     /**
      * 子部门
      */
-    @Schema(description = "子部门")
+    @Schema(description = "子部门", example = "[]")
     private List children;
 
     /**

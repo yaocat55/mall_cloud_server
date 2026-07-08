@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-@Schema(description = "退货申请DTO")
+@Schema(description = "退货申请DTO", example = "0")
 public class OrderReturnApplyDTO {
     @Schema(description = "ID", example = "1")
     private Long id;
@@ -32,7 +32,7 @@ public class OrderReturnApplyDTO {
     private Date auditTime;
     @Schema(description = "收货时间(逆向)", example = "2024-01-01")
     private Date receiveTime;
-    @Schema(description = "明细列表")
+    @Schema(description = "明细列表", example = "string")
     private List<OrderReturnItemDTO> items;
 
     @Schema(description = "凭证图片URL列表", example = "-")

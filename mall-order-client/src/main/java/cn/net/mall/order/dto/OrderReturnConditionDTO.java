@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Schema(description = "退货申请查询条件DTO")
+@Schema(description = "退货申请查询条件DTO", example = "0")
 public class OrderReturnConditionDTO extends RequestConditionEntity {
     @Schema(description = "订单ID", example = "1")
     private Long orderId;

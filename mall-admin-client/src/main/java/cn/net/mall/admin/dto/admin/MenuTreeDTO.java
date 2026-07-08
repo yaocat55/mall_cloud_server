@@ -97,13 +97,13 @@ public class MenuTreeDTO implements Serializable {
     /**
      * 下一级菜单集合
      */
-    @Schema(description = "下一级菜单集合")
+    @Schema(description = "下一级菜单集合", example = "[]")
     private List children;
 
     /**
      * 是否叶子节点
      */
-    @Schema(description = "是否叶子节点")
+    @Schema(description = "是否叶子节点", example = "true")
     private Boolean leaf;
 
     /**
@@ -115,6 +115,6 @@ public class MenuTreeDTO implements Serializable {
     /**
      * 是否有下一级
      */
-    @Schema(description = "是否有下一级")
+    @Schema(description = "是否有下一级", example = "true")
     private Boolean hasChildren;
 }

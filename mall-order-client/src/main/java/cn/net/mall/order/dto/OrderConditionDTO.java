@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Schema(description = "订单查询条件传输对象")
+@Schema(description = "订单查询条件传输对象", example = "string")
 public class OrderConditionDTO extends RequestConditionEntity {
     @Schema(description = "订单编码", example = "CODE_001")
     private String code;

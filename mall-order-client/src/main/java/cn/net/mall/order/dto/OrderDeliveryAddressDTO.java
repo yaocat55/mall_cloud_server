@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Schema(description = "订单收货地址传输对象")
+@Schema(description = "订单收货地址传输对象", example = "0")
 public class OrderDeliveryAddressDTO extends BaseEntity {
     @Schema(description = "订单ID", example = "1")
     private Long orderId;

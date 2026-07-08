@@ -25,7 +25,7 @@ public class UnitConditionDTO extends RequestConditionEntity {
     /**
      * ID集合
      */
-    @Schema(description = "ID集合")
+    @Schema(description = "ID集合", example = "string")
     private List<Long> idList;
 
     /**

@@ -9,19 +9,19 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-@Schema(description = "订单确认响应DTO")
+@Schema(description = "订单确认响应DTO", example = "string")
 public class OrderConfirmRespDTO {
     
-    @Schema(description = "收货地址列表")
+    @Schema(description = "收货地址列表", example = "string")
     private List<DeliveryAddressDTO> addressList;
     
-    @Schema(description = "默认收货地址")
+    @Schema(description = "默认收货地址", example = "string")
     private DeliveryAddressDTO defaultAddress;
     
-    @Schema(description = "商品列表")
+    @Schema(description = "商品列表", example = "string")
     private List<ShoppingCartDTO> items;
     
-    @Schema(description = "可用优惠券列表")
+    @Schema(description = "可用优惠券列表", example = "string")
     private List<CouponDTO> coupons;
     
     @Schema(description = "订单总金额", example = "99.99")

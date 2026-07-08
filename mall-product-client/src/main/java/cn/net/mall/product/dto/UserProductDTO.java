@@ -19,13 +19,13 @@ public class UserProductDTO extends BaseEntity {
      * 商品ID
      */
     @NotNull(message = "商品ID不能为空")
-    @Schema(description = "商品ID")
+    @Schema(description = "商品ID", example = "0")
     private Long productId;
 
     /**
      * 用户ID
      */
-    @Schema(description = "用户ID")
+    @Schema(description = "用户ID", example = "0")
     private Long userId;
 
     /**
@@ -61,6 +61,6 @@ public class UserProductDTO extends BaseEntity {
     /**
      * 库存
      */
-    @Schema(description = "库存")
+    @Schema(description = "库存", example = "0")
     private Integer stock;
 }

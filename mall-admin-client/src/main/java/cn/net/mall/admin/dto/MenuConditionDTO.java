@@ -37,7 +37,7 @@ public class MenuConditionDTO extends RequestConditionEntity {
     /**
      * 上级菜单ID集合
      */
-    @Schema(description = "上级菜单ID集合")
+    @Schema(description = "上级菜单ID集合", example = "[]")
     private List pidList;
 
     /**

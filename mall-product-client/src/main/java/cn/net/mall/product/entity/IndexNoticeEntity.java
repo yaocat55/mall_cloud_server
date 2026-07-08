@@ -22,18 +22,18 @@ public class IndexNoticeEntity extends BaseEntity {
 	/**
 	 * 标题
 	 */
-	@Schema(description = "标题")
+	@Schema(description = "标题", example = "string")
 	private String title;
 
 	/**
 	 * 内容
 	 */
-	@Schema(description = "内容")
+	@Schema(description = "内容", example = "string")
 	private String content;
 
 	/**
 	 * 排序
 	 */
-	@Schema(description = "排序")
+	@Schema(description = "排序", example = "0")
 	private Integer sort;
 }

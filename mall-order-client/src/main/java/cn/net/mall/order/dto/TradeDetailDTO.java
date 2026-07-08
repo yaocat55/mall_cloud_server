@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-@Schema(description = "订单详情DTO")
+@Schema(description = "订单详情DTO", example = "string")
 public class TradeDetailDTO {
     @Schema(description = "订单编码", example = "CODE_001")
     private String code;
@@ -28,8 +28,8 @@ public class TradeDetailDTO {
     private BigDecimal payAmount;
     @Schema(description = "备注", example = "备注")
     private String remark;
-    @Schema(description = "订单明细列表")
+    @Schema(description = "订单明细列表", example = "string")
     private List<TradeItemDTO> orderItemList;
-    @Schema(description = "订单收货地址")
+    @Schema(description = "订单收货地址", example = "string")
     private OrderDeliveryAddressDTO orderDeliveryAddress;
 }

@@ -41,6 +41,6 @@ public class DictDTO extends BaseEntity {
     /**
      * 字典详情
      */
-    @Schema(description = "字典详情")
+    @Schema(description = "字典详情", example = "string")
     private List<DictDetailDTO> detailList;
 }

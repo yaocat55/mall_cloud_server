@@ -74,19 +74,19 @@ public class ProductSearchResultDTO extends EsBaseEntity {
     /**
      * 销量
      */
-    @Schema(description = "销量")
+    @Schema(description = "销量", example = "string")
     private String saleQuantity;
 
     /**
      * 评价数量
      */
-    @Schema(description = "comment Count")
+    @Schema(description = "comment Count", example = "string")
     private String commentCount;
 
     /**
      * 好评率
      */
-    @Schema(description = "好评率")
+    @Schema(description = "好评率", example = "string")
     private String positiveRating;
 
     /**

@@ -6,7 +6,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-@Schema(description = "订单明细返回DTO")
+@Schema(description = "订单明细返回DTO", example = "0")
 public class TradeItemDTO {
     @Schema(description = "订单明细ID", example = "1")
     private Long id;

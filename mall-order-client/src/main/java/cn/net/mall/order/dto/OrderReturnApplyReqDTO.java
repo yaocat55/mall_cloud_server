@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-@Schema(description = "退货申请入参DTO")
+@Schema(description = "退货申请入参DTO", example = "string")
 public class OrderReturnApplyReqDTO {
     @Schema(description = "订单编码", example = "TC202401010001")
     private String tradeCode;

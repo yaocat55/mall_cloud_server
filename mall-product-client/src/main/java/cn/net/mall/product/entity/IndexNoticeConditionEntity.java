@@ -19,52 +19,52 @@ public class IndexNoticeConditionEntity extends RequestConditionEntity {
    /**
     * ID集合
     */
-    @Schema(description = "系统ID列表")
+    @Schema(description = "系统ID列表", example = "string")
     private List<Long> idList;
 
 	/**
 	 *  ID
      */
-	@Schema(description = "系统ID")
+	@Schema(description = "系统ID", example = "0")
 	private Long id;
 	/**
 	 *  标题
      */
-	@Schema(description = "标题")
+	@Schema(description = "标题", example = "string")
 	private String title;
 	/**
 	 *  内容
      */
-	@Schema(description = "内容")
+	@Schema(description = "内容", example = "string")
 	private String content;
 	/**
 	 *  排序
      */
-	@Schema(description = "排序")
+	@Schema(description = "排序", example = "0")
 	private Integer sort;
 	/**
 	 *  创建人ID
      */
-	@Schema(description = "create User Id")
+	@Schema(description = "create User Id", example = "0")
 	private Long createUserId;
 	/**
 	 *  创建人名称
      */
-	@Schema(description = "create User Name")
+	@Schema(description = "create User Name", example = "string")
 	private String createUserName;
 	/**
 	 *  修改人ID
      */
-	@Schema(description = "update User Id")
+	@Schema(description = "update User Id", example = "0")
 	private Long updateUserId;
 	/**
 	 *  修改人名称
      */
-	@Schema(description = "update User Name")
+	@Schema(description = "update User Name", example = "string")
 	private String updateUserName;
 	/**
 	 *  是否删除 1：已删除 0：未删除
      */
-	@Schema(description = "是否删除")
+	@Schema(description = "是否删除", example = "0")
 	private Integer isDel;
 }

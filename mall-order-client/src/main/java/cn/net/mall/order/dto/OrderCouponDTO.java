@@ -12,10 +12,10 @@ import java.util.List;
 public class OrderCouponDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "可使用优惠券列表")
+    @Schema(description = "可使用优惠券列表", example = "string")
     private List<CouponDTO> canUseCouponList;
 
-    @Schema(description = "不可使用优惠券列表")
+    @Schema(description = "不可使用优惠券列表", example = "string")
     private List<CouponDTO> unCanUseCouponList;
 
     @Schema(description = "优惠券总数量", example = "0")
