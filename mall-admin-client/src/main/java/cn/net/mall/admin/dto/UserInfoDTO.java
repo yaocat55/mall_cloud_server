@@ -21,18 +21,18 @@ public class UserInfoDTO {
     /**
      * 用户ID
      */
-    @Schema(description = "系统ID")
+    @Schema(description = "系统ID", example = "13")
     private Long id;
 
     /**
      * 用户名
      */
-    @Schema(description = "用户名")
+    @Schema(description = "用户名", example = "admin")
     private String username;
 
     /**
      * 角色信息
      */
-    @Schema(description = "roles")
+    @Schema(description = "角色列表", example = "[\"admin\"]")
     private List roles;
 }

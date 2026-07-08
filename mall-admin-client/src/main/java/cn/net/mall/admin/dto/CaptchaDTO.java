@@ -18,12 +18,12 @@ public class CaptchaDTO {
     /**
      * 唯一标识
      */
-    @Schema(description = "唯一标识")
+    @Schema(description = "唯一标识", example = "C0ff54a1581c547f8bb13fd8b60e26d2e")
     private String uuid;
 
     /**
      * 验证码图片
      */
-    @Schema(description = "图片(base64)")
+    @Schema(description = "图片(base64)", example = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAG8AAAAkCAIAAAAIOPOYAAA...")
     private String img;
 }

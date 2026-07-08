@@ -22,6 +22,6 @@ public class DeliveryAddressDefaultDTO implements Serializable {
      * 系统ID
      */
     @NotNull(message = "系统ID不能为空")
-    @Schema(description = "系统ID")
+    @Schema(description = "系统ID", example = "13")
     private Long id;
 }
