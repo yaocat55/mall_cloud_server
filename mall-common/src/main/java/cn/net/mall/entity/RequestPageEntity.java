@@ -29,13 +29,13 @@ public class RequestPageEntity implements Serializable {
      * 页码，默认从一页开始
      */
     @Schema(description = "pageNo", example = "0")
-    private Integer pageNo =
+    private Integer pageNo;
 
     /**
      * 每页大小，默认一页查询10条数据
      */
     @Schema(description = "pageSize", example = "0")
-    private Integer pageSize =
+    private Integer pageSize;
 
     /**
      * 排序字段
