@@ -1,50 +1,50 @@
 dataSources:
-  mall_trade_0:
+  cloud_trade_0:
     dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/mall_trade_0?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_trade_0?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: ${DB_USER:root}
     password: ${DB_PWD:123456}
-  mall_trade_1:
+  cloud_trade_1:
     dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/mall_trade_1?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_trade_1?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: ${DB_USER:root}
     password: ${DB_PWD:123456}
-  mall_trade_2:
+  cloud_trade_2:
     dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/mall_trade_2?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_trade_2?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: ${DB_USER:root}
     password: ${DB_PWD:123456}
-  mall_trade_3:
+  cloud_trade_3:
     dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/mall_trade_3?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_trade_3?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: ${DB_USER:root}
     password: ${DB_PWD:123456}
-  mall_trade_4:
+  cloud_trade_4:
     dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/mall_trade_4?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_trade_4?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: ${DB_USER:root}
     password: ${DB_PWD:123456}
-  mall_trade_5:
+  cloud_trade_5:
     dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/mall_trade_5?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_trade_5?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: ${DB_USER:root}
     password: ${DB_PWD:123456}
-  mall_trade_6:
+  cloud_trade_6:
     dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/mall_trade_6?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_trade_6?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: ${DB_USER:root}
     password: ${DB_PWD:123456}
-  mall_trade_7:
+  cloud_trade_7:
     dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/mall_trade_7?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_trade_7?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: ${DB_USER:root}
     password: ${DB_PWD:123456}
 
@@ -52,7 +52,7 @@ rules:
 - !SHARDING
   tables:
     t_order:
-      actualDataNodes: mall_trade_${0..7}.t_order_${0..31}
+      actualDataNodes: cloud_trade_${0..7}.t_order_${0..31}
       tableStrategy:
         standard:
           shardingColumn: id
@@ -65,7 +65,7 @@ rules:
         column: id
         keyGeneratorName: snowflake
     t_order_item:
-      actualDataNodes: mall_trade_${0..7}.t_order_item_${0..255}
+      actualDataNodes: cloud_trade_${0..7}.t_order_item_${0..255}
       tableStrategy:
         standard:
           shardingColumn: order_id
@@ -78,7 +78,7 @@ rules:
         column: id
         keyGeneratorName: snowflake
     t_order_delivery_address:
-      actualDataNodes: mall_trade_${0..7}.t_order_delivery_address_${0..31}
+      actualDataNodes: cloud_trade_${0..7}.t_order_delivery_address_${0..31}
       tableStrategy:
         standard:
           shardingColumn: order_id
@@ -91,7 +91,7 @@ rules:
         column: id
         keyGeneratorName: snowflake
     t_order_return_apply:
-      actualDataNodes: mall_trade_${0..7}.t_order_return_apply_${0..3}
+      actualDataNodes: cloud_trade_${0..7}.t_order_return_apply_${0..3}
       tableStrategy:
         standard:
           shardingColumn: order_id
@@ -104,7 +104,7 @@ rules:
         column: id
         keyGeneratorName: snowflake
     t_order_return_item:
-      actualDataNodes: mall_trade_${0..7}.t_order_return_item_${0..7}
+      actualDataNodes: cloud_trade_${0..7}.t_order_return_item_${0..7}
       tableStrategy:
         standard:
           shardingColumn: order_id
@@ -117,7 +117,7 @@ rules:
         column: id
         keyGeneratorName: snowflake
     t_order_return_voucher:
-      actualDataNodes: mall_trade_${0..7}.t_order_return_voucher_${0..15}
+      actualDataNodes: cloud_trade_${0..7}.t_order_return_voucher_${0..15}
       tableStrategy:
         standard:
           shardingColumn: order_id
@@ -137,11 +137,11 @@ rules:
     database-inline-order:
       type: INLINE
       props:
-        algorithm-expression: mall_trade_${id % 8}
+        algorithm-expression: cloud_trade_${id % 8}
     database-inline-item:
       type: INLINE
       props:
-        algorithm-expression: mall_trade_${order_id % 8}
+        algorithm-expression: cloud_trade_${order_id % 8}
     t-order-inline:
       type: INLINE
       props:
