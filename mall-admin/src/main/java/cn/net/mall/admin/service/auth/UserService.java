@@ -860,20 +860,51 @@ public class UserService extends BaseService<UserEntity, UserConditionEntity> {
         return userMapper;
     }
 
-    // ==================== JWT 黑名单相关 ====================
+    // ==================== JWT 黑名单 + 在线用户相关 ====================
+
+    private static final String ONLINE_USER_PREFIX = "online:user:";
 
     /**
      * 登录成功后，保存当前 token jti 映射（用于踢人）
+     * 同时记录在线用户状态
      */
     private void saveUserTokenJti(Long userId, String token) {
         try {
             Claims claims = TokenUtil.parseClaimsFromToken(token, tokenHelper.getTokenSecret());
             if (claims != null) {
                 redisUtil.set("user_token_jti:" + userId, claims.getId(), tokenExpireTimeInRecord);
+                // 记录在线用户，TTL 与 token 过期时间一致
+                redisUtil.set(ONLINE_USER_PREFIX + userId, claims.getSubject(), tokenExpireTimeInRecord);
             }
         } catch (Exception e) {
             log.warn("保存 user_token_jti 失败 userId={}", userId, e);
         }
+    }
+
+    /**
+     * 查询当前在线用户列表
+     */
+    public List<UserDTO> getOnlineUsers() {
+        List<UserDTO> onlineUsers = new ArrayList<>();
+        try {
+            Set<String> keys = redisUtil.scan(ONLINE_USER_PREFIX + "*");
+            if (keys != null) {
+                for (String key : keys) {
+                    String userIdStr = key.substring(ONLINE_USER_PREFIX.length());
+                    Long userId = Long.parseLong(userIdStr);
+                    String username = redisUtil.get(key);
+                    if (username != null) {
+                        UserDTO dto = new UserDTO();
+                        dto.setId(userId);
+                        dto.setUserName(username);
+                        onlineUsers.add(dto);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("查询在线用户失败", e);
+        }
+        return onlineUsers;
     }
 
     /**
@@ -892,12 +923,14 @@ public class UserService extends BaseService<UserEntity, UserConditionEntity> {
 
     /**
      * 踢人下线：将指定用户的当前 token 加入黑名单
+     * 同时移除在线状态
      */
     public void kickOut(Long userId) {
         String jti = redisUtil.get("user_token_jti:" + userId);
         if (jti != null) {
             redisUtil.set("blacklist:" + jti, "1", tokenExpireTimeInRecord);
             redisUtil.del("user_token_jti:" + userId);
+            redisUtil.del(ONLINE_USER_PREFIX + userId);
         }
     }
 }

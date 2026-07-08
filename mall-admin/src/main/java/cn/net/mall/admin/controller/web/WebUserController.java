@@ -16,6 +16,7 @@ import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 
 
@@ -128,5 +129,12 @@ public class WebUserController {
     @PostMapping("/updateUser")
     public void updateUser(@RequestBody @Valid UpdateUserDTO updateUserDTO) {
         userService.updateUser(updateUserDTO);
+    }
+
+    @Operation(summary = "获取在线用户列表",
+               description = "查询当前登录状态未过期的管理端用户")
+    @GetMapping("/onlineUsers")
+    public List<UserDTO> onlineUsers() {
+        return userService.getOnlineUsers();
     }
 }

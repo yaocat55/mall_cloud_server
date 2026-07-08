@@ -1,10 +1,17 @@
 package cn.net.mall.redis;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -161,10 +168,9 @@ public class RedisUtil {
     }
 
     /**
-     * 保存缓存
+     * 删除缓存
      *
      * @param key 键
-     * @return true成功 false失败
      */
     public void del(String key) {
         try {
@@ -174,5 +180,31 @@ public class RedisUtil {
         } catch (Exception e) {
             log.error("Redis删除数据失败：", e);
         }
+    }
+
+    /**
+     * SCAN 扫描匹配的 key（代替 KEYS，避免阻塞）
+     *
+     * @param pattern 匹配模式，如 "online:user:*"
+     * @return 匹配的 key 集合
+     */
+    public Set<String> scan(String pattern) {
+        Set<String> keys = new HashSet<>();
+        try {
+            stringRedisTemplate.execute((RedisCallback<Boolean>) connection -> {
+                try (Cursor<byte[]> cursor = connection.scan(
+                        ScanOptions.scanOptions().match(pattern).count(100).build())) {
+                    while (cursor.hasNext()) {
+                        keys.add(new String(cursor.next(), StandardCharsets.UTF_8));
+                    }
+                } catch (IOException e) {
+                    log.error("Redis SCAN 失败", e);
+                }
+                return true;
+            });
+        } catch (Exception e) {
+            log.error("Redis SCAN 异常", e);
+        }
+        return keys;
     }
 }
