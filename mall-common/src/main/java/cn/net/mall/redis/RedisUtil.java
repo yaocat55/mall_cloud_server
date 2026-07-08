@@ -7,7 +7,6 @@ import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Map;
@@ -197,7 +196,7 @@ public class RedisUtil {
                     while (cursor.hasNext()) {
                         keys.add(new String(cursor.next(), StandardCharsets.UTF_8));
                     }
-                } catch (IOException e) {
+                } catch (Exception e) {
                     log.error("Redis SCAN 失败", e);
                 }
                 return true;
