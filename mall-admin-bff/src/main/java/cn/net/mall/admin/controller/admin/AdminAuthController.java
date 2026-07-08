@@ -30,31 +30,31 @@ public class AdminAuthController {
 
     @Operation(summary = "登录", description = "账号密码登录，返回 token + 用户信息 + 菜单权限")
     @PostMapping("/login")
-    public TokenDTO login(@Valid @RequestBody UserLoginDTO userLoginDTO) {
+    public ApiResult<TokenDTO> login(@Valid @RequestBody UserLoginDTO userLoginDTO) {
         return userFeignClient.login(userLoginDTO);
     }
 
     @Operation(summary = "手机号登录", description = "手机号验证码登录")
     @PostMapping("/loginByPhone")
-    public TokenDTO loginByPhone(@Valid @RequestBody UserPhoneLoginDTO userPhoneLoginDTO) {
+    public ApiResult<TokenDTO> loginByPhone(@Valid @RequestBody UserPhoneLoginDTO userPhoneLoginDTO) {
         return userFeignClient.loginByPhone(userPhoneLoginDTO);
     }
 
     @Operation(summary = "获取验证码", description = "获取图形验证码")
     @GetMapping("/getCode")
-    public CaptchaDTO getCode() {
+    public ApiResult<CaptchaDTO> getCode() {
         return userFeignClient.getCode();
     }
 
     @Operation(summary = "获取当前用户信息", description = "获取当前登录用户的完整信息，包含角色权限")
     @GetMapping("/userInfo")
-    public UserInfoDTO getUserInfo() {
+    public ApiResult<UserInfoDTO> getUserInfo() {
         return userFeignClient.getUserInfo();
     }
 
     @Operation(summary = "获取用户详情", description = "获取当前登录用户详情")
     @GetMapping("/userDetail")
-    public UserDTO getUserDetail() {
+    public ApiResult<UserDTO> getUserDetail() {
         return userFeignClient.getUserDetail();
     }
 
@@ -72,7 +72,7 @@ public class AdminAuthController {
 
     @Operation(summary = "重置密码")
     @PostMapping("/resetPassword")
-    public boolean resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO) {
+    public ApiResult<Boolean> resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO) {
         return userFeignClient.resetPassword(resetPasswordDTO);
     }
 
@@ -95,14 +95,14 @@ public class AdminAuthController {
     @Operation(summary = "测试登录（跳过验证码）",
                description = "内部测试：跳过图形验证码，直接使用账号密码登录获取token。仅限开发/测试环境使用。")
     @PostMapping("/testLogin")
-    public TokenDTO testLogin(@Valid @RequestBody UserLoginDTO userLoginDTO) {
+    public ApiResult<TokenDTO> testLogin(@Valid @RequestBody UserLoginDTO userLoginDTO) {
         return userFeignClient.testLogin(userLoginDTO);
     }
 
     @Operation(summary = "获取在线用户列表",
                description = "查询当前登录状态未过期的管理端用户")
     @GetMapping("/onlineUsers")
-    public List<UserDTO> onlineUsers() {
+    public ApiResult<List<UserDTO>> onlineUsers() {
         return userFeignClient.onlineUsers();
     }
 }
