@@ -3,10 +3,10 @@ package cn.net.mall.admin.controller.admin;
 import cn.net.mall.admin.client.UserFeignClient;
 import cn.net.mall.admin.dto.*;
 import cn.net.mall.admin.client.*;
+import cn.net.mall.util.ApiResult;
+import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,16 +60,14 @@ public class AdminAuthController {
 
     @Operation(summary = "获取菜单树", description = "获取当前用户有权限的菜单树")
     @GetMapping("/menus")
-    public Object getMenus() {
-        // 通过 RestTemplate 转发到 auth 服务
-        return null; // 由 ForwardController 处理
+    public ApiResult<Object> getMenus() {
+        return ApiResultUtil.success();
     }
 
     @Operation(summary = "退出登录")
-    @ApiResponses(@ApiResponse(responseCode = "200", description = "退出成功"))
     @PostMapping("/logout")
-    public void logout() {
-        // 转发到 auth 服务处理 token 清理
+    public ApiResult<Void> logout() {
+        return ApiResultUtil.success();
     }
 
     @Operation(summary = "重置密码")
@@ -80,18 +78,18 @@ public class AdminAuthController {
 
     @Operation(summary = "更新用户头像",
                description = "更新当前登录用户的头像地址")
-    @ApiResponses(@ApiResponse(responseCode = "200", description = "更新成功"))
     @PostMapping("/updateAvatar")
-    public void updateAvatar(@Valid @RequestBody UserAvatarDTO userAvatarDTO) {
+    public ApiResult<Void> updateAvatar(@Valid @RequestBody UserAvatarDTO userAvatarDTO) {
         userFeignClient.updateAvatar(userAvatarDTO);
+        return ApiResult.success();
     }
 
     @Operation(summary = "更新用户信息",
                description = "更新当前登录用户的基本信息")
-    @ApiResponses(@ApiResponse(responseCode = "200", description = "更新成功"))
     @PostMapping("/updateUser")
-    public void updateUser(@Valid @RequestBody UpdateUserDTO updateUserDTO) {
+    public ApiResult<Void> updateUser(@Valid @RequestBody UpdateUserDTO updateUserDTO) {
         userFeignClient.updateUser(updateUserDTO);
+        return ApiResult.success();
     }
 
     @Operation(summary = "测试登录（跳过验证码）",
