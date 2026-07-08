@@ -28,19 +28,19 @@ public class RequestPageEntity implements Serializable {
     /**
      * 页码，默认从一页开始
      */
-    @Schema(description = "页码")
+    @Schema(description = "页码", example = "0")
     private Integer pageNo = 1;
 
     /**
      * 每页大小，默认一页查询10条数据
      */
-    @Schema(description = "每页条数")
+    @Schema(description = "每页条数", example = "0")
     private Integer pageSize = DEFAULT_PAGE_SIZE;
 
     /**
      * 排序字段
      */
-    @Schema(description = "排序字段")
+    @Schema(description = "排序字段", example = "string")
     private List<String> sortField;
 
 

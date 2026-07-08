@@ -5,6 +5,8 @@ import cn.net.mall.admin.dto.*;
 import cn.net.mall.admin.client.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,6 +66,7 @@ public class AdminAuthController {
     }
 
     @Operation(summary = "退出登录")
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "退出成功"))
     @PostMapping("/logout")
     public void logout() {
         // 转发到 auth 服务处理 token 清理
@@ -75,13 +78,17 @@ public class AdminAuthController {
         return userFeignClient.resetPassword(resetPasswordDTO);
     }
 
-    @Operation(summary = "更新用户头像")
+    @Operation(summary = "更新用户头像",
+               description = "更新当前登录用户的头像地址")
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "更新成功"))
     @PostMapping("/updateAvatar")
     public void updateAvatar(@Valid @RequestBody UserAvatarDTO userAvatarDTO) {
         userFeignClient.updateAvatar(userAvatarDTO);
     }
 
-    @Operation(summary = "更新用户信息")
+    @Operation(summary = "更新用户信息",
+               description = "更新当前登录用户的基本信息")
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "更新成功"))
     @PostMapping("/updateUser")
     public void updateUser(@Valid @RequestBody UpdateUserDTO updateUserDTO) {
         userFeignClient.updateUser(updateUserDTO);

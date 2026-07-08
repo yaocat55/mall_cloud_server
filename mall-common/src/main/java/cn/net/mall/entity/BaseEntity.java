@@ -1,5 +1,6 @@
 package cn.net.mall.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,40 +21,48 @@ public class BaseEntity implements Serializable {
     /**
      * 系统ID
      */
+    @Schema(description = "系统ID", example = "13")
     private Long id;
 
     /**
      * 创建人ID
      */
+    @Schema(description = "创建人ID", example = "1")
     private Long createUserId;
 
     /**
      * 创建人名称
      */
+    @Schema(description = "创建人名称", example = "admin")
     private String createUserName;
 
     /**
      * 创建时间
      */
+    @Schema(description = "创建时间", example = "2024-01-01 00:00:00")
     private Date createTime;
 
     /**
      * 修改人ID
      */
+    @Schema(description = "修改人ID", example = "1")
     private Long updateUserId;
 
     /**
      * 修改人名称
      */
+    @Schema(description = "修改人名称", example = "admin")
     private String updateUserName;
 
     /**
      * 修改时间
      */
+    @Schema(description = "修改时间", example = "2024-01-01 00:00:00")
     private Date updateTime;
 
     /**
      * 是否删除
      */
+    @Schema(description = "是否删除 0-否 1-是", example = "0")
     private Integer isDel;
 }
