@@ -3,10 +3,10 @@ SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Database: mall_trade_0
+-- Database: cloud_mall_trade_0
 -- ----------------------------
-CREATE DATABASE IF NOT EXISTS mall_trade_0 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE mall_trade_0;
+CREATE DATABASE IF NOT EXISTS cloud_mall_trade_0 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE cloud_mall_trade_0;
 
 CREATE TABLE IF NOT EXISTS `t_order_0` (
   `id` bigint(20) NOT NULL COMMENT "订单ID",
@@ -937,10 +937,10 @@ CREATE TABLE IF NOT EXISTS `t_order_delivery_address_24` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT="订单收货地址表";
 
 -- ----------------------------
--- Database: mall_trade_1
+-- Database: cloud_mall_trade_1
 -- ----------------------------
-CREATE DATABASE IF NOT EXISTS mall_trade_1 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE mall_trade_1;
+CREATE DATABASE IF NOT EXISTS cloud_mall_trade_1 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE cloud_mall_trade_1;
 
 CREATE TABLE IF NOT EXISTS `t_order_1` (
   `id` bigint(20) NOT NULL COMMENT "订单ID",
@@ -1871,10 +1871,10 @@ CREATE TABLE IF NOT EXISTS `t_order_delivery_address_25` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT="订单收货地址表";
 
 -- ----------------------------
--- Database: mall_trade_2
+-- Database: cloud_mall_trade_2
 -- ----------------------------
-CREATE DATABASE IF NOT EXISTS mall_trade_2 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE mall_trade_2;
+CREATE DATABASE IF NOT EXISTS cloud_mall_trade_2 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE cloud_mall_trade_2;
 
 CREATE TABLE IF NOT EXISTS `t_order_2` (
   `id` bigint(20) NOT NULL COMMENT "订单ID",
@@ -2805,10 +2805,10 @@ CREATE TABLE IF NOT EXISTS `t_order_delivery_address_26` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT="订单收货地址表";
 
 -- ----------------------------
--- Database: mall_trade_3
+-- Database: cloud_mall_trade_3
 -- ----------------------------
-CREATE DATABASE IF NOT EXISTS mall_trade_3 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE mall_trade_3;
+CREATE DATABASE IF NOT EXISTS cloud_mall_trade_3 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE cloud_mall_trade_3;
 
 CREATE TABLE IF NOT EXISTS `t_order_3` (
   `id` bigint(20) NOT NULL COMMENT "订单ID",
@@ -3739,10 +3739,10 @@ CREATE TABLE IF NOT EXISTS `t_order_delivery_address_27` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT="订单收货地址表";
 
 -- ----------------------------
--- Database: mall_trade_4
+-- Database: cloud_mall_trade_4
 -- ----------------------------
-CREATE DATABASE IF NOT EXISTS mall_trade_4 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE mall_trade_4;
+CREATE DATABASE IF NOT EXISTS cloud_mall_trade_4 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE cloud_mall_trade_4;
 
 CREATE TABLE IF NOT EXISTS `t_order_4` (
   `id` bigint(20) NOT NULL COMMENT "订单ID",
@@ -4673,10 +4673,10 @@ CREATE TABLE IF NOT EXISTS `t_order_delivery_address_28` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT="订单收货地址表";
 
 -- ----------------------------
--- Database: mall_trade_5
+-- Database: cloud_mall_trade_5
 -- ----------------------------
-CREATE DATABASE IF NOT EXISTS mall_trade_5 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE mall_trade_5;
+CREATE DATABASE IF NOT EXISTS cloud_mall_trade_5 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE cloud_mall_trade_5;
 
 CREATE TABLE IF NOT EXISTS `t_order_5` (
   `id` bigint(20) NOT NULL COMMENT "订单ID",
@@ -5607,10 +5607,10 @@ CREATE TABLE IF NOT EXISTS `t_order_delivery_address_29` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT="订单收货地址表";
 
 -- ----------------------------
--- Database: mall_trade_6
+-- Database: cloud_mall_trade_6
 -- ----------------------------
-CREATE DATABASE IF NOT EXISTS mall_trade_6 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE mall_trade_6;
+CREATE DATABASE IF NOT EXISTS cloud_mall_trade_6 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE cloud_mall_trade_6;
 
 CREATE TABLE IF NOT EXISTS `t_order_6` (
   `id` bigint(20) NOT NULL COMMENT "订单ID",
@@ -6541,10 +6541,10 @@ CREATE TABLE IF NOT EXISTS `t_order_delivery_address_30` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT="订单收货地址表";
 
 -- ----------------------------
--- Database: mall_trade_7
+-- Database: cloud_mall_trade_7
 -- ----------------------------
-CREATE DATABASE IF NOT EXISTS mall_trade_7 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE mall_trade_7;
+CREATE DATABASE IF NOT EXISTS cloud_mall_trade_7 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE cloud_mall_trade_7;
 
 CREATE TABLE IF NOT EXISTS `t_order_7` (
   `id` bigint(20) NOT NULL COMMENT "订单ID",

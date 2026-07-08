@@ -1,50 +1,50 @@
 dataSources:
-  cloud_message_0:
+  cloud_mall_message_0:
     dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_message_0?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_mall_message_0?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: ${DB_USER:root}
     password: ${DB_PWD:123456}
-  cloud_message_1:
+  cloud_mall_message_1:
     dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_message_1?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_mall_message_1?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: ${DB_USER:root}
     password: ${DB_PWD:123456}
-  cloud_message_2:
+  cloud_mall_message_2:
     dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_message_2?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_mall_message_2?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: ${DB_USER:root}
     password: ${DB_PWD:123456}
-  cloud_message_3:
+  cloud_mall_message_3:
     dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_message_3?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_mall_message_3?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: ${DB_USER:root}
     password: ${DB_PWD:123456}
-  cloud_message_4:
+  cloud_mall_message_4:
     dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_message_4?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_mall_message_4?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: ${DB_USER:root}
     password: ${DB_PWD:123456}
-  cloud_message_5:
+  cloud_mall_message_5:
     dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_message_5?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_mall_message_5?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: ${DB_USER:root}
     password: ${DB_PWD:123456}
-  cloud_message_6:
+  cloud_mall_message_6:
     dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_message_6?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_mall_message_6?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: ${DB_USER:root}
     password: ${DB_PWD:123456}
-  cloud_message_7:
+  cloud_mall_message_7:
     dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_message_7?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:33081}/cloud_mall_message_7?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: ${DB_USER:root}
     password: ${DB_PWD:123456}
 
@@ -52,7 +52,7 @@ rules:
 - !SHARDING
   tables:
     common_notify:
-      actualDataNodes: cloud_message_${0..7}.common_notify_${0..63}
+      actualDataNodes: cloud_mall_message_${0..7}.common_notify_${0..63}
       tableStrategy:
         standard:
           shardingColumn: to_user_id
@@ -69,7 +69,7 @@ rules:
     database-inline-common-notify:
       type: INLINE
       props:
-        algorithm-expression: cloud_message_${to_user_id % 8}
+        algorithm-expression: cloud_mall_message_${to_user_id % 8}
     t-common-notify-inline:
       type: INLINE
       props:
