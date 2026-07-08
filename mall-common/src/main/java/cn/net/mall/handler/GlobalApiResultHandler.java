@@ -32,11 +32,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  */
 // @RestControllerAdvice (registered by WebAutoConfiguration)
 public class GlobalApiResultHandler implements ResponseBodyAdvice<Object> {
-    public static final String URL_PREFIX = "/v1";
+    private static final String URL_PREFIX = "/v1";
+    private static final String INTERNAL_PREFIX = "/v1/internal/";
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (sra == null) return false;
         HttpServletRequest request = sra.getRequest();
         String requestURI = request.getRequestURI();
         return matchUrl(requestURI);
@@ -44,6 +46,10 @@ public class GlobalApiResultHandler implements ResponseBodyAdvice<Object> {
 
     private boolean matchUrl(String uri) {
         if (uri == null || uri.isEmpty()) {
+            return false;
+        }
+        // 内部 Feign 接口不包装（Feign 期望裸 DTO）
+        if (uri.contains(INTERNAL_PREFIX)) {
             return false;
         }
         return uri.contains(URL_PREFIX);
