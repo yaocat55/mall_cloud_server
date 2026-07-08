@@ -17,24 +17,24 @@ import lombok.NoArgsConstructor;
 @Data
 public class CommonNotifyDTO extends BaseEntity {
 
-    @Schema(description = "类型")
+    @Schema(description = "类型", example = "0")
     private Integer type;
 
-    @Schema(description = "标题")
+    @Schema(description = "标题", example = "string")
     private String title;
 
-    @Schema(description = "内容")
+    @Schema(description = "内容", example = "string")
     private String content;
 
-    @Schema(description = "link Url")
+    @Schema(description = "link Url", example = "string")
     private String linkUrl;
 
-    @Schema(description = "read Status")
+    @Schema(description = "read Status", example = "0")
     private Integer readStatus;
 
-    @Schema(description = "to User Id")
+    @Schema(description = "to User Id", example = "0")
     private Long toUserId;
 
-    @Schema(description = "is Push")
+    @Schema(description = "is Push", example = "0")
     private Integer isPush;
 }

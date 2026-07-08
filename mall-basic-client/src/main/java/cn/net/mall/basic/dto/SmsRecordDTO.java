@@ -25,24 +25,24 @@ public class SmsRecordDTO extends BaseEntity {
 	 * 手机号
 	 */
 	@Sensitive
-	@Schema(description = "手机号")
+	@Schema(description = "手机号", example = "string")
 	private String phone;
 
 	/**
 	 * 验证码
 	 */
-	@Schema(description = "sms Code")
+	@Schema(description = "sms Code", example = "string")
 	private String smsCode;
 
 	/**
 	 * 有效期
 	 */
-	@Schema(description = "expire Second")
+	@Schema(description = "expire Second", example = "0")
 	private Integer expireSecond;
 
 	/**
 	 * 发送时间
 	 */
-	@Schema(description = "send Time")
+	@Schema(description = "send Time", example = "2024-01-01")
 	private Date sendTime;
 }

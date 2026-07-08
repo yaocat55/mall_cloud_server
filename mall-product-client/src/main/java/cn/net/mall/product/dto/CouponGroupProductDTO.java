@@ -18,13 +18,13 @@ public class CouponGroupProductDTO {
     /**
      * 使用优惠券
      */
-    @Schema(description = "coupon Web Entity")
+    @Schema(description = "coupon Web Entity", example = "string")
     private CouponDTO couponWebEntity;
 
     /**
      * 购物车中的商品列表
      */
-    @Schema(description = "shopping Cart List")
+    @Schema(description = "shopping Cart List", example = "string")
     private List<ShoppingCartProductDTO> shoppingCartList;
 
 

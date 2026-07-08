@@ -20,30 +20,30 @@ public class IndexNoticeDetailDTO {
     /**
      * 系统编号
      */
-    @Schema(description = "系统ID")
+    @Schema(description = "系统ID", example = "0")
     private Long id;
 
     /**
      * 标题
      */
-    @Schema(description = "标题")
+    @Schema(description = "标题", example = "string")
     private String title;
 
 	/**
 	 * 发布时间
 	 */
-	@Schema(description = "创建时间")
+	@Schema(description = "创建时间", example = "string")
 	private String createTime;
 
     /**
      * 公告详情
      */
-    @Schema(description = "内容")
+    @Schema(description = "内容", example = "string")
     private String content;
 
     /**
      * 排序
      */
-    @Schema(description = "排序")
+    @Schema(description = "排序", example = "0")
     private Integer sort;
 }

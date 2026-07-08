@@ -14,6 +14,6 @@ import java.util.List;
 public class OrderSettlementDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "结算项集合")
+    @Schema(description = "结算项集合", example = "string")
     private List<OrderSettlementItemDTO> items;
 }

@@ -16,13 +16,13 @@ public class ProductGroupAttributeValueDTO {
     /**
      * 系统ID
      */
-    @Schema(description = "系统ID")
+    @Schema(description = "系统ID", example = "0")
     private Long id;
 
     /**
      * 属性值
      */
-    @Schema(description = "值")
+    @Schema(description = "值", example = "string")
     private String value;
 
 }

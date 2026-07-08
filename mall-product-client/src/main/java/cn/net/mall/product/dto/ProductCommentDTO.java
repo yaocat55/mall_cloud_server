@@ -19,67 +19,67 @@ public class ProductCommentDTO {
     /**
      * 系统ID
      */
-    @Schema(description = "系统ID")
+    @Schema(description = "系统ID", example = "0")
     private Long id;
 
     /**
      * 商品ID
      */
-    @Schema(description = "商品ID")
+    @Schema(description = "商品ID", example = "0")
     private Long productId;
 
     /**
      * 父评论ID
      */
-    @Schema(description = "上级ID")
+    @Schema(description = "上级ID", example = "0")
     private Long parentId;
 
     /**
      * 用户ID
      */
-    @Schema(description = "用户ID")
+    @Schema(description = "用户ID", example = "0")
     private Long userId;
 
     /**
      * 个人头像
      */
-    @Schema(description = "头像URL")
+    @Schema(description = "头像URL", example = "string")
     private String avatarUrl;
 
     /**
      * 用户昵称
      */
-    @Schema(description = "昵称")
+    @Schema(description = "昵称", example = "string")
     private String nickName;
 
-    @Schema(description = "用户名")
+    @Schema(description = "用户名", example = "string")
     private String userName;
 
     /**
      * 评论内容
      */
     @ValidSensitiveWordField
-    @Schema(description = "内容")
+    @Schema(description = "内容", example = "string")
     private String content;
 
     /**
      * 评分
      */
-    @Schema(description = "评分")
+    @Schema(description = "评分", example = "0")
     private Integer rating;
 
     /**
      * 评价类型 1：好评 2：中评 3：差评
      */
-    @Schema(description = "类型")
+    @Schema(description = "类型", example = "0")
     private Integer type;
 
     /**
      * 评价时间
      */
-    @Schema(description = "创建时间(字符串)")
+    @Schema(description = "创建时间(字符串)", example = "string")
     private String createTimeStr;
 
-    @Schema(description = "photos")
+    @Schema(description = "photos", example = "string")
     private List<String> photos;
 }

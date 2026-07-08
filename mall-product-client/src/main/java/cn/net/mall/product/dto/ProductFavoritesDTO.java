@@ -17,12 +17,12 @@ public class ProductFavoritesDTO {
      * 商品ID
      */
     @NotNull(message = "商品ID不能为空")
-    @Schema(description = "商品ID")
+    @Schema(description = "商品ID", example = "0")
     private Long productId;
 
     /**
      * 是否收藏
      */
-    @Schema(description = "是否已收藏")
+    @Schema(description = "是否已收藏", example = "true")
     private Boolean isFavorites;
 }

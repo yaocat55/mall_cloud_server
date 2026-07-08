@@ -18,19 +18,19 @@ public class ProductGroupAttributeDTO {
     /**
      * 属性
      */
-    @Schema(description = "系统ID")
+    @Schema(description = "系统ID", example = "0")
     private Long id;
 
     /**
      * 属性名称
      */
-    @Schema(description = "名称")
+    @Schema(description = "名称", example = "string")
     private String name;
 
     /**
      * 属性值集合
      */
-    @Schema(description = "value List")
+    @Schema(description = "value List", example = "string")
     private List<ProductGroupAttributeValueDTO> valueList;
 
 }
