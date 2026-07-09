@@ -2,6 +2,8 @@ package cn.net.mall.admin.controller.web;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.net.mall.admin.dto.*;
+import cn.net.mall.admin.dto.auth.MenuTreeDTO;
+import cn.net.mall.admin.service.auth.MenuService;
 import cn.net.mall.admin.entity.auth.web.UserPhoneLoginWebEntity;
 import cn.net.mall.admin.entity.auth.web.UserWebEntity;
 import cn.net.mall.admin.service.auth.UserService;
@@ -27,14 +29,16 @@ import java.util.Objects;
  */
 @Tag(name = "Web 用户", description = "管理后台：Web端用户登录、信息管理")
 @RestController
-@RequestMapping("/v1/web/user")
+@RequestMapping("/v1/auth/web/user")
 @Validated
 public class WebUserController {
 
     private final UserService userService;
+    private final MenuService menuService;
 
-    public WebUserController(UserService userService) {
+    public WebUserController(UserService userService, MenuService menuService) {
         this.userService = userService;
+        this.menuService = menuService;
     }
 
     @Operation(summary = "获取图形验证码", description = "获取图形验证码（base64图片）")
@@ -108,6 +112,12 @@ public class WebUserController {
             return BeanUtil.toBean(userInfo, UserInfoDTO.class);
         }
         return null;
+    }
+
+    @Operation(summary = "获取当前用户菜单树", description = "根据当前用户的角色返回可见的菜单树（前端渲染侧边栏用）")
+    @GetMapping("/menus")
+    public List<MenuTreeDTO> getCurrentUserMenus() {
+        return menuService.getCurrentUserMenuTree();
     }
 
 

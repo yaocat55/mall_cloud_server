@@ -103,6 +103,14 @@
         WHERE user_id = #{userId}
     </delete>
 
+    <delete id="deleteByRoleIds">
+        DELETE FROM auth_user_role
+        WHERE role_id IN
+        <foreach collection="roleIds" item="roleId" open="(" close=")" separator=",">
+            #{roleId}
+        </foreach>
+    </delete>
+
     <insert id="insert" parameterType="cn.net.mall.admin.entity.auth.UserRoleEntity">
         INSERT INTO auth_user_role
         <trim prefix="(" suffix=")" suffixOverrides=",">

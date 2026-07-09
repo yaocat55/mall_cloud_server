@@ -13,18 +13,18 @@ import static cn.net.mall.admin.constant.AppConstant.ADMIN_SERVICE_NAME;
 @FeignClient(value = ADMIN_SERVICE_NAME, contextId = "jobFeignClient")
 public interface JobFeignClient {
     @Operation(summary = "分页查询岗位")
-    @PostMapping("/v1/job/searchByPage")
+    @PostMapping("/v1/auth/job/searchByPage")
     ResponsePageEntity<?> searchByPage(@RequestBody Map condition);
     @Operation(summary = "查询所有岗位")
-    @GetMapping("/v1/job/all")
+    @GetMapping("/v1/auth/job/all")
     List all();
     @Operation(summary = "新增岗位")
-    @PostMapping("/v1/job/insert")
+    @PostMapping("/v1/auth/job/insert")
     int insert(@RequestBody Object entity);
     @Operation(summary = "修改岗位")
-    @PostMapping("/v1/job/update")
+    @PostMapping("/v1/auth/job/update")
     int update(@RequestBody Object entity);
     @Operation(summary = "删除岗位")
-    @PostMapping("/v1/job/deleteByIds")
+    @PostMapping("/v1/auth/job/deleteByIds")
     int deleteByIds(@RequestBody @NotNull List ids);
 }

@@ -1,6 +1,6 @@
 package cn.net.mall.mobile.dto;
 
-import cn.net.mall.admin.dto.UserDTO;
+import cn.net.mall.customer.dto.CustomerUserDTO;
 import cn.net.mall.order.dto.OrderTradeCountDTO;
 import cn.net.mall.product.dto.IndexProductDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,7 +13,7 @@ import java.util.List;
 public class UserProfileDTO {
 
     @Schema(description = "用户基本信息（昵称、头像、手机号、会员信息等）")
-    private UserDTO user;
+    private CustomerUserDTO user;
 
     @Schema(description = "各状态订单数量统计")
     private OrderTradeCountDTO orderCounts;

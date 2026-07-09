@@ -76,4 +76,12 @@ public interface UserRoleMapper {
      */
     int deleteByUserId(@Param("userId") Long userId);
 
+    /**
+     * 根据角色ID集合批量删除用户角色关联
+     *
+     * @param roleIds 角色ID集合
+     * @return 影响行数
+     */
+    int deleteByRoleIds(@Param("roleIds") List<Long> roleIds);
+
 }

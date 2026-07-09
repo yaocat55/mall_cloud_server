@@ -7,6 +7,7 @@ import cn.net.mall.entity.ResponsePageEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Tag(name = "角色菜单管理", description = "管理后台：角色菜单权限")
 @RestController
-@RequestMapping("/v1/roleMenu")
+@RequestMapping("/v1/auth/role-menu")
 public class RoleMenuController {
 	
 	private RoleMenuService roleMenuService;
@@ -58,6 +59,7 @@ public class RoleMenuController {
      * @return 影响行数
      */
 	@Operation(summary = "添加角色菜单关联", description = "添加角色菜单关联")
+	@PreAuthorize("hasRole('admin')")
 	@PostMapping("/insert")
 	public int insert(@RequestBody RoleMenuEntity roleMenuEntity) {
 		return roleMenuService.insert(roleMenuEntity);
@@ -70,6 +72,7 @@ public class RoleMenuController {
      * @return 影响行数
      */
 	@Operation(summary = "修改角色菜单关联", description = "修改角色菜单关联")
+	@PreAuthorize("hasRole('admin')")
 	@PostMapping("/update")
 	public int update(@RequestBody RoleMenuEntity roleMenuEntity) {
 		return roleMenuService.update(roleMenuEntity);
@@ -82,6 +85,7 @@ public class RoleMenuController {
      * @return 影响行数
      */
 	@Operation(summary = "删除角色菜单关联", description = "删除角色菜单关联")
+	@PreAuthorize("hasRole('admin')")
 	@PostMapping("/deleteById")
 	public int deleteById(@RequestBody @NotNull Long id) {
 		return roleMenuService.deleteById(id);

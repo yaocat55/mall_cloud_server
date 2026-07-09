@@ -24,7 +24,7 @@
     <sql id="queryWhere">
         <where>
             <if test="roleIdList != null and roleIdList.size()>0">
-                AND roleIdList IN
+                AND role_id IN
                 <foreach collection="roleIdList" item="roleId" open="(" close=")" separator=",">
                     #{roleId}
                 </foreach>

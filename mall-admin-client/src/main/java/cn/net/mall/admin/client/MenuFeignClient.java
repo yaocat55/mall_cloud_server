@@ -14,21 +14,21 @@ import static cn.net.mall.admin.constant.AppConstant.ADMIN_SERVICE_NAME;
 @FeignClient(value = ADMIN_SERVICE_NAME, contextId = "menuFeignClient")
 public interface MenuFeignClient {
     @Operation(summary = "分页查询菜单")
-    @PostMapping("/v1/menu/searchByPage")
+    @PostMapping("/v1/auth/menu/searchByPage")
     ResponsePageEntity<?> searchByPage(@RequestBody Map condition);
     @Operation(summary = "获取菜单树")
-    @GetMapping("/v1/menu/getMenuTree")
+    @GetMapping("/v1/auth/menu/getMenuTree")
     List getMenuTree();
     @Operation(summary = "查询菜单列表")
-    @PostMapping("/v1/menu/getMenu")
+    @PostMapping("/v1/auth/menu/getMenu")
     List getMenu(@RequestBody Map condition);
     @Operation(summary = "新增菜单")
-    @PostMapping("/v1/menu/insert")
+    @PostMapping("/v1/auth/menu/insert")
     int insert(@RequestBody Object entity);
     @Operation(summary = "修改菜单")
-    @PostMapping("/v1/menu/update")
+    @PostMapping("/v1/auth/menu/update")
     int update(@RequestBody Object entity);
     @Operation(summary = "删除菜单")
-    @PostMapping("/v1/menu/deleteByIds")
+    @PostMapping("/v1/auth/menu/deleteByIds")
     int deleteByIds(@RequestBody @NotNull List ids);
 }

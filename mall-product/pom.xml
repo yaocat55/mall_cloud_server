@@ -48,6 +48,12 @@
             <version>${mall-admin-client.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>cn.net.mall</groupId>
+            <artifactId>mall-customer-client</artifactId>
+            <version>${mall-customer-client.version}</version>
+            <scope>compile</scope>
+        </dependency>
 
         <dependency>
             <groupId>cn.net.mall</groupId>

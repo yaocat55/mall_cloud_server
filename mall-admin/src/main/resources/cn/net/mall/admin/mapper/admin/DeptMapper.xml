@@ -116,9 +116,9 @@
           id,
           name,
           pid,
-          valid_status,
+          valid_status
         FROM auth_dept sd
-        INNER JOIN auth_role_dept srd ON sd.id = srd.role_id
+        INNER JOIN auth_role_dept srd ON sd.id = srd.dept_id
         <where>
             srd.role_id IN
             <foreach collection="roleIdList" item="roleId" open="(" close=")" separator=",">

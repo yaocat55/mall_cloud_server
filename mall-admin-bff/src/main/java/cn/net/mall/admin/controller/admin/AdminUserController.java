@@ -51,12 +51,6 @@ public class AdminUserController {
         return ApiResultUtil.success(userFeignClient.findByPhone(phone));
     }
 
-    @Operation(summary = "用户注册")
-    @PostMapping("/register")
-    public ApiResult<UserDTO> register(@Valid @RequestBody RegisterDTO registerDTO) {
-        return ApiResultUtil.success(userFeignClient.register(registerDTO));
-    }
-
     @Operation(summary = "更新用户头像")
     @PostMapping("/updateAvatar")
     public ApiResult<Void> updateAvatar(@Valid @RequestBody UserAvatarDTO userAvatarDTO) {
@@ -68,13 +62,6 @@ public class AdminUserController {
     @PostMapping("/updateUser")
     public ApiResult<Void> updateUser(@Valid @RequestBody UpdateUserDTO updateUserDTO) {
         userFeignClient.updateUser(updateUserDTO);
-        return ApiResultUtil.success();
-    }
-
-    @Operation(summary = "绑定手机号")
-    @PostMapping("/bindPhone")
-    public ApiResult<Void> bindPhone(@Valid @RequestBody BindPhoneDTO bindPhoneDTO) {
-        userFeignClient.bindPhone(bindPhoneDTO);
         return ApiResultUtil.success();
     }
 

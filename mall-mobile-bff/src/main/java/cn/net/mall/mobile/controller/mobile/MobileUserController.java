@@ -1,15 +1,15 @@
 package cn.net.mall.mobile.controller.mobile;
 
-import cn.net.mall.admin.client.DeliveryAddressFeignClient;
-import cn.net.mall.admin.client.UserFeignClient;
-import cn.net.mall.admin.dto.DeliveryAddressDTO;
-import cn.net.mall.admin.dto.DeliveryAddressDefaultDTO;
-import cn.net.mall.admin.dto.UpdateUserDTO;
-import cn.net.mall.admin.dto.UserAvatarDTO;
 import cn.net.mall.basic.client.AreaFeignClient;
 import cn.net.mall.basic.client.UploadFeignClient;
 import cn.net.mall.basic.dto.AreaDTO;
 import cn.net.mall.basic.dto.FileDTO;
+import cn.net.mall.customer.client.AddressFeignClient;
+import cn.net.mall.customer.client.MemberFeignClient;
+import cn.net.mall.customer.dto.AddressDTO;
+import cn.net.mall.customer.dto.AddressDefaultDTO;
+import cn.net.mall.customer.dto.CustomerAvatarDTO;
+import cn.net.mall.customer.dto.CustomerUpdateDTO;
 import cn.net.mall.mobile.dto.UserProfileDTO;
 import cn.net.mall.order.client.OrderFeignClient;
 import cn.net.mall.product.client.IndexFeignClient;
@@ -34,8 +34,8 @@ import java.util.*;
 @Tag(name = "移动端-用户", description = "用户信息、收货地址、个人资料接口")
 public class MobileUserController {
 
-    private final UserFeignClient userFeignClient;
-    private final DeliveryAddressFeignClient deliveryAddressFeignClient;
+    private final MemberFeignClient memberFeignClient;
+    private final AddressFeignClient addressFeignClient;
     private final AreaFeignClient areaFeignClient;
     private final UploadFeignClient uploadFeignClient;
     private final OrderFeignClient orderFeignClient;
@@ -49,7 +49,7 @@ public class MobileUserController {
     @GetMapping("/profile")
     public ApiResult<UserProfileDTO> getProfile() {
         UserProfileDTO result = new UserProfileDTO();
-        try { result.setUser(userFeignClient.getUserDetail());
+        try { result.setUser(memberFeignClient.getUserDetail());
         } catch (Exception e) { log.warn("获取用户详情失败", e); }
         try { result.setOrderCounts(orderFeignClient.getUserOrderTradeCount());
         } catch (Exception e) { log.warn("获取订单统计失败", e); }
@@ -61,13 +61,13 @@ public class MobileUserController {
     @Operation(summary = "获取用户详情")
     @GetMapping("/detail")
     public ApiResult<Object> getUserDetail() {
-        return ApiResultUtil.success(userFeignClient.getUserDetail());
+        return ApiResultUtil.success(memberFeignClient.getUserDetail());
     }
 
     @Operation(summary = "更新用户资料")
     @PostMapping("/update")
-    public ApiResult<Void> updateUser(@Valid @RequestBody UpdateUserDTO dto) {
-        userFeignClient.updateUser(dto);
+    public ApiResult<Void> updateUser(@Valid @RequestBody CustomerUpdateDTO dto) {
+        memberFeignClient.updateUser(dto);
         return ApiResultUtil.success();
     }
 
@@ -75,42 +75,42 @@ public class MobileUserController {
     @PostMapping(value = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResult<Void> updateAvatar(@RequestParam("file") MultipartFile file) throws Exception {
         FileDTO fileDTO = uploadFeignClient.imageUpload(file);
-        UserAvatarDTO avatarDTO = new UserAvatarDTO();
+        CustomerAvatarDTO avatarDTO = new CustomerAvatarDTO();
         avatarDTO.setFileName(file.getOriginalFilename());
         avatarDTO.setFileUrl(fileDTO.getDownloadUrl());
-        userFeignClient.updateAvatar(avatarDTO);
+        memberFeignClient.updateAvatar(avatarDTO);
         return ApiResultUtil.success();
     }
 
     @Operation(summary = "获取收货地址列表")
     @GetMapping("/address/list")
     public ApiResult<List> getAddressList() {
-        return ApiResultUtil.success(deliveryAddressFeignClient.getUserDeliveryAddressList());
+        return ApiResultUtil.success(addressFeignClient.getUserAddressList());
     }
 
     @Operation(summary = "获取收货地址详情")
     @GetMapping("/address/detail")
-    public ApiResult<DeliveryAddressDTO> getAddressDetail(@RequestParam("id") Long id) {
-        return ApiResultUtil.success(deliveryAddressFeignClient.getDetail(id));
+    public ApiResult<AddressDTO> getAddressDetail(@RequestParam("id") Long id) {
+        return ApiResultUtil.success(addressFeignClient.getDetail(id));
     }
 
     @Operation(summary = "保存收货地址")
     @PostMapping("/address/save")
-    public ApiResult<Void> saveAddress(@Valid @RequestBody DeliveryAddressDTO dto) {
-        deliveryAddressFeignClient.save(dto);
+    public ApiResult<Void> saveAddress(@Valid @RequestBody AddressDTO dto) {
+        addressFeignClient.save(dto);
         return ApiResultUtil.success();
     }
 
     @Operation(summary = "删除收货地址")
     @PostMapping("/address/delete")
-    public ApiResult<Integer> deleteAddress(@RequestBody List ids) {
-        return ApiResultUtil.success(deliveryAddressFeignClient.deleteByIds(ids));
+    public ApiResult<Integer> deleteAddress(@RequestBody List<Long> ids) {
+        return ApiResultUtil.success(addressFeignClient.deleteByIds(ids));
     }
 
     @Operation(summary = "设置默认收货地址")
     @PostMapping("/address/setDefault")
-    public ApiResult<Void> setDefaultAddress(@RequestBody DeliveryAddressDefaultDTO dto) {
-        deliveryAddressFeignClient.setDefaultDeliveryAddress(dto);
+    public ApiResult<Void> setDefaultAddress(@RequestBody AddressDefaultDTO dto) {
+        addressFeignClient.setDefaultAddress(dto);
         return ApiResultUtil.success();
     }
 

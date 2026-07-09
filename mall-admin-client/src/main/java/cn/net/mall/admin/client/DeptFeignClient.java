@@ -13,18 +13,18 @@ import static cn.net.mall.admin.constant.AppConstant.ADMIN_SERVICE_NAME;
 @FeignClient(value = ADMIN_SERVICE_NAME, contextId = "deptFeignClient")
 public interface DeptFeignClient {
     @Operation(summary = "分页查询部门")
-    @PostMapping("/v1/dept/searchByPage")
+    @PostMapping("/v1/auth/dept/searchByPage")
     ResponsePageEntity<?> searchByPage(@RequestBody Map condition);
     @Operation(summary = "查询部门树")
-    @PostMapping("/v1/dept/searchByTree")
+    @PostMapping("/v1/auth/dept/searchByTree")
     List searchByTree(@RequestBody Map params);
     @Operation(summary = "新增部门")
-    @PostMapping("/v1/dept/insert")
+    @PostMapping("/v1/auth/dept/insert")
     int insert(@RequestBody Object entity);
     @Operation(summary = "修改部门")
-    @PostMapping("/v1/dept/update")
+    @PostMapping("/v1/auth/dept/update")
     int update(@RequestBody Object entity);
     @Operation(summary = "删除部门")
-    @PostMapping("/v1/dept/deleteByIds")
+    @PostMapping("/v1/auth/dept/deleteByIds")
     int deleteByIds(@RequestBody @NotNull List ids);
 }

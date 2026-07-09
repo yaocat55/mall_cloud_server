@@ -8,6 +8,8 @@ import cn.net.mall.workid.IdGenerateHelper;
 import cn.net.mall.mapper.BaseMapper;
 import cn.net.mall.admin.mapper.auth.RoleMapper;
 import cn.net.mall.admin.mapper.auth.RoleMenuMapper;
+import cn.net.mall.admin.mapper.auth.UserRoleMapper;
+import cn.net.mall.admin.mapper.auth.RoleDeptMapper;
 import cn.net.mall.service.BaseService;
 import cn.net.mall.util.AssertUtil;
 import cn.net.mall.util.FillUserUtil;
@@ -29,11 +31,17 @@ public class RoleService extends BaseService<RoleEntity, RoleConditionEntity> {
 
     private final RoleMapper roleMapper;
     private final RoleMenuMapper roleMenuMapper;
+    private final UserRoleMapper userRoleMapper;
+    private final RoleDeptMapper roleDeptMapper;
     private final IdGenerateHelper idGenerateHelper;
 
-    public RoleService(RoleMapper roleMapper, RoleMenuMapper roleMenuMapper, IdGenerateHelper idGenerateHelper) {
+    public RoleService(RoleMapper roleMapper, RoleMenuMapper roleMenuMapper,
+                       UserRoleMapper userRoleMapper, RoleDeptMapper roleDeptMapper,
+                       IdGenerateHelper idGenerateHelper) {
         this.roleMapper = roleMapper;
         this.roleMenuMapper = roleMenuMapper;
+        this.userRoleMapper = userRoleMapper;
+        this.roleDeptMapper = roleDeptMapper;
         this.idGenerateHelper = idGenerateHelper;
     }
 
@@ -113,9 +121,15 @@ public class RoleService extends BaseService<RoleEntity, RoleConditionEntity> {
      * @param ids 系统ID
      * @return 结果
      */
+    @Transactional(rollbackFor = Throwable.class)
     public int deleteByIds(List<Long> ids) {
         List<RoleEntity> roleEntities = roleMapper.findByIds(ids);
         AssertUtil.notEmpty(roleEntities, "角色已被删除");
+
+        // 级联清理关联表
+        roleMenuMapper.deleteByRoleIds(ids);
+        userRoleMapper.deleteByRoleIds(ids);
+        roleDeptMapper.deleteByRoleIds(ids);
 
         RoleEntity roleEntity = new RoleEntity();
         FillUserUtil.fillUpdateUserInfo(roleEntity);

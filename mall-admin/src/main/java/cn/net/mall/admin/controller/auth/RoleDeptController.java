@@ -7,6 +7,7 @@ import cn.net.mall.entity.ResponsePageEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Tag(name = "角色部门管理", description = "管理后台：角色部门关联")
 @RestController
-@RequestMapping("/v1/roleDept")
+@RequestMapping("/v1/auth/role-dept")
 public class RoleDeptController {
 	
 	private final RoleDeptService roleDeptService;
@@ -57,6 +58,7 @@ public class RoleDeptController {
      * @return 影响行数
      */
 	@Operation(summary = "添加角色部门关联", description = "添加角色部门关联")
+	@PreAuthorize("hasRole('admin')")
 	@PostMapping("/insert")
 	public int insert(@RequestBody RoleDeptEntity roleDeptEntity) {
 		return roleDeptService.insert(roleDeptEntity);
@@ -69,6 +71,7 @@ public class RoleDeptController {
      * @return 影响行数
      */
 	@Operation(summary = "修改角色部门关联", description = "修改角色部门关联")
+	@PreAuthorize("hasRole('admin')")
 	@PostMapping("/update")
 	public int update(@RequestBody RoleDeptEntity roleDeptEntity) {
 		return roleDeptService.update(roleDeptEntity);
@@ -81,6 +84,7 @@ public class RoleDeptController {
      * @return 影响行数
      */
 	@Operation(summary = "删除角色部门关联", description = "删除角色部门关联")
+	@PreAuthorize("hasRole('admin')")
 	@PostMapping("/deleteById")
 	public int deleteById(@RequestBody @NotNull Long id) {
 		return roleDeptService.deleteById(id);

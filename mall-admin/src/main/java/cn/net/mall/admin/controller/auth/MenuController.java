@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.List;
  */
 @Tag(name = "菜单管理", description = "管理后台：菜单权限配置")
 @RestController
-@RequestMapping("/v1/menu")
+@RequestMapping("/v1/auth/menu")
 public class MenuController {
 
     private final MenuService menuService;
@@ -95,6 +96,7 @@ public class MenuController {
      * @return 影响行数
      */
     @Operation(summary = "添加菜单", description = "添加菜单")
+    @PreAuthorize("hasRole('admin')")
     @PostMapping("/insert")
     public int insert(@RequestBody MenuEntity menuEntity) {
         return menuService.insert(menuEntity);
@@ -107,6 +109,7 @@ public class MenuController {
      * @return 影响行数
      */
     @Operation(summary = "修改菜单", description = "修改菜单")
+    @PreAuthorize("hasRole('admin')")
     @PostMapping("/update")
     public int update(@RequestBody MenuEntity menuEntity) {
         return menuService.update(menuEntity);
@@ -119,6 +122,7 @@ public class MenuController {
      * @return 影响行数
      */
     @Operation(summary = "删除菜单", description = "删除菜单")
+    @PreAuthorize("hasRole('admin')")
     @PostMapping("/deleteByIds")
     public int deleteByIds(@RequestBody @NotNull List<Long> ids) {
         return menuService.deleteByIds(ids);

@@ -136,6 +136,11 @@
         </dependency>
         <dependency>
             <groupId>cn.net.mall</groupId>
+            <artifactId>mall-customer-client</artifactId>
+            <version>${mall-customer-client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.net.mall</groupId>
             <artifactId>mall-auth-api-starter</artifactId>
             <version>${mall-auth-api-starter.version}</version>
         </dependency>

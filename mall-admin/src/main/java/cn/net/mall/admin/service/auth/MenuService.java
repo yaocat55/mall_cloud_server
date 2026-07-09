@@ -6,15 +6,21 @@ import cn.net.mall.admin.dto.auth.MetaDTO;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.admin.entity.auth.MenuConditionEntity;
 import cn.net.mall.admin.entity.auth.MenuEntity;
+import cn.net.mall.admin.entity.auth.RoleEntity;
+import cn.net.mall.entity.auth.JwtUserEntity;
 import cn.net.mall.redis.TokenHelper;
 import cn.net.mall.mapper.BaseMapper;
 import cn.net.mall.admin.mapper.auth.MenuMapper;
 import cn.net.mall.admin.mapper.auth.RoleMenuMapper;
+import cn.net.mall.admin.mapper.auth.RoleMapper;
+import cn.net.mall.admin.mapper.auth.UserRoleMapper;
 import cn.net.mall.service.BaseService;
 import cn.net.mall.util.AssertUtil;
 import cn.net.mall.util.FillUserUtil;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -34,11 +40,14 @@ public class MenuService extends BaseService<MenuEntity, MenuConditionEntity> {
     private final MenuMapper menuMapper;
     private final TokenHelper tokenHelper;
     private final RoleMenuMapper roleMenuMapper;
+    private final RoleMapper roleMapper;
 
-    public MenuService(MenuMapper menuMapper, TokenHelper tokenHelper, RoleMenuMapper roleMenuMapper) {
+    public MenuService(MenuMapper menuMapper, TokenHelper tokenHelper,
+                       RoleMenuMapper roleMenuMapper, RoleMapper roleMapper) {
         this.menuMapper = menuMapper;
         this.tokenHelper = tokenHelper;
         this.roleMenuMapper = roleMenuMapper;
+        this.roleMapper = roleMapper;
     }
 
     /**
@@ -103,6 +112,69 @@ public class MenuService extends BaseService<MenuEntity, MenuConditionEntity> {
             buildChildren(menuEntity, menuTreeDTO);
         }
         return result;
+    }
+
+    /**
+     * 获取当前登录用户的菜单树
+     *
+     * <p>根据当前用户拥有的角色，过滤出有权限的菜单树（不含按钮）。
+     * 前端登录后调此接口渲染侧边栏。</p>
+     *
+     * @return 当前用户可见的菜单树
+     */
+    public List<MenuTreeDTO> getCurrentUserMenuTree() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !(auth.getPrincipal() instanceof JwtUserEntity jwtUser)) {
+            return Collections.emptyList();
+        }
+
+        // 查用户拥有的角色
+        List<RoleEntity> roles = roleMapper.findRoleByUserId(jwtUser.getId());
+        if (CollectionUtils.isEmpty(roles)) {
+            return Collections.emptyList();
+        }
+        List<Long> roleIds = roles.stream().map(RoleEntity::getId).collect(Collectors.toList());
+
+        // 查角色关联的菜单
+        List<MenuEntity> menuList = menuMapper.findMenuByRoleIdList(roleIds);
+        if (CollectionUtils.isEmpty(menuList)) {
+            return Collections.emptyList();
+        }
+
+        // 构建菜单树（只保留目录和菜单，不含按钮）
+        return buildMenuTreeFromList(menuList);
+    }
+
+    /**
+     * 从菜单实体列表构建菜单树
+     *
+     * @param menuList 扁平菜单列表
+     * @return 树形菜单结构
+     */
+    private List<MenuTreeDTO> buildMenuTreeFromList(List<MenuEntity> menuList) {
+        // 按 pid 分组
+        Map<Long, List<MenuEntity>> menuMap = menuList.stream()
+                .collect(Collectors.groupingBy(MenuEntity::getPid));
+
+        // 找顶级菜单（pid = 0）
+        List<MenuEntity> topMenus = menuMap.getOrDefault(0L, Collections.emptyList());
+        List<MenuTreeDTO> result = Lists.newArrayList();
+        for (MenuEntity menu : topMenus) {
+            result.add(buildTreeNode(menu, menuMap));
+        }
+        return result;
+    }
+
+    private MenuTreeDTO buildTreeNode(MenuEntity menu, Map<Long, List<MenuEntity>> menuMap) {
+        MenuTreeDTO node = buildMenuTreeDTO(menu);
+        List<MenuEntity> children = menuMap.get(menu.getId());
+        if (CollectionUtils.isNotEmpty(children)) {
+            node.setAlwaysShow(true);
+            for (MenuEntity child : children) {
+                node.addChildren(buildTreeNode(child, menuMap));
+            }
+        }
+        return node;
     }
 
     public List<MenuTreeDTO> getMenu(MenuConditionEntity menuConditionEntity) {

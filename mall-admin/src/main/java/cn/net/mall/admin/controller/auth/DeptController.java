@@ -8,6 +8,7 @@ import cn.net.mall.entity.ResponsePageEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.List;
  */
 @Tag(name = "部门管理", description = "管理后台：部门树形管理")
 @RestController
-@RequestMapping("/v1/dept")
+@RequestMapping("/v1/auth/dept")
 public class DeptController {
 
     private final DeptService deptService;
@@ -72,6 +73,7 @@ public class DeptController {
      * @return 影响行数
      */
     @Operation(summary = "添加部门", description = "添加部门")
+    @PreAuthorize("hasRole('admin')")
     @PostMapping("/insert")
     public int insert(@RequestBody DeptEntity deptEntity) {
         return deptService.insert(deptEntity);
@@ -84,6 +86,7 @@ public class DeptController {
      * @return 影响行数
      */
     @Operation(summary = "修改部门", description = "修改部门")
+    @PreAuthorize("hasRole('admin')")
     @PostMapping("/update")
     public int update(@RequestBody DeptEntity deptEntity) {
         return deptService.update(deptEntity);
@@ -96,6 +99,7 @@ public class DeptController {
      * @return 影响行数
      */
     @Operation(summary = "删除部门", description = "删除部门")
+    @PreAuthorize("hasRole('admin')")
     @PostMapping("/deleteByIds")
     public int deleteByIds(@RequestBody @NotNull List<Long> ids) {
         return deptService.deleteByIds(ids);

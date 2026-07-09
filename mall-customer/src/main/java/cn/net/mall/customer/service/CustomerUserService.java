@@ -5,8 +5,8 @@ import cn.net.mall.basic.client.SmsRecordFeignClient;
 import cn.net.mall.basic.dto.SmsRecordConditionDTO;
 import cn.net.mall.basic.dto.SmsRecordDTO;
 import cn.net.mall.customer.dto.*;
-import cn.net.mall.customer.entity.CustomerEntity;
-import cn.net.mall.customer.mapper.CustomerMapper;
+import cn.net.mall.customer.entity.CustomerUserEntity;
+import cn.net.mall.customer.mapper.CustomerUserMapper;
 import cn.net.mall.enums.SmsTypeEnum;
 import cn.net.mall.exception.BusinessException;
 import cn.net.mall.redis.RedisUtil;
@@ -27,7 +27,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class CustomerService {
+public class CustomerUserService {
     private static final String CAPTCHA_KEY_PREFIX = "captcha:";
 
     // ========== C端 token 管理（已废弃，改用 JWT 过期机制） ==========
@@ -43,16 +43,16 @@ public class CustomerService {
     @Value("${mall.mgt.tokenExpireTimeInRecord:3600}")
     private int tokenExpireTimeInRecord;
 
-    private final CustomerMapper customerMapper;
+    private final CustomerUserMapper customerUserMapper;
     private final RedisUtil redisUtil;
     private final UserTokenHelper userTokenHelper;
     private final PasswordEncoder passwordEncoder;
     private final SmsRecordFeignClient smsRecordFeignClient;
 
-    public CustomerService(CustomerMapper customerMapper, RedisUtil redisUtil,
-                           UserTokenHelper userTokenHelper, PasswordEncoder passwordEncoder,
-                           SmsRecordFeignClient smsRecordFeignClient) {
-        this.customerMapper = customerMapper;
+    public CustomerUserService(CustomerUserMapper customerUserMapper, RedisUtil redisUtil,
+                               UserTokenHelper userTokenHelper, PasswordEncoder passwordEncoder,
+                               SmsRecordFeignClient smsRecordFeignClient) {
+        this.customerUserMapper = customerUserMapper;
         this.redisUtil = redisUtil;
         this.userTokenHelper = userTokenHelper;
         this.passwordEncoder = passwordEncoder;
@@ -69,10 +69,10 @@ public class CustomerService {
         boolean isCodeValid = verifySmsCode(registerDTO.getPhone(), registerDTO.getSmsCode(), SmsTypeEnum.REGISTER);
         if (!isCodeValid) throw new BusinessException("短信验证码错误或已过期");
 
-        CustomerEntity exist = customerMapper.findByPhone(registerDTO.getPhone());
+        CustomerUserEntity exist = customerUserMapper.findByPhone(registerDTO.getPhone());
         if (exist != null) throw new BusinessException("该手机号已注册");
 
-        CustomerEntity member = new CustomerEntity();
+        CustomerUserEntity member = new CustomerUserEntity();
         BeanUtil.copyProperties(registerDTO, member);
         member.setNickName(buildPhoneNickname(registerDTO.getPhone()));
         member.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
@@ -82,30 +82,30 @@ public class CustomerService {
         member.setValidStatus(true);
         member.setLoginCount(1);
         member.setRegisterSource("phone");
-        customerMapper.insert(member);
+        customerUserMapper.insert(member);
         return buildMemberDTOWithToken(member);
     }
 
     public MemberDTO login(MemberLoginDTO loginDTO) {
-        CustomerEntity member = customerMapper.findByPhone(loginDTO.getPhone());
+        CustomerUserEntity member = customerUserMapper.findByPhone(loginDTO.getPhone());
         if (member == null) throw new BusinessException("该手机号未注册");
         if (!Boolean.TRUE.equals(member.getValidStatus())) throw new BusinessException("账号已被禁用");
         if (!passwordEncoder.matches(loginDTO.getPassword(), member.getPassword())) throw new BusinessException("密码错误");
         member.setLoginCount(member.getLoginCount() != null ? member.getLoginCount() + 1 : 1);
         member.setLastLoginTime(new Date());
-        customerMapper.update(member);
+        customerUserMapper.update(member);
         return buildMemberDTOWithToken(member);
     }
 
     public MemberDTO loginByPhone(MemberPhoneLoginDTO phoneLoginDTO) {
         boolean isCodeValid = verifySmsCode(phoneLoginDTO.getPhone(), phoneLoginDTO.getSmsCode(), SmsTypeEnum.LOGIN);
         if (!isCodeValid) throw new BusinessException("短信验证码错误或已过期");
-        CustomerEntity member = customerMapper.findByPhone(phoneLoginDTO.getPhone());
+        CustomerUserEntity member = customerUserMapper.findByPhone(phoneLoginDTO.getPhone());
         if (member == null) throw new BusinessException("该手机号未注册");
         if (!Boolean.TRUE.equals(member.getValidStatus())) throw new BusinessException("账号已被禁用");
         member.setLoginCount(member.getLoginCount() != null ? member.getLoginCount() + 1 : 1);
         member.setLastLoginTime(new Date());
-        customerMapper.update(member);
+        customerUserMapper.update(member);
         return buildMemberDTOWithToken(member);
     }
 
@@ -156,7 +156,7 @@ public class CustomerService {
         return "手机号注册用户";
     }
 
-    private MemberDTO buildMemberDTOWithToken(CustomerEntity member) {
+    private MemberDTO buildMemberDTOWithToken(CustomerUserEntity member) {
         String token = TokenUtil.generateToken(
                 member.getId(), member.getNickName(),
                 Collections.singletonList("ROLE_MEMBER"),

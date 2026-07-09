@@ -1,7 +1,6 @@
 package cn.net.mall.mobile.controller.mobile;
 
-import cn.net.mall.admin.client.DeliveryAddressFeignClient;
-import cn.net.mall.admin.dto.DeliveryAddressDTO;
+import cn.net.mall.customer.client.AddressFeignClient;
 import cn.net.mall.marketing.client.MarketingFeignClient;
 import cn.net.mall.marketing.dto.CouponDTO;
 import cn.net.mall.order.client.OrderFeignClient;
@@ -29,7 +28,7 @@ import java.util.*;
 public class MobileCheckoutController {
 
     private final OrderFeignClient orderFeignClient;
-    private final DeliveryAddressFeignClient deliveryAddressFeignClient;
+    private final AddressFeignClient addressFeignClient;
     private final MarketingFeignClient marketingFeignClient;
 
     @Operation(summary = "结算预览", description = "一次性获取订单确认信息 + 收货地址列表 + 可用优惠券")
@@ -45,7 +44,7 @@ public class MobileCheckoutController {
         }
 
         try {
-            result.put("addresses", deliveryAddressFeignClient.getUserDeliveryAddressList());
+            result.put("addresses", addressFeignClient.getUserAddressList());
         } catch (Exception e) {
             log.warn("获取收货地址列表失败", e);
             result.put("addresses", Collections.emptyList());

@@ -7,6 +7,7 @@ import cn.net.mall.entity.ResponsePageEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.List;
  */
 @Tag(name = "岗位管理", description = "管理后台：岗位 CRUD")
 @RestController
-@RequestMapping("/v1/job")
+@RequestMapping("/v1/auth/job")
 public class JobController {
 
     private final JobService jobService;
@@ -59,6 +60,7 @@ public class JobController {
      * @return 影响行数
      */
     @Operation(summary = "添加岗位", description = "添加岗位")
+    @PreAuthorize("hasRole('admin')")
     @PostMapping("/insert")
     public int insert(@RequestBody JobEntity jobEntity) {
         return jobService.insert(jobEntity);
@@ -71,6 +73,7 @@ public class JobController {
      * @return 影响行数
      */
     @Operation(summary = "修改岗位", description = "修改岗位")
+    @PreAuthorize("hasRole('admin')")
     @PostMapping("/update")
     public int update(@RequestBody JobEntity jobEntity) {
         return jobService.update(jobEntity);
@@ -83,6 +86,7 @@ public class JobController {
      * @return 影响行数
      */
     @Operation(summary = "删除岗位", description = "删除岗位")
+    @PreAuthorize("hasRole('admin')")
     @PostMapping("/deleteByIds")
     public int deleteByIds(@RequestBody @NotNull List<Long> ids) {
         return jobService.deleteByIds(ids);

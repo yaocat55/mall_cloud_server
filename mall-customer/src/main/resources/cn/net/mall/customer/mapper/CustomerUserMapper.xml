@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.net.mall.customer.mapper.CustomerMapper">
-    <resultMap id="BaseResultMap" type="cn.net.mall.customer.entity.CustomerEntity">
+<mapper namespace="cn.net.mall.customer.mapper.CustomerUserMapper">
+    <resultMap id="BaseResultMap" type="cn.net.mall.customer.entity.CustomerUserEntity">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="phone" property="phone" jdbcType="VARCHAR"/>
         <result column="nick_name" property="nickName" jdbcType="VARCHAR"/>
@@ -26,13 +26,20 @@
         register_ip, login_count, valid_status, last_login_ip, last_login_city, last_login_time
     </sql>
     <select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
-        SELECT <include refid="BaseColumns"/> FROM ums_member WHERE id = #{id}
+        SELECT <include refid="BaseColumns"/> FROM customer_user WHERE id = #{id}
     </select>
     <select id="findByPhone" parameterType="java.lang.String" resultMap="BaseResultMap">
-        SELECT <include refid="BaseColumns"/> FROM ums_member WHERE phone = #{phone}
+        SELECT <include refid="BaseColumns"/> FROM customer_user WHERE phone = #{phone}
     </select>
-    <insert id="insert" parameterType="cn.net.mall.customer.entity.CustomerEntity" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO ums_member (id, phone, password, nick_name, avatar_id, avatar_url, sex, birthday,
+    <select id="findByIds" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/> FROM customer_user
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+    <insert id="insert" parameterType="cn.net.mall.customer.entity.CustomerUserEntity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO customer_user (id, phone, password, nick_name, avatar_id, avatar_url, sex, birthday,
             email, level_id, level_name, growth, points, total_consumption,
             register_source, register_ip, login_count, valid_status,
             last_login_ip, last_login_city, last_login_time,
@@ -43,8 +50,8 @@
             #{lastLoginIp}, #{lastLoginCity}, #{lastLoginTime},
             #{createTime}, #{updateTime}, #{createUserId}, #{createUserName})
     </insert>
-    <update id="update" parameterType="cn.net.mall.customer.entity.CustomerEntity">
-        UPDATE ums_member SET
+    <update id="update" parameterType="cn.net.mall.customer.entity.CustomerUserEntity">
+        UPDATE customer_user SET
             phone = #{phone}, password = #{password}, nick_name = #{nickName},
             avatar_id = #{avatarId}, avatar_url = #{avatarUrl}, sex = #{sex},
             birthday = #{birthday}, email = #{email}, level_id = #{levelId},

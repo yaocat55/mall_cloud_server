@@ -3,8 +3,8 @@ package cn.net.mall.product.service;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.exception.BusinessException;
 import cn.net.mall.workid.IdGenerateHelper;
-import cn.net.mall.admin.client.UserFeignClient;
-import cn.net.mall.admin.dto.UserDTO;
+import cn.net.mall.customer.client.MemberFeignClient;
+import cn.net.mall.customer.dto.CustomerUserDTO;
 import cn.net.mall.mapper.BaseMapper;
 import cn.net.mall.product.dto.ProductCommentDTO;
 import cn.net.mall.product.dto.ProductCommentSubmitDTO;
@@ -45,7 +45,7 @@ public class ProductCommentService extends BaseService<ProductCommentEntity, Pro
     private final ProductCommentMapper productCommentMapper;
     private final ProductMapper productMapper;
     private final IdGenerateHelper idGenerateHelper;
-    private final UserFeignClient userFeignClient;
+    private final MemberFeignClient memberFeignClient;
     private final ProductCommentPhotoMapper productCommentPhotoMapper;
 
     private int getCommentType(int rating) {
@@ -94,7 +94,7 @@ public class ProductCommentService extends BaseService<ProductCommentEntity, Pro
         }
         List<Long> userIds = entities.stream().map(ProductCommentEntity::getUserId)
                 .filter(Objects::nonNull).distinct().collect(Collectors.toList());
-        Map<Long, UserDTO> userMap = getUserMap(userIds);
+        Map<Long, CustomerUserDTO> userMap = getUserMap(userIds);
         List<Long> commentIds = entities.stream().map(ProductCommentEntity::getId).filter(Objects::nonNull).collect(Collectors.toList());
         final Map<Long, List<String>> photosMap;
         if (org.apache.commons.collections4.CollectionUtils.isNotEmpty(commentIds)) {
@@ -126,10 +126,10 @@ public class ProductCommentService extends BaseService<ProductCommentEntity, Pro
                 w.setCreateTimeStr(DateFormatUtil.parseToString(ct));
             }
             if (e.getUserId() != null) {
-                UserDTO u = userMap.get(e.getUserId());
+                CustomerUserDTO u = userMap.get(e.getUserId());
                 if (u != null) {
                     w.setAvatar(u.getAvatarUrl());
-                    w.setNickName(Objects.nonNull(u.getNickName()) ? u.getNickName() : u.getUserName());
+                    w.setNickName(u.getNickName());
                 }
             }
             List<String> ph = photosMap.get(e.getId());
@@ -140,15 +140,15 @@ public class ProductCommentService extends BaseService<ProductCommentEntity, Pro
         }).collect(Collectors.toList());
     }
 
-    private Map<Long, UserDTO> getUserMap(List<Long> userIds) {
+    private Map<Long, CustomerUserDTO> getUserMap(List<Long> userIds) {
         if (CollectionUtils.isEmpty(userIds)) {
             return java.util.Collections.emptyMap();
         }
-        List<UserDTO> users = userFeignClient.findByIds(userIds);
+        List<CustomerUserDTO> users = memberFeignClient.findByIds(userIds);
         if (CollectionUtils.isEmpty(users)) {
             return java.util.Collections.emptyMap();
         }
-        return users.stream().collect(Collectors.toMap(UserDTO::getId, x -> x, (a, b) -> a));
+        return users.stream().collect(Collectors.toMap(CustomerUserDTO::getId, x -> x, (a, b) -> a));
     }
 
     /**

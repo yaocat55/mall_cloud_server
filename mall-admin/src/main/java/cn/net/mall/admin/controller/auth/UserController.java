@@ -27,7 +27,7 @@ import java.util.List;
 @Slf4j
 @Tag(name = "用户管理", description = "管理后台：用户 CRUD、密码重置")
 @RestController
-@RequestMapping("/v1/user")
+@RequestMapping("/v1/auth/user")
 public class UserController {
 
     private final UserService userService;
@@ -42,7 +42,7 @@ public class UserController {
      * @param id 系统ID
      * @return 用户信息
      */
-    @PreAuthorize("hasRole('User')")
+    @PreAuthorize("hasRole('admin')")
     @Operation(summary = "通过id查询用户信息", description = "通过id查询用户信息")
     @GetMapping("/findById")
     public UserEntity findById(Long id) {
@@ -58,6 +58,7 @@ public class UserController {
      * @return 用户列表
      */
     @Operation(summary = "根据条件查询用户列表", description = "根据条件查询用户列表")
+    @PreAuthorize("hasRole('admin')")
     @PostMapping("/searchByPage")
     public ResponsePageEntity<UserEntity> searchByPage(@RequestBody UserConditionEntity userConditionEntity) {
         return userService.searchByPage(userConditionEntity);
@@ -71,6 +72,7 @@ public class UserController {
      * @return 影响行数
      */
     @Operation(summary = "添加用户", description = "添加用户")
+    @PreAuthorize("hasRole('admin')")
     @PostMapping("/insert")
     public void insert(@RequestBody UserEntity userEntity) {
         userService.insert(userEntity);
@@ -83,6 +85,7 @@ public class UserController {
      * @return 影响行数
      */
     @Operation(summary = "修改用户", description = "修改用户")
+    @PreAuthorize("hasRole('admin')")
     @PostMapping("/update")
     public int update(@RequestBody UserEntity userEntity) {
         return userService.update(userEntity);
@@ -95,6 +98,7 @@ public class UserController {
      * @return 影响行数
      */
     @Operation(summary = "删除用户", description = "删除用户")
+    @PreAuthorize("hasRole('admin')")
     @PostMapping("/deleteByIds")
     public int deleteById(@RequestBody @NotNull List<Long> ids) {
         return userService.deleteByIds(ids);
@@ -108,6 +112,7 @@ public class UserController {
      * @return 影响行数
      */
     @Operation(summary = "重置密码", description = "重置密码")
+    @PreAuthorize("hasRole('admin')")
     @PostMapping("/resetPwd")
     public int resetPwd(@RequestBody @NotNull List<Long> ids) {
         return userService.resetPwd(ids);

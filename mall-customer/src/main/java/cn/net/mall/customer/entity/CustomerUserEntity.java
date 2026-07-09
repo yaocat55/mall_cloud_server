@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-public class CustomerEntity extends BaseEntity {
+public class CustomerUserEntity extends BaseEntity {
     private String phone;
     private String password;
     private String nickName;

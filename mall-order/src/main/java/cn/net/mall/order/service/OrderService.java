@@ -31,8 +31,8 @@ import cn.net.mall.order.mapper.OrderDeliveryAddressMapper;
 import cn.net.mall.order.mapper.OrderItemMapper;
 import cn.net.mall.order.mapper.OrderMapper;
 import cn.net.mall.service.BaseService;
-import cn.net.mall.admin.client.DeliveryAddressFeignClient;
-import cn.net.mall.admin.dto.DeliveryAddressDTO;
+import cn.net.mall.customer.client.AddressFeignClient;
+import cn.net.mall.customer.dto.AddressDTO;
 import cn.net.mall.entity.RequestPageEntity;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.util.DateFormatUtil;
@@ -94,7 +94,7 @@ public class OrderService extends BaseService<OrderEntity, OrderConditionEntity>
 
     private final OrderEsRepository orderEsRepository;
 
-    private final DeliveryAddressFeignClient deliveryAddressFeignClient;
+    private final AddressFeignClient addressFeignClient;
 
     private final RedisUtil redisUtil;
     private final MqHelper mqHelper;
@@ -616,16 +616,16 @@ public class OrderService extends BaseService<OrderEntity, OrderConditionEntity>
 
 
     private void saveOrderDeliveryAddress(OrderSubmitDTO submitDTO, JwtUserEntity currentUser, OrderEntity orderEntity) {
-        DeliveryAddressDTO deliveryAddressDTO = null;
+        AddressDTO deliveryAddressDTO = null;
         try {
-            deliveryAddressDTO = deliveryAddressFeignClient.getDetail(submitDTO.getDeliveryAddressId());
+            deliveryAddressDTO = addressFeignClient.getDetail(submitDTO.getDeliveryAddressId());
         } catch (Exception e) {
             log.error("获取收货地址详情失败, id={}", submitDTO.getDeliveryAddressId(), e);
         }
         if (deliveryAddressDTO == null) {
             throw new BusinessException("收货地址不存在");
         }
-        if (!Objects.equals(deliveryAddressDTO.getUserId(), currentUser.getId())) {
+        if (!Objects.equals(deliveryAddressDTO.getCustomerId(), currentUser.getId())) {
             throw new BusinessException("收货地址不存在");
         }
         OrderDeliveryAddressEntity address = new OrderDeliveryAddressEntity();
@@ -1054,15 +1054,15 @@ public class OrderService extends BaseService<OrderEntity, OrderConditionEntity>
         resp.setCouponAmount(couponAmount);
 
         // 4. 获取用户地址 (Placeholder)
-        List<DeliveryAddressDTO> addressList = new ArrayList<>();
+        List<AddressDTO> addressList = new ArrayList<>();
         try {
-            addressList = deliveryAddressFeignClient.getUserDeliveryAddressList();
+            addressList = addressFeignClient.getUserAddressList();
         } catch (Exception e) {
             log.error("获取用户收货地址失败", e);
         }
         resp.setAddressList(addressList);
         if (!CollectionUtils.isEmpty(addressList)) {
-            DeliveryAddressDTO defaultAddress = addressList.stream()
+            AddressDTO defaultAddress = addressList.stream()
                     .filter(x -> Boolean.TRUE.equals(x.getIsDefault()))
                     .findFirst()
                     .orElse(addressList.get(0));
