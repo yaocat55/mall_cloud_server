@@ -10,7 +10,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 /**
  * @date 2024/1/3 下午3:44
  */
-@EnableFeignClients(basePackages = {"cn.net.mall.basic", "cn.net.mall.admin.client", "cn.net.mall.product.client"})
+@EnableFeignClients(basePackages = {"cn.net.mall.basic", "cn.net.mall.product.client", "cn.net.mall.customer.client"})
 @EnableDiscoveryClient
 @MapperScan("cn.net.mall.marketing.mapper")
 @EnableCaching

@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
-@EnableFeignClients(basePackages = {"cn.net.mall.message", "cn.net.mall.admin.client"})
+@EnableFeignClients(basePackages = {"cn.net.mall.message", "cn.net.mall.customer.client"})
 @EnableDiscoveryClient
 @MapperScan("cn.net.mall.message.mapper")
 @SpringBootApplication(scanBasePackages = {"cn.net.mall.message"})

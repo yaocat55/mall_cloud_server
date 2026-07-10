@@ -1,7 +1,7 @@
 package cn.net.mall.message.service;
 
-import cn.net.mall.admin.client.UserFeignClient;
-import cn.net.mall.admin.dto.UserDTO;
+import cn.net.mall.customer.client.MemberFeignClient;
+import cn.net.mall.customer.dto.CustomerUserDTO;
 import cn.net.mall.message.entity.CommonNotifyEntity;
 import cn.net.mall.message.mapper.CommonNotifyMapper;
 import cn.net.mall.util.FillUserUtil;
@@ -22,14 +22,14 @@ public class MessagePushService {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final CommonNotifyMapper commonNotifyMapper;
-    private final UserFeignClient userFeignClient;
+    private final MemberFeignClient memberFeignClient;
 
     public MessagePushService(SimpMessagingTemplate messagingTemplate,
                               CommonNotifyMapper commonNotifyMapper,
-                              UserFeignClient userFeignClient) {
+                              MemberFeignClient memberFeignClient) {
         this.messagingTemplate = messagingTemplate;
         this.commonNotifyMapper = commonNotifyMapper;
-        this.userFeignClient = userFeignClient;
+        this.memberFeignClient = memberFeignClient;
     }
 
     public void pushToAll(CommonNotifyEntity notify) {
@@ -57,9 +57,9 @@ public class MessagePushService {
         notify.setIsPush(1);
         FillUserUtil.fillCreateUserInfo(notify);
         commonNotifyMapper.insert(notify);
-        List<UserDTO> list = userFeignClient.findByIds(Collections.singletonList(userId));
+        List<CustomerUserDTO> list = memberFeignClient.findByIds(Collections.singletonList(userId));
         if (Objects.nonNull(list) && !list.isEmpty()) {
-            String username = list.get(0).getUserName();
+            String username = list.get(0).getNickName();
             boolean success = false;
             try {
                 messagingTemplate.convertAndSendToUser(username, "/queue/notify", notify);

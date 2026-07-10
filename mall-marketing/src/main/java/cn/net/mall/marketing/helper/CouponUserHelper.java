@@ -1,7 +1,7 @@
 package cn.net.mall.marketing.helper;
 
-import cn.net.mall.admin.client.UserFeignClient;
-import cn.net.mall.admin.dto.UserDTO;
+import cn.net.mall.customer.client.MemberFeignClient;
+import cn.net.mall.customer.dto.CustomerUserDTO;
 import cn.net.mall.marketing.entity.CouponConditionEntity;
 import cn.net.mall.marketing.entity.CouponEntity;
 import cn.net.mall.marketing.entity.CouponUserEntity;
@@ -29,7 +29,7 @@ public class CouponUserHelper {
 
     private final CouponMapper couponMapper;
     private final ProductFeignClient productFeignClient;
-    private final UserFeignClient userFeignClient;
+    private final MemberFeignClient memberFeignClient;
 
     /**
      * 填充优惠券和用户信息
@@ -76,13 +76,13 @@ public class CouponUserHelper {
         if (CollectionUtils.isEmpty(userIdList)) {
             return;
         }
-        List<UserDTO> userEntities = userFeignClient.findByIds(userIdList);
+        List<CustomerUserDTO> userEntities = memberFeignClient.findByIds(userIdList);
         if (CollectionUtils.isNotEmpty(userEntities)) {
-            Map<Long, List<UserDTO>> userMap = userEntities.stream().collect(Collectors.groupingBy(UserDTO::getId));
+            Map<Long, List<CustomerUserDTO>> userMap = userEntities.stream().collect(Collectors.groupingBy(CustomerUserDTO::getId));
             for (UserProductEntity userProductEntity : list) {
-                List<UserDTO> entityList = userMap.get(userProductEntity.getUserId());
+                List<CustomerUserDTO> entityList = userMap.get(userProductEntity.getUserId());
                 if (CollectionUtils.isNotEmpty(entityList)) {
-                    userProductEntity.setUserName(entityList.get(0).getUserName());
+                    userProductEntity.setUserName(entityList.get(0).getNickName());
                 }
             }
         }

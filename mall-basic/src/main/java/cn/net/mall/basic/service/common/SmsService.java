@@ -1,8 +1,6 @@
 package cn.net.mall.basic.service.common;
 
 import cn.hutool.core.util.BooleanUtil;
-import cn.net.mall.admin.client.UserFeignClient;
-import cn.net.mall.admin.dto.UserDTO;
 import cn.net.mall.basic.dto.SendCodeDTO;
 import cn.net.mall.basic.entity.common.CommonSmsRecordEntity;
 import cn.net.mall.basic.mapper.common.CommonSmsRecordMapper;
@@ -35,13 +33,11 @@ public class SmsService {
     @Value("${aliyun.sms.offTestSms:true}")
     private Boolean offTestSms;
 
-    private final UserFeignClient userFeignClient;
     private final SmsUtil smsUtil;
     private final CommonSmsRecordMapper commonSmsRecordMapper;
     private final RedisUtil redisUtil;
 
-    public SmsService(UserFeignClient userFeignClient, SmsUtil smsUtil, CommonSmsRecordMapper commonSmsRecordMapper, RedisUtil redisUtil) {
-        this.userFeignClient = userFeignClient;
+    public SmsService(SmsUtil smsUtil, CommonSmsRecordMapper commonSmsRecordMapper, RedisUtil redisUtil) {
         this.smsUtil = smsUtil;
         this.commonSmsRecordMapper = commonSmsRecordMapper;
         this.redisUtil = redisUtil;

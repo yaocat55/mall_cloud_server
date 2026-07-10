@@ -38,13 +38,6 @@
 
         <dependency>
             <groupId>cn.net.mall</groupId>
-            <artifactId>mall-admin-client</artifactId>
-            <version>${mall-admin-client.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>cn.net.mall</groupId>
             <artifactId>mall-auth-api-starter</artifactId>
             <version>${mall-auth-api-starter.version}</version>
             <scope>compile</scope>
