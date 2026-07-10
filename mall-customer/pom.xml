@@ -16,7 +16,32 @@
     <dependencies>
         <dependency>
             <groupId>cn.net.mall</groupId>
-            <artifactId>mall-common</artifactId>
+            <artifactId>common-core</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.net.mall</groupId>
+            <artifactId>common-mybatis</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.net.mall</groupId>
+            <artifactId>common-web</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.net.mall</groupId>
+            <artifactId>common-security</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.net.mall</groupId>
+            <artifactId>common-redis</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.net.mall</groupId>
+            <artifactId>common-workid</artifactId>
             <version>1.0.0</version>
         </dependency>
 

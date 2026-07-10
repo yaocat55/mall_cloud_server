@@ -36,7 +36,12 @@
         </dependency>
         <dependency>
             <groupId>cn.net.mall</groupId>
-            <artifactId>mall-common</artifactId>
+            <artifactId>common-core</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.net.mall</groupId>
+            <artifactId>common-security</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>

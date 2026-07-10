@@ -233,6 +233,7 @@ public class CouponService extends BaseService<CouponEntity, CouponConditionEnti
      */
     public int insert(CouponEntity couponEntity) {
         couponEntity.setValidStatus(ValidStatusEnum.VALID.getValue());
+        FillUserUtil.fillCreateUserInfo(couponEntity);
         return couponMapper.insert(couponEntity);
     }
 
@@ -243,6 +244,7 @@ public class CouponService extends BaseService<CouponEntity, CouponConditionEnti
      * @return 结果
      */
     public int update(CouponEntity couponEntity) {
+        FillUserUtil.fillUpdateUserInfo(couponEntity);
         return couponMapper.update(couponEntity);
     }
 

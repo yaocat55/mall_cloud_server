@@ -17,7 +17,7 @@
     <dependencies>
         <dependency>
             <groupId>cn.net.mall</groupId>
-            <artifactId>mall-common</artifactId>
+            <artifactId>common-core</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
@@ -49,6 +49,11 @@
         <dependency>
             <groupId>io.github.openfeign</groupId>
             <artifactId>feign-okhttp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.26.1</version>
         </dependency>
     </dependencies>
     <build>

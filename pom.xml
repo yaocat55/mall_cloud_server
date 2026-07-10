@@ -10,6 +10,13 @@
     <version>1.0.0</version>
 
     <modules>
+        <module>common-core</module>
+        <module>common-mybatis</module>
+        <module>common-web</module>
+        <module>common-security</module>
+        <module>common-redis</module>
+        <module>common-workid</module>
+        <module>common-sensitive</module>
         <module>mall-common</module>
         <module>mall-product</module>
         <module>mall-product-client</module>
