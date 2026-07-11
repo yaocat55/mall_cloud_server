@@ -1,5 +1,6 @@
 package cn.net.mall.admin.client;
 
+import cn.net.mall.admin.client.fallback.UserFeignFallbackFactory;
 import cn.net.mall.admin.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -21,17 +22,17 @@ import static cn.net.mall.admin.constant.AppConstant.ADMIN_SERVICE_NAME;
  *
  * **不对外暴露**，仅限服务间 Feign 调用
  */
-@FeignClient(value = ADMIN_SERVICE_NAME)
+@FeignClient(value = ADMIN_SERVICE_NAME, fallbackFactory = UserFeignFallbackFactory.class)
 public interface UserFeignClient {
 
     @Operation(summary = "批量查询用户信息",
                description = "内部服务：由 mall-admin-api 通过 Feign 调用，根据ID集合批量查询用户信息")
-    @PostMapping("/v1/internal/user/findByIds")
+    @PostMapping("/v1/auth/user/findByIds")
     List<UserDTO> findByIds(@RequestBody List<Long> ids);
 
     @Operation(summary = "通过手机号查询用户信息",
                description = "内部服务：由 mall-admin-api 通过 Feign 调用，根据手机号精确查询用户")
-    @GetMapping("/v1/internal/user/findByPhone")
+    @GetMapping("/v1/auth/user/findByPhone")
     UserDTO findByPhone(@RequestParam String phone);
 
     @Operation(summary = "获取动态验证码",
@@ -66,7 +67,7 @@ public interface UserFeignClient {
 
     @Operation(summary = "更新头像",
                description = "内部服务：由 mall-admin-api 通过 Feign 调用，更新用户头像地址")
-    @PostMapping("/v1/internal/user/updateAvatar")
+    @PostMapping("/v1/auth/user/updateAvatar")
     void updateAvatar(@RequestBody @Valid UserAvatarDTO userAvatarDTO);
 
     @Operation(summary = "更新用户信息",
@@ -76,7 +77,7 @@ public interface UserFeignClient {
 
     @Operation(summary = "测试登录",
                description = "内部测试：跳过图形验证码校验，仅限开发/测试环境使用")
-    @PostMapping("/v1/internal/user/testLogin")
+    @PostMapping("/v1/auth/user/testLogin")
     TokenDTO testLogin(@RequestBody @Valid UserLoginDTO userLoginDTO);
 
     @Operation(summary = "获取在线用户列表",

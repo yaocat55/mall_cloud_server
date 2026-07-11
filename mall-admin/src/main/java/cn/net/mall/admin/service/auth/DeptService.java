@@ -10,7 +10,7 @@ import cn.net.mall.admin.mapper.auth.DeptMapper;
 import cn.net.mall.service.BaseService;
 import cn.net.mall.util.AssertUtil;
 import cn.net.mall.util.BetweenTimeUtil;
-import cn.net.mall.util.ExcelUtil;
+import cn.net.mall.admin.util.ExcelUtil;
 import cn.net.mall.util.FillUserUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.collections4.CollectionUtils;

@@ -12,7 +12,7 @@ mvn clean package -DskipTests -q
 
 echo ""
 echo "=== 2/5 构建 Docker 镜像 ==="
-SERVICES=("gateway" "auth" "basic" "product" "order" "pay" "marketing" "recommend" "message")
+SERVICES=("gateway" "basic" "product" "order" "pay" "marketing" "recommend" "message")
 for svc in "${SERVICES[@]}"; do
   echo "  -> mall-$svc:latest"
   docker build -t "mall-$svc:latest" -q "mall-$svc/"

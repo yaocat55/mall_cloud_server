@@ -48,26 +48,16 @@ public class SpringSecurityConfig {
      * 例如：实际请求 /api/auth/v1/auth/web/user/login，匹配规则为 /v1/auth/web/user/login。
      *
      * 白名单分类：
-     * - 内部 Feign 调用：/v1/internal/**（上游已由 Gateway 鉴权）
-     * - Web 端认证：登录、验证码、登出
-     * - 移动端认证：登录、验证码
+     * - Web 端认证：登录、验证码、登出（admin 后台登录）
      * - 管理端基础数据：菜单、角色、部门、岗位（增删改查）
      * - 测试接口：OpenFeign 连通性测试
      */
     private static final List<String> PERMIT_ALL_URLS = List.of(
-            // 内部 Feign 调用（不校验 JWT，由上游 Gateway 透传身份）
-            "/v1/internal/**",
-
-            // Web 端认证
+            // Web 端认证（admin 后台登录）
             "/v1/auth/web/user/login",
             "/v1/auth/web/user/loginByPhone",
             "/v1/auth/web/user/getCode",
             "/v1/auth/web/user/logout",
-
-            // 移动端认证
-            "/v1/mobile/user/login",
-            "/v1/mobile/user/loginByPhone",
-            "/v1/mobile/user/getCode",
 
             // 菜单、角色、部门、岗位（管理端）
             "/v1/auth/menu/searchByPage",
@@ -80,6 +70,9 @@ public class SpringSecurityConfig {
             "/v1/auth/dept/searchByTree",
             "/v1/auth/job/searchByPage",
             "/v1/auth/job/deleteByIds",
+
+            // 测试登录（跳过验证码）
+            "/v1/auth/user/testLogin",
 
             // 测试
             "/v1/test/testOpenFeign"

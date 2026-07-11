@@ -1,6 +1,0 @@
-cn.net.mall.config.MallCommonAutoConfiguration
-cn.net.mall.config.FeignDecoderConfig
-cn.net.mall.config.RedisAutoConfiguration
-cn.net.mall.config.WorkIdAutoConfiguration
-cn.net.mall.config.WebAutoConfiguration
-cn.net.mall.config.SensitiveAutoConfiguration

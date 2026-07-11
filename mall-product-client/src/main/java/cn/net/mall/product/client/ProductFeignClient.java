@@ -1,5 +1,6 @@
 package cn.net.mall.product.client;
 
+import cn.net.mall.product.client.fallback.ProductFeignFallbackFactory;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.product.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,7 +27,8 @@ import static cn.net.mall.product.constant.AppConstant.PRODUCT_SERVICE_NAME;
  *   - recommend-service（推荐服务）— 商品数据查询
  * 
 */
-@FeignClient(value = PRODUCT_SERVICE_NAME, contextId = "productFeignClient")
+@FeignClient(value = PRODUCT_SERVICE_NAME, contextId = "productFeignClient",
+        fallbackFactory = ProductFeignFallbackFactory.class)
 public interface ProductFeignClient {
 
     /**

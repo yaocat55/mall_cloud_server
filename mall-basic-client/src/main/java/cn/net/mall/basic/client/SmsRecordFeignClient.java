@@ -1,5 +1,6 @@
 package cn.net.mall.basic.client;
 
+import cn.net.mall.basic.client.fallback.SmsRecordFeignFallbackFactory;
 import cn.net.mall.basic.dto.CommonSmsRecordConditionDTO;
 import cn.net.mall.basic.dto.SmsRecordConditionDTO;
 import cn.net.mall.basic.dto.SmsRecordDTO;
@@ -25,7 +26,8 @@ import static cn.net.mall.basic.constant.AppConstant.BASIC_SERVICE_NAME;
 *
  * @date 2025/5/17 12:24
  */
-@FeignClient(value = BASIC_SERVICE_NAME, contextId = "smsRecordFeignClient")
+@FeignClient(value = BASIC_SERVICE_NAME, contextId = "smsRecordFeignClient",
+        fallbackFactory = SmsRecordFeignFallbackFactory.class)
 public interface SmsRecordFeignClient {
 
     /**

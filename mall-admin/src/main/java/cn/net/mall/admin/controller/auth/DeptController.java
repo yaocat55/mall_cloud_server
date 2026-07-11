@@ -18,7 +18,7 @@ import java.util.List;
  *
  * @date 2024-01-08 17:18:17
  */
-@Tag(name = "部门管理", description = "管理后台：部门树形管理")
+@Tag(name = "部门管理", description = "管理后台：部门树形管理。findById / searchByPage / searchByTree 无需认证；insert / update / deleteByIds 需 Bearer Token + admin 角色")
 @RestController
 @RequestMapping("/v1/auth/dept")
 public class DeptController {
@@ -35,7 +35,7 @@ public class DeptController {
      * @param id 系统ID
      * @return 部门信息
      */
-    @Operation(summary = "通过id查询部门信息", description = "通过id查询部门信息")
+    @Operation(summary = "通过id查询部门信息", description = "无需认证 | 查询参数：id（部门ID）")
     @GetMapping("/findById")
     public DeptEntity findById(Long id) {
         return deptService.findById(id);
@@ -47,7 +47,7 @@ public class DeptController {
      * @param deptConditionEntity 条件
      * @return 部门列表
      */
-    @Operation(summary = "根据条件查询部门列表", description = "根据条件查询部门列表")
+    @Operation(summary = "分页查询部门列表", description = "无需认证 | 请求体：DeptConditionEntity（分页条件，含 page/pageSize/pid）")
     @PostMapping("/searchByPage")
     public ResponsePageEntity<DeptTreeDTO> searchByPage(@RequestBody DeptConditionEntity deptConditionEntity) {
         return deptService.searchByPage(deptConditionEntity);
@@ -59,7 +59,7 @@ public class DeptController {
      * @param deptConditionEntity 条件
      * @return 部门树
      */
-    @Operation(summary = "查询部门树", description = "查询部门树")
+    @Operation(summary = "查询部门树", description = "无需认证 | 请求体：DeptConditionEntity（查询条件，支持 pid 筛选）")
     @PostMapping("/searchByTree")
     public List<DeptTreeDTO> searchByTree(@RequestBody DeptConditionEntity deptConditionEntity) {
         return deptService.searchByTree(deptConditionEntity);
@@ -72,7 +72,7 @@ public class DeptController {
      * @param deptEntity 部门实体
      * @return 影响行数
      */
-    @Operation(summary = "添加部门", description = "添加部门")
+    @Operation(summary = "添加部门", description = "需 Bearer Token + admin 角色 | 请求体：DeptEntity（部门信息，含 pid/name/sort/status 等）")
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/insert")
     public int insert(@RequestBody DeptEntity deptEntity) {
@@ -85,7 +85,7 @@ public class DeptController {
      * @param deptEntity 部门实体
      * @return 影响行数
      */
-    @Operation(summary = "修改部门", description = "修改部门")
+    @Operation(summary = "修改部门", description = "需 Bearer Token + admin 角色 | 请求体：DeptEntity（待修改的完整部门信息，含 id）")
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/update")
     public int update(@RequestBody DeptEntity deptEntity) {
@@ -98,7 +98,7 @@ public class DeptController {
      * @param ids 部门ID
      * @return 影响行数
      */
-    @Operation(summary = "删除部门", description = "删除部门")
+    @Operation(summary = "删除部门", description = "需 Bearer Token + admin 角色 | 请求体：ids（部门ID列表）")
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/deleteByIds")
     public int deleteByIds(@RequestBody @NotNull List<Long> ids) {

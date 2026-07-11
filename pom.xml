@@ -17,7 +17,6 @@
         <module>common-redis</module>
         <module>common-workid</module>
         <module>common-sensitive</module>
-        <module>mall-common</module>
         <module>mall-product</module>
         <module>mall-product-client</module>
         <module>mall-auth-api-starter</module>
@@ -79,6 +78,7 @@
         <jackson.datatype.version>2.17.2</jackson.datatype.version>
         <skywalking.version>9.0.0</skywalking.version>
         <micrometer.prometheus.version>1.12.7</micrometer.prometheus.version>
+        <resilience4j.version>2.2.0</resilience4j.version>
 
         <!-- surefire 是否跳过测试（默认跳过，-Dsurefire.skip=false 开启） -->
         <surefire.skip>true</surefire.skip>
@@ -289,6 +289,13 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>0.12.6</version>
             <scope>runtime</scope>
+        </dependency>
+
+        <!-- resilience4j: 熔断降级 + 重试 + 限流 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>
+            <version>3.1.2</version>
         </dependency>
     </dependencies>
 </dependencyManagement>

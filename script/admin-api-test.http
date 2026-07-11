@@ -1,0 +1,207 @@
+### ============================================================
+### Mall Cloud — Admin 模块接口测试脚本
+### 直连服务端口（不经过 Gateway / BFF）
+###
+### 使用方式：IDEA 打开 → 点绿色箭头逐个运行
+###
+### Step 1：testLogin → 获取 Token
+### Step 2+：后续请求自动携带 Token
+### ============================================================
+
+@ADMIN = http://localhost:8030
+
+
+### ============================================================
+### Step 1：获取 Token（testLogin 跳过验证码）
+### ============================================================
+
+# @name testLogin
+POST {{ADMIN}}/v1/auth/user/testLogin
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+
+### ============================================================
+### Step 2：以下请求自动携带 Token
+### ============================================================
+
+### ---------- 用户管理 ----------
+
+# @name searchUser
+POST {{ADMIN}}/v1/auth/user/searchByPage
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.token}}
+
+{
+  "page": 1,
+  "pageSize": 10
+}
+
+###
+GET {{ADMIN}}/v1/auth/user/findById?id=1
+Authorization: Bearer {{testLogin.response.body.token}}
+
+###
+POST {{ADMIN}}/v1/auth/user/resetPwd
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.token}}
+
+{
+  "id": 1,
+  "password": "newpassword123"
+}
+
+
+### ---------- 角色管理 ----------
+
+###
+GET {{ADMIN}}/v1/auth/role/all
+Authorization: Bearer {{testLogin.response.body.token}}
+
+###
+POST {{ADMIN}}/v1/auth/role/insert
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.token}}
+
+{
+  "name": "测试角色",
+  "code": "TEST_ROLE",
+  "sort": 1,
+  "status": 1
+}
+
+###
+POST {{ADMIN}}/v1/auth/role/searchByPage
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.token}}
+
+{
+  "page": 1,
+  "pageSize": 10
+}
+
+
+### ---------- 菜单管理 ----------
+
+###
+GET {{ADMIN}}/v1/auth/menu/getMenuTree
+Authorization: Bearer {{testLogin.response.body.token}}
+
+###
+POST {{ADMIN}}/v1/auth/menu/getMenu
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.token}}
+
+{
+  "page": 1,
+  "pageSize": 50
+}
+
+###
+POST {{ADMIN}}/v1/auth/menu/insert
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.token}}
+
+{
+  "parentId": 0,
+  "name": "测试菜单",
+  "permission": "system:test:list",
+  "type": 1,
+  "sort": 99,
+  "icon": "el-icon-setting"
+}
+
+###
+POST {{ADMIN}}/v1/auth/menu/deleteByIds
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.token}}
+
+{
+  "ids": [999]
+}
+
+
+### ---------- 部门管理 ----------
+
+###
+POST {{ADMIN}}/v1/auth/dept/searchByTree
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.token}}
+
+{
+  "page": 1,
+  "pageSize": 50
+}
+
+###
+POST {{ADMIN}}/v1/auth/dept/insert
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.token}}
+
+{
+  "parentId": 0,
+  "name": "测试部门",
+  "sort": 99,
+  "status": 1
+}
+
+###
+POST {{ADMIN}}/v1/auth/dept/deleteByIds
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.token}}
+
+{
+  "ids": [999]
+}
+
+
+### ---------- 岗位管理 ----------
+
+###
+POST {{ADMIN}}/v1/auth/job/searchByPage
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.token}}
+
+{
+  "page": 1,
+  "pageSize": 10
+}
+
+###
+POST {{ADMIN}}/v1/auth/job/insert
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.token}}
+
+{
+  "name": "测试岗位",
+  "code": "TEST_POST",
+  "sort": 99,
+  "status": 1
+}
+
+
+### ---------- 内部接口（已合并到 /v1/auth/*） ----------
+
+### 批量查询用户（原 internal 合并）
+###
+POST {{ADMIN}}/v1/auth/user/findByIds
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.token}}
+
+{
+  "ids": [1, 2]
+}
+
+### 手机号查询用户（原 internal 合并）
+###
+GET {{ADMIN}}/v1/auth/user/findByPhone?phone=13800138000
+Authorization: Bearer {{testLogin.response.body.token}}
+
+### 查询所有岗位（原 internal 合并）
+###
+GET {{ADMIN}}/v1/auth/job/all
+Authorization: Bearer {{testLogin.response.body.token}}

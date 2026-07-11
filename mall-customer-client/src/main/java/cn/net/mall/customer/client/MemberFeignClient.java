@@ -1,5 +1,6 @@
 package cn.net.mall.customer.client;
 
+import cn.net.mall.customer.client.fallback.MemberFeignFallbackFactory;
 import cn.net.mall.customer.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -9,7 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(value = "mall-customer-api", contextId = "memberFeignClient")
+@FeignClient(value = "mall-customer-api", contextId = "memberFeignClient",
+        fallbackFactory = MemberFeignFallbackFactory.class)
 public interface MemberFeignClient {
 
     @Operation(summary = "会员注册")

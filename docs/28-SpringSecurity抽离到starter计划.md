@@ -1,93 +1,256 @@
-# Spring Security 抽离到 mall-auth-api-starter 计划
+# Spring Security 统一管理（mall-auth-api-starter）
 
-## 一、现状
+> 此文已从"计划"更新为"现状 + 使用指南"。
+> 详见 `AuthSecurityAutoConfiguration` 和 `PermitAllProvider`。
 
-### 1.1 当前鉴权层分布
-
-| 组件 | 所在位置 | 职责 |
-|------|---------|------|
-| `AuthApiInterceptor` | mall-auth-api-starter | 解析 JWT，设 SecurityContext |
-| `FeignAuthInterceptor` | mall-auth-api-starter | Feign 透传 Authorization 头 |
-| `SpringSecurityConfig` | **mall-admin（独有）** | `@EnableWebSecurity` + 权限规则 |
-| `JwtTokenFilter` | **mall-admin（独有）** | Redis 黑名单 |
-| `PasswordEncoder` | **各服务各写各的** | BCrypt 加密 |
-
-### 1.2 问题
+## 一、架构概览
 
 ```
-AuthApiInterceptor 设身份（JWT → SecurityContext）
-  ↓
-但安检门没开（无 @EnableWebSecurity）
-  ↓
-身份设了没人查，等于白设
+┌─────────────────────────────────────────────────────────────────┐
+│                    服务模块 (basic / product / order ...)         │
+│  pom.xml: mall-auth-api-starter (含 common-security 传递依赖)   │
+└───────────────────────┬─────────────────────────────────────────┘
+                        │
+          ┌─────────────┴─────────────┐
+          │                           │
+          ▼                           ▼
+┌─────────────────────┐   ┌──────────────────────────┐
+│  mall-auth-api-starter │   │    common-security       │
+│  (基础设施层)          │   │   (工具库 — 传递依赖)    │
+├─────────────────────┤   ├──────────────────────────┤
+│ AuthApiInterceptor  │   │ TokenUtil                │
+│   ↓ 调 TokenUtil    │◄──│   JWT 解析/生成/验签     │
+│   ↓ 创建 JwtUserEntity│   │                          │
+│   ↓ 设 SecurityContext│   │ JwtUserEntity            │
+│   ↓ 调 FillUserUtil  │◄──│   implements UserDetails │
+│                     │   │                          │
+│ FeignAuthInterceptor│   │ FillUserUtil              │
+│   ↓ 调 TokenUtil    │◄──│   ThreadLocal 用户填充    │
+│   ↓ 透传 Authorization│  │                          │
+│                     │   │                          │
+│ AuthSecurityConfig  │   │                          │
+│ PermitAllProvider   │   │                          │
+└─────────────────────┘   └──────────────────────────┘
+                        │
+            ┌───────────┴───────────┐
+            │                       │
+            ▼                       ▼
+┌─────────────────────────────────────────────────────┐
+│  mall-admin (自定义链)                               │
+│  SpringSecurityConfig                               │
+│    ├─ JwtTokenFilter (Redis 黑名单)                  │
+│    ├─ AuthenticationManager                         │
+│    ├─ 业务白名单 (登录/菜单/角色等)                   │
+│    └─ 403 认证异常处理                               │
+└─────────────────────────────────────────────────────┘
 ```
-
-10 个服务（不含 mall-admin）解析了 JWT 但不做任何安全检查。
 
 ---
 
-## 二、改造目标
+## 二、当前白名单内容
 
-把 `SpringSecurityConfig` 中的通用部分从 `mall-admin` 抽到 `mall-auth-api-starter`，让所有依赖该 starter 的服务自动获得 Spring Security 保护。
+### 2.1 Starter 内置白名单（所有服务共享）
 
-### 2.1 移到 starter ✅
+来自 `AuthSecurityAutoConfiguration.PERMIT_ALL_URLS`：
 
-| 组件 | 说明 |
-|------|------|
-| `@EnableWebSecurity` | 开启 Spring Security |
-| `@EnableMethodSecurity` | 支持 `@PreAuthorize` 注解 |
-| `默认 SecurityFilterChain` | 全部请求需认证（`anyRequest().authenticated()`） |
-| `PasswordEncoder` | BCryptPasswordEncoder |
-| `GrantedAuthorityDefaults` | 标准 `ROLE_` 前缀 |
-| `Http403ForbiddenEntryPoint` | 统一认证异常处理 |
+| 类别 | 路径 | 说明 |
+|------|------|------|
+| Knife4j | `/doc.html` | 文档主页面 |
+| Swagger UI | `/swagger-ui.html`, `/swagger-ui/**` | Swagger 3 页面 |
+| Swagger 兼容 | `/swagger-resources/*` | Swagger 2 资源 |
+| WebJars | `/webjars/**` | 前端静态资源 |
+| OpenAPI 3 | `/v3/api-docs/**`, `/v3/api-docs/*/**` | API 规范文档 |
+| Druid | `/druid/*` | 数据库连接池监控 |
 
-### 2.2 留在 mall-admin ❌
+以及过滤器链中直接放的：
 
-| 组件 | 理由 |
-|------|------|
-| 业务白名单（PERMIT_ALL_URLS） | admin 自己的接口路径，其他服务没有 |
-| Swagger/静态资源白名单 | admin 自己暴露的文档路径 |
-| `JwtTokenFilter` (Redis 黑名单) | 依赖 Redis，仅 admin 需要踢人下线 |
-| `AuthenticationManager` | 只有 admin 做账号密码登录 |
-| `SmsAuthenticationProvider` | 只有 admin 有短信登录 |
-| `DaoAuthenticationProvider` | 绑定 admin 的 UserDetailsService |
-
-### 2.3 各服务清理 ❌
-
-部分服务（如 mall-customer）自己定义了 `PasswordEncoder` Bean，抽到 starter 后需删除重复的定义。
-
-| 服务 | 重复 Bean | 操作 |
+| 类别 | 匹配规则 | 说明 |
 |------|----------|------|
-| mall-customer | `PasswordEncoder` | 删除服务内的重复定义 |
-| 其他 | 无 | 无需操作 |
+| 通用静态资源 | `GET /*.html`, `/*/*.html`, `/*/*.css`, `/*/*.js` | 前端页面依赖 |
+| CORS 预检 | `OPTIONS /*` | 跨域请求放行 |
+
+### 2.2 Admin 额外业务白名单
+
+> 仅 `mall-admin` 有，其他服务没有。
+
+| 类别 | 路径 |
+|------|------|
+| 内部 Feign 调用 | `/v1/internal/**` |
+| Web 端认证 | `/v1/auth/web/user/login`, `loginByPhone`, `getCode`, `logout` |
+| 移动端认证 | `/v1/mobile/user/login`, `loginByPhone`, `getCode` |
+| 菜单 | `/v1/auth/menu/searchByPage`, `insert`, `update`, `deleteByIds` |
+| 角色 | `/v1/auth/role/all` |
+| 部门 | `/v1/auth/dept/findById`, `searchByPage`, `searchByTree` |
+| 岗位 | `/v1/auth/job/searchByPage`, `deleteByIds` |
+| 测试 | `/v1/test/testOpenFeign` |
+| 额外资源 | `/avatar/*`, `/websocket/*`, `/job/*`, `/init/*` |
 
 ---
 
-## 三、技术方案
+## 三、服务开发者使用指南
 
-### 3.1 默认链 + 服务覆写
+### 3.1 什么也不用做
 
-利用 Spring Boot 的条件注入机制——**starter 提供默认链，服务可以自定义链自动覆盖**：
+如果服务没有公开接口（比如 basic、product、order 等内部微服务），**零配置**——starter 的默认链会自动生效，所有请求需要认证。
+
+### 3.2 加几个公开路径（最常见场景）
+
+只需定义一个 `PermitAllProvider` Bean，不需要写任何 Security 配置：
 
 ```java
-// mall-auth-api-starter
+package cn.net.mall.basic.config;
+
+import cn.net.mall.auth.config.PermitAllProvider;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
+
 @Configuration
-@EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
-public class AuthSecurityAutoConfiguration {
+public class BasicSecurityExtender {
 
     @Bean
-    @ConditionalOnMissingBean(SecurityFilterChain.class)
-    SecurityFilterChain defaultFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
+    public PermitAllProvider basicPublicPaths() {
+        return () -> List.of(
+            "/v1/basic/open/**",       // 开放接口
+            "/v1/basic/callback/**"    // 回调通知
+        );
+    }
+}
+```
+
+多个 `PermitAllProvider` Bean 会自动合并，同时生效。
+
+### 3.3 完全覆盖 Security 链（大改动）
+
+> ⚠️ 代价：需要自行包含 starter 内置的所有放行路径。
+
+```java
+package cn.net.mall.xxx.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+
+import java.util.List;
+
+@Configuration
+public class CustomSecurityConfig {
+
+    private static final List<String> PERMIT_ALL = List.of(
+            "/doc.html",
+            "/swagger-ui.html", "/swagger-ui/**",
+            "/swagger-resources/*",
+            "/webjars/**",
+            "/v3/api-docs/**", "/v3/api-docs/*/**",
+            "/druid/*",
+            "/v1/my/public/**"
+    );
+
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        return http
                 .csrf(csrf -> csrf.disable())
                 .exceptionHandling(exception ->
-                        exception.authenticationEntryPoint(new Http403ForbiddenEntryPoint()))
+                        exception.authenticationEntryPoint(
+                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize ->
-                        authorize.anyRequest().authenticated())
+                        authorize
+                                .requestMatchers(HttpMethod.GET,
+                                        "/*.html", "/*/*.html",
+                                        "/*/*.css", "/*/*.js"
+                                ).permitAll()
+                                .requestMatchers(HttpMethod.OPTIONS, "/*").permitAll()
+                                .requestMatchers(PERMIT_ALL.toArray(new String[0])).permitAll()
+                                .anyRequest().authenticated())
+                .addFilterBefore(myJwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
+    }
+}
+```
+
+### 3.4 哪个服务用哪种方式？
+
+| 服务 | 方式 | 说明 |
+|------|------|------|
+| **mall-admin** | ✅ 自定义链 | 有自己的 JWT 黑名单、登录认证 |
+| **mall-admin-bff** | 默认链 | 无特殊需求 |
+| **mall-mobile-bff** | 默认链 | 无特殊需求 |
+| **mall-basic** | 默认链 | 默认即可 |
+| **mall-product** | 默认链 | 默认即可 |
+| **mall-order** | 默认链 | 默认即可 |
+| **mall-marketing** | 默认链 | 默认即可 |
+| **mall-pay** | 默认链 | 默认即可 |
+| **mall-customer** | 默认链 | 默认即可 |
+| **mall-recommend** | 默认链 | 默认即可 |
+| **mall-message** | 默认链 | 默认即可 |
+
+---
+
+## 四、核心源码结构
+
+### 4.1 `AuthSecurityAutoConfiguration.java`
+
+位置：`mall-auth-api-starter/src/main/java/cn/net/mall/auth/config/AuthSecurityAutoConfiguration.java`
+
+```java
+@Configuration(proxyBeanMethods = false)
+@EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
+public class AuthSecurityAutoConfiguration {
+
+    // 内置白名单
+    private static final List<String> PERMIT_ALL_URLS = List.of(
+            "/doc.html",
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/swagger-resources/*",
+            "/webjars/**",
+            "/v3/api-docs/**",
+            "/v3/api-docs/*/**",
+            "/druid/*"
+    );
+
+    // 过滤器链（支持 PermitAllProvider 扩展）
+    @Bean
+    @ConditionalOnMissingBean(SecurityFilterChain.class)
+    SecurityFilterChain defaultFilterChain(
+            HttpSecurity httpSecurity,
+            List<PermitAllProvider> permitAllProviders) throws Exception {
+
+        List<String> allPermitUrls = new ArrayList<>(PERMIT_ALL_URLS);
+        if (permitAllProviders != null) {
+            for (PermitAllProvider provider : permitAllProviders) {
+                List<String> urls = provider.getPermitAllUrls();
+                if (urls != null) allPermitUrls.addAll(urls);
+            }
+        }
+
+        return httpSecurity
+                .csrf(csrf -> csrf.disable())
+                .exceptionHandling(exception ->
+                        exception.authenticationEntryPoint(
+                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(authorize ->
+                        authorize
+                                .requestMatchers(HttpMethod.GET,
+                                        "/*.html", "/*/*.html",
+                                        "/*/*.css", "/*/*.js"
+                                ).permitAll()
+                                .requestMatchers(HttpMethod.OPTIONS, "/*").permitAll()
+                                .requestMatchers(allPermitUrls.toArray(new String[0])).permitAll()
+                                .anyRequest().authenticated())
                 .build();
     }
 
@@ -105,95 +268,158 @@ public class AuthSecurityAutoConfiguration {
 }
 ```
 
-```java
-// mall-admin（自定义链自动覆盖 starter 的默认链）
-@Configuration
-public class SpringSecurityConfig {
+### 4.2 `PermitAllProvider.java`
 
-    @Bean
-    SecurityFilterChain filterChain(HttpSecurity httpSecurity,
-                                    JwtTokenFilter jwtTokenFilter) throws Exception {
-        // 自己的规则：白名单 + JwtTokenFilter + ...
-        return httpSecurity
-                .authorizeHttpRequests(authorize -> {
-                    authorize.requestMatchers(PERMIT_ALL_URLS).permitAll()
-                            .anyRequest().authenticated();
-                })
-                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
-    }
+位置：`mall-auth-api-starter/src/main/java/cn/net/mall/auth/config/PermitAllProvider.java`
+
+```java
+@FunctionalInterface
+public interface PermitAllProvider {
+    List<String> getPermitAllUrls();
 }
 ```
 
-### 3.2 影响范围
-
-| 服务 | 行为变化 | 风险 |
-|------|---------|------|
-| **mall-admin** | 不变（自定义链覆盖默认链） | 无 |
-| **mall-admin-bff** | 全部请求需认证 | ✅ 原来就设了 SecurityContext |
-| **mall-mobile-bff** | 全部请求需认证 | ✅ 原来就设了 SecurityContext |
-| **mall-basic** | 全部请求需认证 | ✅ 原来就设了 SecurityContext |
-| **mall-product** | 全部请求需认证 | ✅ 原来就设了 SecurityContext |
-| **mall-order** | 全部请求需认证 | ✅ 原来就设了 SecurityContext |
-| **mall-customer** | 全部请求需认证，删除重复 PasswordEncoder | ⚠️ 见下方 |
-| **mall-marketing** | 全部请求需认证 | ✅ 原来就设了 SecurityContext |
-| **mall-pay** | 全部请求需认证 | ✅ 原来就设了 SecurityContext |
-| **mall-recommend** | 全部请求需认证 | ✅ 原来就设了 SecurityContext |
-| **mall-message** | 全部请求需认证 | ✅ 原来就设了 SecurityContext |
-
-### 3.3 潜在风险
-
-| 风险 | 原因 | 对策 |
-|------|------|------|
-| `/v1/internal/**` 被拦 | 默认链要求全部请求认证 | 服务的自定义白名单在 starter 之后加，或确认 FeignAuthInterceptor 正常透传了 JWT |
-| 异步/定时任务 Feign 调用失败 | 无请求上下文，FeignAuthInterceptor 不传 JWT | 这些场景本来就不该走到鉴权路径，或者需要手动传 token |
-| 公开接口（如注册）被拦 | 默认链要求认证 | 这些接口在 Gateway 白名单里，不受影响；如果后端有额外公开接口需写自己的 `SecurityFilterChain` |
-| 引入的依赖冲突 | `spring-boot-starter-security` 依赖 | 已有服务可能缺 jar，需确认 pom |
-
-### 3.4 回滚
-
-- 不改代码结构，只是一个新增类 + 条件注解
-- 线上出问题直接删 `AuthSecurityAutoConfiguration` 或移除 `@EnableWebSecurity` 即可恢复
-- `@ConditionalOnMissingBean` 保证任何服务自定义了 `SecurityFilterChain` 就不会用默认链
-
 ---
 
-## 四、实施步骤
+## 五、common-security 与 mall-auth-api-starter 的关系
 
-- [x] 4.1 在 `mall-auth-api-starter` 的 `pom.xml` 添加 `spring-boot-starter-security` 依赖
-- [x] 4.2 创建 `AuthSecurityAutoConfiguration` 类（默认链 + `@EnableWebSecurity` + `@EnableMethodSecurity`）
-- [x] 4.3 更新 `AutoConfiguration.imports` 注册新配置类
-- [x] 4.4 修改 `mall-admin` 的 `SpringSecurityConfig`：移除 `@EnableWebSecurity/@EnableMethodSecurity`、`PasswordEncoder`、`GrantedAuthorityDefaults`（由 starter 提供）
-- [x] 4.5 删除 `mall-customer` 的重复 `PasswordEncoder` Bean
-- [x] 4.6 全项目 mvn compile 验证
-- [ ] 4.7 启动全服务 + 客户端请求验证
+### 5.1 分工
 
----
+| 模块 | 角色 | 提供什么 |
+|------|------|----------|
+| **common-security** | 工具库（数据模型 + 工具类） | `TokenUtil`（JWT 签验）、`JwtUserEntity`（UserDetails 实现）、`FillUserUtil`（ThreadLocal 用户填充） |
+| **mall-auth-api-starter** | 基础设施（拦截器 + Security 配置） | `AuthApiInterceptor`、`FeignAuthInterceptor`、`AuthSecurityAutoConfiguration`、`PermitAllProvider` |
 
-## 五、补充说明
+### 5.2 完整认证数据流
 
-### 关于 BFF 层
+```
+1. 请求到达
+   ┌────────────────────────────────────────────┐
+   │ Authorization: Bearer <jwt>                 │
+   │ X-User-Id: 1                                │  ← Gateway 透传
+   │ X-User-Name: admin                          │
+   └────────────────────────────────────────────┘
 
-BFF（admin-bff、mobile-bff）也会获得 Spring Security 保护。之前 BFF 虽然会解析 JWT、设 SecurityContext，但从不检查——现在有了 `@EnableWebSecurity`，未认证请求会被拒绝。
+2. AuthApiInterceptor.preHandle()
+   ┌────────────────────────────────────────────┐
+   │  TokenUtil.getTokenForAuthorization(req)   │  ← common-security
+   │  TokenUtil.parseClaimsFromToken(token,sec) │  ← common-security
+   │  ↓                                          │
+   │  JwtUserEntity jwtUser = new JwtUserEntity()│  ← common-security
+   │  authentication = new                       │
+   │    UsernamePasswordAuthenticationToken(...) │
+   │  SecurityContextHolder.set(authentication)  │
+   │  FillUserUtil.setCurrentUser(id, name)      │  ← common-security
+   └────────────────────────────────────────────┘
 
-但 Gateway 白名单已经保证了只有带有效 JWT 的请求才能到达 BFF，所以实际不会有影响，只是多了一层后端兜底防护。
+3. AuthSecurityAutoConfiguration 拦截未认证请求
+   ┌────────────────────────────────────────────┐
+   │  SecurityFilterChain                       │
+   │    ├─ 白名单 → permitAll                   │
+   │    ├─ 有 JWT → 步骤 2 已设认证 → 通过       │
+   │    └─ 无 JWT → 401 Unauthorized            │
+   └────────────────────────────────────────────┘
 
-### 关于 `@PreAuthorize`
-
-starter 启用了 `@EnableMethodSecurity`，以后任何服务可以在控制器或 Service 上写：
-
-```java
-@PreAuthorize("hasRole('admin')")
-public void deleteOrder() { ... }
+4. FeignAuthInterceptor (跨服务调用时)
+   ┌────────────────────────────────────────────┐
+   │  TokenUtil.getAuthorization(req)           │  ← common-security
+   │  template.header(Authorization, token)     │
+   │  template.header(INNER-REQUEST, true)      │
+   └────────────────────────────────────────────┘
+   → 下游服务重复步骤 2-3
 ```
 
-实现**方法级的精细权限控制**，不只是拦不拦的问题。
+### 5.3 依赖关系
 
-### 关于 `/v1/internal/`
+```
+服务 pom.xml 只需要写：
+  <dependency>
+      <groupId>cn.net.mall</groupId>
+      <artifactId>mall-auth-api-starter</artifactId>
+  </dependency>
 
-当前 `mall-admin` 放行了 `/v1/internal/**`，因为 Feign 调用走这条路。移到 starter 后默认链不放过任何路径——但问题不大：
-- FeignAuthInterceptor 会透传 Authorization 头
-- 后端 AuthApiInterceptor 能正常解析 JWT、设 SecurityContext
-- 所以 `/v1/internal/**` 也能通过认证，不需要额外 permitAll
+mall-auth-api-starter 的 pom.xml 已经包含了：
+  <dependency>
+      <groupId>cn.net.mall</groupId>
+      <artifactId>common-security</artifactId>
+  </dependency>
 
-如果某个内部接口在无身份时被调用（定时任务、MQ），才需要额外放行。按需加白名单即可。
+所以 common-security 是传递依赖，服务不需要重复声明。
+```
+
+### 5.4 服务为什么要显式声明 common-security？
+
+虽然 starter 已传递依赖 common-security，但多数服务**直接使用**了 common-security 的类：
+
+| 服务 | 直接使用的 common-security 类 |
+|------|------------------------------|
+| mall-basic | `FillUserUtil`（9 个 Service） |
+| mall-product | `FillUserUtil`（16 个 Service）、`JwtUserEntity`（2 个 Service） |
+| mall-order | `FillUserUtil`（4 个 Service）、`JwtUserEntity`（2 个 Service） |
+| mall-marketing | `FillUserUtil`（8 个 Service） |
+| mall-customer | `FillUserUtil` |
+| mall-message | `FillUserUtil` |
+| mall-recommend | `FillUserUtil` |
+| mall-pay | `FillUserUtil` |
+| mall-gateway | `TokenUtil`（Gateway 独有，使用 ServerHttpRequest 重载） |
+| mall-admin | `TokenUtil`、`FillUserUtil` |
+
+对于这些服务，显式声明 common-security 是 **代码可读性的选择**（明确告诉读者"我用了这个库"），不是编译必须。删除显式声明也能编译通过，但 IDE 提示和代码审查时不够直观。
+
+### 5.5 与 Gateway 的关系
+
+```
+客户端 → Gateway (AuthFilter)
+            │
+            ├─ JWT 验证 ← TokenUtil (common-security 的 ServerHttpRequest 版本)
+            ├─ 通过 → 透传 X-User-Id / X-User-Name / X-Roles 头
+            ├─ 失败 → 401
+            │
+            ▼
+         后端服务
+            │
+            ├─ AuthApiInterceptor (starter)
+            │   ├─ 验证 JWT claims 与请求头一致
+            │   └─ 设 SecurityContext
+            │
+            ├─ AuthSecurityAutoConfiguration (starter)
+            │   ├─ 白名单放行
+            │   └─ 兜底拦截
+            │
+            └─ FeignAuthInterceptor (starter)
+                └─ 透传 Authorization 到下游
+
+注意：Gateway 是唯一直接依赖 common-security 但不依赖 starter 的服务
+（因为 Gateway 是 WebFlux 响应式应用，starter 的 Servlet API 拦截器不适用）
+```
+
+---
+
+## 六、常见问题
+
+### Q: 加了 `PermitAllProvider` 后启动报错说找不到这个类？
+
+A: 确保服务的 `pom.xml` 依赖了 `mall-auth-api-starter`：
+
+```xml
+<dependency>
+    <groupId>cn.net.mall</groupId>
+    <artifactId>mall-auth-api-starter</artifactId>
+    <version>${mall-auth-api-starter.version}</version>
+</dependency>
+```
+
+### Q: 我定义的 `PermitAllProvider` 路径没生效？
+
+A: 检查两点：
+1. 服务没有自定义 `SecurityFilterChain` Bean（自定义链会完全覆盖默认链，不再收集 `PermitAllProvider`）
+2. `PermitAllProvider` 的方法返回了正确的 AntPath 模式（如 `/v1/public/**`）
+
+### Q: 自定义 `SecurityFilterChain` 后 Knife4j 打不开了？
+
+A: 自定义链完全替代了 starter 的默认链，需要自己包含 Swagger/Knife4j 放行路径。参考第三章 3.3 节。
+
+### Q: 为什么 `mall-admin` 返回 403 而其他服务返回 401？
+
+A: Admin 使用 `Http403ForbiddenEntryPoint`（见 `SpringSecurityConfig`），其他服务使用 starter 默认的 `HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)`。这是有意为之——admin 先过 JWT 校验再过权限校验，权限不够时返回 403 更准确。
+

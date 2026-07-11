@@ -7,7 +7,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
-@EnableFeignClients(basePackages = {"cn.net.mall.basic", "cn.net.mall.admin.client"})
+@EnableFeignClients(basePackages = {"cn.net.mall.basic"})
 @EnableDiscoveryClient
 @MapperScan("cn.net.mall.admin.mapper")
 @EnableCaching

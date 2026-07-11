@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import cn.net.mall.entity.ResponsePageEntity;
+import cn.net.mall.marketing.client.fallback.MarketingFeignFallbackFactory;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,8 @@ import static cn.net.mall.marketing.constant.AppConstant.MARKETING_SERVICE_NAME;
  *   - mall-mobile-api（BFF 服务）— 获取优惠券列表、领取优惠券
  * 
 */
-@FeignClient(value = MARKETING_SERVICE_NAME, contextId = "marketingFeignClient")
+@FeignClient(value = MARKETING_SERVICE_NAME, contextId = "marketingFeignClient",
+        fallbackFactory = MarketingFeignFallbackFactory.class)
 public interface MarketingFeignClient {
 
     /**

@@ -8,7 +8,7 @@ set -e
 CLUSTER_NAME="${1:-mall}"
 
 echo "=== 加载镜像到 Kind 集群: $CLUSTER_NAME ==="
-SERVICES=("gateway" "auth" "basic" "product" "order" "pay" "marketing" "recommend" "message")
+SERVICES=("gateway" "basic" "product" "order" "pay" "marketing" "recommend" "message")
 for svc in "${SERVICES[@]}"; do
   echo "  -> mall-$svc:latest"
   kind load docker-image "mall-$svc:latest" --name "$CLUSTER_NAME"

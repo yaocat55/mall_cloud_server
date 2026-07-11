@@ -11,13 +11,7 @@
   <img src="https://img.shields.io/badge/license-private-red" alt="License">
 </p>
 
----
 
-> **项目评价：** 这是一套完整的微服务脚手架，覆盖了 Spring Cloud Alibaba 全家桶的集成实践，对学习微服务架构有很高的参考价值。但**离生产可用还有较大距离**——业务逻辑设计不够严谨（订单状态机缺失、鉴权链路不完整、数据同步机制不透明），更适合作为**学习项目**而非直接上线。详见[已知问题](#已知问题)。
->
-> > 坦白说，这个项目给我的感觉是"大厂技术栈堆砌"，把 Spring Cloud Alibaba、ShardingSphere、RocketMQ、ES、SkyWalking 能塞的全塞上了，但核心业务反而经不起推敲。库存不扣、Gateway 不拦人、数据同步不存在——这些都是最基础的东西。面试看到技术栈列表确实唬人，但深问两句就露馅。说白了就是**技术服务于简历，而不是服务于业务**。作为脚手架参考价值很高，但要上线还得重写一遍业务逻辑。 —— 来自某位填坑填了一天的开发者
-
----
 
 ## 📑 目录
 
@@ -29,15 +23,15 @@
   - [核心流程：下单 → 支付](#核心流程下单--支付)
   - [异步解耦：消息队列](#异步解耦消息队列)
 - [前端开发指南](#前端开发指南)
-- [网关路由](docs/网关路由.md)
+- [网关路由](docs/08-网关路由.md)
 - [基础设施](#基础设施)
-- [数据库设计](docs/数据库设计.md)
-- [快速开始](docs/快速开始.md)
+- [数据库设计](docs/06-数据库设计.md)
+- [快速开始](docs/05-快速开始.md)
 - [设计要点](#设计要点)
 - [注意事项](#注意事项)
 - [已知问题](#已知问题)
-- [多仓库拆分方案](docs/仓库拆分方案.md)
-- [Nacos 配置指南](docs/Nacos配置指南.md)
+- [多仓库拆分方案](docs/07-仓库拆分方案.md)
+- [Nacos 配置指南](docs/18-Nacos配置指南.md)
 
 ---
 
@@ -49,7 +43,7 @@
 
 - 🚪 统一 API 网关，JWT 鉴权 + Sentinel 流控
 - 🔐 RBAC 权限模型（用户 → 角色 → 菜单 / 部门）
-- 📦 21 个 Maven 模块，12 个独立部署微服务 + 7 个 Feign 客户端 + 1 个认证 SDK
+- 📦 27 个 Maven 模块，12 个独立部署微服务 + 7 个 Feign 客户端 + 1 个认证 SDK
 - 📄 Swagger 3 三层分组（📱 mobile / ⚙️ admin / 🔗 internal），各服务文档独立展示
 - 🎯 BFF 层统一前端入口，重写前端只需看 BFF 文档
 - 🔄 MySQL + Elasticsearch 双写，ShardingSphere 分库分表
@@ -140,16 +134,13 @@
 
 ```
 mall_cloud_server/
-├── mall-common/                   基础设施核心（工具类、统一响应、异常处理、自动配置）
-│   ├── 实体基类 (BaseEntity / 分页)
-│   ├── 工具类 (雪花 ID / Token / MD5 / Excel)
-│   ├── 全局响应包装 & 异常处理
-│   ├── Redis 工具类 + Token 校验（自动配置）
-│   ├── 雪花算法分布式 ID（自动配置）
-│   ├── 敏感词脱敏（自动配置）
-│   ├── 敏感词校验注解 / AOP
-│   ├── 自定义校验注解 (手机号/金额)
-│   └── MyBatis 基类 (BaseMapper / BaseService / UserInterceptor)
+├── common-core/                    核心基础（统一响应、异常处理、BeanUtils 等基础工具）
+├── common-mybatis/                 MyBatis 基类（BaseMapper、BaseService、分页拦截器）
+├── common-web/                     Web 工具类（IpUtil、HTTP 相关）
+├── common-redis/                   Redis 工具类 + 自动配置
+├── common-workid/                  雪花算法分布式 ID 生成 + 自动配置
+├── common-sensitive/               敏感词脱敏注解 / AOP 校验 + 校验注解（手机号/金额）
+├── common-security/                JWT 工具类（TokenUtil、FillUserUtil、JwtUserEntity）
 │
 ├── mall-gateway/                  网关层
 │   └── Spring Cloud Gateway + JWT 校验 + CORS + Sentinel
@@ -183,12 +174,12 @@ mall_cloud_server/
 ├── mall-message/                  消息推送（WebSocket）
 │
 ├── docs/                          项目文档
-│   ├── frontend-api-mapping.md   前端 API ↔ 后端微服务映射手册
-│   ├── gateway-routes.md          网关路由与白名单
-│   ├── quick-start.md             快速开始
-│   ├── database-design.md         数据库设计
-│   ├── nacos-config-guide.md      Nacos 配置指南
-│   ├── repo-split-plan.md         多仓库拆分方案
+│   ├── 04-前端接口映射.md          前端 API ↔ 后端微服务映射手册
+│   ├── 08-网关路由.md              网关路由与白名单
+│   ├── 05-快速开始.md              快速开始
+│   ├── 06-数据库设计.md            数据库设计
+│   ├── 18-Nacos配置指南.md          Nacos 配置指南
+│   ├── 07-仓库拆分方案.md          多仓库拆分方案
 │   └── superpowers/              设计文档与实施计划
 ```
 
@@ -418,13 +409,13 @@ sequenceDiagram
 | mall-gateway | `cn.net.mall.gateway` | — |
 | mall-admin | `cn.net.mall.admin` | `cn.net.mall.basic`, `cn.net.mall.admin.client` |
 | mall-customer | `cn.net.mall.customer` | `cn.net.mall.basic`, `cn.net.mall.customer.client` |
-| mall-basic | `cn.net.mall.basic` | `cn.net.mall.admin.client` |
+| mall-basic | `cn.net.mall.basic` | 无限制（仅加载自身 `cn.net.mall.basic.client`） |
 | mall-product | `cn.net.mall.product` | `cn.net.mall.basic`, `cn.net.mall.admin.client` |
-| mall-marketing | `cn.net.mall.marketing` | `cn.net.mall.basic`, `cn.net.mall.admin.client`, `cn.net.mall.product.client` |
-| mall-order | `cn.net.mall.order` | `cn.net.mall.order`, `cn.net.mall.product.client`, `cn.net.mall.marketing.client`, `cn.net.mall.admin.client` |
-| mall-pay | `cn.net.mall.pay` | `pay`, `order.client` |
+| mall-marketing | `cn.net.mall.marketing` | `cn.net.mall.basic`, `cn.net.mall.product.client`, `cn.net.mall.customer.client` |
+| mall-order | `cn.net.mall.order` | `cn.net.mall.order`, `cn.net.mall.product.client`, `cn.net.mall.marketing.client`, `cn.net.mall.admin.client`, `cn.net.mall.customer.client` |
+| mall-pay | `cn.net.mall.pay` | `cn.net.mall.pay`, `cn.net.mall.order.client` |
 | mall-recommend | `cn.net.mall.recommend` | `cn.net.mall.product.client`, `cn.net.mall.recommend.support` |
-| mall-message | `cn.net.mall.message` | `cn.net.mall.message`, `cn.net.mall.admin.client` |
+| mall-message | `cn.net.mall.message` | `cn.net.mall.message`, `cn.net.mall.customer.client` |
 | mall-admin-bff | `cn.net.mall.admin` | `cn.net.mall.admin.client`, `cn.net.mall.basic.client`, `cn.net.mall.product.client`, `cn.net.mall.marketing.client`, `cn.net.mall.order.client`, `cn.net.mall.pay.client` |
 | mall-mobile-bff | `cn.net.mall.mobile` | `cn.net.mall.admin.client`, `cn.net.mall.basic.client`, `cn.net.mall.customer.client`, `cn.net.mall.product.client`, `cn.net.mall.marketing.client`, `cn.net.mall.order.client`, `cn.net.mall.pay.client` |
 
@@ -572,14 +563,16 @@ Gateway 已配置全局 CORS（允许所有 Origin）。如果仍然报跨域，
 
 ### ❌ 悬而未决
 
-详见 [docs/架构改进建议.md](docs/架构改进建议.md)，当前主要问题：
+详见 [docs/17-架构改进建议.md](docs/17-架构改进建议.md)，当前主要问题：
 
 | 优先级 | 问题数 | 核心 |
 |--------|:------:|------|
-| P0 | 4 | JWT 查 Redis、库存回滚、敏感信息、.idea 清理 |
-| P1 | 6 | 零测试、无异常处理、BFF 缺 scanBasePackages、缺 template、Feign 无超时 |
-| P2 | 8 | 用户表未分离、认证不全、同步不明确、DTO 缺 @Schema、缺 client 模块 |
+| P0 | 1 | 库存模型：超时取消不恢复库存、MQ 回滚兼容问题 |
+| P1 | 2 | 零测试、Feign 无超时/熔断配置 |
+| P2 | 4 | 用户表未分离、认证不完整、同步不明确、DTO 缺 @Schema、缺 client 模块 |
 | P3 | 3 | Maven Wrapper、启动脚本、Docker 环境 |
+
+> **已解决并入历史的问题：** JWT Redis 剥离 ✅、敏感信息外部化 ✅、`.idea` 清理 ✅、统一异常处理 ✅、BFF scanBasePackages ✅、BFF application.yml.template ✅
 
 ---
 
@@ -591,10 +584,10 @@ Gateway 已配置全局 CORS（允许所有 Origin）。如果仍然报跨域，
 
 **方案二（3 仓库）：** 将耦合紧密的服务放在同一仓库，降低版本协调成本：`mall-foundation`（common/gateway/admin）、`mall-business`（basic/product/order/pay/marketing）、`mall-enhancement`（recommend/message）。
 
-> 详见 [docs/仓库拆分方案.md](docs/仓库拆分方案.md)
+> 详见 [docs/07-仓库拆分方案.md](docs/07-仓库拆分方案.md)
 
 ---
 
 > 在线查看此文档可获得最佳体验（Mermaid 图表自动渲染）。本地 IDE 需安装 Mermaid 插件。
 >
-> 相关文档：`docs/前端接口映射.md` — 前端 API 与后端微服务完整映射手册
+> 相关文档：`docs/04-前端接口映射.md` — 前端 API 与后端微服务完整映射手册

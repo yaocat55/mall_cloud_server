@@ -1,5 +1,6 @@
 package cn.net.mall.basic.client;
 
+import cn.net.mall.basic.client.fallback.SmsFeignFallbackFactory;
 import cn.net.mall.basic.dto.SendCodeDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -19,7 +20,8 @@ import static cn.net.mall.basic.constant.AppConstant.BASIC_SERVICE_NAME;
 *
  * @date 2025/5/17 14:42
  */
-@FeignClient(value = BASIC_SERVICE_NAME, contextId = "smsFeignClient")
+@FeignClient(value = BASIC_SERVICE_NAME, contextId = "smsFeignClient",
+        fallbackFactory = SmsFeignFallbackFactory.class)
 public interface SmsFeignClient {
 
     /**

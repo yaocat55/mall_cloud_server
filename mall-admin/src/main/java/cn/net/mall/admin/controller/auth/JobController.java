@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @date 2024-01-08 17:18:17
  */
-@Tag(name = "岗位管理", description = "管理后台：岗位 CRUD")
+@Tag(name = "岗位管理", description = "管理后台：岗位 CRUD。searchByPage / deleteByIds 无需认证；其余需 Bearer Token；insert / update 额外需 admin 角色")
 @RestController
 @RequestMapping("/v1/auth/job")
 public class JobController {
@@ -34,7 +34,7 @@ public class JobController {
      * @param id 系统ID
      * @return 岗位信息
      */
-    @Operation(summary = "通过id查询岗位信息", description = "通过id查询岗位信息")
+    @Operation(summary = "通过id查询岗位信息", description = "需 Bearer Token | 查询参数：id（岗位ID）")
     @GetMapping("/findById")
     public JobEntity findById(Long id) {
         return jobService.findById(id);
@@ -46,12 +46,21 @@ public class JobController {
      * @param jobConditionEntity 条件
      * @return 岗位列表
      */
-    @Operation(summary = "根据条件查询岗位列表", description = "根据条件查询岗位列表")
+    @Operation(summary = "分页查询岗位列表", description = "无需认证 | 请求体：JobConditionEntity（分页条件，含 page/pageSize）")
     @PostMapping("/searchByPage")
     public ResponsePageEntity<JobEntity> searchByPage(@RequestBody JobConditionEntity jobConditionEntity) {
         return jobService.searchByPage(jobConditionEntity);
     }
 
+
+    @Operation(summary = "查询所有岗位", description = "需 Bearer Token | 无参，返回全部岗位列表")
+    @GetMapping("/all")
+    public List<JobEntity> all() {
+        JobConditionEntity condition = new JobConditionEntity();
+        condition.setPageNo(0);
+        ResponsePageEntity<JobEntity> pageResult = jobService.searchByPage(condition);
+        return pageResult.getData();
+    }
 
     /**
      * 添加岗位
@@ -59,7 +68,7 @@ public class JobController {
      * @param jobEntity 岗位实体
      * @return 影响行数
      */
-    @Operation(summary = "添加岗位", description = "添加岗位")
+    @Operation(summary = "添加岗位", description = "需 Bearer Token + admin 角色 | 请求体：JobEntity（岗位信息，含 name/code/sort/status 等）")
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/insert")
     public int insert(@RequestBody JobEntity jobEntity) {
@@ -72,7 +81,7 @@ public class JobController {
      * @param jobEntity 岗位实体
      * @return 影响行数
      */
-    @Operation(summary = "修改岗位", description = "修改岗位")
+    @Operation(summary = "修改岗位", description = "需 Bearer Token + admin 角色 | 请求体：JobEntity（待修改的完整岗位信息，含 id）")
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/update")
     public int update(@RequestBody JobEntity jobEntity) {
@@ -85,7 +94,7 @@ public class JobController {
      * @param ids 岗位ID
      * @return 影响行数
      */
-    @Operation(summary = "删除岗位", description = "删除岗位")
+    @Operation(summary = "删除岗位", description = "需 Bearer Token + admin 角色 | 请求体：ids（岗位ID列表）")
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/deleteByIds")
     public int deleteByIds(@RequestBody @NotNull List<Long> ids) {

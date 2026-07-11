@@ -24,6 +24,11 @@
             <version>1.0.0</version>
         </dependency>
         <dependency>
+            <groupId>cn.net.mall</groupId>
+            <artifactId>common-sensitive</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-core</artifactId>
             <version>5.8.4</version>

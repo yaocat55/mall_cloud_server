@@ -1,6 +1,7 @@
 package cn.net.mall.order.client;
 
 import cn.net.mall.entity.ResponsePageEntity;
+import cn.net.mall.order.client.fallback.OrderFeignFallbackFactory;
 import cn.net.mall.order.dto.OrderConditionDTO;
 import cn.net.mall.order.dto.OrderDTO;
 import cn.net.mall.order.dto.OrderConfirmReqDTO;
@@ -37,7 +38,8 @@ import static cn.net.mall.order.constant.AppConstant.ORDER_SERVICE_NAME;
  *   - mall-mobile-api（BFF 服务）— 移动端接口聚合
  * 
 */
-@FeignClient(value = ORDER_SERVICE_NAME, contextId = "orderFeignClient")
+@FeignClient(value = ORDER_SERVICE_NAME, contextId = "orderFeignClient",
+        fallbackFactory = OrderFeignFallbackFactory.class)
 public interface OrderFeignClient {
 
     /**

@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Import;
 /**
  * @date 2024/1/3 下午3:44
  */
-@EnableFeignClients(basePackages = {"cn.net.mall.basic","cn.net.mall.admin.client"})
+@EnableFeignClients(basePackages = {"cn.net.mall.basic"})
 @EnableDiscoveryClient
 @MapperScan("cn.net.mall.product.mapper")
 @EnableCaching
