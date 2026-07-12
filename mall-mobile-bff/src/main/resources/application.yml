@@ -28,7 +28,9 @@ spring:
         import-check:
           enabled: false
   config:
-    import: nacos:mall-mobile-bff-dev.yaml?group=mall-cloud
+    import:
+      - nacos:common.yaml?group=mall-cloud
+      - nacos:mall-mobile-bff-dev.yaml?group=mall-cloud
 
 springdoc:
   api-docs:
