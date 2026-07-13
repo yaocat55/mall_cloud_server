@@ -1,6 +1,7 @@
 package cn.net.mall.admin.controller.auth;
 
 import cn.net.mall.admin.dto.auth.DeptTreeDTO;
+import cn.net.mall.admin.dto.RowsDTO;
 import cn.net.mall.admin.entity.auth.DeptConditionEntity;
 import cn.net.mall.admin.entity.auth.DeptEntity;
 import cn.net.mall.admin.service.auth.DeptService;
@@ -75,8 +76,8 @@ public class DeptController {
     @Operation(summary = "添加部门", description = "需 Bearer Token + admin 角色 | 请求体：DeptEntity（部门信息，含 pid/name/sort/status 等）")
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/insert")
-    public int insert(@RequestBody DeptEntity deptEntity) {
-        return deptService.insert(deptEntity);
+    public RowsDTO insert(@RequestBody DeptEntity deptEntity) {
+        return new RowsDTO(deptService.insert(deptEntity));
     }
 
     /**
@@ -88,8 +89,8 @@ public class DeptController {
     @Operation(summary = "修改部门", description = "需 Bearer Token + admin 角色 | 请求体：DeptEntity（待修改的完整部门信息，含 id）")
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/update")
-    public int update(@RequestBody DeptEntity deptEntity) {
-        return deptService.update(deptEntity);
+    public RowsDTO update(@RequestBody DeptEntity deptEntity) {
+        return new RowsDTO(deptService.update(deptEntity));
     }
 
     /**
@@ -101,7 +102,7 @@ public class DeptController {
     @Operation(summary = "删除部门", description = "需 Bearer Token + admin 角色 | 请求体：ids（部门ID列表）")
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/deleteByIds")
-    public int deleteByIds(@RequestBody @NotNull List<Long> ids) {
-        return deptService.deleteByIds(ids);
+    public RowsDTO deleteByIds(@RequestBody @NotNull List<Long> ids) {
+        return new RowsDTO(deptService.deleteByIds(ids));
     }
 }

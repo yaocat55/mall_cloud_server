@@ -77,6 +77,13 @@
         <include refid="queryWhere"/>
     </select>
 
+    <select id="findById" parameterType="java.lang.Long" resultMap="OrderReturnApplyResult">
+        SELECT
+        <include refid="selectOrderReturnApplyColumn"/>
+        FROM t_order_return_apply
+        WHERE id = #{id}
+    </select>
+
     <select id="searchByCondition" parameterType="cn.net.mall.order.entity.OrderReturnApplyConditionEntity"
             resultMap="OrderReturnApplyResult">
         SELECT

@@ -102,6 +102,13 @@ public class OrderReturnApplyService extends BaseService<OrderReturnApplyEntity,
         return searchByPage(condition);
     }
 
+    /**
+     * 根据 ID 查询退货申请.
+     */
+    public OrderReturnApplyEntity findById(Long id) {
+        return orderReturnApplyMapper.findById(id);
+    }
+
     public OrderReturnApplyDTO getDetailByCode(String code) {
         JwtUserEntity current = FillUserUtil.getCurrentUserInfo();
         OrderReturnApplyConditionEntity cond = new OrderReturnApplyConditionEntity();
@@ -158,5 +165,48 @@ public class OrderReturnApplyService extends BaseService<OrderReturnApplyEntity,
             dto.setRefundAmount(total);
         }
         return dto;
+    }
+
+    /**
+     * 审批通过退货申请.
+     *
+     * @param entity 退货申请实体（含 id）
+     * @return 影响行数
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public int approve(OrderReturnApplyEntity entity) {
+        OrderReturnApplyEntity exist = orderReturnApplyMapper.findById(entity.getId());
+        if (exist == null) {
+            throw new BusinessException("退货申请不存在");
+        }
+        if (exist.getApplyStatus() != 1) {
+            throw new BusinessException("当前状态不允许审批通过");
+        }
+        exist.setApplyStatus(2);
+        exist.setAuditTime(new Date());
+        FillUserUtil.fillUpdateUserInfo(exist);
+        return orderReturnApplyMapper.update(exist);
+    }
+
+    /**
+     * 拒绝退货申请.
+     *
+     * @param entity 退货申请实体（含 id 及拒绝原因）
+     * @return 影响行数
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public int reject(OrderReturnApplyEntity entity) {
+        OrderReturnApplyEntity exist = orderReturnApplyMapper.findById(entity.getId());
+        if (exist == null) {
+            throw new BusinessException("退货申请不存在");
+        }
+        if (exist.getApplyStatus() != 1) {
+            throw new BusinessException("当前状态不允许拒绝");
+        }
+        exist.setApplyStatus(3);
+        exist.setAuditTime(new Date());
+        exist.setDescription(entity.getDescription());
+        FillUserUtil.fillUpdateUserInfo(exist);
+        return orderReturnApplyMapper.update(exist);
     }
 }

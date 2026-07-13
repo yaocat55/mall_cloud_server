@@ -1,6 +1,7 @@
 package cn.net.mall.admin.controller.auth;
 
 import cn.net.mall.admin.entity.auth.JobConditionEntity;
+import cn.net.mall.admin.dto.RowsDTO;
 import cn.net.mall.admin.entity.auth.JobEntity;
 import cn.net.mall.admin.service.auth.JobService;
 import cn.net.mall.entity.ResponsePageEntity;
@@ -71,8 +72,8 @@ public class JobController {
     @Operation(summary = "添加岗位", description = "需 Bearer Token + admin 角色 | 请求体：JobEntity（岗位信息，含 name/code/sort/status 等）")
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/insert")
-    public int insert(@RequestBody JobEntity jobEntity) {
-        return jobService.insert(jobEntity);
+    public RowsDTO insert(@RequestBody JobEntity jobEntity) {
+        return new RowsDTO(jobService.insert(jobEntity));
     }
 
     /**
@@ -84,8 +85,8 @@ public class JobController {
     @Operation(summary = "修改岗位", description = "需 Bearer Token + admin 角色 | 请求体：JobEntity（待修改的完整岗位信息，含 id）")
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/update")
-    public int update(@RequestBody JobEntity jobEntity) {
-        return jobService.update(jobEntity);
+    public RowsDTO update(@RequestBody JobEntity jobEntity) {
+        return new RowsDTO(jobService.update(jobEntity));
     }
 
     /**
@@ -97,7 +98,7 @@ public class JobController {
     @Operation(summary = "删除岗位", description = "需 Bearer Token + admin 角色 | 请求体：ids（岗位ID列表）")
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/deleteByIds")
-    public int deleteByIds(@RequestBody @NotNull List<Long> ids) {
-        return jobService.deleteByIds(ids);
+    public RowsDTO deleteByIds(@RequestBody @NotNull List<Long> ids) {
+        return new RowsDTO(jobService.deleteByIds(ids));
     }
 }

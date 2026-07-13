@@ -30,7 +30,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  *
  * @date 2024/1/9 下午2:09
  */
-// @RestControllerAdvice (registered by WebAutoConfiguration)
+@RestControllerAdvice
 public class GlobalApiResultHandler implements ResponseBodyAdvice<Object> {
     private static final String URL_PREFIX = "/v1";
     private static final String INTERNAL_PREFIX = "/v1/internal/";

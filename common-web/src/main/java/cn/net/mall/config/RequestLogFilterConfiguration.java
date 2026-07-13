@@ -1,4 +1,4 @@
-package cn.net.mall.product.config;
+package cn.net.mall.config;
 
 import cn.net.mall.filter.RequestLogFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -6,11 +6,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * 请求日志过滤器配置
- *
+ * 请求日志过滤器配置，由 {@link EnableRequestLogFilter} 导入。
  */
 @Configuration
-public class RequestLogFilterConfig {
+public class RequestLogFilterConfiguration {
 
     @Bean
     public FilterRegistrationBean<RequestLogFilter> requestLogFilter() {

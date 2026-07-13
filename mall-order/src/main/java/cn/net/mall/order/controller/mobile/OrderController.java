@@ -163,8 +163,8 @@ public class OrderController {
      */
     @PostMapping("/update")
     @Operation(summary = "修改订单")
-    public int update(@RequestBody OrderEntity orderEntity) {
-        return orderService.update(orderEntity);
+    public RowsDTO update(@RequestBody OrderEntity orderEntity) {
+        return new RowsDTO(orderService.update(orderEntity));
     }
 
     /**
@@ -175,8 +175,8 @@ public class OrderController {
      */
     @PostMapping("/delete")
     @Operation(summary = "批量删除订单")
-    public int delete(@RequestBody List<Long> ids) {
-        return orderService.deleteByIds(ids);
+    public RowsDTO delete(@RequestBody List<Long> ids) {
+        return new RowsDTO(orderService.deleteByIds(ids));
     }
 
     /**
@@ -221,8 +221,9 @@ public class OrderController {
      */
     @PostMapping("/cancel")
     @Operation(summary = "取消订单")
-    public void cancel(@RequestBody OrderOperateDTO operateDTO) {
+    public RowsDTO cancel(@RequestBody OrderOperateDTO operateDTO) {
         orderService.cancel(operateDTO);
+        return new RowsDTO(1);
     }
 
     /**
@@ -232,21 +233,24 @@ public class OrderController {
      */
     @PostMapping("/confirmReceive")
     @Operation(summary = "确认收货")
-    public void confirmReceive(@RequestBody OrderOperateDTO operateDTO) {
+    public RowsDTO confirmReceive(@RequestBody OrderOperateDTO operateDTO) {
         orderService.confirmReceive(operateDTO);
+        return new RowsDTO(1);
     }
 
     @PostMapping("/delivery")
     @Operation(summary = "已发货")
-    public void delivery(@RequestBody OrderOperateDTO operateDTO) {
+    public RowsDTO delivery(@RequestBody OrderOperateDTO operateDTO) {
         orderService.delivery(operateDTO);
+        return new RowsDTO(1);
     }
 
     @PostMapping("/evaluate")
     @Operation(summary = "订单评价")
     @ValidSensitiveWord
-    public void evaluate(@RequestBody @Valid OrderEvaluateDTO evaluateDTO) {
+    public RowsDTO evaluate(@RequestBody @Valid OrderEvaluateDTO evaluateDTO) {
         orderService.evaluate(evaluateDTO);
+        return new RowsDTO(1);
     }
 
     @PostMapping("/getTradeItem")

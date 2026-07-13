@@ -98,28 +98,35 @@ public class MenuTreeDTO implements Serializable {
     /**
      * 跳转
      */
+@Schema(example = "-")
     private String redirect;
 
+@Schema(example = "true")
     private Boolean alwaysShow;
 
 
+@Schema(example = "-")
     private MetaDTO meta;
 
     /**
      * 下一级菜单集合
      */
+@Schema(example = "[]")
     private List<MenuTreeDTO> children;
 
     /**
      * 是否叶子节点
      */
+@Schema(example = "true")
     private Boolean leaf;
 
     /**
      * 下级菜单数量
      */
+@Schema(example = "0")
     private Integer subCount;
 
+@Schema(example = "true")
     private Boolean hasChildren;
 
 

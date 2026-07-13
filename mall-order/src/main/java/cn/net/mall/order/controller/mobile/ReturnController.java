@@ -2,12 +2,7 @@ package cn.net.mall.order.controller.mobile;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.net.mall.entity.ResponsePageEntity;
-import cn.net.mall.order.dto.OrderDTO;
-import cn.net.mall.order.dto.OrderReturnApplyDTO;
-import cn.net.mall.order.dto.OrderReturnApplyReqDTO;
-import cn.net.mall.order.dto.OrderReturnConditionDTO;
-import cn.net.mall.order.dto.TradeItemDTO;
-import cn.net.mall.order.dto.TradeItemReqDTO;
+import cn.net.mall.order.dto.*;
 import cn.net.mall.order.entity.OrderReturnApplyConditionEntity;
 import cn.net.mall.order.entity.OrderReturnApplyEntity;
 import cn.net.mall.order.entity.OrderReturnItemEntity;
@@ -35,7 +30,7 @@ public class ReturnController {
 
     @PostMapping("/apply")
     @Operation(summary = "提交退货申请")
-    public Long apply(@RequestBody OrderReturnApplyReqDTO req) {
+    public IdDTO apply(@RequestBody OrderReturnApplyReqDTO req) {
         OrderDTO order = orderService.getTradeByCode(req.getTradeCode());
         OrderReturnApplyEntity entity = new OrderReturnApplyEntity();
         entity.setOrderId(order.getId());
@@ -91,7 +86,7 @@ public class ReturnController {
             }
             entity.setRefundAmount(refundAmount);
         }
-        return orderReturnApplyService.createApply(order, entity, items, vouchers);
+        return new IdDTO(orderReturnApplyService.createApply(order, entity, items, vouchers));
     }
 
     @PostMapping("/search")

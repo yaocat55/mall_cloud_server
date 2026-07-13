@@ -16,141 +16,122 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 
 /**
  * 全局异常处理器。
  *
- * <p>通过 {@code @RestControllerAdvice} 拦截所有控制器抛出的异常，按以下规则分类处理：</p>
+ * <p>拦截所有控制器抛出的异常，按类型分类处理：</p>
  * <ul>
- *   <li><strong>BusinessException（业务异常）</strong> — 返回自定义业务错误码与消息</li>
- *   <li><strong>MethodArgumentNotValidException（参数校验异常）</strong> — 提取 BindingResult
- *       中的第一条错误消息，返回 400 状态码</li>
- *   <li><strong>其它异常</strong> — 返回 500 服务器内部错误，日志记录完整堆栈</li>
+ *   <li>{@link BusinessException} — 返回自定义业务错误码与消息</li>
+ *   <li>{@link MethodArgumentNotValidException} — 返回 400 + 参数校验失败信息</li>
+ *   <li>其它异常 — 返回 500 + 通用提示</li>
  * </ul>
  *
- * <p>特殊行为：</p>
- * <ul>
- *   <li>当请求头中包含 {@code INNER-REQUEST} 时（微服务间内部调用），直接返回
- *       {@link org.springframework.http.ResponseEntity} 而非 {@code ApiResult} 格式，
- *       便于内部调用方精确获取原始异常信息</li>
- * </ul>
- *
- * @date 2024/1/9 下午1:16
+ * <p>特殊行为：当请求头包含 {@code INNER-REQUEST} 时（微服务内部 Feign 调用），
+ * 直接返回 {@link ResponseEntity} 而非 {@code ApiResult} 格式，便于调用方获取原始异常信息。</p>
  */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    /**
-     * 统一处理异常
-     *
-     * @param e 异常
-     * @return API请求响应实体
-     */
+    // ====================================
+    // 统一入口
+    // ====================================
+
     @ExceptionHandler(Throwable.class)
     public Object handleException(Throwable e) {
         String reqInfo = getRequestInfo();
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        if (Objects.nonNull(requestAttributes)) {
-            ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) requestAttributes;
-            HttpServletRequest request = servletRequestAttributes.getRequest();
-            if (request != null && request.getHeader("INNER-REQUEST") != null && !request.getHeader("INNER-REQUEST").isEmpty()) {
-                if (e instanceof BusinessException) {
-                    BusinessException be = (BusinessException) e;
-                    log.error("内部调用业务异常：{} code={} msg={}", reqInfo, be.getCode(), be.getMessage(), e);
-                    return ResponseEntity.status(be.getCode()).body(be.getMessage());
-                }
-                log.error("内部调用异常：{}", reqInfo, e);
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-            }
+
+        // 微服务内部调用（Feign），返回 ResponseEntity 而非 ApiResult
+        if (isInnerRequest()) {
+            return handleInnerRequest(e, reqInfo);
         }
 
-        if (e instanceof BusinessException) {
-            BusinessException businessException = (BusinessException) e;
-            log.error("业务异常：{} code={} msg={}", reqInfo, businessException.getCode(), businessException.getMessage(), e);
-            return ApiResultUtil.error(businessException.getCode(), businessException.getMessage());
-        } else if (e instanceof MethodArgumentNotValidException) {
-            MethodArgumentNotValidException message = (MethodArgumentNotValidException) e;
-            BindingResult bindingResult = message.getBindingResult();
-            if (bindingResult.hasErrors()) {
-                return ApiResultUtil.error(HttpStatus.BAD_REQUEST.value(), bindingResult.getFieldError().getDefaultMessage());
-            }
+        // 按类型分类处理
+        if (e instanceof BusinessException be) {
+            return handleBusinessException(be, reqInfo);
         }
+        if (e instanceof MethodArgumentNotValidException me) {
+            return handleValidationException(me, reqInfo);
+        }
+        return handleUnknownException(e, reqInfo);
+    }
+
+    // ====================================
+    // 内部 Feign 调用（INNER-REQUEST 头）
+    // ====================================
+
+    private Object handleInnerRequest(Throwable e, String reqInfo) {
+        if (e instanceof BusinessException be) {
+            log.error("内部调用业务异常：{} code={} msg={}", reqInfo, be.getCode(), be.getMessage(), e);
+            return ResponseEntity.status(be.getCode()).body(be.getMessage());
+        }
+        log.error("内部调用异常：{}", reqInfo, e);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+    }
+
+    // ====================================
+    // 业务异常 — 返回自定义错误码和消息
+    // ====================================
+
+    private ApiResult<String> handleBusinessException(BusinessException e, String reqInfo) {
+        log.error("业务异常：{} code={} msg={}", reqInfo, e.getCode(), e.getMessage(), e);
+        return ApiResultUtil.error(e.getCode(), e.getMessage());
+    }
+
+    // ====================================
+    // 参数校验异常 — 返回 400 + 第一条校验失败信息
+    // ====================================
+
+    private ApiResult<String> handleValidationException(MethodArgumentNotValidException e, String reqInfo) {
+        log.warn("参数校验异常：{}", reqInfo, e);
+        BindingResult bindingResult = e.getBindingResult();
+        if (bindingResult.hasErrors()) {
+            String msg = bindingResult.getFieldError().getDefaultMessage();
+            return ApiResultUtil.error(HttpStatus.BAD_REQUEST.value(), msg);
+        }
+        return ApiResultUtil.error(HttpStatus.BAD_REQUEST.value(), "请求参数校验失败");
+    }
+
+    // ====================================
+    // 未知异常 — 返回 500 通用提示
+    // ====================================
+
+    private ApiResult<String> handleUnknownException(Throwable e, String reqInfo) {
         log.error("其他异常：{} msg={}", reqInfo, e.getMessage(), e);
         return ApiResultUtil.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "服务器内部错误，请联系系统管理员！");
     }
 
+    // ====================================
+    // 工具方法
+    // ====================================
+
     /**
-     * 获取字符串中最后一个中括号内的内容
-     *
-     * @param str 需要解析的字符串
-     * @return 最后一个中括号中的内容，如果没有找到则返回空字符串
+     * 判断当前请求是否来自微服务内部 Feign 调用（含 INNER-REQUEST 头）。
      */
-    public static String getErrorMessage(String str) {
-        if (str == null || str.isEmpty()) {
-            return "";
+    private boolean isInnerRequest() {
+        RequestAttributes attrs = RequestContextHolder.getRequestAttributes();
+        if (!(attrs instanceof ServletRequestAttributes sra)) {
+            return false;
         }
-
-        // 正则表达式匹配最后一个中括号内的内容
-        Pattern pattern = Pattern.compile(".*\\[(.*?)\\].*?");
-        Matcher matcher = pattern.matcher(str);
-
-        // 如果找到匹配，返回捕获组中的内容（即中括号内的内容）
-        if (matcher.matches()) {
-            return matcher.group(1);
-        }
-
-        // 处理嵌套中括号的情况
-        pattern = Pattern.compile("\\[(.*?)\\](?!.*\\[)");
-        matcher = pattern.matcher(str);
-
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-
-        return "系统错误";
+        HttpServletRequest request = sra.getRequest();
+        String header = request.getHeader("INNER-REQUEST");
+        return header != null && !header.isEmpty();
     }
 
     /**
-     * 获取字符串中第一个中括号[]内的内容
-     *
-     * @param str 需要提取内容的字符串
-     * @return 返回中括号内的内容，如果没有找到则返回空字符串
+     * 获取当前请求的方法、URI、客户端 IP，用于日志记录。
      */
-    public static String getErrorCode(String str) {
-        if (str == null || str.isEmpty()) {
-            return "系统出现异常，请稍后重试";
-        }
-
-        // 正则表达式：匹配第一个中括号[]内的内容
-        // \[ 表示左中括号，\] 表示右中括号
-        // (.*?) 表示非贪婪模式匹配任意字符
-        Pattern pattern = Pattern.compile("\\[(.*?)\\]");
-        Matcher matcher = pattern.matcher(str);
-
-        // 如果找到匹配项，返回第一个组（即括号内的内容）
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-
-        // 如果没有找到匹配项，返回空字符串
-        return "";
-    }
-
     private static String getRequestInfo() {
         RequestAttributes attrs = RequestContextHolder.getRequestAttributes();
-        if (attrs instanceof ServletRequestAttributes) {
-            HttpServletRequest req = ((ServletRequestAttributes) attrs).getRequest();
-            String method = req.getMethod();
-            String uri = req.getRequestURI();
-            String query = req.getQueryString();
-            String ip = req.getRemoteAddr();
-            String fullUri = query == null ? uri : uri + "?" + query;
-            return "method=" + method + " uri=" + fullUri + " ip=" + ip;
+        if (!(attrs instanceof ServletRequestAttributes sra)) {
+            return "";
         }
-        return "";
+        HttpServletRequest req = sra.getRequest();
+        String method = req.getMethod();
+        String uri = req.getRequestURI();
+        String query = req.getQueryString();
+        String fullUri = query == null ? uri : uri + "?" + query;
+        return "method=" + method + " uri=" + fullUri + " ip=" + req.getRemoteAddr();
     }
 }

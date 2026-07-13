@@ -1,6 +1,7 @@
 package cn.net.mall.admin.controller.auth;
 
 import cn.net.mall.admin.entity.auth.RoleConditionEntity;
+import cn.net.mall.admin.dto.RowsDTO;
 import cn.net.mall.admin.entity.auth.RoleEntity;
 import cn.net.mall.admin.service.auth.RoleService;
 import cn.net.mall.entity.ResponsePageEntity;
@@ -73,8 +74,8 @@ public class RoleController {
     @Operation(summary = "添加角色", description = "需 Bearer Token + admin 角色 | 请求体：RoleEntity（角色信息，含 name/code/sort/status 等）")
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/insert")
-    public int insert(@RequestBody RoleEntity roleEntity) {
-        return roleService.insert(roleEntity);
+    public RowsDTO insert(@RequestBody RoleEntity roleEntity) {
+        return new RowsDTO(roleService.insert(roleEntity));
     }
 
     /**
@@ -86,8 +87,8 @@ public class RoleController {
     @Operation(summary = "修改角色", description = "需 Bearer Token + admin 角色 | 请求体：RoleEntity（待修改的完整角色信息，含 id）")
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/update")
-    public int update(@RequestBody RoleEntity roleEntity) {
-        return roleService.update(roleEntity);
+    public RowsDTO update(@RequestBody RoleEntity roleEntity) {
+        return new RowsDTO(roleService.update(roleEntity));
     }
 
     /**
@@ -99,8 +100,8 @@ public class RoleController {
     @Operation(summary = "批量删除角色", description = "需 Bearer Token + admin 角色 | 请求体：ids（角色ID列表）")
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/deleteByIds")
-    public int deleteByIds(@RequestBody @NotNull List<Long> ids) {
-        return roleService.deleteByIds(ids);
+    public RowsDTO deleteByIds(@RequestBody @NotNull List<Long> ids) {
+        return new RowsDTO(roleService.deleteByIds(ids));
     }
 
 }

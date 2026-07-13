@@ -1,6 +1,7 @@
 package cn.net.mall.admin.controller.auth;
 
 import cn.net.mall.admin.dto.TokenDTO;
+import cn.net.mall.admin.dto.RowsDTO;
 import cn.net.mall.admin.dto.UserAvatarDTO;
 import cn.net.mall.admin.dto.UserDTO;
 import cn.net.mall.admin.dto.UserLoginDTO;
@@ -81,8 +82,9 @@ public class UserController {
     @Operation(summary = "添加用户", description = "需 Bearer Token + admin 角色 | 请求体：UserEntity（用户信息，含 userName/password/phone 等）")
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/insert")
-    public void insert(@RequestBody UserEntity userEntity) {
+    public RowsDTO insert(@RequestBody UserEntity userEntity) {
         userService.insert(userEntity);
+        return new RowsDTO(1);
     }
 
     /**
@@ -94,8 +96,8 @@ public class UserController {
     @Operation(summary = "修改用户", description = "需 Bearer Token + admin 角色 | 请求体：UserEntity（待修改的完整用户信息，含 id）")
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/update")
-    public int update(@RequestBody UserEntity userEntity) {
-        return userService.update(userEntity);
+    public RowsDTO update(@RequestBody UserEntity userEntity) {
+        return new RowsDTO(userService.update(userEntity));
     }
 
     /**
@@ -107,8 +109,8 @@ public class UserController {
     @Operation(summary = "删除用户", description = "需 Bearer Token + admin 角色 | 请求体：ids（用户ID列表）")
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/deleteByIds")
-    public int deleteById(@RequestBody @NotNull List<Long> ids) {
-        return userService.deleteByIds(ids);
+    public RowsDTO deleteById(@RequestBody @NotNull List<Long> ids) {
+        return new RowsDTO(userService.deleteByIds(ids));
     }
 
 
@@ -121,8 +123,8 @@ public class UserController {
     @Operation(summary = "重置密码", description = "需 Bearer Token + admin 角色 | 请求体：ids（用户ID列表），密码重置为默认值")
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/resetPwd")
-    public int resetPwd(@RequestBody @NotNull List<Long> ids) {
-        return userService.resetPwd(ids);
+    public RowsDTO resetPwd(@RequestBody @NotNull List<Long> ids) {
+        return new RowsDTO(userService.resetPwd(ids));
     }
 
     // ========== 以下方法原在 UserInternalController，合并到此处 ==========
@@ -151,8 +153,9 @@ public class UserController {
                description = "需 Bearer Token + admin 角色 | 请求体：UserAvatarDTO（用户ID + 头像URL）")
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/updateAvatar")
-    public void updateAvatar(@RequestBody @Valid UserAvatarDTO dto) {
+    public RowsDTO updateAvatar(@RequestBody @Valid UserAvatarDTO dto) {
         userService.updateAvatar(dto);
+        return new RowsDTO(1);
     }
 
     @Operation(summary = "测试登录（跳过验证码）",

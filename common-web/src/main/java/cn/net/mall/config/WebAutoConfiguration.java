@@ -1,6 +1,5 @@
 package cn.net.mall.config;
 
-import cn.net.mall.handler.GlobalApiResultHandler;
 import cn.net.mall.handler.GlobalExceptionHandler;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -13,25 +12,15 @@ import org.springframework.context.annotation.Bean;
  *
  * <p>注册的 Bean：</p>
  * <ul>
- *   <li>{@link GlobalApiResultHandler} — 统一 API 响应包装（@RestControllerAdvice + ResponseBodyAdvice）</li>
  *   <li>{@link GlobalExceptionHandler} — 全局异常捕获（@RestControllerAdvice）</li>
  * </ul>
+ *
+ * <p>注意：{@link cn.net.mall.handler.GlobalApiResultHandler} 已通过 {@link EnableApiResultWrapper} 控制，
+ * 不再自动注入。</p>
  */
 @AutoConfiguration
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class WebAutoConfiguration {
-
-    /**
-     * GlobalApiResultHandler —— 统一 API 响应包装器。
-     * <p>对所有匹配 {@code /v1/**} 的控制器返回值进行拦截，自动包装为 {@code ApiResult} 格式，
-     * 确保前端收到统一的数据结构。</p>
-     *
-     * @return GlobalApiResultHandler 实例
-     */
-    @Bean
-    public GlobalApiResultHandler globalApiResultHandler() {
-        return new GlobalApiResultHandler();
-    }
 
     /**
      * GlobalExceptionHandler —— 全局异常处理器。

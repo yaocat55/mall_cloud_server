@@ -118,7 +118,7 @@ test_api GET "/v1/auth/job/findById" "id=1" "岗位详情" "$TOKEN"
 # ==========================================
 echo ""
 echo "--- 7. 合并接口（原 internal → /v1/auth/） ---"
-test_api POST "/v1/auth/user/findByIds" '{"ids":[1,2]}' "批量查用户" "$TOKEN"
+test_api POST "/v1/auth/user/findByIds" '[1,2]' "批量查用户" "$TOKEN"
 test_api GET "/v1/auth/user/findByPhone" "phone=13800138000" "手机号查用户" "$TOKEN"
 test_api GET "/v1/auth/job/all" "" "查询所有岗位" "$TOKEN"
 

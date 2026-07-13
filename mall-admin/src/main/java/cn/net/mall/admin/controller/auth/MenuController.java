@@ -1,6 +1,7 @@
 package cn.net.mall.admin.controller.auth;
 
 import cn.net.mall.admin.dto.auth.MenuTreeDTO;
+import cn.net.mall.admin.dto.RowsDTO;
 import cn.net.mall.admin.entity.auth.MenuConditionEntity;
 import cn.net.mall.admin.entity.auth.MenuEntity;
 import cn.net.mall.admin.service.auth.MenuService;
@@ -98,8 +99,8 @@ public class MenuController {
     @Operation(summary = "添加菜单", description = "需 admin 角色 | 请求体：MenuEntity（菜单信息，含 pid/name/type/sort/path 等）")
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/insert")
-    public int insert(@RequestBody MenuEntity menuEntity) {
-        return menuService.insert(menuEntity);
+    public RowsDTO insert(@RequestBody MenuEntity menuEntity) {
+        return new RowsDTO(menuService.insert(menuEntity));
     }
 
     /**
@@ -111,8 +112,8 @@ public class MenuController {
     @Operation(summary = "修改菜单", description = "需 admin 角色 | 请求体：MenuEntity（待修改的完整菜单信息，含 id）")
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/update")
-    public int update(@RequestBody MenuEntity menuEntity) {
-        return menuService.update(menuEntity);
+    public RowsDTO update(@RequestBody MenuEntity menuEntity) {
+        return new RowsDTO(menuService.update(menuEntity));
     }
 
     /**
@@ -124,7 +125,7 @@ public class MenuController {
     @Operation(summary = "批量删除菜单", description = "需 admin 角色 | 请求体：ids（菜单ID列表）")
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/deleteByIds")
-    public int deleteByIds(@RequestBody @NotNull List<Long> ids) {
-        return menuService.deleteByIds(ids);
+    public RowsDTO deleteByIds(@RequestBody @NotNull List<Long> ids) {
+        return new RowsDTO(menuService.deleteByIds(ids));
     }
 }

@@ -15,7 +15,9 @@ import cn.net.mall.order.dto.TradeItemDTO;
 import cn.net.mall.order.dto.TradeDetailDTO;
 import cn.net.mall.order.dto.OrderReturnApplyDTO;
 import cn.net.mall.order.dto.OrderReturnConditionDTO;
+import cn.net.mall.order.dto.RowsDTO;
 import cn.net.mall.order.dto.OrderEvaluateDTO;
+import cn.net.mall.order.dto.IdDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -76,14 +78,14 @@ public interface OrderFeignClient {
 */
     @Operation(summary = "修改订单", description = "由 mall-mobile-api(BFF) 调用，修改订单信息")
     @PostMapping("/v1/mobile/trade/update")
-    int update(@RequestBody OrderDTO orderDTO);
+    RowsDTO update(@RequestBody OrderDTO orderDTO);
 
     /**
      * 批量删除订单
      */
     @Operation(summary = "批量删除订单")
     @PostMapping("/v1/mobile/trade/delete")
-    int delete(@RequestBody List<Long> ids);
+    RowsDTO delete(@RequestBody List<Long> ids);
 
     /**
      * 订单确认 / 预览
@@ -113,21 +115,21 @@ public interface OrderFeignClient {
      */
     @Operation(summary = "取消订单")
     @PostMapping("/v1/mobile/trade/cancel")
-    void cancel(@RequestBody OrderOperateDTO operateDTO);
+    RowsDTO cancel(@RequestBody OrderOperateDTO operateDTO);
 
     /**
      * 确认收货
      */
     @Operation(summary = "确认收货")
     @PostMapping("/v1/mobile/trade/confirmReceive")
-    void confirmReceive(@RequestBody OrderOperateDTO operateDTO);
+    RowsDTO confirmReceive(@RequestBody OrderOperateDTO operateDTO);
 
     /**
      * 订单评价
      */
     @Operation(summary = "订单评价")
     @PostMapping("/v1/mobile/trade/evaluate")
-    void evaluate(@RequestBody OrderEvaluateDTO evaluateDTO);
+    RowsDTO evaluate(@RequestBody OrderEvaluateDTO evaluateDTO);
 
     /**
      * 获取订单明细
@@ -166,7 +168,7 @@ public interface OrderFeignClient {
      */
     @Operation(summary = "申请退货")
     @PostMapping("/v1/mobile/trade/return/apply")
-    Long applyReturn(@RequestBody OrderReturnApplyDTO dto);
+    IdDTO applyReturn(@RequestBody OrderReturnApplyDTO dto);
 
     /**
      * 查询退货列表
@@ -183,15 +185,15 @@ public interface OrderFeignClient {
 
     @Operation(summary = "新增交易配送地址（管理端）")
     @PostMapping("/v1/tradeDeliveryAddress/insert")
-    int insertDeliveryAddress(@RequestBody Object entity);
+    RowsDTO insertDeliveryAddress(@RequestBody Object entity);
 
     @Operation(summary = "修改交易配送地址（管理端）")
     @PostMapping("/v1/tradeDeliveryAddress/update")
-    int updateDeliveryAddress(@RequestBody Object entity);
+    RowsDTO updateDeliveryAddress(@RequestBody Object entity);
 
     @Operation(summary = "删除交易配送地址（管理端）")
     @PostMapping("/v1/tradeDeliveryAddress/deleteByIds")
-    int deleteDeliveryAddressByIds(@RequestBody List<Long> ids);
+    RowsDTO deleteDeliveryAddressByIds(@RequestBody List<Long> ids);
 
     @Operation(summary = "查询交易配送地址详情（管理端）")
     @GetMapping("/v1/tradeDeliveryAddress/findById")
@@ -205,11 +207,11 @@ public interface OrderFeignClient {
 
     @Operation(summary = "审批退货（管理端）")
     @PostMapping("/v1/trade/return/approve")
-    int approveReturn(@RequestBody Object entity);
+    RowsDTO approveReturn(@RequestBody Object entity);
 
     @Operation(summary = "拒绝退货（管理端）")
     @PostMapping("/v1/trade/return/reject")
-    int rejectReturn(@RequestBody Object entity);
+    RowsDTO rejectReturn(@RequestBody Object entity);
 
     @Operation(summary = "查询退货详情（管理端）")
     @GetMapping("/v1/trade/return/findById")

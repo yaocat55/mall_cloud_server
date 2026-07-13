@@ -20,9 +20,7 @@ spring:
         username: nacos
         password: nacos
   config:
-    import:
-      - nacos:common.yaml?group=mall-cloud
-      - nacos:mall-admin-api-dev.yaml
+    import: nacos:mall-admin-api-dev.yaml
 
 springdoc:
   api-docs:

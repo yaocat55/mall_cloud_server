@@ -4,13 +4,11 @@ import cn.net.mall.basic.client.DictFeignClient;
 import cn.net.mall.feign.FeignFallbackProxy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
-import org.springframework.stereotype.Component;
 
 /**
  * DictFeignClient 降级工厂.
  */
 @Slf4j
-@Component
 public class DictFeignFallbackFactory implements FallbackFactory<DictFeignClient> {
 
     @Override

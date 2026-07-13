@@ -1,5 +1,6 @@
 package cn.net.mall.basic;
 
+import cn.net.mall.annotation.EnableRequestLogFilter;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
