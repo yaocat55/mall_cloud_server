@@ -26,7 +26,6 @@ public class AdminBasicController {
     private final PhotoGroupFeignClient photoGroupFeignClient;
     private final SensitiveWordFeignClient sensitiveWordFeignClient;
     private final SmsRecordFeignClient smsRecordFeignClient;
-    private final DictDetailFeignClient dictDetailFeignClient;
     private final NotifyFeignClient notifyFeignClient;
 
     // ============================== 图片管理 ==============================
@@ -138,32 +137,6 @@ public class AdminBasicController {
     @PostMapping("/smsRecord/delete")
     public ApiResult<Integer> deleteSmsRecord(@RequestBody @NotNull List ids) {
         return ApiResultUtil.success(smsRecordFeignClient.deleteByIds(ids));
-    }
-
-    // ============================== 字典详情管理 ==============================
-
-    @Operation(summary = "分页查询字典详情", description = "分页查询字典详情列表，支持按字典编码、字典标签等条件筛选", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/dictDetail/page")
-    public ApiResult<ResponsePageEntity> searchDictDetailPage(@RequestBody DictDetailConditionDTO condition) {
-        return ApiResultUtil.success(dictDetailFeignClient.searchByPage(condition));
-    }
-
-    @Operation(summary = "新增字典详情", description = "新增字典详情项，如字典标签、字典值、排序等", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/dictDetail/insert")
-    public ApiResult<Integer> insertDictDetail(@RequestBody DictDetailDTO entity) {
-        return ApiResultUtil.success(dictDetailFeignClient.insert(entity));
-    }
-
-    @Operation(summary = "修改字典详情", description = "修改字典详情项，支持更新字典标签、字典值、排序等", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/dictDetail/update")
-    public ApiResult<Integer> updateDictDetail(@RequestBody DictDetailDTO entity) {
-        return ApiResultUtil.success(dictDetailFeignClient.update(entity));
-    }
-
-    @Operation(summary = "删除字典详情", description = "根据ID列表批量删除字典详情项", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/dictDetail/delete")
-    public ApiResult<Integer> deleteDictDetail(@RequestBody @NotNull List ids) {
-        return ApiResultUtil.success(dictDetailFeignClient.deleteByIds(ids));
     }
 
     // ============================== 消息通知管理 ==============================

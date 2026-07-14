@@ -1,7 +1,6 @@
 package cn.net.mall.admin.controller.admin;
 
 import cn.net.mall.basic.client.AreaFeignClient;
-import cn.net.mall.basic.client.DictFeignClient;
 import cn.net.mall.basic.client.UploadFeignClient;
 import cn.net.mall.basic.dto.FileDTO;
 import cn.net.mall.entity.ResponsePageEntity;
@@ -28,7 +27,6 @@ import java.util.Map;
 @Tag(name = "管理后台-基础数据", description = "区域、字典等基础数据管理接口，需携带 Bearer Token")
 public class AdminCommonController {
     private final AreaFeignClient areaFeignClient;
-    private final DictFeignClient dictFeignClient;
     private final UploadFeignClient uploadFeignClient;
 
     @Operation(summary = "分页查询区域", description = "多条件分页查询行政区域列表，支持按名称、层级等条件筛选", security = @SecurityRequirement(name = "Bearer Token"))
@@ -43,19 +41,6 @@ public class AdminCommonController {
     @Operation(summary = "删除区域", description = "根据 ID 列表批量删除行政区域", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/area/delete")
     public ApiResult<Integer> deleteArea(@RequestBody @NotNull List ids) { return ApiResultUtil.success(areaFeignClient.deleteByIds(ids)); }
-
-    @Operation(summary = "分页查询字典", description = "多条件分页查询数据字典列表，支持按字典类型等条件筛选", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/dict/page")
-    public ApiResult<ResponsePageEntity<?>> searchDictPage(@RequestBody Map c) { return ApiResultUtil.success(dictFeignClient.searchByPage(c)); }
-    @Operation(summary = "新增字典", description = "新增一条数据字典记录，包含字典编码、字典名称、字典值等", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/dict/insert")
-    public ApiResult<Integer> insertDict(@RequestBody Object e) { return ApiResultUtil.success(dictFeignClient.insert(e)); }
-    @Operation(summary = "修改字典", description = "修改已有数据字典的信息", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/dict/update")
-    public ApiResult<Integer> updateDict(@RequestBody Object e) { return ApiResultUtil.success(dictFeignClient.update(e)); }
-    @Operation(summary = "删除字典", description = "根据 ID 列表批量删除数据字典", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/dict/delete")
-    public ApiResult<Integer> deleteDict(@RequestBody @NotNull List ids) { return ApiResultUtil.success(dictFeignClient.deleteByIds(ids)); }
 
     // ========== 文件上传 ==========
 
