@@ -31,6 +31,18 @@ public interface UserFeignClient {
     @PostMapping("/v1/auth/user/searchByPage")
     ResponsePageEntity<UserDTO> searchByPage(@RequestBody Object condition);
 
+    @Operation(summary = "新增用户")
+    @PostMapping("/v1/auth/user/insert")
+    RowsDTO insert(@RequestBody Object entity);
+
+    @Operation(summary = "修改用户")
+    @PostMapping("/v1/auth/user/update")
+    RowsDTO update(@RequestBody Object entity);
+
+    @Operation(summary = "删除用户")
+    @PostMapping("/v1/auth/user/deleteByIds")
+    RowsDTO deleteByIds(@RequestBody List<Long> ids);
+
     @Operation(summary = "批量查询用户信息",
                description = "内部服务：由 mall-admin-api 通过 Feign 调用，根据ID集合批量查询用户信息")
     @PostMapping("/v1/auth/user/findByIds")

@@ -74,6 +74,26 @@ public class AdminUserController {
         return ApiResultUtil.success(result);
     }
 
+    // ==================== 用户增删改（直通） ====================
+
+    @Operation(summary = "新增用户", description = "创建新用户，含账号密码等基本信息", security = @SecurityRequirement(name = "Bearer Token"))
+    @PostMapping("/insert")
+    public ApiResult<Integer> insert(@RequestBody Object entity) {
+        return ApiResultUtil.success(userFeignClient.insert(entity).getRows());
+    }
+
+    @Operation(summary = "修改用户", description = "更新用户信息", security = @SecurityRequirement(name = "Bearer Token"))
+    @PostMapping("/update")
+    public ApiResult<Integer> update(@RequestBody Object entity) {
+        return ApiResultUtil.success(userFeignClient.update(entity).getRows());
+    }
+
+    @Operation(summary = "删除用户", description = "批量删除用户", security = @SecurityRequirement(name = "Bearer Token"))
+    @PostMapping("/delete")
+    public ApiResult<Integer> delete(@RequestBody List<Long> ids) {
+        return ApiResultUtil.success(userFeignClient.deleteByIds(ids).getRows());
+    }
+
     // ==================== 用户信息 ====================
 
     @Operation(summary = "通过ID查询用户信息", description = "批量通过ID查询用户信息")
