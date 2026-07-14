@@ -50,7 +50,7 @@ public class DeptTreeDTO {
     /**
      * 有效状态 1:有效 0:无效
      */
-    @Schema(description = "有效状态 1:有效 0:无效", example = "1")
+    @Schema(description = "有效状态 1:有效 0:无效", allowableValues = {"0=无效", "1=有效"}, example = "1")
     private Integer validStatus;
 
     /**

@@ -4,13 +4,11 @@ import cn.net.mall.customer.client.MemberFeignClient;
 import cn.net.mall.feign.FeignFallbackProxy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
-import org.springframework.stereotype.Component;
 
 /**
  * MemberFeignClient 降级工厂.
  */
 @Slf4j
-@Component
 public class MemberFeignFallbackFactory implements FallbackFactory<MemberFeignClient> {
 
     @Override

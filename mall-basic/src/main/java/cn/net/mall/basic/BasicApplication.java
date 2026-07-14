@@ -13,6 +13,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
  * @date 2024/1/3 下午3:44
  */
 @EnableFeignClients
+@EnableRequestLogFilter
 @MapperScan("cn.net.mall.basic.mapper")
 @EnableCaching
 @SpringBootApplication(scanBasePackages = {"cn.net.mall.basic"})

@@ -21,9 +21,9 @@ public class OrderDTO extends BaseEntity {
     private String userName;
     @Schema(description = "下单时间", example = "2024-01-01")
     private Date orderTime;
-    @Schema(description = "订单状态", example = "1")
+    @Schema(description = "订单状态", allowableValues = {"1=待付款", "2=已支付/待发货", "3=已发货", "4=已完成", "5=已取消", "6=已退货", "7=售后中"}, example = "1")
     private Integer orderStatus;
-    @Schema(description = "支付状态", example = "1")
+    @Schema(description = "支付状态", allowableValues = {"1=未支付", "2=已支付", "3=已退款", "4=支付失败"}, example = "1")
     private Integer payStatus;
     @Schema(description = "总金额", example = "99.99")
     private BigDecimal totalAmount;

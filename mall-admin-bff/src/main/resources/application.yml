@@ -29,7 +29,6 @@ spring:
           enabled: false
   config:
     import:
-      - nacos:common.yaml?group=mall-cloud
       - nacos:mall-admin-bff-dev.yaml?group=mall-cloud
 
 springdoc:
