@@ -36,6 +36,7 @@ public class AdminProductExtraController {
     private final IndexNoticeFeignClient indexNoticeFeignClient;
     private final IndexProductFeignClient indexProductFeignClient;
     private final IndexCarouselImageFeignClient indexCarouselImageFeignClient;
+    private final ProductPhotoFeignClient productPhotoFeignClient;
 
     // ========== 属性 (Attribute) ==========
 
@@ -197,5 +198,31 @@ public class AdminProductExtraController {
     @PostMapping("/indexCarouselImage/delete")
     public ApiResult<Integer> deleteIndexCarouselImage(@RequestBody @NotNull List ids) {
         return ApiResultUtil.success(indexCarouselImageFeignClient.deleteByIds(ids));
+    }
+
+    // ========== 商品图片 (ProductPhoto) ==========
+
+    @Operation(summary = "分页查询商品图片", security = @SecurityRequirement(name = "Bearer Token"))
+    @PostMapping("/productPhoto/page")
+    public ApiResult<ResponsePageEntity<?>> searchPhotoPage(@RequestBody Map<String, Object> c) {
+        return ApiResultUtil.success(productPhotoFeignClient.searchByPage(c));
+    }
+
+    @Operation(summary = "新增商品图片", security = @SecurityRequirement(name = "Bearer Token"))
+    @PostMapping("/productPhoto/insert")
+    public ApiResult<Integer> insertPhoto(@RequestBody Object e) {
+        return ApiResultUtil.success(productPhotoFeignClient.insert(e));
+    }
+
+    @Operation(summary = "修改商品图片", security = @SecurityRequirement(name = "Bearer Token"))
+    @PostMapping("/productPhoto/update")
+    public ApiResult<Integer> updatePhoto(@RequestBody Object e) {
+        return ApiResultUtil.success(productPhotoFeignClient.update(e));
+    }
+
+    @Operation(summary = "删除商品图片", security = @SecurityRequirement(name = "Bearer Token"))
+    @PostMapping("/productPhoto/delete")
+    public ApiResult<Integer> deletePhoto(@RequestBody @NotNull List ids) {
+        return ApiResultUtil.success(productPhotoFeignClient.deleteByIds(ids));
     }
 }
