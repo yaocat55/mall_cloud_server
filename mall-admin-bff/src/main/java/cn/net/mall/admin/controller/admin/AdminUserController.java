@@ -8,6 +8,7 @@ import cn.net.mall.admin.dto.UserEditDataDTO;
 import cn.net.mall.admin.dto.*;
 import cn.net.mall.admin.client.*;
 import cn.net.mall.admin.dto.auth.DeptTreeDTO;
+import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.util.ApiResult;
 import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,6 +37,42 @@ public class AdminUserController {
     private final RoleFeignClient roleFeignClient;
     private final DeptFeignClient deptFeignClient;
     private final JobFeignClient jobFeignClient;
+
+    // ==================== 用户列表（聚合） ====================
+
+    @Operation(summary = "分页查询用户列表（聚合）",
+               description = "聚合用户列表 + 部门树 + 角色列表，前端一次调用即可渲染用户管理页面",
+               security = @SecurityRequirement(name = "Bearer Token"))
+    @PostMapping("/page")
+    public ApiResult<Map<String, Object>> userPage(@RequestBody Map<String, Object> condition) {
+        Map<String, Object> result = new HashMap<>();
+
+        // 1. 用户列表
+        try {
+            result.put("users", userFeignClient.searchByPage(condition));
+        } catch (Exception e) {
+            log.warn("获取用户列表失败", e);
+            result.put("users", null);
+        }
+
+        // 2. 部门树（用于搜索筛选）
+        try {
+            result.put("deptTree", deptFeignClient.searchByTree(Collections.emptyMap()));
+        } catch (Exception e) {
+            log.warn("获取部门树失败", e);
+            result.put("deptTree", Collections.emptyList());
+        }
+
+        // 3. 角色列表（用于搜索筛选）
+        try {
+            result.put("roles", roleFeignClient.all());
+        } catch (Exception e) {
+            log.warn("获取角色列表失败", e);
+            result.put("roles", Collections.emptyList());
+        }
+
+        return ApiResultUtil.success(result);
+    }
 
     // ==================== 用户信息 ====================
 

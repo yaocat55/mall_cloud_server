@@ -2,6 +2,7 @@ package cn.net.mall.admin.client;
 
 import cn.net.mall.admin.client.fallback.UserFeignFallbackFactory;
 import cn.net.mall.admin.dto.*;
+import cn.net.mall.entity.ResponsePageEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -24,6 +25,11 @@ import static cn.net.mall.admin.constant.AppConstant.ADMIN_SERVICE_NAME;
  */
 @FeignClient(value = ADMIN_SERVICE_NAME, fallbackFactory = UserFeignFallbackFactory.class)
 public interface UserFeignClient {
+
+    @Operation(summary = "分页查询用户",
+               description = "内部服务：分页查询用户列表，供 admin-bff 聚合调用")
+    @PostMapping("/v1/auth/user/searchByPage")
+    ResponsePageEntity<UserDTO> searchByPage(@RequestBody Object condition);
 
     @Operation(summary = "批量查询用户信息",
                description = "内部服务：由 mall-admin-api 通过 Feign 调用，根据ID集合批量查询用户信息")
