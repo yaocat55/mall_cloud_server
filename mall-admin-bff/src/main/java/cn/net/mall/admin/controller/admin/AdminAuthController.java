@@ -1,5 +1,6 @@
 package cn.net.mall.admin.controller.admin;
 
+import cn.net.mall.admin.client.MenuFeignClient;
 import cn.net.mall.admin.client.UserFeignClient;
 import cn.net.mall.admin.dto.*;
 import cn.net.mall.admin.client.*;
@@ -27,17 +28,12 @@ import java.util.List;
 public class AdminAuthController {
 
     private final UserFeignClient userFeignClient;
+    private final MenuFeignClient menuFeignClient;
 
     @Operation(summary = "登录", description = "账号密码登录，返回 token + 用户信息 + 菜单权限")
     @PostMapping("/login")
     public ApiResult<TokenDTO> login(@Valid @RequestBody UserLoginDTO userLoginDTO) {
         return ApiResultUtil.success(userFeignClient.login(userLoginDTO));
-    }
-
-    @Operation(summary = "手机号登录", description = "手机号验证码登录")
-    @PostMapping("/loginByPhone")
-    public ApiResult<TokenDTO> loginByPhone(@Valid @RequestBody UserPhoneLoginDTO userPhoneLoginDTO) {
-        return ApiResultUtil.success(userFeignClient.loginByPhone(userPhoneLoginDTO));
     }
 
     @Operation(summary = "获取验证码", description = "获取图形验证码")
@@ -64,10 +60,10 @@ public class AdminAuthController {
         return ApiResultUtil.success(userFeignClient.getUserDetail());
     }
 
-    @Operation(summary = "获取菜单树", description = "获取当前用户有权限的菜单树")
+    @Operation(summary = "获取菜单树", description = "获取当前用户有权限的菜单树，决定前端侧边栏渲染内容")
     @GetMapping("/menus")
     public ApiResult<Object> getMenus() {
-        return ApiResultUtil.success();
+        return ApiResultUtil.success(menuFeignClient.getMenuTree());
     }
 
     @Operation(summary = "退出登录",
