@@ -5,6 +5,7 @@ import cn.net.mall.order.dto.RowsDTO;
 import cn.net.mall.order.entity.OrderDeliveryAddressConditionEntity;
 import cn.net.mall.order.entity.OrderDeliveryAddressEntity;
 import cn.net.mall.order.service.OrderDeliveryAddressService;
+import cn.net.mall.util.AssertUtil;
 import cn.net.mall.util.FillUserUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,6 +35,7 @@ public class OrderDeliveryAddressController {
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/searchByPage")
     public ResponsePageEntity<OrderDeliveryAddressEntity> searchByPage(@RequestBody OrderDeliveryAddressConditionEntity condition) {
+        AssertUtil.notNull(condition.getOrderId(), "分片键 orderId 不能为空");
         return orderDeliveryAddressService.searchByPage(condition);
     }
 
