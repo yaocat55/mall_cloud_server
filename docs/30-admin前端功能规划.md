@@ -211,4 +211,101 @@
     [按钮] 编辑订单 [order:edit] [hidden]
 ```
 
-共 106 项，其中标 [内部] 的由开发维护，不在前端展示。另外 79 个 [hidden] 按钮不在树中显示。
+
+## 超级管理员前端可见菜单（91 项）
+
+```
+[目录] 系统管理 → /system
+  [菜单] 用户管理 → /system/user
+    [按钮] 用户列表 [user:list] [hidden]
+    [按钮] 新增用户 [user:add] [hidden]
+    [按钮] 编辑用户 [user:edit] [hidden]
+    [按钮] 删除用户 [user:del] [hidden]
+  [菜单] 角色管理 → /system/role
+    [按钮] 角色列表 [role:list] [hidden]
+    [按钮] 新增角色 [role:add] [hidden]
+    [按钮] 编辑角色 [role:edit] [hidden]
+    [按钮] 删除角色 [role:del] [hidden]
+  [菜单] 部门管理 → /system/dept
+    [按钮] 部门列表 [dept:list] [hidden]
+    [按钮] 新增部门 [dept:add] [hidden]
+    [按钮] 编辑部门 [dept:edit] [hidden]
+    [按钮] 删除部门 [dept:del] [hidden]
+  [菜单] 岗位管理 → /system/job
+    [按钮] 岗位列表 [job:list] [hidden]
+    [按钮] 新增岗位 [job:add] [hidden]
+    [按钮] 编辑岗位 [job:edit] [hidden]
+    [按钮] 删除岗位 [job:del] [hidden]
+[目录] 基础数据 → /basic
+  [菜单] 图片管理 → /basic/image
+    [按钮] 图片列表 [image:list] [hidden]
+    [按钮] 上传图片 [image:add] [hidden]
+    [按钮] 删除图片 [image:del] [hidden]
+  [菜单] 敏感词管理 → /basic/sensitive
+    [按钮] 敏感词列表 [sensitive:list] [hidden]
+    [按钮] 新增敏感词 [sensitive:add] [hidden]
+    [按钮] 编辑敏感词 [sensitive:edit] [hidden]
+    [按钮] 删除敏感词 [sensitive:del] [hidden]
+  [菜单] 短信记录 → /basic/sms
+    [按钮] 短信列表 [sms:list] [hidden]
+[目录] 商品管理 → /product
+  [菜单] 商品列表 → /product/list
+    [按钮] 商品查询 [product:list] [hidden]
+    [按钮] 新增商品 [product:add] [hidden]
+    [按钮] 编辑商品 [product:edit] [hidden]
+    [按钮] 删除商品 [product:del] [hidden]
+  [菜单] 商品分类 → /product/category
+    [按钮] 分类列表 [category:list] [hidden]
+    [按钮] 新增分类 [category:add] [hidden]
+    [按钮] 编辑分类 [category:edit] [hidden]
+    [按钮] 删除分类 [category:del] [hidden]
+  [菜单] 品牌管理 → /product/brand
+    [按钮] 品牌列表 [brand:list] [hidden]
+    [按钮] 新增品牌 [brand:add] [hidden]
+    [按钮] 编辑品牌 [brand:edit] [hidden]
+    [按钮] 删除品牌 [brand:del] [hidden]
+  [菜单] 属性管理 → /product/attr
+    [按钮] 属性列表 [attr:list] [hidden]
+    [按钮] 新增属性 [attr:add] [hidden]
+    [按钮] 编辑属性 [attr:edit] [hidden]
+    [按钮] 删除属性 [attr:del] [hidden]
+  [菜单] 单位管理 → /product/unit
+    [按钮] 单位列表 [unit:list] [hidden]
+    [按钮] 新增单位 [unit:add] [hidden]
+    [按钮] 编辑单位 [unit:edit] [hidden]
+    [按钮] 删除单位 [unit:del] [hidden]
+[目录] 首页内容 → /home
+  [菜单] 轮播图管理 → /home/banner
+    [按钮] 轮播图列表 [banner:list] [hidden]
+    [按钮] 新增轮播图 [banner:add] [hidden]
+    [按钮] 编辑轮播图 [banner:edit] [hidden]
+    [按钮] 删除轮播图 [banner:del] [hidden]
+  [菜单] 公告管理 → /home/notice
+    [按钮] 公告列表 [notice:list] [hidden]
+    [按钮] 新增公告 [notice:add] [hidden]
+    [按钮] 编辑公告 [notice:edit] [hidden]
+    [按钮] 删除公告 [notice:del] [hidden]
+  [菜单] 推荐商品 → /home/recommend
+    [按钮] 推荐列表 [recommend:list] [hidden]
+    [按钮] 新增推荐 [recommend:add] [hidden]
+    [按钮] 编辑推荐 [recommend:edit] [hidden]
+    [按钮] 删除推荐 [recommend:del] [hidden]
+[目录] 营销管理 → /marketing
+  [菜单] 优惠券管理 → /marketing/coupon
+    [按钮] 优惠券列表 [coupon:list] [hidden]
+    [按钮] 新增优惠券 [coupon:add] [hidden]
+    [按钮] 编辑优惠券 [coupon:edit] [hidden]
+    [按钮] 删除优惠券 [coupon:del] [hidden]
+  [菜单] 秒杀管理 → /marketing/seckill
+    [按钮] 秒杀列表 [seckill:list] [hidden]
+    [按钮] 新增秒杀 [seckill:add] [hidden]
+    [按钮] 编辑秒杀 [seckill:edit] [hidden]
+    [按钮] 删除秒杀 [seckill:del] [hidden]
+[目录] 订单管理 → /order
+  [菜单] 订单列表 → /order/list
+    [按钮] 订单查询 [order:list] [hidden]
+    [按钮] 订单详情 [order:detail] [hidden]
+    [按钮] 编辑订单 [order:edit] [hidden]
+```
+
+（共 91 项，不含菜单管理/字典管理/定时任务等内部功能）
