@@ -19,90 +19,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/v1/basic")
 @RequiredArgsConstructor
-@Tag(name = "管理后台-基础扩展数据", description = "定时任务、图片、敏感词、短信记录等基础数据管理接口，需携带 Bearer Token")
+@Tag(name = "管理后台-基础扩展数据", description = "图片、敏感词、短信记录、字典详情、通知等基础数据管理接口，需携带 Bearer Token")
 public class AdminBasicController {
 
-    private final JobFeignClient jobFeignClient;
-    private final JobLogFeignClient jobLogFeignClient;
     private final PhotoFeignClient photoFeignClient;
     private final PhotoGroupFeignClient photoGroupFeignClient;
     private final SensitiveWordFeignClient sensitiveWordFeignClient;
     private final SmsRecordFeignClient smsRecordFeignClient;
     private final DictDetailFeignClient dictDetailFeignClient;
     private final NotifyFeignClient notifyFeignClient;
-
-    // ============================== 定时任务管理 ==============================
-
-    @Operation(summary = "分页查询定时任务", description = "分页查询定时任务列表，支持按任务名称、任务状态等条件筛选", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/job/page")
-    public ApiResult<ResponsePageEntity> searchJobPage(@RequestBody CommonJobConditionDTO condition) {
-        return ApiResultUtil.success(jobFeignClient.searchByPage(condition));
-    }
-
-    @Operation(summary = "新增定时任务", description = "新增定时任务配置，包括任务名称、Cron表达式、调用目标等参数", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/job/insert")
-    public ApiResult<Integer> insertJob(@RequestBody CommonJobDTO entity) {
-        return ApiResultUtil.success(jobFeignClient.insert(entity));
-    }
-
-    @Operation(summary = "修改定时任务", description = "修改定时任务配置，支持更新任务名称、Cron表达式、调用目标等参数", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/job/update")
-    public ApiResult<Integer> updateJob(@RequestBody CommonJobDTO entity) {
-        return ApiResultUtil.success(jobFeignClient.update(entity));
-    }
-
-    @Operation(summary = "删除定时任务", description = "根据ID列表批量删除定时任务配置", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/job/delete")
-    public ApiResult<Integer> deleteJob(@RequestBody @NotNull List ids) {
-        return ApiResultUtil.success(jobFeignClient.deleteByIds(ids));
-    }
-
-    @Operation(summary = "立即执行定时任务", description = "立即触发一次定时任务执行，忽略Cron表达式设定的调度计划", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/job/runNow")
-    public ApiResult<Void> runNowJob(@RequestBody CommonJobDTO entity) {
-        jobFeignClient.runNow(entity);
-        return ApiResultUtil.success();
-    }
-
-    @Operation(summary = "暂停定时任务", description = "暂停指定定时任务，暂停后任务将不再按照Cron表达式执行", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/job/pause")
-    public ApiResult<Void> pauseJob(@RequestBody CommonJobDTO entity) {
-        jobFeignClient.pause(entity);
-        return ApiResultUtil.success();
-    }
-
-    @Operation(summary = "恢复定时任务", description = "恢复已暂停的定时任务，任务将重新按照Cron表达式执行", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/job/resume")
-    public ApiResult<Void> resumeJob(@RequestBody CommonJobDTO entity) {
-        jobFeignClient.resume(entity);
-        return ApiResultUtil.success();
-    }
-
-    // ============================== 定时任务日志管理 ==============================
-
-    @Operation(summary = "分页查询定时任务日志", description = "分页查询定时任务执行日志，支持按任务名称、执行状态、执行时间等条件筛选", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/jobLog/page")
-    public ApiResult<ResponsePageEntity> searchJobLogPage(@RequestBody CommonJobLogConditionDTO condition) {
-        return ApiResultUtil.success(jobLogFeignClient.searchByPage(condition));
-    }
-
-    @Operation(summary = "新增定时任务日志", description = "新增定时任务执行日志记录", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/jobLog/insert")
-    public ApiResult<Integer> insertJobLog(@RequestBody CommonJobLogDTO entity) {
-        return ApiResultUtil.success(jobLogFeignClient.insert(entity));
-    }
-
-    @Operation(summary = "修改定时任务日志", description = "修改定时任务执行日志记录", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/jobLog/update")
-    public ApiResult<Integer> updateJobLog(@RequestBody CommonJobLogDTO entity) {
-        return ApiResultUtil.success(jobLogFeignClient.update(entity));
-    }
-
-    @Operation(summary = "删除定时任务日志", description = "根据ID列表批量删除定时任务日志", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/jobLog/delete")
-    public ApiResult<Integer> deleteJobLog(@RequestBody @NotNull List ids) {
-        return ApiResultUtil.success(jobLogFeignClient.deleteByIds(ids));
-    }
 
     // ============================== 图片管理 ==============================
 
