@@ -109,6 +109,12 @@ public class ProductEntity extends BaseProductEntity {
     private Integer stock;
 
     /**
+     * 上下架状态
+     */
+    @Schema(description = "上下架状态 1:上架 0:下架", example = "1")
+    private Integer status;
+
+    /**
      * 销量
      */
     @Schema(description = "销量", example = "0")
