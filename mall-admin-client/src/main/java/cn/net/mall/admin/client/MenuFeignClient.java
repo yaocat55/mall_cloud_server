@@ -1,5 +1,6 @@
 package cn.net.mall.admin.client;
 
+import cn.net.mall.admin.dto.MenuConditionDTO;
 import cn.net.mall.admin.dto.MenuDTO;
 import cn.net.mall.admin.dto.auth.MenuTreeDTO;
 import cn.net.mall.entity.ResponsePageEntity;
@@ -21,7 +22,7 @@ public interface MenuFeignClient {
     List getMenuTree();
     @Operation(summary = "查询菜单列表")
     @PostMapping("/v1/auth/menu/getMenu")
-    List getMenu(@RequestBody Map condition);
+    List getMenu(@RequestBody MenuConditionDTO condition);
     @Operation(summary = "新增菜单")
     @PostMapping("/v1/auth/menu/insert")
     int insert(@RequestBody Object entity);

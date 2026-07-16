@@ -16,6 +16,7 @@ spring:
       discovery:
         server-addr: localhost:8848
         namespace: 7af60364-a045-4561-85a3-3f7a69de938d
+        ip: 127.0.0.1
         group: mall-cloud
         username: nacos
         password: nacos

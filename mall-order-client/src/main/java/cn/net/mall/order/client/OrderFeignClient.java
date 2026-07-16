@@ -15,8 +15,10 @@ import cn.net.mall.order.dto.TradeItemDTO;
 import cn.net.mall.order.dto.TradeDetailDTO;
 import cn.net.mall.order.dto.OrderReturnApplyDTO;
 import cn.net.mall.order.dto.OrderReturnConditionDTO;
+import cn.net.mall.order.dto.OrderReturnConditionDTO;
 import cn.net.mall.order.dto.RowsDTO;
 import cn.net.mall.order.dto.OrderEvaluateDTO;
+import cn.net.mall.order.dto.OrderStatisticsDTO;
 import cn.net.mall.order.dto.IdDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -203,17 +205,23 @@ public interface OrderFeignClient {
 
     @Operation(summary = "分页查询退货列表（管理端）")
     @PostMapping("/v1/trade/return/searchByPage")
-    ResponsePageEntity<?> searchReturnByPage(@RequestBody Map<String, Object> condition);
+    ResponsePageEntity<?> searchReturnByPage(@RequestBody OrderReturnConditionDTO condition);
 
     @Operation(summary = "审批退货（管理端）")
     @PostMapping("/v1/trade/return/approve")
-    RowsDTO approveReturn(@RequestBody Object entity);
+    RowsDTO approveReturn(@RequestBody OrderReturnApplyDTO entity);
 
     @Operation(summary = "拒绝退货（管理端）")
     @PostMapping("/v1/trade/return/reject")
-    RowsDTO rejectReturn(@RequestBody Object entity);
+    RowsDTO rejectReturn(@RequestBody OrderReturnApplyDTO entity);
 
     @Operation(summary = "查询退货详情（管理端）")
     @GetMapping("/v1/trade/return/findById")
     Object findReturnById(@RequestParam("id") Long id);
+
+    // ========== 订单统计 (statistics) 管理端 ==========
+
+    @Operation(summary = "订单统计", description = "返回总订单数、今日订单数、总销售额、今日销售额、各状态数量")
+    @PostMapping("/v1/admin/trade/statistics")
+    OrderStatisticsDTO statistics();
 }

@@ -3,6 +3,7 @@ package cn.net.mall.product.controller.product;
 import cn.hutool.core.bean.BeanUtil;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.annotation.ValidSensitiveWord;
+import cn.net.mall.product.dto.ProductDTO;
 import cn.net.mall.product.dto.ProductSearchConditionDTO;
 import cn.net.mall.product.dto.ProductSearchResultDTO;
 import cn.net.mall.product.entity.ProductConditionEntity;
@@ -129,6 +130,18 @@ public class ProductController {
     @Operation(summary = "导出商品数据", description = "导出商品数据")
     @PostMapping("/export")
     public void export(@RequestBody ProductConditionEntity productConditionEntity) {
+    }
+
+    /**
+     * 获取热销商品列表
+     *
+     * @param limit 获取数量
+     * @return 热销商品列表
+     */
+    @Operation(summary = "获取热销商品", description = "获取销量最高的商品列表")
+    @GetMapping("/getTopSales")
+    public List<ProductDTO> getTopSales(@RequestParam(value = "limit", defaultValue = "5") int limit) {
+        return productService.getTopProducts(limit);
     }
 }
 

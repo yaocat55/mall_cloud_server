@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
+import cn.net.mall.product.dto.CategoryConditionDTO;
+import cn.net.mall.product.dto.CategoryDTO;
 
 import static cn.net.mall.product.constant.AppConstant.PRODUCT_SERVICE_NAME;
 
@@ -35,15 +37,15 @@ public interface CategoryFeignClient {
 
     @Operation(summary = "分页查询分类（管理端）")
     @PostMapping("/v1/category/searchByPage")
-    ResponsePageEntity<?> searchByPage(@RequestBody Map<String, Object> condition);
+    ResponsePageEntity<?> searchByPage(@RequestBody CategoryConditionDTO condition);
 
     @Operation(summary = "新增分类（管理端）")
     @PostMapping("/v1/category/insert")
-    int insert(@RequestBody Object entity);
+    int insert(@RequestBody CategoryDTO entity);
 
     @Operation(summary = "修改分类（管理端）")
     @PostMapping("/v1/category/update")
-    int update(@RequestBody Object entity);
+    int update(@RequestBody CategoryDTO entity);
 
     @Operation(summary = "删除分类（管理端）")
     @PostMapping("/v1/category/deleteByIds")

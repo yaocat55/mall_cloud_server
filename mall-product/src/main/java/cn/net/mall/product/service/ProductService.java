@@ -437,14 +437,18 @@ public class ProductService extends BaseService<ProductEntity, ProductConditionE
     }
 
     private void fillDetail(ProductEntity productEntity) {
-        Query query = new Query(Criteria.where("productId").is(productEntity.getId()));
-        List<ProductDetailEntity> productDetailEntities = mongoTemplate.find(query, ProductDetailEntity.class);
-        if (CollectionUtils.isEmpty(productDetailEntities)) {
-            return;
-        }
+        try {
+            Query query = new Query(Criteria.where("productId").is(productEntity.getId()));
+            List<ProductDetailEntity> productDetailEntities = mongoTemplate.find(query, ProductDetailEntity.class);
+            if (CollectionUtils.isEmpty(productDetailEntities)) {
+                return;
+            }
 
-        ProductDetailEntity productDetailEntity = productDetailEntities.get(0);
-        productEntity.setDetail(productDetailEntity.getDetail());
+            ProductDetailEntity productDetailEntity = productDetailEntities.get(0);
+            productEntity.setDetail(productDetailEntity.getDetail());
+        } catch (Exception e) {
+            log.warn("查询商品详情失败（MongoDB 可能未连接）, productId={}", productEntity.getId(), e);
+        }
     }
 
     /**
@@ -1075,6 +1079,17 @@ public class ProductService extends BaseService<ProductEntity, ProductConditionE
     /**
      * 回滚库存（补偿用）
      */
+    /**
+     * 获取销量最高的商品列表
+     *
+     * @param limit 查询数量
+     * @return 商品DTO列表
+     */
+    public List<ProductDTO> getTopProducts(int limit) {
+        List<ProductEntity> productEntities = productMapper.getTopProducts(limit);
+        return BeanUtil.copyToList(productEntities, ProductDTO.class);
+    }
+
     public void addStockBatch(List<ShoppingCartDTO> items) {
         if (org.apache.commons.collections4.CollectionUtils.isEmpty(items)) {
             return;

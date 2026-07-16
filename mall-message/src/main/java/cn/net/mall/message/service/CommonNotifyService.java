@@ -6,8 +6,10 @@ import cn.net.mall.message.entity.CommonNotifyConditionEntity;
 import cn.net.mall.message.entity.CommonNotifyEntity;
 import cn.net.mall.message.mapper.CommonNotifyMapper;
 import cn.net.mall.service.BaseService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class CommonNotifyService extends BaseService<CommonNotifyEntity, CommonNotifyConditionEntity> {
 
@@ -22,7 +24,12 @@ public class CommonNotifyService extends BaseService<CommonNotifyEntity, CommonN
     }
 
     public ResponsePageEntity<CommonNotifyEntity> searchByPage(CommonNotifyConditionEntity commonNotifyConditionEntity) {
-        return super.searchByPage(commonNotifyConditionEntity);
+        try {
+            return super.searchByPage(commonNotifyConditionEntity);
+        } catch (Exception e) {
+            log.error("searchByPage 异常", e);
+            throw e;
+        }
     }
 
     public int insert(CommonNotifyEntity commonNotifyEntity) {

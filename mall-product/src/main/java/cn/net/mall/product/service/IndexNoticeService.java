@@ -123,6 +123,7 @@ public class IndexNoticeService extends BaseService<IndexNoticeEntity, IndexNoti
             indexNoticeWebEntity.setId(x.getId());
             indexNoticeWebEntity.setTitle(x.getTitle());
             indexNoticeWebEntity.setCreateTime(DateFormatUtil.parseToString(x.getCreateTime()));
+            indexNoticeWebEntity.setSort(x.getSort());
             return indexNoticeWebEntity;
         }).collect(Collectors.toList());
         return ResponsePageEntity.build(requestPageEntity, indexNoticeEntityResponsePageEntity.getTotalCount(), dataList);

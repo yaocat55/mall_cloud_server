@@ -22,7 +22,7 @@ public class OrderReturnApplyDTO {
     private String reason;
     @Schema(description = "问题描述", example = "描述信息")
     private String description;
-    @Schema(description = "申请状态", example = "0")
+    @Schema(description = "申请状态", allowableValues = {"1=待审核", "2=已通过", "3=已拒绝"}, example = "1")
     private Integer applyStatus;
     @Schema(description = "拟退款金额", example = "0")
     private BigDecimal refundAmount;

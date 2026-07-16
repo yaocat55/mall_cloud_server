@@ -1,5 +1,6 @@
 package cn.net.mall.admin.client;
 
+import cn.net.mall.admin.dto.RowsDTO;
 import cn.net.mall.admin.dto.JobDTO;
 import cn.net.mall.entity.ResponsePageEntity;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,11 +21,11 @@ public interface JobFeignClient {
     List all();
     @Operation(summary = "新增岗位")
     @PostMapping("/v1/auth/job/insert")
-    int insert(@RequestBody Object entity);
+    RowsDTO insert(@RequestBody Object entity);
     @Operation(summary = "修改岗位")
     @PostMapping("/v1/auth/job/update")
-    int update(@RequestBody Object entity);
+    RowsDTO update(@RequestBody Object entity);
     @Operation(summary = "删除岗位")
     @PostMapping("/v1/auth/job/deleteByIds")
-    int deleteByIds(@RequestBody @NotNull List ids);
+    RowsDTO deleteByIds(@RequestBody @NotNull List ids);
 }

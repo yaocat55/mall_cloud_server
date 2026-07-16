@@ -63,6 +63,14 @@ public interface ProductMapper extends BaseMapper<ProductEntity, ProductConditio
     List<ProductEntity> findByIds(List<Long> ids);
 
     /**
+     * 查询销量最高的商品
+     *
+     * @param limit 查询数量
+     * @return 商品列表
+     */
+    List<ProductEntity> getTopProducts(@Param("limit") int limit);
+
+    /**
      * 扣减库存
      *
      * @param id       主键

@@ -45,6 +45,6 @@ public class ProductPhotoDTO extends BaseEntity {
     /**
      * 图片类型 1：封面 2：轮播图
      */
-    @Schema(description = "图片类型", example = "1")
+    @Schema(description = "图片类型", allowableValues = {"0=封面", "1=轮播"}, example = "0")
     private Integer type;
 }

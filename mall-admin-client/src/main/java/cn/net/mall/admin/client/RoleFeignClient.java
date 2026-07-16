@@ -1,5 +1,6 @@
 package cn.net.mall.admin.client;
 
+import cn.net.mall.admin.dto.RowsDTO;
 import cn.net.mall.admin.dto.RoleDTO;
 import cn.net.mall.entity.ResponsePageEntity;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,11 +21,11 @@ public interface RoleFeignClient {
     List all();
     @Operation(summary = "新增角色")
     @PostMapping("/v1/auth/role/insert")
-    int insert(@RequestBody Object entity);
+    RowsDTO insert(@RequestBody Object entity);
     @Operation(summary = "修改角色")
     @PostMapping("/v1/auth/role/update")
-    int update(@RequestBody Object entity);
+    RowsDTO update(@RequestBody Object entity);
     @Operation(summary = "删除角色")
     @PostMapping("/v1/auth/role/deleteByIds")
-    int deleteByIds(@RequestBody @NotNull List ids);
+    RowsDTO deleteByIds(@RequestBody @NotNull List ids);
 }

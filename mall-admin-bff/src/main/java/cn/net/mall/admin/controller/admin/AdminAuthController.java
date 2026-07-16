@@ -24,7 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/v1/auth")
 @RequiredArgsConstructor
-@Tag(name = "管理后台-认证", description = "登录、用户信息、权限菜单聚合接口")
+@Tag(name = "认证", description = "登录退出、用户信息、权限菜单")
 public class AdminAuthController {
 
     private final UserFeignClient userFeignClient;

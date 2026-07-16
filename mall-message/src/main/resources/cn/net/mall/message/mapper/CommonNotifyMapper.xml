@@ -83,25 +83,6 @@
                 AND create_user_name = #{createUserName}
             </if>
 
-            <if test="createTime != null ">
-                AND create_time = #{createTime}
-            </if>
-
-            <if test="updateUserId != null ">
-                AND update_user_id = #{updateUserId}
-            </if>
-
-            <if test="updateUserName != null  and updateUserName != ''">
-                AND update_user_name = #{updateUserName}
-            </if>
-
-            <if test="updateTime != null ">
-                AND update_time = #{updateTime}
-            </if>
-
-            <if test="isDel != null ">
-                AND is_del = #{isDel}
-            </if>
             AND is_del = 0
         </where>
     </sql>

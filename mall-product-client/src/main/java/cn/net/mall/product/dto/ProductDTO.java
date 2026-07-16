@@ -166,4 +166,7 @@ public class ProductDTO {
      */
     @Schema(description = "销量", example = "0")
     private Integer saleCount;
+
+    @Schema(description = "上下架状态 0=下架 1=上架", allowableValues = {"0=下架", "1=上架"}, example = "1")
+    private Integer status;
 }

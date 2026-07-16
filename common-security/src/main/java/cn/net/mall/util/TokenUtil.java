@@ -1,6 +1,5 @@
 package cn.net.mall.util;
 
-import cn.net.mall.constant.NumberConstant;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -23,8 +22,6 @@ import java.util.List;
  */
 public abstract class TokenUtil {
 
-    private static final String AUTHORIZATION_PREFIX = "Basic";
-    private static final String AUTHORIZATION_SEPARATE = "@";
     private static final String BEARER_PREFIX = "Bearer ";
     public static final String AUTHORIZATION = "Authorization";
 
@@ -87,21 +84,10 @@ public abstract class TokenUtil {
         if (!StringUtils.hasLength(authorization)) {
             return null;
         }
-
         if (authorization.startsWith(BEARER_PREFIX)) {
             return authorization.substring(BEARER_PREFIX.length());
         }
-
-        if (!authorization.contains(AUTHORIZATION_PREFIX)
-                || !authorization.contains(AUTHORIZATION_SEPARATE)) {
-            return null;
-        }
-
-        String[] values = authorization.split(AUTHORIZATION_SEPARATE);
-        if (values.length != NumberConstant.NUMBER_2) {
-            return null;
-        }
-        return values[1];
+        return null;
     }
 
     /**

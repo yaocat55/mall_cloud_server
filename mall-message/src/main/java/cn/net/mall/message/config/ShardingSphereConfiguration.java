@@ -1,35 +1,33 @@
 package cn.net.mall.message.config;
 
-import org.apache.shardingsphere.driver.api.yaml.YamlShardingSphereDataSourceFactory;
-import org.springframework.context.EnvironmentAware;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.util.StreamUtils;
 
 import javax.sql.DataSource;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.sql.SQLException;
 
 @Configuration
-public class ShardingSphereConfiguration implements EnvironmentAware {
+public class ShardingSphereConfiguration {
 
-    private Environment environment;
+    private final Environment environment;
 
-    @Override
-    public void setEnvironment(Environment environment) {
+    public ShardingSphereConfiguration(Environment environment) {
         this.environment = environment;
     }
 
     @Bean
     @Primary
-    public DataSource dataSource() throws SQLException, IOException {
-        ClassPathResource resource = new ClassPathResource("sharding.yaml");
-        String yamlContent = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
-        String resolvedYaml = environment.resolvePlaceholders(yamlContent);
-        return YamlShardingSphereDataSourceFactory.createDataSource(resolvedYaml.getBytes(StandardCharsets.UTF_8));
+    public DataSource dataSource() {
+        HikariDataSource ds = new HikariDataSource();
+        ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        ds.setJdbcUrl("jdbc:mysql://" +
+                environment.getProperty("DB_HOST", "localhost") + ":" +
+                environment.getProperty("DB_PORT", "33081") +
+                "/cloud_mall_message_0?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf-8");
+        ds.setUsername(environment.getProperty("DB_USER", "root"));
+        ds.setPassword(environment.getProperty("DB_PWD", "123456"));
+        return ds;
     }
 }

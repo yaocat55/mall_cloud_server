@@ -52,11 +52,7 @@ rules:
 - !SHARDING
   tables:
     common_notify:
-      actualDataNodes: cloud_mall_message_${0..7}.common_notify_${0..63}
-      tableStrategy:
-        standard:
-          shardingColumn: to_user_id
-          shardingAlgorithmName: t-common-notify-inline
+      actualDataNodes: cloud_mall_message_${0..7}.common_notify
       databaseStrategy:
         standard:
           shardingColumn: to_user_id
@@ -64,17 +60,13 @@ rules:
       keyGenerateStrategy:
         column: id
         keyGeneratorName: snowflake
-  
+
   shardingAlgorithms:
     database-inline-common-notify:
       type: INLINE
       props:
         algorithm-expression: cloud_mall_message_${to_user_id % 8}
-    t-common-notify-inline:
-      type: INLINE
-      props:
-        algorithm-expression: common_notify_${to_user_id % 64}
-  
+
   keyGenerators:
     snowflake:
       type: SNOWFLAKE

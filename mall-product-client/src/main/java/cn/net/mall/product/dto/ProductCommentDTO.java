@@ -71,7 +71,7 @@ public class ProductCommentDTO {
     /**
      * 评价类型 1：好评 2：中评 3：差评
      */
-    @Schema(description = "类型", example = "0")
+    @Schema(description = "评价类型", allowableValues = {"1=好评", "2=中评", "3=差评"}, example = "1")
     private Integer type;
 
     /**

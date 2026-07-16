@@ -1,0 +1,736 @@
+### ============================================================
+### Mall Cloud — Admin BFF 全量接口测试脚本
+### 给前端开发用，覆盖所有增删改查接口
+###
+### 用法：IDEA 打开 → 先跑 Step1 → 再跑后面的
+### ============================================================
+
+@ADMIN = http://localhost:8030
+@BFF = http://localhost:8090
+
+### ============================================================
+### Step 1：获取 Token
+### ============================================================
+
+# @name login
+POST {{ADMIN}}/v1/auth/user/testLogin
+Content-Type: application/json
+{"username":"admin","password":"admin123"}
+
+
+### ============================================================
+### 1️⃣ 认证
+### ============================================================
+
+### 1.1 验证码（无需 Token）
+GET {{BFF}}/admin/v1/auth/getCode
+
+### 1.2 当前用户信息
+GET {{BFF}}/admin/v1/auth/userInfo
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 1.3 用户详情
+GET {{BFF}}/admin/v1/auth/userDetail
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 1.4 菜单树
+GET {{BFF}}/admin/v1/auth/menus
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 1.5 在线用户
+GET {{BFF}}/admin/v1/auth/onlineUsers
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 1.6 退出登录
+POST {{BFF}}/admin/v1/auth/logout
+Authorization: Bearer {{login.response.body.data.token}}
+
+
+### ============================================================
+### 2️⃣ 用户管理
+### ============================================================
+
+### 2.1 用户分页
+POST {{BFF}}/admin/v1/user/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"entity":{},"page":{"pageNum":1,"pageSize":10}}
+
+### 2.2 新增用户
+POST {{BFF}}/admin/v1/user/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"userName":"testuser","phone":"13800000001","email":"test@t.com","password":"123456","deptId":1,"jobId":1,"status":1}
+
+### 2.3 修改用户
+POST {{BFF}}/admin/v1/user/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"id":1,"email":"new@t.com","status":1}
+
+### 2.4 删除用户
+POST {{BFF}}/admin/v1/user/delete
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"ids":[999]}
+
+### 2.5 用户编辑数据
+GET {{BFF}}/admin/v1/user/1/edit-data
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 2.6 更新头像
+POST {{BFF}}/admin/v1/user/updateAvatar
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"userId":1,"avatar":"http://img.com/avatar.jpg"}
+
+### 2.7 更新用户信息
+POST {{BFF}}/admin/v1/user/updateUser
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"userId":1,"nickName":"管理员"}
+
+
+### ============================================================
+### 3️⃣ 角色管理
+### ============================================================
+
+### 3.1 角色分页
+POST {{BFF}}/admin/v1/system/role/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+### 3.2 角色列表
+GET {{BFF}}/admin/v1/system/role/all
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 3.3 新增角色
+POST {{BFF}}/admin/v1/system/role/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"name":"测试角色"}
+
+### 3.4 修改角色
+POST {{BFF}}/admin/v1/system/role/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"id":1,"name":"新角色名"}
+
+### 3.5 删除角色
+POST {{BFF}}/admin/v1/system/role/delete
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"ids":[999]}
+
+
+### ============================================================
+### 4️⃣ 部门管理
+### ============================================================
+
+### 4.1 部门分页
+POST {{BFF}}/admin/v1/system/dept/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+### 4.2 部门树
+GET {{BFF}}/admin/v1/system/dept/tree
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 4.3 新增部门
+POST {{BFF}}/admin/v1/system/dept/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"name":"新部门","pid":0,"validStatus":1}
+
+### 4.4 修改部门
+POST {{BFF}}/admin/v1/system/dept/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"id":1,"name":"新部门名"}
+
+### 4.5 删除部门
+POST {{BFF}}/admin/v1/system/dept/delete
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"ids":[999]}
+
+
+### ============================================================
+### 5️⃣ 岗位管理
+### ============================================================
+
+### 5.1 岗位分页
+POST {{BFF}}/admin/v1/system/job/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+### 5.2 岗位列表
+GET {{BFF}}/admin/v1/system/job/all
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 5.3 新增岗位
+POST {{BFF}}/admin/v1/system/job/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"name":"测试岗位","sort":1,"validStatus":1}
+
+### 5.4 修改岗位
+POST {{BFF}}/admin/v1/system/job/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"id":1,"name":"新岗位名"}
+
+### 5.5 删除岗位
+POST {{BFF}}/admin/v1/system/job/delete
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"ids":[999]}
+
+
+### ============================================================
+### 6️⃣ 菜单
+### ============================================================
+
+### 6.1 菜单树
+GET {{BFF}}/admin/v1/system/menu/tree
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 6.2 菜单列表
+POST {{BFF}}/admin/v1/system/menu/list
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+
+### ============================================================
+### 7️⃣ 商品 CRUD
+### ============================================================
+
+### 7.1 商品分页
+POST {{BFF}}/admin/v1/product/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"entity":{},"page":{"pageNum":1,"pageSize":10}}
+
+### 7.2 新增商品
+POST {{BFF}}/admin/v1/product/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"name":"测试商品","price":99.99,"quantity":100,"status":1,"categoryId":1806965539515801603,"brandId":1806609234968473601,"unitId":1807039393319260160}
+
+### 7.3 修改商品
+POST {{BFF}}/admin/v1/product/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"id":1833339862330556416,"price":88.88}
+
+### 7.4 删除商品
+POST {{BFF}}/admin/v1/product/delete
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"ids":[999]}
+
+### 7.5 商品编辑数据
+GET {{BFF}}/admin/v1/product/1/edit-data
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 7.6 商品详情
+GET {{BFF}}/admin/v1/product/detail?id=1833339862330556416
+Authorization: Bearer {{login.response.body.data.token}}
+
+
+### ============================================================
+### 8️⃣ 分类
+### ============================================================
+
+### 8.1 分类树
+POST {{BFF}}/admin/v1/product-mgr/category/tree
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+### 8.2 分类分页
+POST {{BFF}}/admin/v1/product-mgr/category/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+### 8.3 新增分类
+POST {{BFF}}/admin/v1/product-mgr/category/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"name":"新分类","parentId":0,"level":1,"isLeaf":1}
+
+### 8.4 修改分类
+POST {{BFF}}/admin/v1/product-mgr/category/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"id":1,"name":"新分类名"}
+
+### 8.5 删除分类
+POST {{BFF}}/admin/v1/product-mgr/category/delete
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"ids":[999]}
+
+
+### ============================================================
+### 9️⃣ 品牌
+### ============================================================
+
+### 9.1 品牌分页
+POST {{BFF}}/admin/v1/product-mgr/brand/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+### 9.2 新增品牌
+POST {{BFF}}/admin/v1/product-mgr/brand/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"name":"新品牌"}
+
+### 9.3 修改品牌
+POST {{BFF}}/admin/v1/product-mgr/brand/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"id":1,"name":"新品牌名"}
+
+### 9.4 删除品牌
+POST {{BFF}}/admin/v1/product-mgr/brand/delete
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"ids":[999]}
+
+
+### ============================================================
+### 🔟 单位
+### ============================================================
+
+### 10.1 单位分页
+POST {{BFF}}/admin/v1/product-mgr/unit/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+### 10.2 新增单位
+POST {{BFF}}/admin/v1/product-mgr/unit/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"name":"新单位"}
+
+### 10.3 修改单位
+POST {{BFF}}/admin/v1/product-mgr/unit/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"id":1,"name":"新单位名"}
+
+### 10.4 删除单位
+POST {{BFF}}/admin/v1/product-mgr/unit/delete
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"ids":[999]}
+
+
+### ============================================================
+### 1️⃣1️⃣ 属性
+### ============================================================
+
+### 11.1 属性分页
+POST {{BFF}}/admin/v1/product-extra/attribute/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+### 11.2 新增属性
+POST {{BFF}}/admin/v1/product-extra/attribute/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"name":"颜色","type":1}
+
+### 11.3 修改属性
+POST {{BFF}}/admin/v1/product-extra/attribute/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"id":1,"name":"颜色2"}
+
+### 11.4 删除属性
+POST {{BFF}}/admin/v1/product-extra/attribute/delete
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"ids":[999]}
+
+### 11.5 属性值分页
+POST {{BFF}}/admin/v1/product-extra/attributeValue/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+### 11.6 新增属性值
+POST {{BFF}}/admin/v1/product-extra/attributeValue/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"attributeId":1,"value":"红色"}
+
+### 11.7 修改属性值
+POST {{BFF}}/admin/v1/product-extra/attributeValue/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"id":1,"value":"蓝色"}
+
+### 11.8 删除属性值
+POST {{BFF}}/admin/v1/product-extra/attributeValue/delete
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"ids":[999]}
+
+
+### ============================================================
+### 1️⃣2️⃣ 商品分组 / 首页 / 商品图片
+### ============================================================
+
+### 12.1 商品分组分页
+POST {{BFF}}/admin/v1/product-extra/productGroup/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+### 12.2 新增商品分组
+POST {{BFF}}/admin/v1/product-extra/productGroup/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"name":"热卖"}
+
+### 12.3 修改商品分组
+POST {{BFF}}/admin/v1/product-extra/productGroup/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"id":1,"name":"新品"}
+
+### 12.4 删除商品分组
+POST {{BFF}}/admin/v1/product-extra/productGroup/delete
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"ids":[999]}
+
+### 12.5 首页公告分页
+POST {{BFF}}/admin/v1/product-extra/indexNotice/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+### 12.6 新增首页公告
+POST {{BFF}}/admin/v1/product-extra/indexNotice/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"title":"新公告","content":"内容"}
+
+### 12.7 修改首页公告
+POST {{BFF}}/admin/v1/product-extra/indexNotice/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"id":1,"title":"新标题"}
+
+### 12.8 删除首页公告
+POST {{BFF}}/admin/v1/product-extra/indexNotice/delete
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"ids":[999]}
+
+### 12.9 首页公告详情
+GET {{BFF}}/admin/v1/product-extra/indexNotice/detail?id=1
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 12.10 首页商品分页
+POST {{BFF}}/admin/v1/product-extra/indexProduct/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+### 12.11 轮播图分页
+POST {{BFF}}/admin/v1/product-extra/indexCarouselImage/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+### 12.12 新增轮播图
+POST {{BFF}}/admin/v1/product-extra/indexCarouselImage/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"url":"http://img.com/banner.jpg","title":"新轮播"}
+
+### 12.13 商品图片分页
+POST {{BFF}}/admin/v1/product-extra/productPhoto/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+
+### ============================================================
+### 1️⃣3️⃣ 订单
+### ============================================================
+
+### 13.1 订单分页
+POST {{BFF}}/admin/v1/order/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"entity":{},"page":{"pageNum":1,"pageSize":10}}
+
+### 13.2 修改订单
+POST {{BFF}}/admin/v1/order/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"id":1,"remark":"新备注"}
+
+### 13.3 删除订单
+POST {{BFF}}/admin/v1/order/delete
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"ids":[999]}
+
+### 13.4 退货分页
+POST {{BFF}}/admin/v1/order/return/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+### 13.5 退货审批通过
+POST {{BFF}}/admin/v1/order/return/approve
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"id":1}
+
+### 13.6 退货审批拒绝
+POST {{BFF}}/admin/v1/order/return/reject
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"id":1,"reason":"不符合条件"}
+
+### 13.7 退货详情
+GET {{BFF}}/admin/v1/order/return/detail?id=1
+Authorization: Bearer {{login.response.body.data.token}}
+
+
+### ============================================================
+### 1️⃣4️⃣ 营销
+### ============================================================
+
+### 14.1 优惠券分页
+POST {{BFF}}/admin/v1/marketing/coupon/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+### 14.2 新增优惠券
+POST {{BFF}}/admin/v1/marketing/coupon/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"name":"测试券","type":1,"offMoney":10,"minMoney":100,"quantity":100,"validStatus":1}
+
+### 14.3 修改优惠券
+POST {{BFF}}/admin/v1/marketing/coupon/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"id":1,"name":"新券名","validStatus":1}
+
+### 14.4 删除优惠券
+POST {{BFF}}/admin/v1/marketing/coupon/delete
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"ids":[999]}
+
+### 14.5 秒杀分页
+POST {{BFF}}/admin/v1/marketing/seckill/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+### 14.6 秒杀详情
+GET {{BFF}}/admin/v1/marketing/seckill/detail?id=1
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 14.7 发券记录
+POST {{BFF}}/admin/v1/marketing/couponUserProvide/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+### 14.8 领券记录
+POST {{BFF}}/admin/v1/marketing/couponUserReceive/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+
+### ============================================================
+### 1️⃣5️⃣ 评价
+### ============================================================
+
+### 15.1 评价分页
+POST {{BFF}}/admin/v1/shopping/productComment/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+### 15.2 新增评价
+POST {{BFF}}/admin/v1/shopping/productComment/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"productId":1,"content":"好评","rating":5}
+
+### 15.3 修改评价
+POST {{BFF}}/admin/v1/shopping/productComment/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"id":1,"content":"修改后的评价"}
+
+### 15.4 删除评价
+POST {{BFF}}/admin/v1/shopping/productComment/delete
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"ids":[999]}
+
+### 15.5 评价详情
+GET {{BFF}}/admin/v1/shopping/productComment/detail?id=1
+Authorization: Bearer {{login.response.body.data.token}}
+
+
+### ============================================================
+### 1️⃣6️⃣ 基础数据 — 图片
+### ============================================================
+
+### 16.1 图片分页
+POST {{BFF}}/admin/v1/basic/photo/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+### 16.2 新增图片
+POST {{BFF}}/admin/v1/basic/photo/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"url":"http://img.com/photo.jpg","name":"测试图片"}
+
+### 16.3 修改图片
+POST {{BFF}}/admin/v1/basic/photo/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"id":1,"name":"新图片名"}
+
+### 16.4 删除图片
+POST {{BFF}}/admin/v1/basic/photo/delete
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"ids":[999]}
+
+### 16.5 图片分组分页
+POST {{BFF}}/admin/v1/basic/photoGroup/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+### 16.6 新增图片分组
+POST {{BFF}}/admin/v1/basic/photoGroup/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"name":"新分组"}
+
+### 16.7 修改图片分组
+POST {{BFF}}/admin/v1/basic/photoGroup/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"id":1,"name":"新分组名"}
+
+### 16.8 删除图片分组
+POST {{BFF}}/admin/v1/basic/photoGroup/delete
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"ids":[999]}
+
+
+### ============================================================
+### 1️⃣7️⃣ 基础数据 — 敏感词
+### ============================================================
+
+### 17.1 敏感词分页
+POST {{BFF}}/admin/v1/basic/sensitiveWord/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+### 17.2 新增敏感词
+POST {{BFF}}/admin/v1/basic/sensitiveWord/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"word":"违禁词","type":1}
+
+### 17.3 修改敏感词
+POST {{BFF}}/admin/v1/basic/sensitiveWord/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"id":1,"word":"新违禁词","type":1}
+
+### 17.4 删除敏感词
+POST {{BFF}}/admin/v1/basic/sensitiveWord/delete
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"ids":[999]}
+
+### 17.5 敏感词校验
+POST {{BFF}}/admin/v1/basic/sensitiveWord/check
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"word":"测试"}
+
+
+### ============================================================
+### 1️⃣8️⃣ 基础数据 — 通知
+### ============================================================
+
+### 18.1 通知分页
+POST {{BFF}}/admin/v1/basic/notify/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{}
+
+### 18.2 新增通知
+POST {{BFF}}/admin/v1/basic/notify/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"title":"新通知","content":"通知内容"}
+
+### 18.3 修改通知
+POST {{BFF}}/admin/v1/basic/notify/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"id":1,"title":"新标题"}
+
+### 18.4 删除通知
+POST {{BFF}}/admin/v1/basic/notify/delete
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"ids":[999]}
+
+### 18.5 全员推送
+POST {{BFF}}/admin/v1/basic/notify/push/all
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"title":"通知","content":"内容"}
+
+### 18.6 指定用户推送
+POST {{BFF}}/admin/v1/basic/notify/push/user
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+{"title":"通知","content":"内容","toUserId":1}
+
+
+### ============================================================
+### 1️⃣9️⃣ 工作台
+### ============================================================
+
+### 19.1 统计数据
+GET {{BFF}}/admin/v1/dashboard/stats
+Authorization: Bearer {{login.response.body.data.token}}

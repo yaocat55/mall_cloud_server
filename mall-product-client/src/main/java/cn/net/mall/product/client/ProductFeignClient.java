@@ -188,6 +188,16 @@ public interface ProductFeignClient {
     @PostMapping("/v1/internal/product/reduceStockBatch")
     void reduceStockBatch(@RequestBody List<ShoppingCartDTO> items);
 
+    /**
+     * 获取热销商品列表
+     *
+     * @param limit 查询数量
+     * @return 热销商品DTO列表
+     */
+    @Operation(summary = "获取热销商品", description = "由Feign远程调用，获取销量最高的商品列表")
+    @GetMapping("/v1/product/getTopSales")
+    List<ProductDTO> getTopSales(@RequestParam("limit") int limit);
+
     // ========== 管理端 CRUD ==========
 
     /**
@@ -208,7 +218,7 @@ public interface ProductFeignClient {
      */
     @Operation(summary = "分页查询商品列表（管理端）", description = "分页查询商品列表")
     @PostMapping("/v1/product/searchByPage")
-    ResponsePageEntity<?> searchByPage(@RequestBody Map<String, Object> condition);
+    ResponsePageEntity<?> searchByPage(@RequestBody ProductConditionDTO condition);
 
     /**
      * 新增商品

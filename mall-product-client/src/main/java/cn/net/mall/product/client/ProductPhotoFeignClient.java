@@ -1,6 +1,8 @@
 package cn.net.mall.product.client;
 
 import cn.net.mall.entity.ResponsePageEntity;
+import cn.net.mall.product.dto.ProductPhotoDTO;
+import cn.net.mall.product.dto.ProductPhotoConditionDTO;
 import cn.net.mall.product.client.fallback.ProductFeignFallbackFactory;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -19,7 +21,7 @@ public interface ProductPhotoFeignClient {
 
     @Operation(summary = "分页查询商品图片")
     @PostMapping("/v1/productPhoto/searchByPage")
-    ResponsePageEntity<?> searchByPage(@RequestBody Map<String, Object> condition);
+    ResponsePageEntity<?> searchByPage(@RequestBody ProductPhotoConditionDTO condition);
 
     @Operation(summary = "查询商品图片详情")
     @GetMapping("/v1/productPhoto/findById")
@@ -27,11 +29,11 @@ public interface ProductPhotoFeignClient {
 
     @Operation(summary = "新增商品图片")
     @PostMapping("/v1/productPhoto/insert")
-    int insert(@RequestBody Object entity);
+    int insert(@RequestBody ProductPhotoDTO entity);
 
     @Operation(summary = "修改商品图片")
     @PostMapping("/v1/productPhoto/update")
-    int update(@RequestBody Object entity);
+    int update(@RequestBody ProductPhotoDTO entity);
 
     @Operation(summary = "删除商品图片")
     @PostMapping("/v1/productPhoto/deleteByIds")

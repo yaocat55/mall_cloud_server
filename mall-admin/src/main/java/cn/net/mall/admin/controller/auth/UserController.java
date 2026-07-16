@@ -129,6 +129,14 @@ public class UserController {
 
     // ========== 以下方法原在 UserInternalController，合并到此处 ==========
 
+    @Operation(summary = "今日新增用户数",
+               description = "需 Bearer Token + admin 角色 | 查询今日注册且未删除的用户总数")
+    @PreAuthorize("hasRole('admin')")
+    @GetMapping("/todayCount")
+    public int todayCount() {
+        return userService.todayCount();
+    }
+
     @Operation(summary = "批量查询用户信息",
                description = "需 Bearer Token + admin 角色 | 请求体：ids（用户ID列表）")
     @PreAuthorize("hasRole('admin')")

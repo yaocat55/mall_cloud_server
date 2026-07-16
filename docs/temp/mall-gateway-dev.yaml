@@ -1,0 +1,152 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: mall-gateway
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
+  cloud:
+    sentinel:
+      transport:
+        dashboard: localhost:9903
+      eager: true
+      datasource:
+        flow:
+          nacos:
+            server-addr: localhost:8848
+            dataId: ${spring.application.name}-flow-rules
+            groupId: mall-cloud
+            data-type: json
+            rule-type: flow
+            username: nacos
+            password: nacos
+            namespace: 7af60364-a045-4561-85a3-3f7a69de938d
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: '*'
+            allowedMethods: '*'
+            allowedHeaders: '*'
+            allowCredentials: true
+      routes:
+      - id: admin-bff
+        uri: lb://mall-admin-bff
+        predicates:
+        - Path=/admin/**
+      - id: mobile-bff
+        uri: lb://mall-mobile-bff
+        predicates:
+        - Path=/mobile/**
+      - id: mall-basic-api
+        uri: lb://mall-basic-api
+        order: 8000
+        predicates:
+        - Path=/api/basic/**
+        filters:
+        - StripPrefix=2
+      - id: mall-customer-api
+        uri: lb://mall-customer-api
+        order: 8001
+        predicates:
+        - Path=/api/customer/**
+        filters:
+        - StripPrefix=2
+      - id: mall-product-api
+        uri: lb://mall-product-api
+        order: 8003
+        predicates:
+        - Path=/api/product/**
+        filters:
+        - StripPrefix=2
+      - id: mall-marketing-api
+        uri: lb://mall-marketing-api
+        order: 8004
+        predicates:
+        - Path=/api/marketing/**
+        filters:
+        - StripPrefix=2
+      - id: mall-order-api
+        uri: lb://mall-order-api
+        order: 8005
+        predicates:
+        - Path=/api/order/**
+        filters:
+        - StripPrefix=2
+      - id: mall-pay-api
+        uri: lb://mall-pay-api
+        order: 8006
+        predicates:
+        - Path=/api/pay/**
+        filters:
+        - StripPrefix=2
+      - id: mall-recommend-api
+        uri: lb://mall-recommend-api
+        order: 8007
+        predicates:
+        - Path=/api/recommend/**
+        filters:
+        - StripPrefix=2
+      - id: mall-message-ws
+        uri: lb:ws://mall-message-api
+        order: 8008
+        predicates:
+        - Path=/api/message/ws,/api/message/ws/**,/api/message/ws-stomp,/api/message/ws-stomp/**
+        filters:
+        - StripPrefix=2
+      - id: mall-message-api
+        uri: lb://mall-message-api
+        order: 8009
+        predicates:
+        - Path=/api/message/**
+        filters:
+        - StripPrefix=2
+      - id: mall-admin-bff-old
+        uri: lb://mall-admin-bff
+        order: 9000
+        predicates:
+        - Path=/api/admin/**
+        filters:
+        - StripPrefix=1
+    openfeign:
+      circuitbreaker:
+        enabled: true
+  data:
+    redis:
+      database: 0
+      host: localhost
+      port: 6379
+      password: '123456'
+      timeout: 50000
+  devtools:
+    restart:
+      enabled: false
+gateway:
+  filter:
+    noAuth: "/admin/v1/auth/login, /admin/v1/auth/getCode, /mobile/v1/auth/login, /mobile/v1/auth/getCode, /api/admin/v1/auth/login, /api/admin/v1/auth/loginByPhone, /api/admin/v1/auth/getCode, /api/admin/v1/auth/testLogin, /api/mobile/v1/auth/login, /api/mobile/v1/auth/loginByPhone, /api/mobile/v1/auth/getCode, /api/customer/v1/mobile/user/, /api/basic/v1/image/, /api/basic/v1/file/, /api/product/v1/mobile/, /api/mobile/v1/home/, /api/mobile/v1/product/, /api/mobile/v1/coupon/, /api/mobile/v1/user/area, /api/pay/v1/mobile/pay/"
+mall:
+  mgt:
+    tokenSecret: 123123123123123213123dsfsdfsdfsdfsdfsdfsdfsdfdfdsfsdfsd12312312312312312312312sEME9M9cSy9FvfHvcx2gMPkp1H5Dj4YaKufPRsAyon8Tf
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        permitted-number-of-calls-in-half-open-state: 3
+        wait-duration-in-open-state: 10s
+        failure-rate-threshold: 50
+        slow-call-duration-threshold: 2s
+        slow-call-rate-threshold: 50
+  retry:
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 500ms
+        retry-exceptions:
+        - feign.RetryableException
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 10s

@@ -1,46 +1,26 @@
 package cn.net.mall.admin.controller.admin;
 
-import cn.net.mall.basic.client.AreaFeignClient;
 import cn.net.mall.basic.client.UploadFeignClient;
 import cn.net.mall.basic.dto.FileDTO;
-import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.util.ApiResult;
 import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Map;
-
 @Slf4j
 @RestController
 @RequestMapping("/admin/v1/common")
 @RequiredArgsConstructor
-@Tag(name = "管理后台-基础数据", description = "区域、字典等基础数据管理接口，需携带 Bearer Token")
+@Tag(name = "基础数据", description = "图片库、敏感词、通知、文件上传")
 public class AdminCommonController {
-    private final AreaFeignClient areaFeignClient;
     private final UploadFeignClient uploadFeignClient;
-
-    @Operation(summary = "分页查询区域", description = "多条件分页查询行政区域列表，支持按名称、层级等条件筛选", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/area/page")
-    public ApiResult<ResponsePageEntity<?>> searchAreaPage(@RequestBody Map c) { return ApiResultUtil.success(areaFeignClient.searchByPage(c)); }
-    @Operation(summary = "新增区域", description = "新增一条行政区域记录，包含区域名称、父区域、层级等", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/area/insert")
-    public ApiResult<Integer> insertArea(@RequestBody Object e) { return ApiResultUtil.success(areaFeignClient.insert(e)); }
-    @Operation(summary = "修改区域", description = "修改已有行政区域的信息", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/area/update")
-    public ApiResult<Integer> updateArea(@RequestBody Object e) { return ApiResultUtil.success(areaFeignClient.update(e)); }
-    @Operation(summary = "删除区域", description = "根据 ID 列表批量删除行政区域", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/area/delete")
-    public ApiResult<Integer> deleteArea(@RequestBody @NotNull List ids) { return ApiResultUtil.success(areaFeignClient.deleteByIds(ids)); }
 
     // ========== 文件上传 ==========
 

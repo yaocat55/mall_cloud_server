@@ -3,6 +3,7 @@ package cn.net.mall.auth.config;
 import cn.net.mall.auth.filter.JwtAuthenticationFilter;
 import cn.net.mall.redis.RedisUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +30,7 @@ import java.util.List;
  *
  * <h3>默认行为</h3>
  * <ul>
- *   <li>Bearer Token JWT 验签 + Redis 黑名单检查</li>
+ *   <li>Bearer Token JWT 验签 + 可选 Redis 黑名单检查（有 RedisUtil Bean 时自动启用）</li>
  *   <li>全部请求需认证，但自动放行 Swagger/Druid/静态资源</li>
  *   <li>无状态会话（STATELESS）</li>
  * </ul>
@@ -56,22 +57,36 @@ public class AuthSecurityAutoConfiguration {
     );
 
     private final String tokenSecret;
-    private final RedisUtil redisUtil;
 
     public AuthSecurityAutoConfiguration(
-            @Value("${mall.mgt.tokenSecret}") String tokenSecret,
-            RedisUtil redisUtil) {
+            @Value("${mall.mgt.tokenSecret}") String tokenSecret) {
         this.tokenSecret = tokenSecret;
-        this.redisUtil = redisUtil;
     }
 
     /**
-     * 默认 JWT 认证过滤器 — 各服务可注入此 Bean 复用.
+     * 带 Redis 黑名单检查的 JWT 认证过滤器（admin-bff 等需要踢人下线的服务使用）.
+     *
+     * <p>仅在存在 RedisUtil Bean 时创建，否则使用 {@link #jwtAuthenticationFilterWithoutRedis(String)}。</p>
      */
     @Bean
+    @ConditionalOnBean(RedisUtil.class)
     @ConditionalOnMissingBean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+    public JwtAuthenticationFilter jwtAuthenticationFilterWithRedis(
+            @Value("${mall.mgt.tokenSecret}") String tokenSecret,
+            RedisUtil redisUtil) {
         return new JwtAuthenticationFilter(tokenSecret, redisUtil);
+    }
+
+    /**
+     * 不带 Redis 黑名单检查的 JWT 认证过滤器（mobile-bff 等无需 Redis 的服务使用）.
+     *
+     * <p>仅在不存在 RedisUtil Bean 且没有自定义 JwtAuthenticationFilter 时创建。</p>
+     */
+    @Bean
+    @ConditionalOnMissingBean(JwtAuthenticationFilter.class)
+    public JwtAuthenticationFilter jwtAuthenticationFilterWithoutRedis(
+            @Value("${mall.mgt.tokenSecret}") String tokenSecret) {
+        return new JwtAuthenticationFilter(tokenSecret);
     }
 
     /**

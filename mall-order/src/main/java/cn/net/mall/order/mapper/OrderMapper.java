@@ -6,7 +6,9 @@ import cn.net.mall.order.entity.OrderEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 订单 mapper
@@ -72,4 +74,31 @@ public interface OrderMapper extends BaseMapper<OrderEntity, OrderConditionEntit
      * @return 影响行数
      */
     int cancelIfUnpaid(@Param("id") Long id, @Param("cancelStatus") Integer cancelStatus);
+
+    /**
+     * 查询订单总数（is_del = 0）
+     */
+    int selectOrderCount();
+
+    /**
+     * 查询今日订单数（is_del = 0 且创建时间 >= 当天）
+     */
+    int selectOrderTodayCount();
+
+    /**
+     * 查询总销售额（SUM payment_amount）
+     */
+    BigDecimal selectTotalSalesAmount();
+
+    /**
+     * 查询今日销售额
+     */
+    BigDecimal selectTodaySalesAmount();
+
+    /**
+     * 按订单状态分组统计数量
+     *
+     * @return List<Map>，每个 Map 包含 order_status 和 cnt
+     */
+    List<Map<String, Object>> selectOrderStatusGroupCount();
 }

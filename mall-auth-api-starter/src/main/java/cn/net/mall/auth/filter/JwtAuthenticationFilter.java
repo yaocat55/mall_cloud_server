@@ -30,9 +30,22 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     private final String tokenSecret;
     private final RedisUtil redisUtil;
 
+    /**
+     * 含 Redis 黑名单检查的过滤器（踢人/下线功能）.
+     */
     public JwtAuthenticationFilter(String tokenSecret, RedisUtil redisUtil) {
         this.tokenSecret = tokenSecret;
         this.redisUtil = redisUtil;
+    }
+
+    /**
+     * 不含 Redis 黑名单检查的过滤器（仅 JWT 验签）.
+     *
+     * <p>适用于不需要踢人下线功能的服务（如 mobile-bff）。</p>
+     */
+    public JwtAuthenticationFilter(String tokenSecret) {
+        this.tokenSecret = tokenSecret;
+        this.redisUtil = null;
     }
 
     @Override
@@ -50,12 +63,14 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         try {
             Claims claims = TokenUtil.parseClaimsFromToken(token, tokenSecret);
             if (claims != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                // Redis 黑名单检查（踢人下线 / 登出）
-                String jti = claims.getId();
-                String blacklisted = redisUtil.get("blacklist:" + jti);
-                if (blacklisted != null) {
-                    resp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token 已被踢下线");
-                    return;
+                // Redis 黑名单检查（踢人下线 / 登出）— 没有 RedisUtil 时跳过
+                if (redisUtil != null) {
+                    String jti = claims.getId();
+                    String blacklisted = redisUtil.get("blacklist:" + jti);
+                    if (blacklisted != null) {
+                        resp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token 已被踢下线");
+                        return;
+                    }
                 }
                 // 构建认证信息
                 String username = claims.getSubject();

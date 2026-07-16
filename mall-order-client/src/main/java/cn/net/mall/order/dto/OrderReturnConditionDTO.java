@@ -15,7 +15,7 @@ public class OrderReturnConditionDTO extends RequestConditionEntity {
     private String orderCode;
     @Schema(description = "用户ID", example = "1")
     private Long userId;
-    @Schema(description = "申请状态", example = "0")
+    @Schema(description = "申请状态", allowableValues = {"1=待审核", "2=已通过", "3=已拒绝"}, example = "1")
     private Integer applyStatus;
 }
 

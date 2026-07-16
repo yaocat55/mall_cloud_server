@@ -4,6 +4,8 @@ import cn.net.mall.entity.RequestConditionEntity;
 import lombok.Data;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.util.Date;
+
 @Data
 @Schema(description = "CommonNotify信息")
 
@@ -28,4 +30,6 @@ public class CommonNotifyConditionEntity extends RequestConditionEntity {
     private Long createUserId;
     @Schema(description = "create User Name")
     private String createUserName;
+    @Schema(description = "创建时间")
+    private Date createTime;
 }

@@ -173,3 +173,4 @@ rules:
 
 props:
   sql-show: true
+  check-table-metadata-enabled: false

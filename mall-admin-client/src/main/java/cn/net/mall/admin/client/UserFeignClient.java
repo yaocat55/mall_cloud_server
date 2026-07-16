@@ -103,6 +103,11 @@ public interface UserFeignClient {
     @GetMapping("/v1/auth/web/user/onlineUsers")
     List<UserDTO> onlineUsers();
 
+    @Operation(summary = "今日新增用户数",
+               description = "内部服务：查询今日注册且未删除的用户总数，由 mall-admin-api 通过 Feign 调用")
+    @GetMapping("/v1/auth/user/todayCount")
+    int todayCount();
+
     @Operation(summary = "退出登录",
                description = "将当前 token 加入 Redis 黑名单")
     @PostMapping("/v1/auth/web/user/logout")

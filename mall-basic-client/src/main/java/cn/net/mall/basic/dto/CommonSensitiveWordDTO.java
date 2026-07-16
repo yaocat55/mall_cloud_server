@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class CommonSensitiveWordDTO extends BaseEntity {
 
-    @Schema(description = "类型 1:广告 2:政治 3：违法 4：色情 5：网址", example = "1")
+    @Schema(description = "类型（1-政治 2-广告 3-色情 4-违法 5-网址）", allowableValues = {"1", "2", "3", "4", "5"}, example = "1")
     private Integer type;
 
     @Schema(description = "名称", example = "-")

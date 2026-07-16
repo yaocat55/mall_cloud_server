@@ -76,4 +76,11 @@ public interface UserMapper extends BaseMapper<UserEntity, UserConditionEntity> 
      * @return 影响行数
      */
     int updateForBatch(List<UserEntity> list);
+
+    /**
+     * 查询今日新增用户数
+     *
+     * @return 今日新增用户数
+     */
+    int selectTodayCount();
 }

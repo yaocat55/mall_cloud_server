@@ -1,5 +1,6 @@
 package cn.net.mall.admin.client;
 
+import cn.net.mall.admin.dto.RowsDTO;
 import cn.net.mall.admin.dto.auth.DeptTreeDTO;
 import cn.net.mall.entity.ResponsePageEntity;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,11 +21,11 @@ public interface DeptFeignClient {
     List searchByTree(@RequestBody Map params);
     @Operation(summary = "新增部门")
     @PostMapping("/v1/auth/dept/insert")
-    int insert(@RequestBody Object entity);
+    RowsDTO insert(@RequestBody Object entity);
     @Operation(summary = "修改部门")
     @PostMapping("/v1/auth/dept/update")
-    int update(@RequestBody Object entity);
+    RowsDTO update(@RequestBody Object entity);
     @Operation(summary = "删除部门")
     @PostMapping("/v1/auth/dept/deleteByIds")
-    int deleteByIds(@RequestBody @NotNull List ids);
+    RowsDTO deleteByIds(@RequestBody @NotNull List ids);
 }

@@ -1,26 +1,26 @@
 package cn.net.mall.admin.controller.admin;
 
+import cn.net.mall.admin.dto.IdsDTO;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.order.client.OrderFeignClient;
+import cn.net.mall.order.dto.OrderConditionDTO;
 import cn.net.mall.order.dto.OrderDTO;
+import cn.net.mall.order.dto.OrderReturnApplyDTO;
+import cn.net.mall.order.dto.OrderReturnConditionDTO;
 import cn.net.mall.util.ApiResult;
 import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import cn.net.mall.order.dto.OrderConditionDTO;
-import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
 @RequestMapping("/admin/v1/order")
 @RequiredArgsConstructor
-@Tag(name = "管理后台-订单管理", description = "订单查询与管理接口，需携带 Bearer Token")
+@Tag(name = "订单管理", description = "订单查询、退货审核")
 public class AdminOrderController {
     private final OrderFeignClient orderFeignClient;
 
@@ -34,26 +34,26 @@ public class AdminOrderController {
     }
     @Operation(summary = "删除订单", description = "根据 ID 列表批量删除订单", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/delete")
-    public ApiResult<Integer> delete(@RequestBody @NotNull List ids) {
-        return ApiResultUtil.success(orderFeignClient.delete(ids).getRows());
+    public ApiResult<Integer> delete(@RequestBody IdsDTO dto) {
+        return ApiResultUtil.success(orderFeignClient.delete(dto.getIds()).getRows());
     }
 
     // ========== 退货/退款管理 ==========
 
     @Operation(summary = "分页查询退货列表", description = "多条件分页查询退货/退款申请列表", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/return/page")
-    public ApiResult<ResponsePageEntity<?>> searchReturnPage(@RequestBody Map c) { return ApiResultUtil.success(orderFeignClient.searchReturnByPage(c)); }
+    public ApiResult<ResponsePageEntity<?>> searchReturnPage(@RequestBody OrderReturnConditionDTO c) { return ApiResultUtil.success(orderFeignClient.searchReturnByPage(c)); }
 
-    @Operation(summary = "审批退货", description = "审批通过退货/退款申请", security = @SecurityRequirement(name = "Bearer Token"))
+    @Operation(summary = "审批退货", description = "审批通过退货/退款申请，需传入退货单 ID", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/return/approve")
-    public ApiResult<Integer> approveReturn(@RequestBody Object e) {
-        return ApiResultUtil.success(orderFeignClient.approveReturn(e).getRows());
+    public ApiResult<Integer> approveReturn(@RequestBody OrderReturnApplyDTO dto) {
+        return ApiResultUtil.success(orderFeignClient.approveReturn(dto).getRows());
     }
 
-    @Operation(summary = "拒绝退货", description = "驳回退货/退款申请", security = @SecurityRequirement(name = "Bearer Token"))
+    @Operation(summary = "拒绝退货", description = "驳回退货/退款申请，需传入退货单 ID 和拒绝原因", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/return/reject")
-    public ApiResult<Integer> rejectReturn(@RequestBody Object e) {
-        return ApiResultUtil.success(orderFeignClient.rejectReturn(e).getRows());
+    public ApiResult<Integer> rejectReturn(@RequestBody OrderReturnApplyDTO dto) {
+        return ApiResultUtil.success(orderFeignClient.rejectReturn(dto).getRows());
     }
 
     @Operation(summary = "查询退货详情", description = "根据 ID 查询退货/退款申请的详细信息", security = @SecurityRequirement(name = "Bearer Token"))

@@ -839,6 +839,15 @@ public class UserService extends BaseService<UserEntity, UserConditionEntity> {
     }
 
     /**
+     * 查询今日新增用户数
+     *
+     * @return 今日新增用户数
+     */
+    public int todayCount() {
+        return userMapper.selectTodayCount();
+    }
+
+    /**
      * 批量重置用户密码
      *
      * @param ids 用户ID

@@ -501,6 +501,15 @@
         </foreach>
     </select>
 
+    <select id="getTopProducts" resultMap="ProductResult">
+        SELECT
+        <include refid="selectProductColumn"/>
+        FROM product
+        WHERE is_del = 0
+        ORDER BY sale_count DESC
+        LIMIT #{limit}
+    </select>
+
     <update id="reduceStock">
         UPDATE
           product

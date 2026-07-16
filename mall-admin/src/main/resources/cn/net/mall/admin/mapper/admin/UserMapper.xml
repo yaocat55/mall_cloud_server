@@ -473,4 +473,11 @@
         SELECT <include refid="selectUserColumn"/>
             FROM auth_user WHERE phone = #{phone} AND is_del = 0
     </select>
+
+    <select id="selectTodayCount" resultType="int">
+        SELECT COUNT(*)
+        FROM auth_user
+        WHERE create_time >= CURDATE()
+          AND is_del = 0
+    </select>
 </mapper>

@@ -1,5 +1,6 @@
 package cn.net.mall.admin.controller.admin;
 
+import cn.net.mall.admin.dto.IdsDTO;
 import cn.net.mall.basic.client.*;
 import cn.net.mall.basic.dto.*;
 import cn.net.mall.entity.ResponsePageEntity;
@@ -19,13 +20,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/v1/basic")
 @RequiredArgsConstructor
-@Tag(name = "管理后台-基础扩展数据", description = "图片、敏感词、短信记录、字典详情、通知等基础数据管理接口，需携带 Bearer Token")
+@Tag(name = "基础数据", description = "图片库、敏感词、通知、文件上传")
 public class AdminBasicController {
 
     private final PhotoFeignClient photoFeignClient;
     private final PhotoGroupFeignClient photoGroupFeignClient;
     private final SensitiveWordFeignClient sensitiveWordFeignClient;
-    private final SmsRecordFeignClient smsRecordFeignClient;
     private final NotifyFeignClient notifyFeignClient;
 
     // ============================== 图片管理 ==============================
@@ -50,8 +50,8 @@ public class AdminBasicController {
 
     @Operation(summary = "删除图片", description = "根据ID列表批量删除图片记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/photo/delete")
-    public ApiResult<Integer> deletePhoto(@RequestBody @NotNull List ids) {
-        return ApiResultUtil.success(photoFeignClient.deleteByIds(ids));
+    public ApiResult<Integer> deletePhoto(@RequestBody IdsDTO dto) {
+        return ApiResultUtil.success(photoFeignClient.deleteByIds(dto.getIds()));
     }
 
     // ============================== 图片分组管理 ==============================
@@ -76,8 +76,8 @@ public class AdminBasicController {
 
     @Operation(summary = "删除图片分组", description = "根据ID列表批量删除图片分组", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/photoGroup/delete")
-    public ApiResult<Integer> deletePhotoGroup(@RequestBody @NotNull List ids) {
-        return ApiResultUtil.success(photoGroupFeignClient.deleteByIds(ids));
+    public ApiResult<Integer> deletePhotoGroup(@RequestBody IdsDTO dto) {
+        return ApiResultUtil.success(photoGroupFeignClient.deleteByIds(dto.getIds()));
     }
 
     // ============================== 敏感词管理 ==============================
@@ -102,8 +102,8 @@ public class AdminBasicController {
 
     @Operation(summary = "删除敏感词", description = "根据ID列表批量删除敏感词", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/sensitiveWord/delete")
-    public ApiResult<Integer> deleteSensitiveWord(@RequestBody @NotNull List ids) {
-        return ApiResultUtil.success(sensitiveWordFeignClient.deleteByIds(ids));
+    public ApiResult<Integer> deleteSensitiveWord(@RequestBody IdsDTO dto) {
+        return ApiResultUtil.success(sensitiveWordFeignClient.deleteByIds(dto.getIds()));
     }
 
     @Operation(summary = "校验敏感词", description = "校验文本内容中是否包含敏感词，返回校验结果", security = @SecurityRequirement(name = "Bearer Token"))
@@ -111,32 +111,6 @@ public class AdminBasicController {
     public ApiResult<Void> checkSensitiveWord(@RequestBody CommonSensitiveWordDTO entity) {
         sensitiveWordFeignClient.checkSensitiveWord(entity);
         return ApiResultUtil.success();
-    }
-
-    // ============================== 短信记录管理 ==============================
-
-    @Operation(summary = "分页查询短信记录", description = "分页查询短信发送记录，支持按手机号、发送时间、发送状态等条件筛选", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/smsRecord/page")
-    public ApiResult<ResponsePageEntity> searchSmsRecordPage(@RequestBody CommonSmsRecordConditionDTO condition) {
-        return ApiResultUtil.success(smsRecordFeignClient.searchByPage(condition));
-    }
-
-    @Operation(summary = "新增短信记录", description = "新增短信发送记录", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/smsRecord/insert")
-    public ApiResult<Integer> insertSmsRecord(@RequestBody SmsRecordDTO entity) {
-        return ApiResultUtil.success(smsRecordFeignClient.insert(entity));
-    }
-
-    @Operation(summary = "修改短信记录", description = "修改短信发送记录，如更新发送状态等", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/smsRecord/update")
-    public ApiResult<Integer> updateSmsRecord(@RequestBody SmsRecordDTO entity) {
-        return ApiResultUtil.success(smsRecordFeignClient.update(entity));
-    }
-
-    @Operation(summary = "删除短信记录", description = "根据ID列表批量删除短信发送记录", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/smsRecord/delete")
-    public ApiResult<Integer> deleteSmsRecord(@RequestBody @NotNull List ids) {
-        return ApiResultUtil.success(smsRecordFeignClient.deleteByIds(ids));
     }
 
     // ============================== 消息通知管理 ==============================
@@ -177,7 +151,7 @@ public class AdminBasicController {
 
     @Operation(summary = "删除通知", description = "根据ID列表批量删除消息通知记录", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/notify/delete")
-    public ApiResult<Integer> deleteNotify(@RequestBody @NotNull List ids) {
-        return ApiResultUtil.success(notifyFeignClient.deleteByIds(ids));
+    public ApiResult<Integer> deleteNotify(@RequestBody IdsDTO dto) {
+        return ApiResultUtil.success(notifyFeignClient.deleteByIds(dto.getIds()));
     }
 }
