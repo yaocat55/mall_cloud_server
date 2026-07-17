@@ -12,10 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @SpringBootApplication(scanBasePackages = "cn.net.mall.recommend")
 @MapperScan("cn.net.mall.recommend.mapper")
-@EnableFeignClients(basePackages = {
-        "cn.net.mall.product.client",
-        "cn.net.mall.recommend.support"
-})
+@EnableFeignClients(basePackages = {"cn.net.mall.recommend.support"})
 @EnableDiscoveryClient
 @Import(RocketMQAutoConfiguration.class)
 public class RecommendApplication {

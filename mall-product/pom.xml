@@ -73,6 +73,11 @@
         </dependency>
         <dependency>
             <groupId>cn.net.mall</groupId>
+            <artifactId>mall-inventory-client</artifactId>
+            <version>${mall-inventory-client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.net.mall</groupId>
             <artifactId>mall-customer-client</artifactId>
             <version>${mall-customer-client.version}</version>
             <scope>compile</scope>
@@ -197,13 +202,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
-            <exclusions>
-                <!-- 必须排除默认的Elasticsearch 8.x客户端 -->
-                <exclusion>
-                    <groupId>org.elasticsearch</groupId>
-                    <artifactId>elasticsearch</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>

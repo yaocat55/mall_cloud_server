@@ -10,9 +10,7 @@ import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = {"cn.net.mall.admin.client", "cn.net.mall.basic.client",
-        "cn.net.mall.product.client", "cn.net.mall.marketing.client",
-        "cn.net.mall.order.client", "cn.net.mall.pay.client"})
+@EnableFeignClients(basePackages = {"cn.net.mall.admin.client"})
 public class AdminBffApplication {
 
     @Bean

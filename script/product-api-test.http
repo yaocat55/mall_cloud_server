@@ -1,0 +1,226 @@
+### ============================================================
+### Mall Cloud — Product 模块接口测试脚本
+### 直连商品服务端口（不经过 Gateway / BFF）
+###
+### 使用方式：IDEA 打开 → 点绿色箭头逐个运行
+###
+### Step 1：testLogin → 获取 Token
+### Step 2+：后续请求自动携带 Token
+### ============================================================
+
+@ADMIN = http://localhost:8030
+@PRODUCT = http://localhost:8023
+
+
+### ============================================================
+### Step 1：获取 Token（testLogin 跳过验证码）
+### ============================================================
+
+# @name testLogin
+POST {{ADMIN}}/v1/auth/user/testLogin
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+
+### ============================================================
+### Step 2：商品中心（B端，需 token）
+### ============================================================
+
+### 2.1 商品分页
+# @name searchProduct
+POST {{PRODUCT}}/v1/product/searchByPage
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{"pageNo":1,"pageSize":10}
+
+### 2.2 ES商品搜索
+# @name searchFromES
+POST {{PRODUCT}}/v1/product/searchFromES
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{"pageNo":1,"pageSize":10}
+
+### 2.3 商品详情
+# @name findProduct
+GET {{PRODUCT}}/v1/product/findById?id=1825358818617536512
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+### 2.4 新增商品
+# @name insertProduct
+POST {{PRODUCT}}/v1/product/insert
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{"name":"测试商品","price":99,"categoryId":1,"brandId":1,"unitId":1}
+
+### 2.5 修改商品
+# @name updateProduct
+POST {{PRODUCT}}/v1/product/update
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{"id":1,"name":"修改后名称"}
+
+### 2.6 删除商品
+# @name deleteProduct
+POST {{PRODUCT}}/v1/product/deleteByIds
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+[1]
+
+
+### ============================================================
+### Step 3：分类管理（B端，需 token）
+### ============================================================
+
+### 3.1 分类分页
+# @name searchCategory
+POST {{PRODUCT}}/v1/category/searchByPage
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{"pageNo":1,"pageSize":10}
+
+### 3.2 分类详情
+# @name findCategory
+GET {{PRODUCT}}/v1/category/findById?id=1
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+
+### ============================================================
+### Step 4：品牌管理（B端，需 token）
+### ============================================================
+
+### 4.1 品牌分页
+# @name searchBrand
+POST {{PRODUCT}}/v1/brand/searchByPage
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{"pageNo":1,"pageSize":10}
+
+### 4.2 品牌详情
+# @name findBrand
+GET {{PRODUCT}}/v1/brand/findById?id=1
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+
+### ============================================================
+### Step 5：属性管理（B端，需 token）
+### ============================================================
+
+### 5.1 属性分页
+POST {{PRODUCT}}/v1/attribute/searchByPage
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{"pageNo":1,"pageSize":10}
+
+### 5.2 属性值分页
+POST {{PRODUCT}}/v1/attributeValue/searchByPage
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{"pageNo":1,"pageSize":10}
+
+
+### ============================================================
+### Step 6：单位管理（B端，需 token）
+### ============================================================
+
+### 6.1 单位分页
+POST {{PRODUCT}}/v1/unit/searchByPage
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{"pageNo":1,"pageSize":10}
+
+### 6.2 单位详情
+GET {{PRODUCT}}/v1/unit/findById?id=1
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+
+### ============================================================
+### Step 7：商品分组（B端，需 token）
+### ============================================================
+
+POST {{PRODUCT}}/v1/productGroup/searchByPage
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{"pageNo":1,"pageSize":10}
+
+
+### ============================================================
+### Step 8：商品图片（B端，需 token）
+### ============================================================
+
+POST {{PRODUCT}}/v1/productPhoto/searchByPage
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{"pageNo":1,"pageSize":10}
+
+
+### ============================================================
+### Step 9：首页管理（B端，需 token）
+### ============================================================
+
+### 9.1 轮播图分页
+POST {{PRODUCT}}/v1/indexCarouselImage/searchByPage
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{"pageNo":1,"pageSize":10}
+
+### 9.2 公告分页
+POST {{PRODUCT}}/v1/indexNotice/searchByPage
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{"pageNo":1,"pageSize":10}
+
+### 9.3 首页推荐分页
+POST {{PRODUCT}}/v1/indexProduct/searchByPage
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{"pageNo":1,"pageSize":10}
+
+
+### ============================================================
+### Step 10：购物车（B端，需 token）
+### ============================================================
+
+POST {{PRODUCT}}/v1/shoppingCart/searchByPage
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{"pageNo":1,"pageSize":10}
+
+
+### ============================================================
+### Step 11：移动端（C端，无需 token）
+### ============================================================
+
+### 11.1 移动端分类
+GET {{PRODUCT}}/v1/mobile/category
+
+### 11.2 移动端商品搜索
+POST {{PRODUCT}}/v1/mobile/product/search
+Content-Type: application/json
+
+{}
+
+### 11.3 移动端商品详情
+GET {{PRODUCT}}/v1/mobile/product/detail?id=1825358818617536512
+
+### 11.4 移动端首页
+GET {{PRODUCT}}/v1/mobile/index

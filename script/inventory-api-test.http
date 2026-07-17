@@ -1,0 +1,139 @@
+### ============================================================
+### Mall Cloud — Inventory 模块接口测试脚本
+### 直连库存服务端口（不经过 Gateway / BFF）
+###
+### 使用方式：IDEA 打开 → 点绿色箭头逐个运行
+###
+### Step 1：testLogin → 获取 Token（调 admin 模块）
+### Step 2+：后续请求自动携带 Token
+### ============================================================
+
+@ADMIN = http://localhost:8030
+@INVENTORY = http://localhost:8036
+
+
+### ============================================================
+### Step 1：获取 Token（testLogin 跳过验证码）
+### ============================================================
+
+# @name testLogin
+POST {{ADMIN}}/v1/auth/user/testLogin
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+
+### ============================================================
+### Step 2：库存查询
+### ============================================================
+
+### 2.1 查询单个商品库存
+# @name getInventory
+GET {{INVENTORY}}/v1/inventory/1
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+
+### 2.2 批量查询库存
+# @name batchInventory
+POST {{INVENTORY}}/v1/inventory/batch
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+[1, 2, 3]
+
+
+### ============================================================
+### Step 3：冻结库存（下单时调用）
+### ============================================================
+
+### 3.1 冻结 1 件商品
+# @name freeze
+POST {{INVENTORY}}/v1/inventory/freeze
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{
+  "productId": 1,
+  "quantity": 1,
+  "orderId": 20260717001
+}
+
+
+### ============================================================
+### Step 4：确认扣减（支付回调时调用）
+### ============================================================
+
+# @name confirm
+POST {{INVENTORY}}/v1/inventory/confirm
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{
+  "productId": 1,
+  "quantity": 1,
+  "orderId": 20260717001
+}
+
+
+### ============================================================
+### Step 5：释放冻结（取消订单时调用）
+### ============================================================
+
+# @name unfreeze
+POST {{INVENTORY}}/v1/inventory/unfreeze
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{
+  "productId": 1,
+  "quantity": 1,
+  "orderId": 20260717001
+}
+
+
+### ============================================================
+### Step 6：入库（采购/调拨）
+### ============================================================
+
+# @name inbound
+POST {{INVENTORY}}/v1/inventory/inbound
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{
+  "productId": 1,
+  "quantity": 500,
+  "batchNo": "PO20260717-001",
+  "supplier": "富士康",
+  "purchasePrice": 3999.00,
+  "warehouse": "A区-01"
+}
+
+
+### ============================================================
+### Step 7：回库（售后退货时调用）
+### ============================================================
+
+# @name returnStock
+POST {{INVENTORY}}/v1/inventory/return
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{
+  "productId": 1,
+  "quantity": 2,
+  "orderId": 20260717002,
+  "remark": "退货回库"
+}
+
+
+### ============================================================
+### Step 8：查询冻结后的库存（验证冻结/确认/释放后的变化）
+### ============================================================
+
+# @name verifyInventory
+GET {{INVENTORY}}/v1/inventory/1
+Authorization: Bearer {{testLogin.response.body.data.token}}

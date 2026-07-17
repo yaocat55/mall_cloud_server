@@ -510,17 +510,3 @@
         LIMIT #{limit}
     </select>
 
-    <update id="reduceStock">
-        UPDATE
-          product
-        SET   remain_quantity = remain_quantity - #{quantity}
-        WHERE id = #{id} AND remain_quantity - #{quantity} >= 0
-    </update>
-
-    <update id="addStock">
-        UPDATE
-          product
-        SET   remain_quantity = remain_quantity + #{quantity}
-        WHERE id = #{id}
-    </update>
-</mapper>

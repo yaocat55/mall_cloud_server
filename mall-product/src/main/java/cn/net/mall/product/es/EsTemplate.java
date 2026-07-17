@@ -1,140 +1,103 @@
 package cn.net.mall.product.es;
 
-import cn.net.mall.entity.EsBaseEntity;
 import cn.net.mall.entity.ResponsePageEntity;
-import cn.net.mall.exception.BusinessException;
-import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.action.bulk.BulkItemResponse;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.rest.RestStatus;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.xcontent.XContentType;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
+import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * ES template
+ * ES 操作封装 — 基于 {@link ElasticsearchOperations}.
  *
  * @date 2024/5/14 下午4:30
  */
-@Component
 @Slf4j
+@Component
 public class EsTemplate {
 
-    private final RestHighLevelClient restHighLevelClient;
+    private final ElasticsearchOperations elasticsearchOperations;
 
-    public EsTemplate(RestHighLevelClient restHighLevelClient) {
-        this.restHighLevelClient = restHighLevelClient;
+    public EsTemplate(ElasticsearchOperations elasticsearchOperations) {
+        this.elasticsearchOperations = elasticsearchOperations;
     }
 
     /**
-     * 添加数据到ES
-     *
-     * @param indexName    索引名称
-     * @param esBaseEntity 数据
-     * @return 是否成功
+     * 添加或更新数据到 ES.
      */
-    public boolean insertOrUpdate(String indexName, EsBaseEntity esBaseEntity) {
-        BulkRequest bulkRequest = new BulkRequest();
-        IndexRequest request = new IndexRequest(indexName);
-        request.id(esBaseEntity.getId());
-        request.source(JSON.toJSONString(esBaseEntity), XContentType.JSON);
-        bulkRequest.add(request);
+    public boolean insertOrUpdate(String indexName, Object entity) {
         try {
-            BulkResponse response = restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
-            return response.status().equals(RestStatus.OK);
-        } catch (IOException e) {
-            log.error("写入ES失败，原因：", e);
-            throw new BusinessException("写入ES失败");
+            elasticsearchOperations.save(entity, IndexCoordinates.of(indexName));
+            return true;
+        } catch (Exception e) {
+            log.error("写入 ES 失败，index={}", indexName, e);
+            return false;
         }
     }
 
     /**
-     * 批量删除
-     *
-     * @param indexName index
-     * @param idList    待删除列表
+     * 批量删除.
      */
-    public <T> boolean deleteBatch(String indexName, Collection<T> idList) throws IOException {
-        BulkRequest request = new BulkRequest();
-        idList.forEach(item -> request.add(new DeleteRequest(indexName, item.toString())));
-        BulkResponse bulkResponse = restHighLevelClient.bulk(request, RequestOptions.DEFAULT);
+    public <T> boolean deleteBatch(String indexName, Collection<T> idList) {
         boolean flag = true;
-        for (BulkItemResponse response : bulkResponse) {
-            if (response.isFailed()) {
+        IndexCoordinates idx = IndexCoordinates.of(indexName);
+        for (T id : idList) {
+            try {
+                String result = elasticsearchOperations.delete(id.toString(), idx);
+                if (result == null) {
+                    flag = false;
+                }
+            } catch (Exception e) {
+                log.error("删除 ES 文档失败，index={}, id={}", indexName, id, e);
                 flag = false;
-                BulkItemResponse.Failure failure = response.getFailure();
-                log.error(failure.getMessage(), failure.getCause());
             }
         }
         return flag;
     }
 
-
     /**
-     * 批量添加数据到ES
-     *
-     * @param indexName      索引名称
-     * @param esBaseEntities 数据集合
+     * 批量添加数据到 ES.
      */
-    public void batchInsert(String indexName, List<EsBaseEntity> esBaseEntities) {
-        BulkRequest request = new BulkRequest();
-        esBaseEntities.forEach(item -> request.add(new IndexRequest(indexName).id(item.getId())
-                .source(item.getData(), XContentType.JSON)));
-        try {
-            restHighLevelClient.bulk(request, RequestOptions.DEFAULT);
-        } catch (IOException e) {
-            log.error("批量写入ES失败，原因：", e);
-            throw new BusinessException("批量写入ES失败");
+    public void batchInsert(String indexName, List<?> entities) {
+        for (Object entity : entities) {
+            try {
+                elasticsearchOperations.save(entity, IndexCoordinates.of(indexName));
+            } catch (Exception e) {
+                log.error("批量写入 ES 失败，index={}", indexName, e);
+            }
         }
     }
 
     /**
-     * 查询数据
+     * 查询数据（带分页）.
      *
-     * @param idxName            index
-     * @param builder            查询参数
-     * @param aClass             结果类对象
-     * @param responsePageEntity 总记录数
-     * @return java.util.List<T>
+     * @param <T>            结果类型
+     * @param indexName      索引名称
+     * @param query          Spring Data ES Query
+     * @param clazz          结果类
+     * @param responsePage   分页响应（回写 totalCount）
+     * @return 数据列表
      */
-    public <T> List<T> search(String idxName, SearchSourceBuilder builder, Class<T> aClass, ResponsePageEntity responsePageEntity) throws IOException {
-        SearchRequest request = new SearchRequest(idxName);
-        request.source(builder);
-        SearchResponse response = restHighLevelClient.search(request, RequestOptions.DEFAULT);
-        SearchHit[] hits = response.getHits().getHits();
-        int total = (int) response.getHits().getTotalHits().value;
-        responsePageEntity.setTotalCount(total);
-        return Arrays.stream(hits).map(hit -> JSON.parseObject(hit.getSourceAsString(), aClass)).collect(Collectors.toList());
-    }
-
-    /**
-     * 查询数据
-     *
-     * @param idxName            index
-     * @param builder            查询参数
-     * @param aClass             结果类对象
-     * @return java.util.List<T>
-     */
-    public <T> List<T> search(String idxName, SearchSourceBuilder builder, Class<T> aClass) throws IOException {
-        SearchRequest request = new SearchRequest(idxName);
-        request.source(builder);
-        SearchResponse response = restHighLevelClient.search(request, RequestOptions.DEFAULT);
-        SearchHit[] hits = response.getHits().getHits();
-        return Arrays.stream(hits).map(hit -> JSON.parseObject(hit.getSourceAsString(), aClass)).collect(Collectors.toList());
+    @SuppressWarnings("unchecked")
+    public <T> List<T> search(String indexName, Query query, Class<T> clazz,
+                              ResponsePageEntity<?> responsePage) {
+        try {
+            SearchHits<T> hits = elasticsearchOperations.search(query, clazz,
+                    IndexCoordinates.of(indexName));
+            long total = hits.getTotalHits();
+            responsePage.setTotalCount((int) total);
+            return hits.getSearchHits().stream()
+                    .map(SearchHit::getContent)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            log.error("ES 查询失败，index={}", indexName, e);
+            return List.of();
+        }
     }
 }

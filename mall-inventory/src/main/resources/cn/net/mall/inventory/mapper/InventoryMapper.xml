@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.net.mall.inventory.mapper.InventoryMapper">
+
+    <resultMap id="InventoryResult" type="cn.net.mall.inventory.entity.InventoryEntity">
+        <result property="id" column="id"/>
+        <result property="productId" column="product_id"/>
+        <result property="quantity" column="quantity"/>
+        <result property="frozen" column="frozen"/>
+        <result property="available" column="available"/>
+        <result property="saleCount" column="sale_count"/>
+        <result property="version" column="version"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="InventoryResult">
+        SELECT * FROM inventory
+    </select>
+    <select id="findByProductId" resultMap="InventoryResult">
+        SELECT * FROM inventory WHERE product_id = #{productId}
+    </select>
+
+    <insert id="insert" parameterType="cn.net.mall.inventory.entity.InventoryEntity">
+        INSERT INTO inventory (id, product_id, quantity, frozen, available, sale_count, version, create_time, update_time)
+        VALUES (#{id}, #{productId}, #{quantity}, #{frozen}, #{available}, #{saleCount}, #{version}, NOW(3), NOW(3))
+    </insert>
+
+    <update id="updateById" parameterType="cn.net.mall.inventory.entity.InventoryEntity">
+        UPDATE inventory
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="frozen != null">frozen = #{frozen},</if>
+            <if test="available != null">available = #{available},</if>
+            <if test="saleCount != null">sale_count = #{saleCount},</if>
+            <if test="version != null">version = #{version},</if>
+            update_time = NOW(3)
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 乐观锁扣减可用库存 -->
+    <update id="decrAvailable">
+        UPDATE inventory
+        SET available = available - #{quantity},
+            version = version + 1,
+            update_time = NOW(3)
+        WHERE product_id = #{productId}
+          AND available >= #{quantity}
+          AND version = #{version}
+    </update>
+
+    <!-- 降级扣减：不带版本号，纯条件判断 -->
+    <update id="decrAvailableFallback">
+        UPDATE inventory
+        SET available = available - #{quantity},
+            version = version + 1,
+            update_time = NOW(3)
+        WHERE product_id = #{productId}
+          AND available >= #{quantity}
+    </update>
+
+    <update id="incrAvailable">
+        UPDATE inventory SET available = available + #{quantity},
+            update_time = NOW(3)
+        WHERE product_id = #{productId}
+    </update>
+
+    <update id="incrFrozen">
+        UPDATE inventory SET frozen = frozen + #{quantity},
+            update_time = NOW(3)
+        WHERE product_id = #{productId}
+    </update>
+
+    <update id="decrFrozen">
+        UPDATE inventory SET frozen = frozen - #{quantity},
+            update_time = NOW(3)
+        WHERE product_id = #{productId}
+          AND frozen >= #{quantity}
+    </update>
+
+    <update id="incrQuantity">
+        UPDATE inventory SET quantity = quantity + #{quantity},
+            update_time = NOW(3)
+        WHERE product_id = #{productId}
+    </update>
+
+    <update id="incrSaleCount">
+        UPDATE inventory SET sale_count = sale_count + #{quantity},
+            update_time = NOW(3)
+        WHERE product_id = #{productId}
+    </update>
+</mapper>

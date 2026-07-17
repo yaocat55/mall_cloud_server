@@ -1,7 +1,9 @@
 package cn.net.mall.product.message;
 
+import cn.net.mall.inventory.client.InventoryFeignClient;
+import cn.net.mall.inventory.dto.InventoryUnfreezeDTO;
+import cn.net.mall.inventory.dto.InventoryReturnDTO;
 import cn.net.mall.product.dto.ShoppingCartDTO;
-import cn.net.mall.product.service.ProductService;
 import com.alibaba.fastjson.JSON;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,9 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * 库存回滚消费者
- * 
-* 当 mall-order 下单失败时，发送补偿消息回滚已扣减的库存。
+ * 库存回滚消费者 — 下单失败时释放已冻结的库存.
  */
 @Slf4j
 @Component
@@ -25,7 +25,7 @@ import java.util.List;
 )
 public class StockRollbackConsumer implements RocketMQListener<String> {
 
-    private final ProductService productService;
+    private final InventoryFeignClient inventoryFeignClient;
 
     @Override
     public void onMessage(String message) {
@@ -36,7 +36,12 @@ public class StockRollbackConsumer implements RocketMQListener<String> {
                 log.warn("库存回滚消息为空");
                 return;
             }
-            productService.addStockBatch(items);
+            for (ShoppingCartDTO item : items) {
+                InventoryUnfreezeDTO dto = new InventoryUnfreezeDTO();
+                dto.setProductId(item.getProductId());
+                dto.setQuantity(item.getQuantity());
+                inventoryFeignClient.unfreeze(dto);
+            }
             log.info("库存回滚成功, 涉及 {} 个商品", items.size());
         } catch (Exception e) {
             log.error("库存回滚失败, message={}", message, e);

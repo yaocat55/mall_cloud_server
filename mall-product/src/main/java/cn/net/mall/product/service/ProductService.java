@@ -31,9 +31,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.search.sort.SortOrder;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -43,7 +43,6 @@ import org.springframework.util.StringUtils;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.ObjectProvider;
 import cn.net.mall.product.dto.ProductViewRecordDTO;
-import cn.net.mall.product.dto.ShoppingCartDTO;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -54,10 +53,6 @@ import java.util.stream.Collectors;
 import static cn.net.mall.constant.NumberConstant.NUMBER_100;
 import static cn.net.mall.constant.NumberConstant.NUMBER_10000;
 
-import java.io.IOException;
-
-import org.elasticsearch.search.sort.SortBuilders;
-import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * 商品 服务层
@@ -129,7 +124,7 @@ public class ProductService extends BaseService<ProductEntity, ProductConditionE
      * @param ids 商品ID集合
      * @return 商品信息
      */
-    public List<ProductDTO> findByIds(@RequestBody List<Long> ids) {
+    public List<ProductDTO> findByIds(List<Long> ids) {
         ProductConditionEntity productConditionEntity = new ProductConditionEntity();
         productConditionEntity.setIdList(ids);
         List<ProductEntity> productEntities = productMapper.searchByCondition(productConditionEntity);
@@ -144,7 +139,7 @@ public class ProductService extends BaseService<ProductEntity, ProductConditionE
         if (CollectionUtils.isNotEmpty(productEntities)) {
             List<Long> unitIdList = productEntities.stream().map(ProductEntity::getUnitId).distinct().collect(Collectors.toList());
             List<UnitEntity> unitList = unitMapper.findByIds(unitIdList);
-            Map<Long, String> unitMap = unitList.stream().collect(Collectors.toMap(UnitEntity::getId, UnitEntity::getName));
+            Map<Long, String> unitMap = unitList.stream().collect(Collectors.toMap(UnitEntity::getId, UnitEntity::getName, (a, b) -> a));
             for (ProductEntity productEntity : productEntities) {
                 String unitName = unitMap.get(productEntity.getUnitId());
                 productEntity.setUnitName(unitName);
@@ -156,7 +151,7 @@ public class ProductService extends BaseService<ProductEntity, ProductConditionE
         if (CollectionUtils.isNotEmpty(productEntities)) {
             List<Long> brandIdList = productEntities.stream().map(ProductEntity::getBrandId).distinct().collect(Collectors.toList());
             List<BrandEntity> brandList = brandMapper.findByIds(brandIdList);
-            Map<Long, String> brandMap = brandList.stream().collect(Collectors.toMap(BrandEntity::getId, BrandEntity::getName));
+            Map<Long, String> brandMap = brandList.stream().collect(Collectors.toMap(BrandEntity::getId, BrandEntity::getName, (a, b) -> a));
             for (ProductEntity productEntity : productEntities) {
                 String brandName = brandMap.get(productEntity.getBrandId());
                 productEntity.setBrandName(brandName);
@@ -168,7 +163,7 @@ public class ProductService extends BaseService<ProductEntity, ProductConditionE
         if (CollectionUtils.isNotEmpty(productEntities)) {
             List<Long> categoryIdList = productEntities.stream().map(ProductEntity::getCategoryId).distinct().collect(Collectors.toList());
             List<CategoryEntity> categoryList = categoryMapper.findByIds(categoryIdList);
-            Map<Long, String> categoryMap = categoryList.stream().collect(Collectors.toMap(CategoryEntity::getId, CategoryEntity::getName));
+            Map<Long, String> categoryMap = categoryList.stream().collect(Collectors.toMap(CategoryEntity::getId, CategoryEntity::getName, (a, b) -> a));
             for (ProductEntity productEntity : productEntities) {
                 String categoryName = categoryMap.get(productEntity.getCategoryId());
                 productEntity.setCategoryName(categoryName);
@@ -329,7 +324,7 @@ public class ProductService extends BaseService<ProductEntity, ProductConditionE
 
             productGroupAttributeWebEntity.setValueList(Lists.newArrayList());
 
-            attributeValueEntities.stream().sorted((a, b) -> a.getSort().compareTo(b.getSort()));
+            attributeValueEntities.sort((a, b) -> a.getSort().compareTo(b.getSort()));
             for (AttributeValueEntity valueEntity : attributeValueEntities) {
                 ProductGroupAttributeValueWebEntity productGroupAttributeValueWebEntity = new ProductGroupAttributeValueWebEntity();
                 productGroupAttributeValueWebEntity.setId(valueEntity.getId());
@@ -342,17 +337,6 @@ public class ProductService extends BaseService<ProductEntity, ProductConditionE
         productDetailWebEntity.setGroupAttributeList(groupAttributeWebEntities);
     }
 
-
-//    private void fillTotalCartNum(ProductDetailWebEntity productDetailWebEntity) {
-//        JwtUserEntity currentUserInfo = FillUserUtil.getCurrentUserInfoOrNull();
-//        if (Objects.isNull(currentUserInfo)) {
-//            return;
-//        }
-//        ShoppingCartConditionEntity shoppingCartConditionEntity = new ShoppingCartConditionEntity();
-//        shoppingCartConditionEntity.setUserId(currentUserInfo.getId());
-//        int count = shoppingCartMapper.searchCount(shoppingCartConditionEntity);
-//        productDetailWebEntity.setTotalCartNum(count);
-//    }
 
     private String getStringValue(int count) {
         if (count < NUMBER_10000) {
@@ -492,62 +476,69 @@ public class ProductService extends BaseService<ProductEntity, ProductConditionE
      */
     public ResponsePageEntity<ProductSearchResultDTO> searchFromES(ProductSearchConditionDTO productConditionEntity) {
         try {
-            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-            searchSourceBuilder.from(productConditionEntity.getPageBegin());
-            searchSourceBuilder.size(productConditionEntity.getPageSize());
-            if (Objects.nonNull(productConditionEntity.getCategoryId()) && productConditionEntity.getCategoryId() > 0) {
-                searchSourceBuilder.query(QueryBuilders.matchQuery("categoryId", productConditionEntity.getCategoryId()));
+            int page = productConditionEntity.getPageBegin();
+            int size = productConditionEntity.getPageSize();
+
+            var mustQueries = new ArrayList<co.elastic.clients.elasticsearch._types.query_dsl.Query>();
+            if (Objects.nonNull(productConditionEntity.getCategoryId())
+                    && productConditionEntity.getCategoryId() > 0) {
+                mustQueries.add(co.elastic.clients.elasticsearch._types.query_dsl.Query.of(
+                        q -> q.match(m -> m.field("categoryId").query(productConditionEntity.getCategoryId()))));
             }
             if (StringUtils.hasLength(productConditionEntity.getKeyword())) {
-                searchSourceBuilder.query(QueryBuilders.multiMatchQuery(productConditionEntity.getKeyword(), "name", "model"));
+                mustQueries.add(co.elastic.clients.elasticsearch._types.query_dsl.Query.of(
+                        q -> q.multiMatch(mm -> mm.fields("name", "model").query(productConditionEntity.getKeyword()))));
             }
-            setTypeCondition(productConditionEntity, searchSourceBuilder);
-            log.info("searchFromES请求参数:", searchSourceBuilder);
-            ResponsePageEntity responsePageEntity = ResponsePageEntity.buildEmpty(productConditionEntity);
-            List<ProductWebEntity> productEntities = esTemplate.search(businessConfig.getProductEsIndexName(), searchSourceBuilder, ProductWebEntity.class, responsePageEntity);
+
+            var queryBuilder = NativeQuery.builder()
+                    .withPageable(PageRequest.of(page / size, size));
+            if (!mustQueries.isEmpty()) {
+                queryBuilder.withQuery(
+                        q -> q.bool(b -> b.must(mustQueries)));
+            }
+            Sort sort = buildSort(productConditionEntity);
+            if (sort != null) {
+                queryBuilder.withSort(sort);
+            }
+
+            log.info("searchFromES page={}, size={}, categoryId={}, keyword={}",
+                    productConditionEntity.getPageNo(), size,
+                    productConditionEntity.getCategoryId(), productConditionEntity.getKeyword());
+
+            ResponsePageEntity<ProductWebEntity> responsePageEntity =
+                    ResponsePageEntity.buildEmpty(productConditionEntity);
+            List<ProductWebEntity> productEntities = esTemplate.search(
+                    businessConfig.getProductEsIndexName(),
+                    queryBuilder.build(),
+                    ProductWebEntity.class,
+                    responsePageEntity);
+
             if (CollectionUtils.isEmpty(productEntities)) {
                 return ResponsePageEntity.buildEmpty(productConditionEntity);
             }
 
-            return ResponsePageEntity.build(productConditionEntity, responsePageEntity.getTotalCount(), BeanUtil.copyToList(productEntities, ProductSearchResultDTO.class));
+            return ResponsePageEntity.build(productConditionEntity,
+                    responsePageEntity.getTotalCount(),
+                    BeanUtil.copyToList(productEntities, ProductSearchResultDTO.class));
         } catch (Exception e) {
             log.error("从ES中查询商品失败，原因：", e);
             return ResponsePageEntity.buildEmpty(productConditionEntity);
         }
     }
 
-    private void setTypeCondition(ProductSearchConditionDTO productConditionEntity, SearchSourceBuilder searchSourceBuilder) {
-        if (Objects.isNull(productConditionEntity.getType())) {
-            return;
+    private Sort buildSort(ProductSearchConditionDTO condition) {
+        if (Objects.isNull(condition.getType())) {
+            return null;
         }
-
-        switch (productConditionEntity.getType()) {
-            case 1:
-                sortByComprehensive(searchSourceBuilder);
-                break;
-            case 2:
-                sortBySaleQuantity(searchSourceBuilder);
-                break;
-            case 3:
-                sortByPrice(searchSourceBuilder);
-                break;
-            default:
-                return;
-        }
-    }
-
-    private void sortByComprehensive(SearchSourceBuilder searchSourceBuilder) {
-        searchSourceBuilder.sort(SortBuilders.fieldSort("saleQuantity.keyword").order(SortOrder.DESC));
-        searchSourceBuilder.sort(SortBuilders.fieldSort("positiveRating.keyword").order(SortOrder.DESC));
-        searchSourceBuilder.sort(SortBuilders.fieldSort("price.keyword").order(SortOrder.DESC));
-    }
-
-    private void sortBySaleQuantity(SearchSourceBuilder searchSourceBuilder) {
-        searchSourceBuilder.sort(SortBuilders.fieldSort("saleQuantity.keyword").order(SortOrder.DESC));
-    }
-
-    private void sortByPrice(SearchSourceBuilder searchSourceBuilder) {
-        searchSourceBuilder.sort(SortBuilders.fieldSort("price.keyword").order(SortOrder.DESC));
+        return switch (condition.getType()) {
+            case 1 -> Sort.by(
+                    Sort.Order.desc("saleQuantity.keyword"),
+                    Sort.Order.desc("positiveRating.keyword"),
+                    Sort.Order.desc("price.keyword"));
+            case 2 -> Sort.by(Sort.Order.desc("saleQuantity.keyword"));
+            case 3 -> Sort.by(Sort.Order.desc("price.keyword"));
+            default -> null;
+        };
     }
 
     /**
@@ -692,7 +683,7 @@ public class ProductService extends BaseService<ProductEntity, ProductConditionE
             productEntity.setModel(model);
         }
 
-        if (!StringUtils.hasLength(productEntity.getName())) {
+        if (!StringUtils.hasLength(productEntity.getName()) && productCheckEntity != null) {
             String productName = getProductName(productEntity, productCheckEntity);
             productEntity.setName(productName);
         }
@@ -770,10 +761,7 @@ public class ProductService extends BaseService<ProductEntity, ProductConditionE
         }
 
         List<Long> ids = addList.stream().map(ProductEntity::getId).collect(Collectors.toList());
-        Query query = new Query();
-        Criteria criatira = new Criteria();
-        query.addCriteria(Criteria.where("productId").in(ids));
-        query.addCriteria(criatira);
+        Query query = new Query(Criteria.where("productId").in(ids));
         List<ProductDetailEntity> productDetailEntities = mongoTemplate.find(query, ProductDetailEntity.class);
 
         List<ProductDetailEntity> foundList = productDetailEntities.stream()
@@ -962,9 +950,11 @@ public class ProductService extends BaseService<ProductEntity, ProductConditionE
         }
 
         List<AttributeValueEntity> skuAttributeValueEntities = productEntityList.stream()
+                .filter(x -> CollectionUtils.isNotEmpty(x.getSkuAttributeEntityList()))
                 .flatMap(x -> x.getSkuAttributeEntityList().stream()).collect(Collectors.toList());
-        AssertUtil.notEmpty(skuAttributeValueEntities, "商品属性不能为空");
-        checkAttributeValue(skuAttributeValueEntities);
+        if (CollectionUtils.isNotEmpty(skuAttributeValueEntities)) {
+            checkAttributeValue(skuAttributeValueEntities);
+        }
     }
 
     private void checkAttributeValue(List<AttributeValueEntity> attributeValueEntities) {
@@ -1011,19 +1001,32 @@ public class ProductService extends BaseService<ProductEntity, ProductConditionE
      * @return 结果
      */
     public void update(ProductEntity productEntity) {
-        final ProductCheckEntity productCheckEntity = new ProductCheckEntity();
-        checkParams(Lists.newArrayList(productEntity), productCheckEntity);
-        productEntity.setModel(null);
-        fillSkuNameAndModel(productEntity, productCheckEntity);
+        // 只校验传了的字段，没传的保持原值
+        if (productEntity.getCategoryId() != null || productEntity.getBrandId() != null
+                || productEntity.getUnitId() != null || CollectionUtils.isNotEmpty(productEntity.getSpuAttributeEntityList())
+                || CollectionUtils.isNotEmpty(productEntity.getSkuAttributeEntityList())) {
+            checkParams(Lists.newArrayList(productEntity), new ProductCheckEntity());
+        }
+
+        if (CollectionUtils.isNotEmpty(productEntity.getSkuAttributeEntityList())) {
+            fillSkuNameAndModel(productEntity, null);
+        }
 
         final List<ProductEntity> updateList = Lists.newArrayList(productEntity);
         transactionTemplate.execute((status -> {
-            //deleteProductDetail(productEntity);
-            saveProductDetail(updateList);
-            deleteProductAttribute(productEntity);
-            saveProductAttribute(updateList);
-            deleteProductPhoto(productEntity);
-            savePhoto(updateList);
+            if (StringUtils.hasLength(productEntity.getDetail())) {
+                saveProductDetail(updateList);
+            }
+            if (CollectionUtils.isNotEmpty(productEntity.getSkuAttributeEntityList())) {
+                deleteProductAttribute(productEntity);
+                saveProductAttribute(updateList);
+            }
+            if (CollectionUtils.isNotEmpty(productEntity.getProductPhotoEntityList())
+                    || CollectionUtils.isNotEmpty(productEntity.getCover())
+                    || CollectionUtils.isNotEmpty(productEntity.getSwiper())) {
+                deleteProductPhoto(productEntity);
+                savePhoto(updateList);
+            }
             return productMapper.update(productEntity);
         }));
     }
@@ -1088,39 +1091,5 @@ public class ProductService extends BaseService<ProductEntity, ProductConditionE
     public List<ProductDTO> getTopProducts(int limit) {
         List<ProductEntity> productEntities = productMapper.getTopProducts(limit);
         return BeanUtil.copyToList(productEntities, ProductDTO.class);
-    }
-
-    public void addStockBatch(List<ShoppingCartDTO> items) {
-        if (org.apache.commons.collections4.CollectionUtils.isEmpty(items)) {
-            return;
-        }
-        for (ShoppingCartDTO sc : items) {
-            Long pid = sc.getProductId();
-            Integer qty = sc.getQuantity();
-            if (pid == null || qty == null || qty <= 0) {
-                continue;
-            }
-            productMapper.addStock(pid, qty);
-        }
-    }
-
-    public void reduceStockBatch(List<ShoppingCartDTO> items) {
-        if (org.apache.commons.collections4.CollectionUtils.isEmpty(items)) {
-            return;
-        }
-        transactionTemplate.execute(status -> {
-            for (ShoppingCartDTO sc : items) {
-                Long pid = sc.getProductId();
-                Integer qty = sc.getQuantity();
-                if (pid == null || qty == null || qty <= 0) {
-                    throw new BusinessException("库存扣减参数错误");
-                }
-                int rows = productMapper.reduceStock(pid, qty);
-                if (rows <= 0) {
-                    throw new BusinessException("库存不足");
-                }
-            }
-            return Boolean.TRUE;
-        });
     }
 }

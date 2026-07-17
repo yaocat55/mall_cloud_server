@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,7 +67,7 @@ public class SyncProductService {
             List<Long> idList = productEntityResponsePageEntity.getData().stream().map(ProductEntity::getId).collect(Collectors.toList());
             try {
                 esTemplate.deleteBatch(businessConfig.getProductEsIndexName(), idList);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 log.error("删除ES中的商品失败，原因：", e);
             }
 

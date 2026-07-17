@@ -1,1 +1,2 @@
-cn.net.mall.order.client.config.FallbackFactoryAutoConfiguration
+# Auto-configuration for mall-order-client Feign clients
+cn.net.mall.order.client.OrderFeignAutoConfig

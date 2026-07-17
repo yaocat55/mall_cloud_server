@@ -4,6 +4,10 @@ import cn.net.mall.order.enums.OrderStatusEnum;
 import cn.net.mall.workid.IdGenerateHelper;
 import cn.net.mall.mapper.BaseMapper;
 import cn.net.mall.marketing.client.MarketingFeignClient;
+import cn.net.mall.inventory.client.InventoryFeignClient;
+import cn.net.mall.inventory.dto.InventoryConfirmDTO;
+import cn.net.mall.inventory.dto.InventoryFreezeDTO;
+import cn.net.mall.inventory.dto.InventoryUnfreezeDTO;
 import cn.net.mall.order.dto.*;
 import cn.net.mall.order.event.OrderCreatedEvent;
 import cn.net.mall.product.client.ProductFeignClient;
@@ -87,6 +91,7 @@ public class OrderService extends BaseService<OrderEntity, OrderConditionEntity>
     private final IdGenerateHelper idGenerateHelper;
 
     private final ProductFeignClient productFeignClient;
+    private final InventoryFeignClient inventoryFeignClient;
 
     private final MarketingFeignClient marketingFeignClient;
 
@@ -538,14 +543,20 @@ public class OrderService extends BaseService<OrderEntity, OrderConditionEntity>
             saveOrderDeliveryAddress(submitDTO, currentUser, orderEntity);
         }
 
-        // 5. 扣减库存 + 保存订单（扣库存成功但订单失败时，通过 MQ 补偿回滚）
-        //    先扣库存，防止超卖；扣库存失败时直接抛异常，订单不成立
+        // 5. 冻结库存 + 保存订单
+        //    先冻结库存，防止超卖；冻结失败时直接抛异常，订单不成立
         if (!CollectionUtils.isEmpty(cartItems)) {
             try {
-                productFeignClient.reduceStockBatch(cartItems);
-                log.info("扣库存成功, items={}", cartItems.size());
+                for (ShoppingCartDTO item : cartItems) {
+                    InventoryFreezeDTO dto = new InventoryFreezeDTO();
+                    dto.setProductId(item.getProductId());
+                    dto.setQuantity(item.getQuantity());
+                    dto.setOrderId(orderEntity.getId());
+                    inventoryFeignClient.freeze(dto);
+                }
+                log.info("冻结库存成功, items={}", cartItems.size());
             } catch (Exception e) {
-                log.error("扣库存失败，下单终止", e);
+                log.error("冻结库存失败，下单终止", e);
                 throw new BusinessException("库存不足");
             }
         }
@@ -865,6 +876,23 @@ public class OrderService extends BaseService<OrderEntity, OrderConditionEntity>
             if (newOrderStatus != null || newPayStatus != null) {
                 syncEsOrderStatusAndPayStatus(orderEntity.getId(), newOrderStatus, newPayStatus);
             }
+            // 支付成功 → 确认扣减库存
+            if (newOrderStatus != null && newOrderStatus == OrderStatusEnum.PAY.getValue()) {
+                try {
+                    OrderItemConditionEntity itemCond = new OrderItemConditionEntity();
+                    itemCond.setOrderId(orderEntity.getId());
+                    List<OrderItemEntity> items = orderItemMapper.searchByCondition(itemCond);
+                    for (OrderItemEntity item : items) {
+                        InventoryConfirmDTO confirmDTO = new InventoryConfirmDTO();
+                        confirmDTO.setProductId(item.getProductId());
+                        confirmDTO.setQuantity(item.getQuantity() != null ? item.getQuantity() : 1);
+                        confirmDTO.setOrderId(orderEntity.getId());
+                        inventoryFeignClient.confirm(confirmDTO);
+                    }
+                } catch (Exception e) {
+                    log.error("确认扣减库存失败，orderId={}", orderEntity.getId(), e);
+                }
+            }
         }
         return rows;
     }
@@ -906,6 +934,7 @@ public class OrderService extends BaseService<OrderEntity, OrderConditionEntity>
         int rows = orderMapper.cancelIfUnpaid(id, OrderStatusEnum.CANCEL.getValue());
         if (rows > 0) {
             syncEsOrderStatus(id, OrderStatusEnum.CANCEL.getValue());
+            unfreezeInventory(id);
             return true;
         }
         return false;
@@ -1093,6 +1122,26 @@ public class OrderService extends BaseService<OrderEntity, OrderConditionEntity>
         }
 
         return resp;
+    }
+
+    /**
+     * 释放订单占用的冻结库存（取消订单/超时释放时调用）.
+     */
+    private void unfreezeInventory(Long orderId) {
+        try {
+            OrderItemConditionEntity itemCond = new OrderItemConditionEntity();
+            itemCond.setOrderId(orderId);
+            List<OrderItemEntity> items = orderItemMapper.searchByCondition(itemCond);
+            for (OrderItemEntity item : items) {
+                InventoryUnfreezeDTO dto = new InventoryUnfreezeDTO();
+                dto.setProductId(item.getProductId());
+                dto.setQuantity(item.getQuantity() != null ? item.getQuantity() : 1);
+                dto.setOrderId(orderId);
+                inventoryFeignClient.unfreeze(dto);
+            }
+        } catch (Exception e) {
+            log.error("释放冻结库存失败，orderId={}", orderId, e);
+        }
     }
 
     private void syncEsOrderStatus(Long orderId, Integer newStatus) {

@@ -64,6 +64,7 @@ echo ""
 
 echo "--- 1. 商品中心（B端，需 token）---"
 test_api POST "/v1/product/searchByPage" '{"pageNo":1,"pageSize":10}' "商品分页" true
+test_api POST "/v1/product/searchFromES" '{"pageNo":1,"pageSize":10}' "商品ES搜索" true
 test_api GET "/v1/product/findById" "id=1" "商品详情" true
 test_api POST "/v1/product/insert" '{"name":"测试商品","price":99}' "新增商品" true
 test_api POST "/v1/product/update" '{"id":1,"name":"测试商品"}' "修改商品" true

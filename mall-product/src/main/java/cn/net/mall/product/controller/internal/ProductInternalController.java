@@ -44,11 +44,4 @@ public class ProductInternalController {
     public ProductDetailDTO findDetailById(Long id) {
         return productService.findDetailById(id);
     }
-
-    @Operation(summary = "批量扣减商品库存",
-               description = "内部服务：由 order-service 提交订单时通过 Feign 调用，批量扣减商品库存")
-    @PostMapping("/reduceStockBatch")
-    public void reduceStockBatch(@RequestBody List<ShoppingCartDTO> items) {
-        productService.reduceStockBatch(items);
-    }
 }

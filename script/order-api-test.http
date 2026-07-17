@@ -1,0 +1,124 @@
+### ============================================================
+### Mall Cloud — Order 模块接口测试脚本
+### 直连订单服务端口（不经过 Gateway / BFF）
+###
+### 使用方式：IDEA 打开 → 点绿色箭头逐个运行
+###
+### Step 1：testLogin → 获取 Token
+### Step 2+：后续请求自动携带 Token
+### ============================================================
+
+@ADMIN = http://localhost:8030
+@ORDER = http://localhost:8026
+
+
+### ============================================================
+### Step 1：获取 Token（testLogin 跳过验证码）
+### ============================================================
+
+# @name testLogin
+POST {{ADMIN}}/v1/auth/user/testLogin
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+
+### ============================================================
+### Step 2：订单 C 端接口
+### ============================================================
+
+### 2.1 获取订单数量统计
+# @name orderCount
+GET {{ORDER}}/v1/mobile/trade/getUserOrderTradeCount
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+### 2.2 分页查询订单
+# @name searchOrder
+POST {{ORDER}}/v1/mobile/trade/search
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{"pageNo":1,"pageSize":10}
+
+### 2.3 查询订单详情
+# @name orderDetail
+GET {{ORDER}}/v1/mobile/trade/detail/1
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+### 2.4 查询订单明细
+# @name orderItem
+POST {{ORDER}}/v1/mobile/trade/getTradeItem
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{"tradeCode":"TEST"}
+
+### 2.5 订单确认/预览
+# @name confirmOrder
+POST {{ORDER}}/v1/mobile/trade/confirm
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{}
+
+
+### ============================================================
+### Step 3：退货 C 端接口
+### ============================================================
+
+### 3.1 分页查询退货
+# @name searchReturn
+POST {{ORDER}}/v1/mobile/trade/return/search
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{"pageNo":1,"pageSize":10}
+
+### 3.2 退货详情
+# @name returnDetail
+GET {{ORDER}}/v1/mobile/trade/return/detail/TEST
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+
+### ============================================================
+### Step 4：B 端配送地址管理
+### ============================================================
+
+### 4.1 分页查询配送地址
+# @name searchAddress
+POST {{ORDER}}/v1/tradeDeliveryAddress/searchByPage
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{"pageNo":1,"pageSize":10}
+
+### 4.2 配送地址详情
+# @name findAddress
+GET {{ORDER}}/v1/tradeDeliveryAddress/findById?id=1
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+
+### ============================================================
+### Step 5：B 端退货审核
+### ============================================================
+
+### 5.1 分页查询退货申请
+# @name searchReturnApproval
+POST {{ORDER}}/v1/trade/return/searchByPage
+Content-Type: application/json
+Authorization: Bearer {{testLogin.response.body.data.token}}
+
+{"pageNo":1,"pageSize":10}
+
+
+### ============================================================
+### Step 6：统计接口
+### ============================================================
+
+### 6.1 订单统计
+# @name orderStats
+POST {{ORDER}}/v1/admin/trade/statistics
+Authorization: Bearer {{testLogin.response.body.data.token}}

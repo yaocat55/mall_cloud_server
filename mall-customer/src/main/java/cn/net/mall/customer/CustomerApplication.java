@@ -9,7 +9,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication(scanBasePackages = {"cn.net.mall.customer"})
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = {"cn.net.mall.basic", "cn.net.mall.customer.client"})
+@EnableFeignClients(basePackages = {"cn.net.mall.customer.client"})
 @MapperScan("cn.net.mall.customer.mapper")
 @EnableCaching
 public class CustomerApplication {

@@ -79,23 +79,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.elasticsearch</groupId>
-                    <artifactId>elasticsearch</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.elasticsearch.client</groupId>
-            <artifactId>elasticsearch-rest-high-level-client</artifactId>
-            <version>7.17.15</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         
         <!-- Internal dependencies -->
@@ -178,6 +161,11 @@
             <groupId>cn.net.mall</groupId>
             <artifactId>mall-order-client</artifactId>
             <version>${mall-order-client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.net.mall</groupId>
+            <artifactId>mall-inventory-client</artifactId>
+            <version>${mall-inventory-client.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.rocketmq</groupId>

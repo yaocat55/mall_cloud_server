@@ -37,6 +37,8 @@
         <module>mall-customer-client</module>
         <module>mall-admin</module>
         <module>mall-admin-client</module>
+        <module>mall-inventory</module>
+        <module>mall-inventory-client</module>
     </modules>
 
     <name>mall-cloud</name>
@@ -92,6 +94,7 @@
         <mall-auth-api-starter.version>1.0.0</mall-auth-api-starter.version>
         <mall-customer-client.version>1.0.0</mall-customer-client.version>
         <mall-admin-client.version>1.0.0</mall-admin-client.version>
+        <mall-inventory-client.version>1.0.0</mall-inventory-client.version>
     </properties>
 
 <dependencyManagement>

@@ -43,7 +43,7 @@
 
 - 🚪 统一 API 网关，JWT 鉴权 + Sentinel 流控
 - 🔐 RBAC 权限模型（用户 → 角色 → 菜单 / 部门）
-- 📦 27 个 Maven 模块，12 个独立部署微服务 + 7 个 Feign 客户端 + 1 个认证 SDK
+- 📦 28 个 Maven 模块，13 个独立部署微服务 + 8 个 Feign 客户端 + 1 个认证 SDK
 - 📄 Swagger 3 三层分组（📱 mobile / ⚙️ admin / 🔗 internal），各服务文档独立展示
 - 🎯 BFF 层统一前端入口，重写前端只需看 BFF 文档
 - 🔄 MySQL + Elasticsearch 双写，ShardingSphere 分库分表
@@ -122,6 +122,7 @@
 | 👤 客户中心 | `mall-customer` | C 端注册登录、会员信息管理 |
 | 🏗️ 基础服务 | `mall-basic` | 字典管理、行政区域、文件上传（MinIO）、短信（阿里云 SMS）、敏感词过滤、AI 对话（Ollama）、Quartz 定时任务 |
 | 🛒 商品中心 | `mall-product` | 商品 CRUD、分类/品牌/属性体系、MySQL+ES 双写搜索、购物车、首页管理（轮播图/公告/推荐） |
+| 📦 库存中心 | `mall-inventory` | 独立库存微服务、Redis Lua 原子扣减、冻结-确认-释放三段式库存、FIFO 批次出库、Redis→MySQL 降级兜底 |
 | 📋 订单交易 | `mall-order` | 下单→支付→发货→收货→评价 全生命周期、退货退款、ES 订单搜索、**分库分表（8库）** |
 | 🎫 营销中心 | `mall-marketing` | 优惠券发放/领取/核销、秒杀商品、优惠金额试算 |
 | 💰 支付服务 | `mall-pay` | 支付宝沙箱支付、二维码生成（ZXing）、**无数据库**（纯 Feign 调用） |
@@ -164,6 +165,9 @@ mall_cloud_server/
 ├── mall-order/                    订单服务（订单、退货、分库分表）
 ├── mall-order-client/             订单服务 Feign 接口 & DTO
 │
+├── mall-inventory/                库存服务（Redis Lua 原子扣减、FIFO 批次、冻结/确认/释放）
+├── mall-inventory-client/         库存服务 Feign 接口 & DTO（自动配置）
+│
 ├── mall-pay/                      支付服务（支付宝对接，无数据库）
 ├── mall-pay-client/               支付服务 Feign 接口 & DTO
 │
@@ -184,7 +188,7 @@ mall_cloud_server/
 ```
 
 > [!NOTE]
-> `mall-admin-bff` 和 `mall-mobile-bff` 是 BFF（Backend For Frontend）层，为各前端提供聚合接口和统一文档入口，**前端重写只需看这两者的文档**。每个 `*-client` 模块定义该服务的 Feign 接口，供其他服务引入。业务配置全部托管在 Nacos 配置中心。
+> `mall-admin-bff` 和 `mall-mobile-bff` 是 BFF（Backend For Frontend）层，为各前端提供聚合接口和统一文档入口，**前端重写只需看这两者的文档**。每个 `*-client` 模块通过 `AutoConfiguration.imports` 自动注册 Feign 客户端，引入依赖即生效，无需配置 `@EnableFeignClients` 扫描包。业务配置全部托管在 Nacos 配置中心。
 >
 > 每个业务模块在 `controller/internal/` 包下存放仅供微服务间 Feign 调用的接口，URL 以 `/v1/internal/` 开头，与前端接口物理隔离。
 
@@ -249,6 +253,7 @@ mall_cloud_server/
 | **mall-order** | 用户/地址 | — | 商品/库存/购物车 | — | 优惠券 |
 | **mall-pay** | — | — | — | 订单状态 | — |
 | **mall-marketing** | 用户信息 | 上传/字典 | 商品信息 | — | — |
+| **mall-inventory** | — | — | — | — | — |
 | **mall-recommend** | — | — | 商品信息 | — | — |
 | **mall-message** | 用户信息 | — | — | — | — |
 
@@ -361,6 +366,7 @@ sequenceDiagram
   ├── ① mall-admin       → AdminApplication        Admin 业务（登录/RBAC）
   ├── ① mall-customer    → CustomerApplication     C 端客户（注册/登录）
   ├── ② mall-product     → ProductApplication      商品服务
+  ├── ② mall-inventory   → InventoryApplication     库存服务（Redis 原子扣减）
   ├── ③ mall-order       → OrderApplication        订单服务
   ├── ③ mall-marketing   → MarketingApplication    营销服务
   ├── ③ mall-pay         → PayApplication          支付服务
@@ -396,28 +402,35 @@ sequenceDiagram
 
 `spring.cloud.nacos.config.group` 仅影响配置中心分组，不继承给服务发现。`spring.cloud.nacos.discovery.group` 需单独声明，否则服务注册到 `DEFAULT_GROUP`。
 
-### 组件包扫描范围
+### Feign 客户端自动配置
 
-每个服务必须将 `@SpringBootApplication(scanBasePackages)` 和 `@EnableFeignClients(basePackages)` 限定到自身模块及实际调用的 Feign 客户端包，**禁止使用 `"cn.net.mall"` 全量扫描**。
+每个 `*-client` 模块通过 Spring Boot `AutoConfiguration.imports` 机制自动注册自己的 `@FeignClient`：
 
-全量扫描会导致：
-- 加载不需要的 bean（如无 Redis 依赖时加载 `RedisUtil` 导致启动失败）
-- **无法拆分为独立仓库**（拆库后 classpath 上只有自身模块，全量扫描扫不到其他服务的类）
+```
+mall-xxx-client/src/main/resources/META-INF/spring/
+  └── org.springframework.boot.autoconfigure.AutoConfiguration.imports
+       └── cn.net.mall.xxx.client.XxxFeignAutoConfig
+           
+XxxFeignAutoConfig.java:
+  @AutoConfiguration
+  @EnableFeignClients(basePackages = "cn.net.mall.xxx.client")
+  public class XxxFeignAutoConfig {}
+```
 
-| 服务 | 组件扫描 | Feign 扫描 |
-|------|----------|------------|
-| mall-gateway | `cn.net.mall.gateway` | — |
-| mall-admin | `cn.net.mall.admin` | `cn.net.mall.basic`, `cn.net.mall.admin.client` |
-| mall-customer | `cn.net.mall.customer` | `cn.net.mall.basic`, `cn.net.mall.customer.client` |
-| mall-basic | `cn.net.mall.basic` | 无限制（仅加载自身 `cn.net.mall.basic.client`） |
-| mall-product | `cn.net.mall.product` | `cn.net.mall.basic`, `cn.net.mall.admin.client` |
-| mall-marketing | `cn.net.mall.marketing` | `cn.net.mall.basic`, `cn.net.mall.product.client`, `cn.net.mall.customer.client` |
-| mall-order | `cn.net.mall.order` | `cn.net.mall.order`, `cn.net.mall.product.client`, `cn.net.mall.marketing.client`, `cn.net.mall.admin.client`, `cn.net.mall.customer.client` |
-| mall-pay | `cn.net.mall.pay` | `cn.net.mall.pay`, `cn.net.mall.order.client` |
-| mall-recommend | `cn.net.mall.recommend` | `cn.net.mall.product.client`, `cn.net.mall.recommend.support` |
-| mall-message | `cn.net.mall.message` | `cn.net.mall.message`, `cn.net.mall.customer.client` |
-| mall-admin-bff | `cn.net.mall.admin` | `cn.net.mall.admin.client`, `cn.net.mall.basic.client`, `cn.net.mall.product.client`, `cn.net.mall.marketing.client`, `cn.net.mall.order.client`, `cn.net.mall.pay.client` |
-| mall-mobile-bff | `cn.net.mall.mobile` | `cn.net.mall.admin.client`, `cn.net.mall.basic.client`, `cn.net.mall.customer.client`, `cn.net.mall.product.client`, `cn.net.mall.marketing.client`, `cn.net.mall.order.client`, `cn.net.mall.pay.client` |
+调用方只需在 pom.xml 添加依赖，无需在 `@EnableFeignClients` 中手动声明包扫描。
+
+| 客户端模块 | 自动配置类 | 生效条件 |
+|-----------|-----------|---------|
+| `mall-inventory-client` | `InventoryFeignAutoConfig` | 引入依赖即生效 |
+| `mall-product-client` | `ProductFeignAutoConfig` | 引入依赖即生效 |
+| `mall-order-client` | `OrderFeignAutoConfig` | 引入依赖即生效 |
+| `mall-basic-client` | `BasicFeignAutoConfig` | 引入依赖即生效 |
+| `mall-marketing-client` | `MarketingFeignAutoConfig` | 引入依赖即生效 |
+| `mall-customer-client` | `CustomerFeignAutoConfig` | 引入依赖即生效 |
+| `mall-admin-client` | `AdminFeignAutoConfig` | 引入依赖即生效 |
+| `mall-pay-client` | `PayFeignAutoConfig` | 引入依赖即生效 |
+
+所有 Application 的 `@EnableFeignClients` 仅需扫描自身模块的 client 包（或空扫描），不再列出所有被调方的客户端包。详见各个 Application.java。
 
 ---
 
@@ -556,8 +569,11 @@ Gateway 已配置全局 CORS（允许所有 Origin）。如果仍然报跨域，
 | 1 | **双向服务依赖** | 移除 `mall-product` 对 `mall-order-client` 的编译期依赖，现为单向：`mall-order → mall-product` |
 | 2 | **公共 DTO 变更爆炸** | 每个 client 模块声明独立版本号，通过根 POM 属性管控 |
 | 3 | **scanBasePackages 扫全量** | 限缩到各自模块包，共享 bean 通过 `AutoConfiguration.imports` + `MallCommonAutoConfiguration` 按需加载 |
-| 5 | **缺少事务补偿机制** | 下单先扣库存（`reduceStockBatch`），订单创建失败时发送 `STOCK_ROLLBACK_TOPIC` 消息由 mall-product 异步回滚库存。⚠️ 补偿消费者 `StockRollbackConsumer` 使用了 `@RocketMQMessageListener`，触发了 `DefaultRocketMQListenerContainer` 初始化，引入 RocketMQ 5.x 兼容问题（见第 6 条） |
-| 6 | **`rocketmq-spring-boot-starter:2.1.1` 与 Alibaba BOM 的 RocketMQ 版本冲突** | `spring-cloud-alibaba-dependencies:2023.0.1.0` 的 BOM 将 `rocketmq.version` 锁定为 `5.1.4`，但 starter `2.1.1` 的代码引用了 4.x 才有的 `MessageModel` 类（5.x 已移除）。无 `@RocketMQMessageListener` 的服务不受影响（如原项目），一旦有消息监听容器创建即报 `ClassNotFoundException`。修复：在根 POM `dependencyManagement` 中统一锁定 `rocketmq-client`、`rocketmq-common`、`rocketmq-acl`、`rocketmq-remoting` 全部为 `4.9.4` 版本 |
+| 4 | **@EnableFeignClients 手动列包** | 每个 `*-client` 模块通过 `AutoConfiguration.imports` + `@AutoConfiguration` + `@EnableFeignClients` 自动注册自身 Feign 客户端，新增模块无需修改任何 Application.java |
+| 5 | **库存混在商品表** | 拆为独立 `mall-inventory` 微服务，独立数据库 `cloud_mall_inventory`，Redis Lua 原子扣减 + MySQL 降级 |
+| 6 | **缺少事务补偿机制** | 下单先冻结库存（`inventoryFeignClient.freeze`），订单创建失败时发送 `STOCK_ROLLBACK_TOPIC` 消息由 inventory 异步释放冻结库存。⚠️ 补偿消费者 `StockRollbackConsumer` 使用了 `@RocketMQMessageListener`，触发了 `DefaultRocketMQListenerContainer` 初始化，引入 RocketMQ 5.x 兼容问题（见第 7 条） |
+| 7 | **`rocketmq-spring-boot-starter:2.1.1` 与 Alibaba BOM 的 RocketMQ 版本冲突** | `spring-cloud-alibaba-dependencies:2023.0.1.0` 的 BOM 将 `rocketmq.version` 锁定为 `5.1.4`，但 starter `2.1.1` 的代码引用了 4.x 才有的 `MessageModel` 类（5.x 已移除）。无 `@RocketMQMessageListener` 的服务不受影响（如原项目），一旦有消息监听容器创建即报 `ClassNotFoundException`。修复：在根 POM `dependencyManagement` 中统一锁定 `rocketmq-client`、`rocketmq-common`、`rocketmq-acl`、`rocketmq-remoting` 全部为 `4.9.4` 版本 |
+| 8 | **商品服务 ES 旧客户端** | `mall-product` 和 `mall-marketing` 的 `EsTemplate` 从 `RestHighLevelClient`（已废弃）迁移到 `ElasticsearchOperations`（Spring Data ES 5.x） |
 
 ---
 
@@ -567,7 +583,7 @@ Gateway 已配置全局 CORS（允许所有 Origin）。如果仍然报跨域，
 
 | 优先级 | 问题数 | 核心 |
 |--------|:------:|------|
-| P0 | 1 | 库存模型：超时取消不恢复库存、MQ 回滚兼容问题 |
+| P0 | 0 | ~~库存模型~~ ✅ 已解决 |
 | P1 | 2 | 零测试、Feign 无超时/熔断配置 |
 | P2 | 4 | 用户表未分离、认证不完整、同步不明确、DTO 缺 @Schema、缺 client 模块 |
 | P3 | 3 | Maven Wrapper、启动脚本、Docker 环境 |
