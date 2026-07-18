@@ -1,10 +1,10 @@
-package cn.net.mall.pay.client;
+package cn.net.mall.pay.client.config;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
- * 支付 Feign 客户端自动配置.
+ * Pay Feign 客户端自动配置.
  */
 @AutoConfiguration
 @EnableFeignClients(basePackages = "cn.net.mall.pay.client")

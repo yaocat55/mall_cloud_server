@@ -2,6 +2,8 @@ package cn.net.mall.admin.controller.admin;
 
 import cn.net.mall.admin.dto.DashboardDTO;
 import cn.net.mall.admin.client.UserFeignClient;
+import cn.net.mall.inventory.client.InventoryFeignClient;
+import cn.net.mall.inventory.dto.InventoryDTO;
 import cn.net.mall.order.client.OrderFeignClient;
 import cn.net.mall.order.dto.OrderConditionDTO;
 import cn.net.mall.order.dto.OrderReturnConditionDTO;
@@ -32,6 +34,7 @@ public class AdminDashboardController {
     private final UserFeignClient userFeignClient;
     private final OrderFeignClient orderFeignClient;
     private final ProductFeignClient productFeignClient;
+    private final InventoryFeignClient inventoryFeignClient;
 
     @Operation(summary = "获取仪表盘统计数据", description = "聚合用户数、订单数等统计数据")
     @GetMapping("/stats")
@@ -131,7 +134,7 @@ public class AdminDashboardController {
             log.warn("获取待审核退货数失败", e);
         }
 
-        // 销量排行 Top 5
+        // 销量排行 Top 5（从库存服务读取 sale_count）
         try {
             var topSalesList = productFeignClient.getTopSales(5);
             if (topSalesList != null) {
@@ -139,7 +142,13 @@ public class AdminDashboardController {
                     DashboardDTO.TopProductDTO t = new DashboardDTO.TopProductDTO();
                     t.setId(p.getId());
                     t.setName(p.getName());
-                    t.setSaleCount(p.getSaleCount() != null ? p.getSaleCount() : 0);
+                    // 从库存服务获取实际销量
+                    try {
+                        InventoryDTO inv = inventoryFeignClient.getByProductId(p.getId());
+                        t.setSaleCount(inv != null ? (inv.getSaleCount() != null ? inv.getSaleCount() : 0) : 0);
+                    } catch (Exception e) {
+                        t.setSaleCount(0);
+                    }
                     t.setTotalAmount(BigDecimal.ZERO);
                     return t;
                 }).collect(Collectors.toList()));

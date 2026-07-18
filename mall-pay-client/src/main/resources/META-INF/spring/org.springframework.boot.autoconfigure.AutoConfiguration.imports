@@ -1,2 +1,2 @@
 # Auto-configuration for mall-pay-client Feign clients
-cn.net.mall.pay.client.PayFeignAutoConfig
+cn.net.mall.pay.client.config.PayFeignAutoConfig

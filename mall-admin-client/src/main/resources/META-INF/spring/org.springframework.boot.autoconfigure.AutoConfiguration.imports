@@ -1,2 +1,3 @@
 # Auto-configuration for mall-admin-client Feign clients
-cn.net.mall.admin.client.AdminFeignAutoConfig
+cn.net.mall.admin.client.config.AdminFeignAutoConfig
+cn.net.mall.admin.client.config.FallbackFactoryAutoConfiguration

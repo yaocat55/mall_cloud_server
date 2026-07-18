@@ -1,2 +1,3 @@
 # Auto-configuration for mall-inventory-client Feign clients
-cn.net.mall.inventory.client.InventoryFeignAutoConfig
+cn.net.mall.inventory.client.config.InventoryFeignAutoConfig
+cn.net.mall.inventory.client.config.FeignClientFallbackFactoryAutoConfiguration

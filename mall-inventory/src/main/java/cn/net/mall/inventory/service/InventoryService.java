@@ -13,6 +13,8 @@ import cn.net.mall.workid.IdGenerateHelper;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -47,18 +49,28 @@ public class InventoryService {
     private static final String KEY_AVAILABLE = "inv:available:";
     private static final String KEY_FROZEN = "inv:frozen:";
 
-    @PostConstruct
+    @EventListener(ApplicationReadyEvent.class)
     public void init() {
         freezeScript.setScriptSource(new ResourceScriptSource(
                 new ClassPathResource("scripts/freeze.lua")));
         freezeScript.setResultType(Long.class);
 
         List<InventoryEntity> all = inventoryMapper.findAll();
+        log.info("库存预热开始，共 {} 个商品", all.size());
+
+        int success = 0, fail = 0;
         for (InventoryEntity inv : all) {
-            redisUtil.set(KEY_AVAILABLE + inv.getProductId(), String.valueOf(inv.getAvailable()));
-            redisUtil.set(KEY_FROZEN + inv.getProductId(), String.valueOf(inv.getFrozen()));
+            boolean ok1 = redisUtil.set(KEY_AVAILABLE + inv.getProductId(), String.valueOf(inv.getAvailable()));
+            boolean ok2 = redisUtil.set(KEY_FROZEN + inv.getProductId(), String.valueOf(inv.getFrozen()));
+            if (ok1 && ok2) success++; else fail++;
         }
-        log.info("库存预热完成，共 {} 个商品", all.size());
+        if (fail == 0) {
+            log.info("库存预热完成，Redis 写入成功");
+        } else if (success > 0) {
+            log.warn("库存预热部分失败：成功 {} 个，失败 {} 个", success, fail);
+        } else {
+            log.warn("库存预热失败，Redis 可能未连接");
+        }
     }
 
     // ==================== 核心方法 ====================
@@ -181,18 +193,23 @@ public class InventoryService {
     // ==================== 查询 ====================
 
     public InventoryDTO getByProductId(Long productId) {
-        String key = KEY_AVAILABLE + productId;
-        String redisVal = redisUtil.get(key);
-        if (redisVal != null) {
-            InventoryEntity inv = inventoryMapper.findByProductId(productId);
-            if (inv == null) return null;
-            InventoryDTO dto = new InventoryDTO();
-            dto.setProductId(productId);
-            dto.setAvailable(Integer.parseInt(redisVal));
-            dto.setQuantity(inv.getQuantity());
-            dto.setFrozen(inv.getFrozen());
-            dto.setSaleCount(inv.getSaleCount());
-            return dto;
+        // 尝试从 Redis 读取，失败则降级到 MySQL
+        try {
+            String key = KEY_AVAILABLE + productId;
+            String redisVal = redisUtil.get(key);
+            if (redisVal != null) {
+                InventoryEntity inv = inventoryMapper.findByProductId(productId);
+                if (inv == null) return null;
+                InventoryDTO dto = new InventoryDTO();
+                dto.setProductId(productId);
+                dto.setAvailable(Integer.parseInt(redisVal));
+                dto.setQuantity(inv.getQuantity());
+                dto.setFrozen(inv.getFrozen());
+                dto.setSaleCount(inv.getSaleCount());
+                return dto;
+            }
+        } catch (Exception e) {
+            log.warn("Redis 查询失败，降级到 MySQL，productId={}", productId, e);
         }
 
         InventoryEntity inv = inventoryMapper.findByProductId(productId);

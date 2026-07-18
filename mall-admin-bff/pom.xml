@@ -80,6 +80,11 @@
             <version>${mall-pay-client.version}</version>
         </dependency>
         <dependency>
+            <groupId>cn.net.mall</groupId>
+            <artifactId>mall-inventory-client</artifactId>
+            <version>${mall-inventory-client.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>

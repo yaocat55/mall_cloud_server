@@ -1,2 +1,3 @@
 cn.net.mall.config.WebAutoConfiguration
 cn.net.mall.config.FeignDecoderConfig
+cn.net.mall.config.ApiResultWrapperConfiguration

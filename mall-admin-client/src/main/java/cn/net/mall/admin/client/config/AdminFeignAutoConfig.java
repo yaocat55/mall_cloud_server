@@ -1,10 +1,10 @@
-package cn.net.mall.admin.client;
+package cn.net.mall.admin.client.config;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
- * 管理端 Feign 客户端自动配置.
+ * Admin Feign 客户端自动配置.
  */
 @AutoConfiguration
 @EnableFeignClients(basePackages = "cn.net.mall.admin.client")

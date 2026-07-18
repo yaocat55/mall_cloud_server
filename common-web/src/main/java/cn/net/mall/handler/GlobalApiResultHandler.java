@@ -20,19 +20,24 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * <p>通过 {@code @RestControllerAdvice} + {@link ResponseBodyAdvice} 拦截控制器的返回值，
  * 将非 {@code ApiResult} 类型的返回值自动包装为统一的 {@code ApiResult} 格式。</p>
  *
- * <p>拦截范围：匹配 {@code /v1/**} 路径的请求。</p>
+ * <p>路径匹配规则：</p>
+ * <ul>
+ *   <li>{@code /v1/**} — 内部微服务公开接口</li>
+ *   <li>{@code /admin/v1/**} — admin-bff 聚合接口</li>
+ *   <li>{@code /mobile/v1/**} — mobile-bff 聚合接口</li>
+ *   <li>{@code /v1/internal/**} — ⛔ 不包装（Feign 内部调用需要裸 DTO）</li>
+ *   <li>非以上前缀（如 ForwardController 的代理路径）— ⛔ 不包装</li>
+ * </ul>
  *
  * <p>处理规则：</p>
  * <ul>
  *   <li>如果返回值已经是 {@code ApiResult} 类型，直接返回不做二次包装</li>
- *   <li>其它返回值自动包装为 {@code ApiResult.success(body)}</li>
+ *   <li>{@code null} 返回值 → 包装为 {@code ApiResult.success(null)}</li>
+ *   <li>其它返回值自动包装为 {@code ApiResultUtil.success(body)}</li>
  * </ul>
- *
- * @date 2024/1/9 下午2:09
  */
 @RestControllerAdvice
 public class GlobalApiResultHandler implements ResponseBodyAdvice<Object> {
-    private static final String URL_PREFIX = "/v1";
     private static final String INTERNAL_PREFIX = "/v1/internal/";
 
     @Override
@@ -44,21 +49,24 @@ public class GlobalApiResultHandler implements ResponseBodyAdvice<Object> {
         return matchUrl(requestURI);
     }
 
+    /**
+     * 接口路径匹配规则.
+     *
+     * <p>只有显式的 API 前缀才自动包装，避免误包 ForwardController 的代理路径。</p>
+     */
     private boolean matchUrl(String uri) {
-        if (uri == null || uri.isEmpty()) {
-            return false;
-        }
+        if (uri == null || uri.isEmpty()) return false;
         // 内部 Feign 接口不包装（Feign 期望裸 DTO）
-        if (uri.contains(INTERNAL_PREFIX)) {
-            return false;
-        }
-        return uri.contains(URL_PREFIX);
+        if (uri.contains(INTERNAL_PREFIX)) return false;
+        return uri.startsWith("/v1/")
+                || uri.startsWith("/admin/v1/")
+                || uri.startsWith("/mobile/v1/");
     }
 
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
         if (body instanceof ApiResult) {
-            return (ApiResult) body;
+            return body;
         }
         return ApiResultUtil.success(body);
     }

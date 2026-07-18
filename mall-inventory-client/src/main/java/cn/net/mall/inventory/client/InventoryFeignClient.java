@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * 库存 Feign 客户端.
  */
-@FeignClient(name = "mall-inventory-api", path = "/v1/inventory",
+@FeignClient(name = "mall-inventory-api", path = "/v1/internal/inventory",
         fallbackFactory = InventoryFeignFallbackFactory.class)
 public interface InventoryFeignClient {
 
