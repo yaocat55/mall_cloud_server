@@ -68,4 +68,11 @@ public class ProductInternalController {
     public int deleteByIds(@RequestBody @NotNull List<Long> ids) {
         return productService.deleteByIds(ids);
     }
+
+    @Operation(summary = "获取热销商品",
+               description = "内部服务：由 admin-bff 通过 Feign 调用，获取销量最高的商品列表")
+    @GetMapping("/getTopSales")
+    public List<ProductDTO> getTopSales(@RequestParam(value = "limit", defaultValue = "5") int limit) {
+        return productService.getTopProducts(limit);
+    }
 }

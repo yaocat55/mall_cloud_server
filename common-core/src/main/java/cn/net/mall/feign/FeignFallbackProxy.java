@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -30,17 +31,19 @@ import java.util.Map;
 @Slf4j
 public class FeignFallbackProxy implements InvocationHandler {
 
-    private static final Map<Class<?>, Object> PRIMITIVE_DEFAULTS = Map.of(
-            boolean.class, false,
-            byte.class, (byte) 0,
-            short.class, (short) 0,
-            int.class, 0,
-            long.class, 0L,
-            float.class, 0f,
-            double.class, 0d,
-            char.class, '\0',
-            void.class, null
-    );
+    private static final Map<Class<?>, Object> PRIMITIVE_DEFAULTS = new HashMap<>();
+
+    static {
+        PRIMITIVE_DEFAULTS.put(boolean.class, false);
+        PRIMITIVE_DEFAULTS.put(byte.class, (byte) 0);
+        PRIMITIVE_DEFAULTS.put(short.class, (short) 0);
+        PRIMITIVE_DEFAULTS.put(int.class, 0);
+        PRIMITIVE_DEFAULTS.put(long.class, 0L);
+        PRIMITIVE_DEFAULTS.put(float.class, 0f);
+        PRIMITIVE_DEFAULTS.put(double.class, 0d);
+        PRIMITIVE_DEFAULTS.put(char.class, '\0');
+        PRIMITIVE_DEFAULTS.put(void.class, null);
+    }
 
     private final Class<?> interfaceType;
 

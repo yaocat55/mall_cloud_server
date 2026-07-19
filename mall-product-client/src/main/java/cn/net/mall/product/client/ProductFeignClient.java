@@ -195,7 +195,7 @@ public interface ProductFeignClient {
      * @return 热销商品DTO列表
      */
     @Operation(summary = "获取热销商品", description = "由Feign远程调用，获取销量最高的商品列表")
-    @GetMapping("/v1/product/getTopSales")
+    @GetMapping("/v1/internal/product/getTopSales")
     List<ProductDTO> getTopSales(@RequestParam("limit") int limit);
 
     // ========== 管理端 CRUD ==========

@@ -47,7 +47,7 @@ public class AdminDashboardController {
             prodCond.setPageNo(1);
             prodCond.setPageSize(1);
             var productPage = productFeignClient.searchByPage(prodCond);
-            if (productPage != null) dto.setProductCount(productPage.getTotalCount());
+            if (productPage != null && productPage.getTotalCount() != null) dto.setProductCount(productPage.getTotalCount());
         } catch (Exception e) {
             log.warn("获取商品总数失败", e);
         }

@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,10 +58,10 @@ public class AdminProductController {
             log.warn("获取库存信息失败, productId={}", id, e);
         }
 
-        return ApiResultUtil.success(Map.of(
-                "product", product,
-                "inventory", inventory
-        ));
+        Map<String, Object> result = new HashMap<>();
+        result.put("product", product);
+        result.put("inventory", inventory);
+        return ApiResultUtil.success(result);
     }
 
     @Operation(summary = "分页查询商品列表",

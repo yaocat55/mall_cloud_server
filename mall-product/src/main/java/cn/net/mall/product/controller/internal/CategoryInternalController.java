@@ -1,7 +1,10 @@
 package cn.net.mall.product.controller.internal;
 
+import cn.net.mall.product.entity.CategoryConditionEntity;
 import cn.net.mall.product.entity.CategoryEntity;
+import cn.net.mall.product.dto.CategoryTreeDTO;
 import cn.net.mall.product.service.CategoryService;
+import cn.net.mall.entity.ResponsePageEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
@@ -47,5 +50,19 @@ public class CategoryInternalController {
     @PostMapping("/deleteByIds")
     public int deleteByIds(@RequestBody @NotNull List<Long> ids) {
         return categoryService.deleteByIds(ids);
+    }
+
+    @Operation(summary = "分页查询分类",
+               description = "内部服务：由 admin-bff 通过 Feign 调用，分页查询商品分类列表")
+    @PostMapping("/searchByPage")
+    public ResponsePageEntity<CategoryEntity> searchByPage(@RequestBody CategoryConditionEntity condition) {
+        return categoryService.searchByPage(condition);
+    }
+
+    @Operation(summary = "查询分类树",
+               description = "内部服务：由 admin-bff 通过 Feign 调用，按层级查询分类树结构")
+    @PostMapping("/searchByTree")
+    public List<CategoryTreeDTO> searchByTree(@RequestBody CategoryConditionEntity condition) {
+        return categoryService.searchByTree(condition);
     }
 }

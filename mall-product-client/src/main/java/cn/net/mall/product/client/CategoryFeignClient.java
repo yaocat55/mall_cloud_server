@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 import java.util.Map;
 import cn.net.mall.product.dto.CategoryConditionDTO;
-import cn.net.mall.product.dto.CategoryDTO;
 
 import static cn.net.mall.product.constant.AppConstant.PRODUCT_SERVICE_NAME;
 
@@ -36,7 +35,7 @@ public interface CategoryFeignClient {
     List<CategoryDTO> getCategoryByParentId(@RequestParam("parentId") Long parentId);
 
     @Operation(summary = "分页查询分类（管理端）")
-    @PostMapping("/v1/category/searchByPage")
+    @PostMapping("/v1/internal/category/searchByPage")
     ResponsePageEntity<?> searchByPage(@RequestBody CategoryConditionDTO condition);
 
     @Operation(summary = "新增分类（管理端）")
@@ -52,6 +51,6 @@ public interface CategoryFeignClient {
     int deleteByIds(@RequestBody @NotNull List<Long> ids);
 
     @Operation(summary = "查询分类树（管理端）", description = "按层级查询分类树结构")
-    @PostMapping("/v1/category/searchByTree")
+    @PostMapping("/v1/internal/category/searchByTree")
     List<?> searchByTree(@RequestBody Map<String, Object> condition);
 }
