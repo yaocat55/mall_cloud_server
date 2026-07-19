@@ -1,0 +1,801 @@
+### ============================================================
+### Mall Cloud — 管理后台全量接口文档
+###
+### 给前端开发用，按功能模块分类
+### 用法：IDEA 打开 → 先跑 Step 0 获取 Token → 再跑后面的
+### ============================================================
+
+@ADMIN = http://localhost:8030
+@BFF = http://localhost:8090
+@BASIC = http://localhost:8022
+@PRODUCT = http://localhost:8023
+@MARKETING = http://localhost:8024
+@ORDER = http://localhost:8026
+@INVENTORY = http://localhost:8036
+
+
+### ============================================================
+### Step 0：获取 Token（所有接口都需要这个 header）
+### ============================================================
+
+# @name login
+POST {{ADMIN}}/v1/auth/user/testLogin
+Content-Type: application/json
+
+{"username":"admin","password":"admin123"}
+
+### 登录后把下面的 Header 加到每个请求里：
+### Authorization: Bearer {{login.response.body.data.token}}
+
+
+### ============================================================
+### 1️⃣ 认证
+### ============================================================
+
+### 1.1 验证码（不需要登录）
+GET {{BFF}}/admin/v1/auth/getCode
+
+### 1.2 当前用户信息
+GET {{BFF}}/admin/v1/auth/userInfo
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 1.3 用户详情
+GET {{BFF}}/admin/v1/auth/userDetail
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 1.4 菜单树（侧边栏导航）
+GET {{BFF}}/admin/v1/auth/menus
+Authorization: Bearer {{login.response.body.data.token}}
+
+
+### ============================================================
+### 2️⃣ 用户管理
+### ============================================================
+
+### 2.1 用户分页列表
+POST {{BFF}}/admin/v1/user/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"entity":{},"page":{"pageNum":1,"pageSize":10}}
+
+### 2.2 用户编辑页数据（聚合角色/部门）
+GET {{BFF}}/admin/v1/user/1/edit-data
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 2.3 用户详情（admin 直通）
+GET {{ADMIN}}/v1/auth/user/findById?id=1
+Authorization: Bearer {{login.response.body.data.token}}
+
+
+### ============================================================
+### 3️⃣ 系统管理 — 角色
+### ============================================================
+
+### 3.1 角色分页
+POST {{BFF}}/admin/v1/system/role/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+### 3.2 角色列表（下拉选择器用）
+GET {{BFF}}/admin/v1/system/role/all
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 3.3 新增角色（admin 直通）
+POST {{ADMIN}}/v1/auth/role/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"name":"测试角色"}
+
+### 3.4 修改角色（admin 直通）
+POST {{ADMIN}}/v1/auth/role/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"id":1,"name":"新角色名"}
+
+### 3.5 删除角色（admin 直通）
+POST {{ADMIN}}/v1/auth/role/deleteByIds
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"ids":[999]}
+
+
+### ============================================================
+### 4️⃣ 系统管理 — 部门
+### ============================================================
+
+### 4.1 部门分页
+POST {{BFF}}/admin/v1/system/dept/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+### 4.2 部门树
+GET {{BFF}}/admin/v1/system/dept/tree
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 4.3 新增部门（admin 直通）
+POST {{ADMIN}}/v1/auth/dept/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"name":"新部门","pid":0,"validStatus":1}
+
+### 4.4 修改部门（admin 直通）
+POST {{ADMIN}}/v1/auth/dept/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"id":1,"name":"新部门名"}
+
+### 4.5 删除部门（admin 直通）
+POST {{ADMIN}}/v1/auth/dept/deleteByIds
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"ids":[999]}
+
+
+### ============================================================
+### 5️⃣ 系统管理 — 岗位
+### ============================================================
+
+### 5.1 岗位分页
+POST {{BFF}}/admin/v1/system/job/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+### 5.2 岗位列表（下拉选择器用）
+GET {{BFF}}/admin/v1/system/job/all
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 5.3 新增岗位（admin 直通）
+POST {{ADMIN}}/v1/auth/job/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"name":"新岗位","sort":1,"validStatus":1}
+
+### 5.4 修改岗位（admin 直通）
+POST {{ADMIN}}/v1/auth/job/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"id":1,"name":"新岗位名"}
+
+### 5.5 删除岗位（admin 直通）
+POST {{ADMIN}}/v1/auth/job/deleteByIds
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"ids":[999]}
+
+
+### ============================================================
+### 6️⃣ 系统管理 — 菜单
+### ============================================================
+
+### 6.1 菜单树
+GET {{BFF}}/admin/v1/system/menu/tree
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 6.2 菜单列表
+POST {{BFF}}/admin/v1/system/menu/list
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+### 6.3 新增菜单（admin 直通）
+POST {{ADMIN}}/v1/auth/menu/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"name":"新菜单","pid":0,"type":1,"path":"/test","sort":1}
+
+### 6.4 修改菜单（admin 直通）
+POST {{ADMIN}}/v1/auth/menu/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"id":1,"name":"新菜单名"}
+
+### 6.5 删除菜单（admin 直通）
+POST {{ADMIN}}/v1/auth/menu/deleteByIds
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"ids":[999]}
+
+
+### ============================================================
+### 7️⃣ 商品管理
+### ============================================================
+
+### 7.1 商品分页
+POST {{BFF}}/admin/v1/product/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"entity":{},"page":{"pageNum":1,"pageSize":10}}
+
+### 7.2 商品详情
+GET {{BFF}}/admin/v1/product/detail?id=1833339862330556416
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 7.3 商品编辑数据（聚合商品+库存）
+GET {{BFF}}/admin/v1/product/1/edit-data
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 7.4 新增商品（product 直通）
+POST {{PRODUCT}}/admin/v1/product/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"name":"测试商品","price":99.99,"status":1,"categoryId":1806965539515801603,"brandId":1806609234968473601,"unitId":1807039393319260160}
+
+### 7.5 修改商品（product 直通）
+POST {{PRODUCT}}/admin/v1/product/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"id":1833339862330556416,"price":88.88}
+
+### 7.6 删除商品（product 直通）
+POST {{PRODUCT}}/admin/v1/product/deleteByIds
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"ids":[999]}
+
+### 7.7 商品分页（product 直通）
+POST {{PRODUCT}}/admin/v1/product/searchByPage
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"entity":{},"page":{"pageNum":1,"pageSize":10}}
+
+
+### ============================================================
+### 8️⃣ 分类 / 品牌 / 单位
+### ============================================================
+
+### 8.1 分类分页
+POST {{BFF}}/admin/v1/product-mgr/category/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+### 8.2 分类树（商品分类选择器用）
+POST {{BFF}}/admin/v1/product-mgr/category/tree
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+### 8.3 新增分类（product 直通）
+POST {{PRODUCT}}/v1/internal/category/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"name":"新分类","parentId":0,"level":1}
+
+### 8.4 修改分类（product 直通）
+POST {{PRODUCT}}/v1/internal/category/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"id":1,"name":"新分类名"}
+
+### 8.5 删除分类（product 直通）
+POST {{PRODUCT}}/v1/internal/category/deleteByIds
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"ids":[999]}
+
+### 8.6 品牌分页
+POST {{BFF}}/admin/v1/product-mgr/brand/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+### 8.7 新增品牌（product 直通）
+POST {{PRODUCT}}/v1/internal/brand/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"name":"新品牌"}
+
+### 8.8 修改品牌（product 直通）
+POST {{PRODUCT}}/v1/internal/brand/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"id":1,"name":"新品牌名"}
+
+### 8.9 删除品牌（product 直通）
+POST {{PRODUCT}}/v1/internal/brand/deleteByIds
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"ids":[999]}
+
+### 8.10 单位分页
+POST {{BFF}}/admin/v1/product-mgr/unit/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+### 8.11 新增单位（product 直通）
+POST {{PRODUCT}}/v1/internal/unit/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"name":"新单位"}
+
+### 8.12 修改单位（product 直通）
+POST {{PRODUCT}}/v1/internal/unit/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"id":1,"name":"新单位名"}
+
+### 8.13 删除单位（product 直通）
+POST {{PRODUCT}}/v1/internal/unit/deleteByIds
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"ids":[999]}
+
+
+### ============================================================
+### 9️⃣ 商品属性
+### ============================================================
+
+### 9.1 属性分页
+POST {{BFF}}/admin/v1/product-extra/attribute/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+### 9.2 属性值分页
+POST {{BFF}}/admin/v1/product-extra/attributeValue/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+### 9.3 商品分组分页
+POST {{BFF}}/admin/v1/product-extra/productGroup/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+
+### ============================================================
+### 🔟 首页管理
+### ============================================================
+
+### 10.1 公告分页
+POST {{BFF}}/admin/v1/product-extra/indexNotice/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+### 10.2 公告详情
+GET {{BFF}}/admin/v1/product-extra/indexNotice/detail?id=1
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 10.3 首页商品分页
+POST {{BFF}}/admin/v1/product-extra/indexProduct/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+### 10.4 轮播图分页
+POST {{BFF}}/admin/v1/product-extra/indexCarouselImage/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+### 10.5 商品图片分页
+POST {{BFF}}/admin/v1/product-extra/productPhoto/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+
+### ============================================================
+### 1️⃣1️⃣ 基础数据 — 图片库
+### ============================================================
+
+### 11.1 图片分页
+POST {{BFF}}/admin/v1/basic/photo/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+### 11.2 新增图片（basic 直通）
+POST {{BASIC}}/v1/commonPhoto/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"url":"http://img.com/photo.jpg","name":"测试图片","photoGroupId":1}
+
+### 11.3 修改图片（basic 直通）
+POST {{BASIC}}/v1/commonPhoto/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"id":1,"name":"新图片名"}
+
+### 11.4 删除图片（basic 直通）
+POST {{BASIC}}/v1/commonPhoto/deleteByIds
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"ids":[999]}
+
+### 11.5 图片分组分页
+POST {{BFF}}/admin/v1/basic/photoGroup/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+### 11.6 新增图片分组（basic 直通）
+POST {{BASIC}}/v1/commonPhotoGroup/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"name":"新分组"}
+
+### 11.7 修改图片分组（basic 直通）
+POST {{BASIC}}/v1/commonPhotoGroup/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"id":1,"name":"新分组名"}
+
+### 11.8 删除图片分组（basic 直通）
+POST {{BASIC}}/v1/commonPhotoGroup/deleteByIds
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"ids":[999]}
+
+
+### ============================================================
+### 1️⃣2️⃣ 基础数据 — 敏感词
+### ============================================================
+
+### 12.1 敏感词分页
+POST {{BFF}}/admin/v1/basic/sensitiveWord/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+### 12.2 新增敏感词（basic 直通）
+POST {{BASIC}}/v1/commonSensitiveWord/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"word":"违禁词","type":1}
+
+### 12.3 修改敏感词（basic 直通）
+POST {{BASIC}}/v1/commonSensitiveWord/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"id":1,"word":"新违禁词","type":1}
+
+### 12.4 删除敏感词（basic 直通）
+POST {{BASIC}}/v1/commonSensitiveWord/deleteByIds
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"ids":[999]}
+
+
+### ============================================================
+### 1️⃣3️⃣ 基础数据 — 通知
+### ============================================================
+
+### 13.1 通知分页
+POST {{BFF}}/admin/v1/basic/notify/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+### 13.2 新增通知（message 直通）
+POST {{BASIC}}/v1/commonNotify/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"title":"新通知","content":"通知内容"}
+
+### 13.3 修改通知（message 直通）
+POST {{BASIC}}/v1/commonNotify/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"id":1,"title":"新标题"}
+
+### 13.4 删除通知（message 直通）
+POST {{BASIC}}/v1/commonNotify/deleteByIds
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"ids":[999]}
+
+### 13.5 全员推送通知（message 直通）
+POST {{BASIC}}/v1/commonNotify/push/all
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"title":"通知","content":"内容"}
+
+
+### ============================================================
+### 1️⃣4️⃣ 订单管理
+### ============================================================
+
+### 14.1 订单分页
+POST {{BFF}}/admin/v1/order/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"entity":{},"page":{"pageNum":1,"pageSize":10}}
+
+### 14.2 修改订单（order 直通）
+POST {{ORDER}}/v1/order/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"id":1,"remark":"新备注"}
+
+### 14.3 删除订单（order 直通）
+POST {{ORDER}}/v1/order/deleteByIds
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"ids":[999]}
+
+### 14.4 退货分页
+POST {{BFF}}/admin/v1/order/return/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+### 14.5 退货详情
+GET {{BFF}}/admin/v1/order/return/detail?id=1
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 14.6 退货审批通过（order 直通）
+POST {{ORDER}}/v1/return/approve
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"id":1}
+
+### 14.7 退货审批拒绝（order 直通）
+POST {{ORDER}}/v1/return/reject
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"id":1,"reason":"不符合条件"}
+
+
+### ============================================================
+### 1️⃣5️⃣ 营销管理 — 优惠券
+### ============================================================
+
+### 15.1 优惠券分页
+POST {{BFF}}/admin/v1/marketing/coupon/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+### 15.2 新增优惠券（marketing 直通）
+POST {{MARKETING}}/v1/coupon/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"name":"测试券","type":1,"offMoney":10,"minMoney":100,"quantity":100}
+
+### 15.3 修改优惠券（marketing 直通）
+POST {{MARKETING}}/v1/coupon/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"id":1,"name":"新券名"}
+
+### 15.4 删除优惠券（marketing 直通）
+POST {{MARKETING}}/v1/coupon/deleteByIds
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"ids":[999]}
+
+
+### ============================================================
+### 1️⃣6️⃣ 营销管理 — 秒杀
+### ============================================================
+
+### 16.1 秒杀分页
+POST {{BFF}}/admin/v1/marketing/seckill/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+### 16.2 秒杀详情
+GET {{BFF}}/admin/v1/marketing/seckill/detail?id=1
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 16.3 新增秒杀（marketing 直通）
+POST {{MARKETING}}/v1/seckill/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"name":"测试秒杀","productId":1,"price":50,"quantity":100}
+
+### 16.4 修改秒杀（marketing 直通）
+POST {{MARKETING}}/v1/seckill/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"id":1,"price":40}
+
+### 16.5 删除秒杀（marketing 直通）
+POST {{MARKETING}}/v1/seckill/deleteByIds
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"ids":[999]}
+
+### 16.6 发券记录分页
+POST {{BFF}}/admin/v1/marketing/couponUserProvide/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+### 16.7 领券记录分页
+POST {{BFF}}/admin/v1/marketing/couponUserReceive/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+
+### ============================================================
+### 1️⃣7️⃣ 评价管理
+### ============================================================
+
+### 17.1 评价分页
+POST {{BFF}}/admin/v1/shopping/productComment/page
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{}
+
+### 17.2 评价详情
+GET {{BFF}}/admin/v1/shopping/productComment/detail?id=1
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 17.3 新增评价（product 直通）
+POST {{PRODUCT}}/v1/internal/productComment/insert
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"productId":1,"content":"好评","rating":5}
+
+### 17.4 修改评价（product 直通）
+POST {{PRODUCT}}/v1/internal/productComment/update
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"id":1,"content":"修改后的评价"}
+
+### 17.5 删除评价（product 直通）
+POST {{PRODUCT}}/v1/internal/productComment/deleteByIds
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"ids":[999]}
+
+
+### ============================================================
+### 1️⃣8️⃣ 库存管理
+### ============================================================
+
+### 18.1 库存查询
+GET {{BFF}}/admin/v1/inventory/1833339862330556416
+Authorization: Bearer {{login.response.body.data.token}}
+
+### 18.2 批量库存查询
+POST {{BFF}}/admin/v1/inventory/batch
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+[1833339862330556416]
+
+### 18.3 入库（inventory 直通）
+POST {{INVENTORY}}/v1/inventory/inbound
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"productId":1833339862330556416,"quantity":500,"batchNo":"PO20260719-001","warehouse":"A区-01"}
+
+### 18.4 冻结库存（inventory 直通）
+POST {{INVENTORY}}/v1/inventory/freeze
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"productId":1833339862330556416,"quantity":10,"orderId":999}
+
+### 18.5 确认扣减（inventory 直通）
+POST {{INVENTORY}}/v1/inventory/confirm
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"productId":1833339862330556416,"quantity":10,"orderId":999}
+
+### 18.6 释放冻结（inventory 直通）
+POST {{INVENTORY}}/v1/inventory/unfreeze
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"productId":1833339862330556416,"quantity":10,"orderId":999}
+
+### 18.7 回库（inventory 直通）
+POST {{INVENTORY}}/v1/inventory/return
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.data.token}}
+
+{"productId":1833339862330556416,"quantity":10,"orderId":999,"remark":"退货入库"}
+
+
+### ============================================================
+### 1️⃣9️⃣ 仪表盘
+### ============================================================
+
+### 19.1 统计数据
+GET {{BFF}}/admin/v1/dashboard/stats
+Authorization: Bearer {{login.response.body.data.token}}
+
+
+### ============================================================
+### 2️⃣0️⃣ 公共
+### ============================================================
+
+### 20.1 图片上传
+POST {{BFF}}/admin/v1/common/image/upload
+Content-Type: multipart/form-data
+Authorization: Bearer {{login.response.body.data.token}}
+
+file=@/dummy.jpg
