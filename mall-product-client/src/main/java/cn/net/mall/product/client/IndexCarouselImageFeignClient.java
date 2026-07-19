@@ -27,14 +27,14 @@ public interface IndexCarouselImageFeignClient {
     ResponsePageEntity<?> searchByPage(@RequestBody IndexCarouselImageConditionDTO condition);
 
     @Operation(summary = "新增首页轮播图", description = "新增首页轮播图记录，请求体包含图片地址、标题、排序、状态等字段")
-    @PostMapping("/v1/indexCarouselImage/insert")
+    @PostMapping("/v1/internal/indexCarouselImage/insert")
     int insert(@RequestBody IndexCarouselImageDTO entity);
 
     @Operation(summary = "修改首页轮播图", description = "修改首页轮播图记录，根据 ID 更新图片地址、标题、排序、状态等字段")
-    @PostMapping("/v1/indexCarouselImage/update")
+    @PostMapping("/v1/internal/indexCarouselImage/update")
     int update(@RequestBody IndexCarouselImageDTO entity);
 
     @Operation(summary = "删除首页轮播图", description = "根据 ID 列表批量删除首页轮播图记录")
-    @PostMapping("/v1/indexCarouselImage/deleteByIds")
+    @PostMapping("/v1/internal/indexCarouselImage/deleteByIds")
     int deleteByIds(@RequestBody @NotNull List<Long> ids);
 }

@@ -27,14 +27,14 @@ public interface ProductGroupFeignClient {
     ResponsePageEntity<?> searchByPage(@RequestBody ProductGroupConditionDTO condition);
 
     @Operation(summary = "新增商品组", description = "新增商品组记录，请求体包含商品组名称、排序、状态等字段")
-    @PostMapping("/v1/productGroup/insert")
+    @PostMapping("/v1/internal/productGroup/insert")
     int insert(@RequestBody ProductGroupDTO entity);
 
     @Operation(summary = "修改商品组", description = "修改商品组记录，根据 ID 更新商品组名称、排序、状态等字段")
-    @PostMapping("/v1/productGroup/update")
+    @PostMapping("/v1/internal/productGroup/update")
     int update(@RequestBody ProductGroupDTO entity);
 
     @Operation(summary = "删除商品组", description = "根据 ID 列表批量删除商品组记录")
-    @PostMapping("/v1/productGroup/deleteByIds")
+    @PostMapping("/v1/internal/productGroup/deleteByIds")
     int deleteByIds(@RequestBody @NotNull List<Long> ids);
 }

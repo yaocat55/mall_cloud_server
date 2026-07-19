@@ -31,17 +31,17 @@ public interface CommentFeignClient {
 
     @Operation(summary = "新增商品评论（管理端）",
                description = "管理端新增商品评论，传入评论内容、商品ID、评分等信息")
-    @PostMapping("/v1/productComment/insert")
+    @PostMapping("/v1/internal/productComment/insert")
     int insert(@RequestBody ProductCommentDTO entity);
 
     @Operation(summary = "修改商品评论（管理端）",
                description = "管理端修改商品评论，根据ID更新评论内容、评分等信息")
-    @PostMapping("/v1/productComment/update")
+    @PostMapping("/v1/internal/productComment/update")
     int update(@RequestBody ProductCommentDTO entity);
 
     @Operation(summary = "删除商品评论（管理端）",
                description = "管理端批量删除商品评论，根据ID列表物理删除")
-    @PostMapping("/v1/productComment/deleteByIds")
+    @PostMapping("/v1/internal/productComment/deleteByIds")
     int deleteByIds(@RequestBody @NotNull List<Long> ids);
 
     @Operation(summary = "查询商品评论详情（管理端）",

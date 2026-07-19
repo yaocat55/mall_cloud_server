@@ -15,7 +15,6 @@ import cn.net.mall.order.dto.TradeItemDTO;
 import cn.net.mall.order.dto.TradeDetailDTO;
 import cn.net.mall.order.dto.OrderReturnApplyDTO;
 import cn.net.mall.order.dto.OrderReturnConditionDTO;
-import cn.net.mall.order.dto.OrderReturnConditionDTO;
 import cn.net.mall.order.dto.RowsDTO;
 import cn.net.mall.order.dto.OrderEvaluateDTO;
 import cn.net.mall.order.dto.OrderStatisticsDTO;
@@ -35,57 +34,84 @@ import static cn.net.mall.order.constant.AppConstant.ORDER_SERVICE_NAME;
 
 /**
  * 订单服务 Feign 客户端
- * 
+ *
 * **调用方：**
- * 
+ *
 *   - mall-pay（支付服务）— 支付回调时查询订单信息
  *   - mall-mobile-api（BFF 服务）— 移动端接口聚合
- * 
+ *   - mall-admin-bff（管理后台 BFF）— 管理端接口聚合
+ *
 */
 @FeignClient(value = ORDER_SERVICE_NAME, contextId = "orderFeignClient",
         fallbackFactory = OrderFeignFallbackFactory.class)
 public interface OrderFeignClient {
 
+    // ============================================================
+    // 内部服务 — /v1/internal/trade （移动端/支付）
+    // ============================================================
+
     /**
      * 创建订单
-     * 
-调用方：mall-mobile-api（BFF 服务）
-*/
+     *
+     * 调用方：mall-mobile-api（BFF 服务）
+     */
     @Operation(summary = "创建订单", description = "由 mall-mobile-api(BFF) 调用，创建新订单")
     @PostMapping("/v1/internal/trade/create")
     Long create(@RequestBody OrderDTO orderDTO);
 
     /**
+     * 根据编码查询订单详情
+     *
+     * 调用方：mall-pay（支付服务）— 支付回调时根据订单编码获取详情
+     */
+    @Operation(summary = "根据编码查询订单详情", description = "由 mall-pay 支付回调时调用，根据订单编码获取详情")
+    @GetMapping("/v1/internal/trade/getDetailByCode/{code}")
+    TradeDetailDTO getDetailByCode(@PathVariable("code") String code);
+
+    /**
+     * 根据编码查询订单
+     *
+     * 调用方：mall-pay（支付服务）— 支付回调时根据订单编码获取基本信息
+     */
+    @Operation(summary = "根据编码查询订单", description = "由 mall-pay 支付回调时调用，根据订单编码获取基本信息")
+    @GetMapping("/v1/internal/trade/getTrade/{code}")
+    OrderDTO getTrade(@PathVariable("code") String code);
+
+    // ============================================================
+    // 移动端 — /v1/mobile/trade
+    // ============================================================
+
+    /**
      * 根据 ID 查询订单
-     * 
-调用方：mall-pay（支付服务）
-*/
-    @Operation(summary = "根据ID查询订单", description = "由 mall-pay 调用，根据订单ID获取订单信息")
+     *
+     * 调用方：mall-mobile-api（BFF 服务）
+     */
+    @Operation(summary = "根据ID查询订单", description = "由 mall-mobile-api 调用，根据订单ID获取订单信息")
     @GetMapping("/v1/mobile/trade/getDetail/{id}")
     OrderDTO findById(@PathVariable("id") Long id);
 
     /**
-     * 分页查询订单
-     * 
-调用方：mall-mobile-api（BFF 服务）
-*/
-    @Operation(summary = "分页查询订单", description = "由 mall-mobile-api(BFF) 调用，分页查询订单列表")
+     * 分页查询订单（移动端）
+     *
+     * 调用方：mall-mobile-api（BFF 服务）
+     */
+    @Operation(summary = "分页查询订单（移动端）", description = "由 mall-mobile-api(BFF) 调用，分页查询订单列表")
     @PostMapping("/v1/mobile/trade/search")
     ResponsePageEntity<OrderDTO> search(@RequestBody OrderConditionDTO orderConditionDTO);
 
     /**
-     * 修改订单
-     * 
-调用方：mall-mobile-api（BFF 服务）
-*/
-    @Operation(summary = "修改订单", description = "由 mall-mobile-api(BFF) 调用，修改订单信息")
+     * 修改订单（移动端）
+     *
+     * 调用方：mall-mobile-api（BFF 服务）
+     */
+    @Operation(summary = "修改订单（移动端）", description = "由 mall-mobile-api(BFF) 调用，修改订单信息")
     @PostMapping("/v1/mobile/trade/update")
     RowsDTO update(@RequestBody OrderDTO orderDTO);
 
     /**
-     * 批量删除订单
+     * 批量删除订单（移动端）
      */
-    @Operation(summary = "批量删除订单")
+    @Operation(summary = "批量删除订单（移动端）")
     @PostMapping("/v1/mobile/trade/delete")
     RowsDTO delete(@RequestBody List<Long> ids);
 
@@ -105,24 +131,24 @@ public interface OrderFeignClient {
 
     /**
      * 获取用户订单数量统计
-     * 
-调用方：mall-mobile-api（BFF 服务）
-*/
+     *
+     * 调用方：mall-mobile-api（BFF 服务）
+     */
     @Operation(summary = "获取用户订单数量统计", description = "由 mall-mobile-api(BFF) 调用")
     @GetMapping("/v1/mobile/trade/getUserOrderCount")
     OrderTradeCountDTO getUserOrderCount();
 
     /**
-     * 取消订单
+     * 取消订单（移动端）
      */
-    @Operation(summary = "取消订单")
+    @Operation(summary = "取消订单（移动端）")
     @PostMapping("/v1/mobile/trade/cancel")
     RowsDTO cancel(@RequestBody OrderOperateDTO operateDTO);
 
     /**
-     * 确认收货
+     * 确认收货（移动端）
      */
-    @Operation(summary = "确认收货")
+    @Operation(summary = "确认收货（移动端）")
     @PostMapping("/v1/mobile/trade/confirmReceive")
     RowsDTO confirmReceive(@RequestBody OrderOperateDTO operateDTO);
 
@@ -148,76 +174,69 @@ public interface OrderFeignClient {
     OrderTradeCountDTO getUserOrderTradeCount();
 
     /**
-     * 根据编码查询订单详情
-     * 
-调用方：mall-pay（支付服务）— 支付回调时根据订单编码获取详情
-*/
-    @Operation(summary = "根据编码查询订单详情", description = "由 mall-pay 支付回调时调用，根据订单编码获取详情")
-    @GetMapping("/v1/internal/trade/getDetailByCode/{code}")
-    TradeDetailDTO getDetailByCode(@PathVariable("code") String code);
-
-    /**
-     * 根据编码查询订单
-     * 
-调用方：mall-pay（支付服务）— 支付回调时根据订单编码获取基本信息
-*/
-    @Operation(summary = "根据编码查询订单", description = "由 mall-pay 支付回调时调用，根据订单编码获取基本信息")
-    @GetMapping("/v1/internal/trade/getTrade/{code}")
-    OrderDTO getTrade(@PathVariable("code") String code);
-
-    /**
-     * 申请退货
+     * 申请退货（移动端）
      */
-    @Operation(summary = "申请退货")
+    @Operation(summary = "申请退货（移动端）")
     @PostMapping("/v1/mobile/trade/return/apply")
     IdDTO applyReturn(@RequestBody OrderReturnApplyDTO dto);
 
     /**
-     * 查询退货列表
+     * 查询退货列表（移动端）
      */
-    @Operation(summary = "查询退货列表")
+    @Operation(summary = "查询退货列表（移动端）")
     @PostMapping("/v1/mobile/trade/return/search")
     ResponsePageEntity<OrderReturnApplyDTO> searchReturn(@RequestBody OrderReturnConditionDTO condition);
 
-    // ========== 交易配送地址 (tradeDeliveryAddress) 管理端 ==========
+    // ============================================================
+    // 管理端 — /v1/internal/order / /v1/internal/return
+    // ============================================================
 
-    @Operation(summary = "分页查询交易配送地址（管理端）")
-    @PostMapping("/v1/tradeDeliveryAddress/searchByPage")
-    ResponsePageEntity<?> searchDeliveryAddressPage(@RequestBody Map<String, Object> condition);
-
-    @Operation(summary = "新增交易配送地址（管理端）")
-    @PostMapping("/v1/tradeDeliveryAddress/insert")
-    RowsDTO insertDeliveryAddress(@RequestBody Object entity);
-
-    @Operation(summary = "修改交易配送地址（管理端）")
-    @PostMapping("/v1/tradeDeliveryAddress/update")
-    RowsDTO updateDeliveryAddress(@RequestBody Object entity);
-
-    @Operation(summary = "删除交易配送地址（管理端）")
-    @PostMapping("/v1/tradeDeliveryAddress/deleteByIds")
-    RowsDTO deleteDeliveryAddressByIds(@RequestBody List<Long> ids);
-
-    @Operation(summary = "查询交易配送地址详情（管理端）")
-    @GetMapping("/v1/tradeDeliveryAddress/findById")
-    Object findDeliveryAddressById(@RequestParam("id") Long id);
+    /**
+     * 分页查询订单（管理端）
+     */
+    @Operation(summary = "分页查询订单（管理端）")
+    @PostMapping("/v1/internal/order/searchByPage")
+    ResponsePageEntity<OrderDTO> searchByPage(@RequestBody OrderConditionDTO condition);
 
     // ========== 退货/退款 (return) 管理端 ==========
 
     @Operation(summary = "分页查询退货列表（管理端）")
-    @PostMapping("/v1/trade/return/searchByPage")
+    @PostMapping("/v1/internal/return/searchByPage")
     ResponsePageEntity<?> searchReturnByPage(@RequestBody OrderReturnConditionDTO condition);
 
     @Operation(summary = "审批退货（管理端）")
-    @PostMapping("/v1/trade/return/approve")
+    @PostMapping("/v1/internal/return/approve")
     RowsDTO approveReturn(@RequestBody OrderReturnApplyDTO entity);
 
     @Operation(summary = "拒绝退货（管理端）")
-    @PostMapping("/v1/trade/return/reject")
+    @PostMapping("/v1/internal/return/reject")
     RowsDTO rejectReturn(@RequestBody OrderReturnApplyDTO entity);
 
     @Operation(summary = "查询退货详情（管理端）")
-    @GetMapping("/v1/trade/return/findById")
+    @GetMapping("/v1/internal/return/findDetailById")
     Object findReturnById(@RequestParam("id") Long id);
+
+    // ========== 交易配送地址 (tradeDeliveryAddress) 管理端 ==========
+
+    @Operation(summary = "分页查询交易配送地址（管理端）")
+    @PostMapping("/v1/internal/order/deliveryAddress/searchByPage")
+    ResponsePageEntity<?> searchDeliveryAddressPage(@RequestBody Map<String, Object> condition);
+
+    @Operation(summary = "新增交易配送地址（管理端）")
+    @PostMapping("/v1/internal/order/deliveryAddress/insert")
+    RowsDTO insertDeliveryAddress(@RequestBody Object entity);
+
+    @Operation(summary = "修改交易配送地址（管理端）")
+    @PostMapping("/v1/internal/order/deliveryAddress/update")
+    RowsDTO updateDeliveryAddress(@RequestBody Object entity);
+
+    @Operation(summary = "删除交易配送地址（管理端）")
+    @PostMapping("/v1/internal/order/deliveryAddress/deleteByIds")
+    RowsDTO deleteDeliveryAddressByIds(@RequestBody List<Long> ids);
+
+    @Operation(summary = "查询交易配送地址详情（管理端）")
+    @GetMapping("/v1/internal/order/deliveryAddress/findById")
+    Object findDeliveryAddressById(@RequestParam("id") Long id);
 
     // ========== 订单统计 (statistics) 管理端 ==========
 

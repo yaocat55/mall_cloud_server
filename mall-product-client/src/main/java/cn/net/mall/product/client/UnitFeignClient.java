@@ -17,12 +17,12 @@ public interface UnitFeignClient {
     @PostMapping("/v1/unit/searchByPage")
     ResponsePageEntity<?> searchByPage(@RequestBody UnitConditionDTO condition);
     @Operation(summary = "新增单位")
-    @PostMapping("/v1/unit/insert")
+    @PostMapping("/v1/internal/unit/insert")
     int insert(@RequestBody UnitDTO entity);
     @Operation(summary = "修改单位")
-    @PostMapping("/v1/unit/update")
+    @PostMapping("/v1/internal/unit/update")
     int update(@RequestBody UnitDTO entity);
     @Operation(summary = "删除单位")
-    @PostMapping("/v1/unit/deleteByIds")
+    @PostMapping("/v1/internal/unit/deleteByIds")
     int deleteByIds(@RequestBody @NotNull List<Long> ids);
 }

@@ -226,7 +226,7 @@ public interface ProductFeignClient {
      * @param entity 商品实体
      */
     @Operation(summary = "新增商品（管理端）", description = "新增商品")
-    @PostMapping("/v1/product/insert")
+    @PostMapping("/v1/internal/product/insert")
     void insert(@RequestBody Object entity);
 
     /**
@@ -235,7 +235,7 @@ public interface ProductFeignClient {
      * @param entity 商品实体
      */
     @Operation(summary = "修改商品（管理端）", description = "修改商品")
-    @PostMapping("/v1/product/update")
+    @PostMapping("/v1/internal/product/update")
     void update(@RequestBody Object entity);
 
     /**
@@ -245,6 +245,6 @@ public interface ProductFeignClient {
      * @return 影响行数
      */
     @Operation(summary = "批量删除商品（管理端）", description = "批量删除商品")
-    @PostMapping("/v1/product/deleteByIds")
+    @PostMapping("/v1/internal/product/deleteByIds")
     int deleteByIds(@RequestBody @NotNull List<Long> ids);
 }

@@ -51,12 +51,15 @@ public class GlobalApiResultHandler implements ResponseBodyAdvice<Object> {
     /**
      * 接口路径匹配规则.
      *
-     * <p>只匹配 BFF 路径前缀，内部微服务的 {@code /v1/**} 不包装——它们同时服务 Feign（裸 DTO）
-     * 和 HTTP（手动 ApiResult），由各 Controller 自行决定。</p>
+     * <p>BFF 路径（/admin/v1  /mobile/v1）和微服务公开路径（/v1）自动包装。
+     * 内部 Feign 路径（/v1/internal）跳过，Feign 需要裸 DTO。</p>
      */
     private boolean matchUrl(String uri) {
         if (uri == null || uri.isEmpty()) return false;
-        return uri.startsWith("/admin/v1/")
+        // 内部 Feign 接口不包装
+        if (uri.contains("/v1/internal/")) return false;
+        return uri.startsWith("/v1/")
+                || uri.startsWith("/admin/v1/")
                 || uri.startsWith("/mobile/v1/");
     }
 

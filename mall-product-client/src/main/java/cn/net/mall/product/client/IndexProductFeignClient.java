@@ -27,14 +27,14 @@ public interface IndexProductFeignClient {
     ResponsePageEntity<?> searchByPage(@RequestBody IndexProductConditionDTO condition);
 
     @Operation(summary = "新增首页商品", description = "新增首页商品记录，请求体包含商品ID、排序、状态等字段")
-    @PostMapping("/v1/indexProduct/insert")
+    @PostMapping("/v1/internal/indexProduct/insert")
     int insert(@RequestBody IndexProductDTO entity);
 
     @Operation(summary = "修改首页商品", description = "修改首页商品记录，根据 ID 更新商品ID、排序、状态等字段")
-    @PostMapping("/v1/indexProduct/update")
+    @PostMapping("/v1/internal/indexProduct/update")
     int update(@RequestBody IndexProductDTO entity);
 
     @Operation(summary = "删除首页商品", description = "根据 ID 列表批量删除首页商品记录")
-    @PostMapping("/v1/indexProduct/deleteByIds")
+    @PostMapping("/v1/internal/indexProduct/deleteByIds")
     int deleteByIds(@RequestBody @NotNull List<Long> ids);
 }

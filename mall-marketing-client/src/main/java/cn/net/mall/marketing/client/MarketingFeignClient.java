@@ -46,7 +46,7 @@ public interface MarketingFeignClient {
 调用方：mall-mobile-api（BFF 服务）
 */
     @Operation(summary = "获取用户已领取的优惠券列表", description = "由 mall-mobile-api(BFF) 调用，获取当前用户已领取的优惠券列表")
-    @GetMapping("/v1/coupon/getUserCouponList")
+    @GetMapping("/v1/internal/coupon/userList")
     List<CouponDTO> getUserCouponList();
 
     /**
@@ -55,7 +55,7 @@ public interface MarketingFeignClient {
 调用方：mall-mobile-api（BFF 服务）
 */
     @Operation(summary = "获取可领取的优惠券列表", description = "由 mall-mobile-api(BFF) 调用，获取当前可领取的优惠券列表")
-    @GetMapping("/v1/coupon/getObtainableCouponList")
+    @GetMapping("/v1/internal/coupon/obtainableList")
     List<CouponDTO> getObtainableCouponList();
 
     /**
@@ -82,82 +82,82 @@ public interface MarketingFeignClient {
 调用方：mall-mobile-api（BFF 服务）
 */
     @Operation(summary = "领取优惠券", description = "由 mall-mobile-api(BFF) 调用，领取指定优惠券")
-    @PostMapping("/v1/coupon/receiveCoupon")
+    @PostMapping("/v1/internal/coupon/receiveCoupon")
     void receiveCoupon(@RequestBody CouponReceiveDTO req);
 
     // ========== 优惠券 (coupon) 管理端 ==========
 
     @Operation(summary = "分页查询优惠券（管理端）", description = "根据条件分页查询优惠券列表，支持多条件筛选，请求参数包含 pageNo、pageSize 及可选筛选条件")
-    @PostMapping("/v1/coupon/searchByPage")
+    @PostMapping("/v1/internal/coupon/searchByPage")
     ResponsePageEntity<?> searchByPage(@RequestBody CouponConditionDTO condition);
 
     @Operation(summary = "新增优惠券（管理端）", description = "新增一条优惠券记录，请求体包含优惠券名称、类型、面值、使用条件等字段")
-    @PostMapping("/v1/coupon/insert")
+    @PostMapping("/v1/internal/coupon/insert")
     int insert(@RequestBody CouponAdminDTO entity);
 
     @Operation(summary = "修改优惠券（管理端）", description = "修改一条已有的优惠券记录，请求体包含要修改的优惠券字段")
-    @PostMapping("/v1/coupon/update")
+    @PostMapping("/v1/internal/coupon/update")
     int update(@RequestBody CouponAdminDTO entity);
 
     @Operation(summary = "删除优惠券（管理端）", description = "根据 ID 列表批量删除优惠券")
-    @PostMapping("/v1/coupon/deleteByIds")
+    @PostMapping("/v1/internal/coupon/deleteByIds")
     int deleteByIds(@RequestBody @NotNull List<Long> ids);
 
     // ========== 秒杀商品 (seckillProduct) 管理端 ==========
 
     @Operation(summary = "分页查询秒杀商品（管理端）", description = "根据条件分页查询秒杀商品列表，请求参数包含 pageNo、pageSize 及可选筛选条件")
-    @PostMapping("/v1/seckillProduct/searchByPage")
+    @PostMapping("/v1/internal/seckill/searchByPage")
     ResponsePageEntity<?> searchSeckillPage(@RequestBody SeckillProductConditionDTO condition);
 
     @Operation(summary = "新增秒杀商品（管理端）", description = "新增一条秒杀商品记录，请求体包含秒杀商品ID、秒杀价、库存、场次等字段")
-    @PostMapping("/v1/seckillProduct/insert")
+    @PostMapping("/v1/internal/seckill/insert")
     int insertSeckill(@RequestBody SeckillProductAdminDTO entity);
 
     @Operation(summary = "修改秒杀商品（管理端）", description = "修改一条已有的秒杀商品记录，请求体包含要修改的秒杀商品字段")
-    @PostMapping("/v1/seckillProduct/update")
+    @PostMapping("/v1/internal/seckill/update")
     int updateSeckill(@RequestBody SeckillProductAdminDTO entity);
 
     @Operation(summary = "删除秒杀商品（管理端）", description = "根据 ID 列表批量删除秒杀商品")
-    @PostMapping("/v1/seckillProduct/deleteByIds")
+    @PostMapping("/v1/internal/seckill/deleteByIds")
     int deleteSeckillByIds(@RequestBody @NotNull List<Long> ids);
 
     @Operation(summary = "查询秒杀商品详情（管理端）", description = "根据 ID 查询单个秒杀商品的详细信息")
-    @GetMapping("/v1/seckillProduct/findById")
+    @GetMapping("/v1/internal/seckill/findById")
     Object findSeckillById(@RequestParam("id") Long id);
 
     // ========== 发券记录 (couponUserProvide) 管理端 ==========
 
     @Operation(summary = "分页查询发券记录（管理端）", description = "根据条件分页查询发券记录列表，支持多条件筛选")
-    @PostMapping("/v1/couponUserProvide/searchByPage")
+    @PostMapping("/v1/internal/couponUserProvide/searchByPage")
     ResponsePageEntity<?> searchProvidePage(@RequestBody CouponUserProvideConditionDTO condition);
 
     @Operation(summary = "新增发券记录（管理端）", description = "新增一条发券记录")
-    @PostMapping("/v1/couponUserProvide/insert")
+    @PostMapping("/v1/internal/couponUserProvide/insert")
     int insertProvide(@RequestBody CouponUserProvideDTO entity);
 
     @Operation(summary = "修改发券记录（管理端）", description = "修改一条已有的发券记录")
-    @PostMapping("/v1/couponUserProvide/update")
+    @PostMapping("/v1/internal/couponUserProvide/update")
     int updateProvide(@RequestBody CouponUserProvideDTO entity);
 
     @Operation(summary = "删除发券记录（管理端）", description = "根据 ID 列表批量删除发券记录")
-    @PostMapping("/v1/couponUserProvide/deleteByIds")
+    @PostMapping("/v1/internal/couponUserProvide/deleteByIds")
     int deleteProvideByIds(@RequestBody @NotNull List<Long> ids);
 
     // ========== 领券记录 (couponUserReceive) 管理端 ==========
 
     @Operation(summary = "分页查询领券记录（管理端）", description = "根据条件分页查询领券记录列表，支持多条件筛选")
-    @PostMapping("/v1/couponUserReceive/searchByPage")
+    @PostMapping("/v1/internal/couponUserReceive/searchByPage")
     ResponsePageEntity<?> searchReceivePage(@RequestBody CouponUserReceiveConditionDTO condition);
 
     @Operation(summary = "新增领券记录（管理端）", description = "新增一条领券记录")
-    @PostMapping("/v1/couponUserReceive/insert")
+    @PostMapping("/v1/internal/couponUserReceive/insert")
     int insertReceive(@RequestBody CouponUserReceiveDTO entity);
 
     @Operation(summary = "修改领券记录（管理端）", description = "修改一条已有的领券记录")
-    @PostMapping("/v1/couponUserReceive/update")
+    @PostMapping("/v1/internal/couponUserReceive/update")
     int updateReceive(@RequestBody CouponUserReceiveDTO entity);
 
     @Operation(summary = "删除领券记录（管理端）", description = "根据 ID 列表批量删除领券记录")
-    @PostMapping("/v1/couponUserReceive/deleteByIds")
+    @PostMapping("/v1/internal/couponUserReceive/deleteByIds")
     int deleteReceiveByIds(@RequestBody @NotNull List<Long> ids);
 }

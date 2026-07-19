@@ -29,15 +29,15 @@ public interface IndexNoticeFeignClient {
     ResponsePageEntity<?> searchByPage(@RequestBody IndexNoticeConditionDTO condition);
 
     @Operation(summary = "新增首页公告", description = "新增首页公告记录，请求体包含公告标题、内容、排序、状态等字段")
-    @PostMapping("/v1/indexNotice/insert")
+    @PostMapping("/v1/internal/indexNotice/insert")
     int insert(@RequestBody IndexNoticeDTO entity);
 
     @Operation(summary = "修改首页公告", description = "修改首页公告记录，根据 ID 更新公告标题、内容、排序、状态等字段")
-    @PostMapping("/v1/indexNotice/update")
+    @PostMapping("/v1/internal/indexNotice/update")
     int update(@RequestBody IndexNoticeDTO entity);
 
     @Operation(summary = "删除首页公告", description = "根据 ID 列表批量删除首页公告记录")
-    @PostMapping("/v1/indexNotice/deleteByIds")
+    @PostMapping("/v1/internal/indexNotice/deleteByIds")
     int deleteByIds(@RequestBody @NotNull List<Long> ids);
 
     @Operation(summary = "查询首页公告详情", description = "根据ID查询首页公告详细内容")

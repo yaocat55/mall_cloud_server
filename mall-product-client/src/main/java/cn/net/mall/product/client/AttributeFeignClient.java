@@ -27,14 +27,14 @@ public interface AttributeFeignClient {
     ResponsePageEntity<?> searchByPage(@RequestBody AttributeConditionDTO condition);
 
     @Operation(summary = "新增属性", description = "新增属性记录，请求体包含属性名称、属性类型、排序等字段")
-    @PostMapping("/v1/attribute/insert")
+    @PostMapping("/v1/internal/attribute/insert")
     int insert(@RequestBody AttributeDTO entity);
 
     @Operation(summary = "修改属性", description = "修改属性记录，根据 ID 更新属性名称、属性类型、排序等字段")
-    @PostMapping("/v1/attribute/update")
+    @PostMapping("/v1/internal/attribute/update")
     int update(@RequestBody AttributeDTO entity);
 
     @Operation(summary = "删除属性", description = "根据 ID 列表批量删除属性记录")
-    @PostMapping("/v1/attribute/deleteByIds")
+    @PostMapping("/v1/internal/attribute/deleteByIds")
     int deleteByIds(@RequestBody @NotNull List<Long> ids);
 }

@@ -40,15 +40,15 @@ public interface CategoryFeignClient {
     ResponsePageEntity<?> searchByPage(@RequestBody CategoryConditionDTO condition);
 
     @Operation(summary = "新增分类（管理端）")
-    @PostMapping("/v1/category/insert")
+    @PostMapping("/v1/internal/category/insert")
     int insert(@RequestBody CategoryDTO entity);
 
     @Operation(summary = "修改分类（管理端）")
-    @PostMapping("/v1/category/update")
+    @PostMapping("/v1/internal/category/update")
     int update(@RequestBody CategoryDTO entity);
 
     @Operation(summary = "删除分类（管理端）")
-    @PostMapping("/v1/category/deleteByIds")
+    @PostMapping("/v1/internal/category/deleteByIds")
     int deleteByIds(@RequestBody @NotNull List<Long> ids);
 
     @Operation(summary = "查询分类树（管理端）", description = "按层级查询分类树结构")

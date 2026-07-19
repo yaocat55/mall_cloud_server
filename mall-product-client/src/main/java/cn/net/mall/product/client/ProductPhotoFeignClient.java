@@ -28,14 +28,14 @@ public interface ProductPhotoFeignClient {
     Object findById(@RequestParam("id") Long id);
 
     @Operation(summary = "新增商品图片")
-    @PostMapping("/v1/productPhoto/insert")
+    @PostMapping("/v1/internal/productPhoto/insert")
     int insert(@RequestBody ProductPhotoDTO entity);
 
     @Operation(summary = "修改商品图片")
-    @PostMapping("/v1/productPhoto/update")
+    @PostMapping("/v1/internal/productPhoto/update")
     int update(@RequestBody ProductPhotoDTO entity);
 
     @Operation(summary = "删除商品图片")
-    @PostMapping("/v1/productPhoto/deleteByIds")
+    @PostMapping("/v1/internal/productPhoto/deleteByIds")
     int deleteByIds(@RequestBody List<Long> ids);
 }

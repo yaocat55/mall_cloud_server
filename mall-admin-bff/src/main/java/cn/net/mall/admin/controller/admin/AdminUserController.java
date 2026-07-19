@@ -1,16 +1,13 @@
 package cn.net.mall.admin.controller.admin;
 
-import cn.net.mall.admin.dto.IdsDTO;
 import cn.net.mall.admin.client.UserFeignClient;
 import cn.net.mall.admin.dto.*;
-import cn.net.mall.admin.client.*;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.util.ApiResult;
 import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -41,26 +38,6 @@ public class AdminUserController {
         return ApiResultUtil.success(userFeignClient.searchByPage(condition));
     }
 
-    // ==================== 用户增删改（直通） ====================
-
-    @Operation(summary = "新增用户", description = "创建新用户，含账号密码等基本信息", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/insert")
-    public ApiResult<Integer> insert(@RequestBody UserDTO entity) {
-        return ApiResultUtil.success(userFeignClient.insert(entity).getRows());
-    }
-
-    @Operation(summary = "修改用户", description = "更新用户信息", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/update")
-    public ApiResult<Integer> update(@RequestBody UserDTO entity) {
-        return ApiResultUtil.success(userFeignClient.update(entity).getRows());
-    }
-
-    @Operation(summary = "删除用户", description = "批量删除用户", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/delete")
-    public ApiResult<Integer> delete(@RequestBody IdsDTO dto) {
-        return ApiResultUtil.success(userFeignClient.deleteByIds(dto.getIds()).getRows());
-    }
-
     // ==================== 用户信息 ====================
 
     @Operation(summary = "通过ID查询用户信息", description = "批量通过ID查询用户信息")
@@ -73,20 +50,6 @@ public class AdminUserController {
     @GetMapping("/findByPhone")
     public ApiResult<UserDTO> findByPhone(@RequestParam String phone) {
         return ApiResultUtil.success(userFeignClient.findByPhone(phone));
-    }
-
-    @Operation(summary = "更新用户头像")
-    @PostMapping("/updateAvatar")
-    public ApiResult<Void> updateAvatar(@Valid @RequestBody UserAvatarDTO userAvatarDTO) {
-        userFeignClient.updateAvatar(userAvatarDTO);
-        return ApiResultUtil.success();
-    }
-
-    @Operation(summary = "更新用户信息")
-    @PostMapping("/updateUser")
-    public ApiResult<Void> updateUser(@Valid @RequestBody UpdateUserDTO updateUserDTO) {
-        userFeignClient.updateUser(updateUserDTO);
-        return ApiResultUtil.success();
     }
 
     // ==================== 用户编辑数据 ====================

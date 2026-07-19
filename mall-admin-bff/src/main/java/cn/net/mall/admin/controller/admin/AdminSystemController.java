@@ -1,19 +1,13 @@
 package cn.net.mall.admin.controller.admin;
 
 import cn.net.mall.admin.client.*;
-import cn.net.mall.admin.dto.JobDTO;
 import cn.net.mall.admin.dto.MenuConditionDTO;
-import cn.net.mall.admin.dto.MenuDTO;
-import cn.net.mall.admin.dto.RoleDTO;
-import cn.net.mall.admin.dto.auth.DeptTreeDTO;
-import cn.net.mall.admin.dto.auth.MenuTreeDTO;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.util.ApiResult;
 import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -43,18 +37,6 @@ public class AdminSystemController {
     @GetMapping("/role/all")
     public ApiResult<List> allRoles() { return ApiResultUtil.success(roleFeignClient.all()); }
 
-    @Operation(summary = "新增角色", description = "新增角色", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/role/insert")
-    public ApiResult<Integer> insertRole(@RequestBody RoleDTO e) { return ApiResultUtil.success(roleFeignClient.insert(e).getRows()); }
-
-    @Operation(summary = "修改角色", description = "修改角色信息", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/role/update")
-    public ApiResult<Integer> updateRole(@RequestBody RoleDTO e) { return ApiResultUtil.success(roleFeignClient.update(e).getRows()); }
-
-    @Operation(summary = "删除角色", description = "批量删除角色", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/role/delete")
-    public ApiResult<Integer> deleteRole(@RequestBody @NotNull List<Long> ids) { return ApiResultUtil.success(roleFeignClient.deleteByIds(ids).getRows()); }
-
     // ========== 菜单管理 ==========
 
     @Operation(summary = "获取菜单树", description = "获取完整的菜单树结构", security = @SecurityRequirement(name = "Bearer Token"))
@@ -75,18 +57,6 @@ public class AdminSystemController {
     @GetMapping("/dept/tree")
     public ApiResult<List> getDeptTree() { return ApiResultUtil.success(deptFeignClient.searchByTree(Collections.emptyMap())); }
 
-    @Operation(summary = "新增部门", description = "新增部门", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/dept/insert")
-    public ApiResult<Integer> insertDept(@RequestBody DeptTreeDTO e) { return ApiResultUtil.success(deptFeignClient.insert(e).getRows()); }
-
-    @Operation(summary = "修改部门", description = "修改部门信息", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/dept/update")
-    public ApiResult<Integer> updateDept(@RequestBody DeptTreeDTO e) { return ApiResultUtil.success(deptFeignClient.update(e).getRows()); }
-
-    @Operation(summary = "删除部门", description = "批量删除部门", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/dept/delete")
-    public ApiResult<Integer> deleteDept(@RequestBody @NotNull List<Long> ids) { return ApiResultUtil.success(deptFeignClient.deleteByIds(ids).getRows()); }
-
     // ========== 岗位管理 ==========
 
     @Operation(summary = "分页查询岗位", description = "按条件分页查询岗位列表", security = @SecurityRequirement(name = "Bearer Token"))
@@ -97,15 +67,4 @@ public class AdminSystemController {
     @GetMapping("/job/all")
     public ApiResult<List> allJobs() { return ApiResultUtil.success(jobFeignClient.all()); }
 
-    @Operation(summary = "新增岗位", description = "新增岗位", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/job/insert")
-    public ApiResult<Integer> insertJob(@RequestBody JobDTO e) { return ApiResultUtil.success(jobFeignClient.insert(e).getRows()); }
-
-    @Operation(summary = "修改岗位", description = "修改岗位信息", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/job/update")
-    public ApiResult<Integer> updateJob(@RequestBody JobDTO e) { return ApiResultUtil.success(jobFeignClient.update(e).getRows()); }
-
-    @Operation(summary = "删除岗位", description = "批量删除岗位", security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/job/delete")
-    public ApiResult<Integer> deleteJob(@RequestBody @NotNull List<Long> ids) { return ApiResultUtil.success(jobFeignClient.deleteByIds(ids).getRows()); }
 }

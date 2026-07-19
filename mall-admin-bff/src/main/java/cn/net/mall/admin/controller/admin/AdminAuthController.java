@@ -1,9 +1,7 @@
 package cn.net.mall.admin.controller.admin;
 
-import cn.net.mall.admin.client.MenuFeignClient;
-import cn.net.mall.admin.client.UserFeignClient;
-import cn.net.mall.admin.dto.*;
 import cn.net.mall.admin.client.*;
+import cn.net.mall.admin.dto.*;
 import cn.net.mall.util.ApiResult;
 import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -64,38 +62,6 @@ public class AdminAuthController {
     @GetMapping("/menus")
     public ApiResult<Object> getMenus() {
         return ApiResultUtil.success(menuFeignClient.getMenuTree());
-    }
-
-    @Operation(summary = "退出登录",
-               description = "将当前 token 加入 Redis 黑名单，实现登出。" +
-                       "无需请求体，Bearer Token 由 Authorize 按钮统一注入，Feign 自动透传。",
-               security = @io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/logout")
-    public ApiResult<Void> logout() {
-        userFeignClient.logout();
-        return ApiResultUtil.success();
-    }
-
-    @Operation(summary = "重置密码")
-    @PostMapping("/resetPassword")
-    public ApiResult<Boolean> resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO) {
-        return ApiResultUtil.success(userFeignClient.resetPassword(resetPasswordDTO));
-    }
-
-    @Operation(summary = "更新用户头像",
-               description = "更新当前登录用户的头像地址")
-    @PostMapping("/updateAvatar")
-    public ApiResult<Void> updateAvatar(@Valid @RequestBody UserAvatarDTO userAvatarDTO) {
-        userFeignClient.updateAvatar(userAvatarDTO);
-        return ApiResultUtil.success();
-    }
-
-    @Operation(summary = "更新用户信息",
-               description = "更新当前登录用户的基本信息")
-    @PostMapping("/updateUser")
-    public ApiResult<Void> updateUser(@Valid @RequestBody UpdateUserDTO updateUserDTO) {
-        userFeignClient.updateUser(updateUserDTO);
-        return ApiResultUtil.success();
     }
 
     @Operation(summary = "测试登录（跳过验证码）",

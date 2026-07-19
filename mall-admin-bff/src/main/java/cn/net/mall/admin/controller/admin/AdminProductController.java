@@ -1,6 +1,5 @@
 package cn.net.mall.admin.controller.admin;
 
-import cn.net.mall.admin.dto.IdsDTO;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.inventory.client.InventoryFeignClient;
 import cn.net.mall.inventory.dto.InventoryDTO;
@@ -78,31 +77,5 @@ public class AdminProductController {
     @GetMapping("/detail")
     public ApiResult<Object> findById(@RequestParam("id") Long id) {
         return ApiResultUtil.success(productFeignClient.findById(id));
-    }
-
-    @Operation(summary = "新增商品",
-               description = "新增商品记录（不含库存信息，库存由入库操作管理）",
-               security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/insert")
-    public ApiResult<Void> insert(@RequestBody ProductDTO entity) {
-        productFeignClient.insert(entity);
-        return ApiResultUtil.success();
-    }
-
-    @Operation(summary = "修改商品",
-               description = "修改商品基本信息，支持部分字段更新（不修改库存字段）",
-               security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/update")
-    public ApiResult<Void> update(@RequestBody ProductDTO entity) {
-        productFeignClient.update(entity);
-        return ApiResultUtil.success();
-    }
-
-    @Operation(summary = "批量删除商品",
-               description = "根据 ID 列表批量删除商品",
-               security = @SecurityRequirement(name = "Bearer Token"))
-    @PostMapping("/delete")
-    public ApiResult<Integer> delete(@RequestBody IdsDTO dto) {
-        return ApiResultUtil.success(productFeignClient.deleteByIds(dto.getIds()));
     }
 }

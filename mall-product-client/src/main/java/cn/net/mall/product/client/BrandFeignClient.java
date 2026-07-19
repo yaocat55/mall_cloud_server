@@ -17,12 +17,12 @@ public interface BrandFeignClient {
     @PostMapping("/v1/brand/searchByPage")
     ResponsePageEntity<?> searchByPage(@RequestBody BrandConditionDTO condition);
     @Operation(summary = "新增品牌")
-    @PostMapping("/v1/brand/insert")
+    @PostMapping("/v1/internal/brand/insert")
     int insert(@RequestBody BrandDTO entity);
     @Operation(summary = "修改品牌")
-    @PostMapping("/v1/brand/update")
+    @PostMapping("/v1/internal/brand/update")
     int update(@RequestBody BrandDTO entity);
     @Operation(summary = "删除品牌")
-    @PostMapping("/v1/brand/deleteByIds")
+    @PostMapping("/v1/internal/brand/deleteByIds")
     int deleteByIds(@RequestBody @NotNull List<Long> ids);
 }

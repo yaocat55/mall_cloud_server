@@ -28,29 +28,29 @@ public interface UserFeignClient {
 
     @Operation(summary = "分页查询用户",
                description = "内部服务：分页查询用户列表，供 admin-bff 聚合调用")
-    @PostMapping("/v1/auth/user/searchByPage")
+    @PostMapping("/v1/internal/auth/user/searchByPage")
     ResponsePageEntity<UserDTO> searchByPage(@RequestBody Object condition);
 
     @Operation(summary = "新增用户")
-    @PostMapping("/v1/auth/user/insert")
+    @PostMapping("/v1/internal/auth/user/insert")
     RowsDTO insert(@RequestBody Object entity);
 
     @Operation(summary = "修改用户")
-    @PostMapping("/v1/auth/user/update")
+    @PostMapping("/v1/internal/auth/user/update")
     RowsDTO update(@RequestBody Object entity);
 
     @Operation(summary = "删除用户")
-    @PostMapping("/v1/auth/user/deleteByIds")
+    @PostMapping("/v1/internal/auth/user/deleteByIds")
     RowsDTO deleteByIds(@RequestBody List<Long> ids);
 
     @Operation(summary = "批量查询用户信息",
                description = "内部服务：由 mall-admin-api 通过 Feign 调用，根据ID集合批量查询用户信息")
-    @PostMapping("/v1/auth/user/findByIds")
+    @PostMapping("/v1/internal/auth/user/findByIds")
     List<UserDTO> findByIds(@RequestBody List<Long> ids);
 
     @Operation(summary = "通过手机号查询用户信息",
                description = "内部服务：由 mall-admin-api 通过 Feign 调用，根据手机号精确查询用户")
-    @GetMapping("/v1/auth/user/findByPhone")
+    @GetMapping("/v1/internal/auth/user/findByPhone")
     UserDTO findByPhone(@RequestParam String phone);
 
     @Operation(summary = "获取动态验证码",
@@ -85,7 +85,7 @@ public interface UserFeignClient {
 
     @Operation(summary = "更新头像",
                description = "内部服务：由 mall-admin-api 通过 Feign 调用，更新用户头像地址")
-    @PostMapping("/v1/auth/user/updateAvatar")
+    @PostMapping("/v1/internal/auth/user/updateAvatar")
     void updateAvatar(@RequestBody @Valid UserAvatarDTO userAvatarDTO);
 
     @Operation(summary = "更新用户信息",
@@ -95,7 +95,7 @@ public interface UserFeignClient {
 
     @Operation(summary = "测试登录",
                description = "内部测试：跳过图形验证码校验，仅限开发/测试环境使用")
-    @PostMapping("/v1/auth/user/testLogin")
+    @PostMapping("/v1/internal/auth/user/testLogin")
     TokenDTO testLogin(@RequestBody @Valid UserLoginDTO userLoginDTO);
 
     @Operation(summary = "获取在线用户列表",
@@ -105,7 +105,7 @@ public interface UserFeignClient {
 
     @Operation(summary = "今日新增用户数",
                description = "内部服务：查询今日注册且未删除的用户总数，由 mall-admin-api 通过 Feign 调用")
-    @GetMapping("/v1/auth/user/todayCount")
+    @GetMapping("/v1/internal/auth/user/todayCount")
     int todayCount();
 
     @Operation(summary = "退出登录",
