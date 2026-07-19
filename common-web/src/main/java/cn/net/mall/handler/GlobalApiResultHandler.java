@@ -38,7 +38,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  */
 @RestControllerAdvice
 public class GlobalApiResultHandler implements ResponseBodyAdvice<Object> {
-    private static final String INTERNAL_PREFIX = "/v1/internal/";
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
@@ -52,14 +51,12 @@ public class GlobalApiResultHandler implements ResponseBodyAdvice<Object> {
     /**
      * 接口路径匹配规则.
      *
-     * <p>只有显式的 API 前缀才自动包装，避免误包 ForwardController 的代理路径。</p>
+     * <p>只匹配 BFF 路径前缀，内部微服务的 {@code /v1/**} 不包装——它们同时服务 Feign（裸 DTO）
+     * 和 HTTP（手动 ApiResult），由各 Controller 自行决定。</p>
      */
     private boolean matchUrl(String uri) {
         if (uri == null || uri.isEmpty()) return false;
-        // 内部 Feign 接口不包装（Feign 期望裸 DTO）
-        if (uri.contains(INTERNAL_PREFIX)) return false;
-        return uri.startsWith("/v1/")
-                || uri.startsWith("/admin/v1/")
+        return uri.startsWith("/admin/v1/")
                 || uri.startsWith("/mobile/v1/");
     }
 
