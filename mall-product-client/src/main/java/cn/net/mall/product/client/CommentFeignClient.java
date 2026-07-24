@@ -26,7 +26,7 @@ public interface CommentFeignClient {
 
     @Operation(summary = "分页查询商品评论（管理端）",
                description = "管理端分页查询商品评论列表，支持按商品ID、用户ID、评论内容等条件筛选，请求参数包含 pageNo、pageSize 及可选筛选条件")
-    @PostMapping("/v1/productComment/searchByPage")
+    @PostMapping("/v1/internal/productComment/searchByPage")
     ResponsePageEntity<?> searchByPage(@RequestBody ProductCommentConditionDTO condition);
 
     @Operation(summary = "新增商品评论（管理端）",
@@ -46,6 +46,6 @@ public interface CommentFeignClient {
 
     @Operation(summary = "查询商品评论详情（管理端）",
                description = "管理端根据ID查询商品评论详细信息")
-    @GetMapping("/v1/productComment/findById")
+    @GetMapping("/v1/internal/productComment/findById")
     Object findById(@RequestParam("id") Long id);
 }

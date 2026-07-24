@@ -74,6 +74,8 @@ public class JobService extends BaseService<JobEntity, JobConditionEntity> {
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+        AssertUtil.notEmpty(ids, "请选择要删除的岗位");
+
         List<JobEntity> jobEntities = jobMapper.findByIds(ids);
         AssertUtil.notEmpty(jobEntities, "岗位已被删除");
 

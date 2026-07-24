@@ -9,8 +9,6 @@ import cn.net.mall.order.dto.OrderConditionDTO;
 import cn.net.mall.order.dto.OrderReturnConditionDTO;
 import cn.net.mall.product.client.ProductFeignClient;
 import cn.net.mall.product.dto.ProductConditionDTO;
-import cn.net.mall.util.ApiResult;
-import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +36,7 @@ public class AdminDashboardController {
 
     @Operation(summary = "获取仪表盘统计数据", description = "聚合用户数、订单数等统计数据")
     @GetMapping("/stats")
-    public ApiResult<DashboardDTO> getStats() {
+    public DashboardDTO getStats() {
         DashboardDTO dto = new DashboardDTO();
 
         // 商品总数
@@ -157,7 +155,7 @@ public class AdminDashboardController {
             log.warn("获取销量排行失败", e);
         }
 
-        return ApiResultUtil.success(dto);
+        return dto;
     }
 
     private DashboardDTO.OrderStatusCountDTO statusCount(int status, String name, int count) {

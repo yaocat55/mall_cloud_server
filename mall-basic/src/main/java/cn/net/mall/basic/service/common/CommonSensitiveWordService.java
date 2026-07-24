@@ -204,6 +204,7 @@ public class CommonSensitiveWordService extends BaseService<CommonSensitiveWordE
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+    	AssertUtil.notEmpty(ids, "请选择要删除的敏感词");
         List<CommonSensitiveWordEntity> entities = commonSensitiveWordMapper.findByIds(ids);
         AssertUtil.notEmpty(entities, "敏感词已被删除");
 

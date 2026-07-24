@@ -1,8 +1,10 @@
 package cn.net.mall.product.controller.internal;
 
+import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.product.dto.ProductDTO;
 import cn.net.mall.product.dto.ProductDetailDTO;
 import cn.net.mall.product.dto.ShoppingCartDTO;
+import cn.net.mall.product.entity.ProductConditionEntity;
 import cn.net.mall.product.entity.ProductEntity;
 import cn.net.mall.product.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,6 +55,20 @@ public class ProductInternalController {
     @PostMapping("/insert")
     public void insert(@RequestBody ProductEntity productEntity) {
         productService.insert(productEntity);
+    }
+
+    @Operation(summary = "分页查询商品列表（管理端）",
+               description = "内部服务：由 admin-bff 通过 Feign 调用")
+    @PostMapping("/searchByPage")
+    public ResponsePageEntity<ProductEntity> searchByPage(@RequestBody ProductConditionEntity condition) {
+        return productService.searchByPage(condition);
+    }
+
+    @Operation(summary = "通过id查询商品信息（管理端）",
+               description = "内部服务：由 admin-bff 通过 Feign 调用")
+    @GetMapping("/findById")
+    public ProductEntity findById(@RequestParam("id") Long id) {
+        return productService.findById(id);
     }
 
     @Operation(summary = "修改商品",

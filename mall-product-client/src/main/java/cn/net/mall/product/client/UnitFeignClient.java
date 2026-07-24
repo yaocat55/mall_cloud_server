@@ -14,7 +14,7 @@ import static cn.net.mall.product.constant.AppConstant.PRODUCT_SERVICE_NAME;
 @FeignClient(value = PRODUCT_SERVICE_NAME, contextId = "unitFeignClient")
 public interface UnitFeignClient {
     @Operation(summary = "分页查询单位")
-    @PostMapping("/v1/unit/searchByPage")
+    @PostMapping("/v1/internal/unit/searchByPage")
     ResponsePageEntity<?> searchByPage(@RequestBody UnitConditionDTO condition);
     @Operation(summary = "新增单位")
     @PostMapping("/v1/internal/unit/insert")

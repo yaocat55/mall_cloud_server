@@ -6,8 +6,6 @@ import cn.net.mall.marketing.dto.CouponConditionDTO;
 import cn.net.mall.marketing.dto.CouponUserProvideConditionDTO;
 import cn.net.mall.marketing.dto.CouponUserReceiveConditionDTO;
 import cn.net.mall.marketing.dto.SeckillProductConditionDTO;
-import cn.net.mall.util.ApiResult;
-import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,27 +23,37 @@ public class AdminMarketingController {
 
     @Operation(summary = "分页查询优惠券", description = "根据条件分页查询优惠券列表，支持多条件筛选", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/coupon/page")
-    public ApiResult<ResponsePageEntity<?>> searchCouponPage(@RequestBody CouponConditionDTO c) { return ApiResultUtil.success(marketingFeignClient.searchByPage(c)); }
+    public ResponsePageEntity<?> searchCouponPage(@RequestBody CouponConditionDTO c) {
+        return marketingFeignClient.searchByPage(c);
+    }
 
     // ========== 秒杀商品 (seckillProduct) ==========
 
     @Operation(summary = "分页查询秒杀商品", description = "根据条件分页查询秒杀商品列表，支持多条件筛选", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/seckill/page")
-    public ApiResult<ResponsePageEntity<?>> searchSeckillPage(@RequestBody SeckillProductConditionDTO c) { return ApiResultUtil.success(marketingFeignClient.searchSeckillPage(c)); }
+    public ResponsePageEntity<?> searchSeckillPage(@RequestBody SeckillProductConditionDTO c) {
+        return marketingFeignClient.searchSeckillPage(c);
+    }
 
     @Operation(summary = "查询秒杀商品详情", description = "根据 ID 查询单个秒杀商品的详细信息", security = @SecurityRequirement(name = "Bearer Token"))
     @GetMapping("/seckill/detail")
-    public ApiResult<Object> findSeckillById(@RequestParam("id") Long id) { return ApiResultUtil.success(marketingFeignClient.findSeckillById(id)); }
+    public Object findSeckillById(@RequestParam("id") Long id) {
+        return marketingFeignClient.findSeckillById(id);
+    }
 
     // ========== 发券记录 (couponUserProvide) ==========
 
     @Operation(summary = "分页查询发券记录", description = "根据条件分页查询发券记录列表，支持多条件筛选", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/couponUserProvide/page")
-    public ApiResult<ResponsePageEntity<?>> searchProvidePage(@RequestBody CouponUserProvideConditionDTO c) { return ApiResultUtil.success(marketingFeignClient.searchProvidePage(c)); }
+    public ResponsePageEntity<?> searchProvidePage(@RequestBody CouponUserProvideConditionDTO c) {
+        return marketingFeignClient.searchProvidePage(c);
+    }
 
     // ========== 领券记录 (couponUserReceive) ==========
 
     @Operation(summary = "分页查询领券记录", description = "根据条件分页查询领券记录列表，支持多条件筛选", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/couponUserReceive/page")
-    public ApiResult<ResponsePageEntity<?>> searchReceivePage(@RequestBody CouponUserReceiveConditionDTO c) { return ApiResultUtil.success(marketingFeignClient.searchReceivePage(c)); }
+    public ResponsePageEntity<?> searchReceivePage(@RequestBody CouponUserReceiveConditionDTO c) {
+        return marketingFeignClient.searchReceivePage(c);
+    }
 }

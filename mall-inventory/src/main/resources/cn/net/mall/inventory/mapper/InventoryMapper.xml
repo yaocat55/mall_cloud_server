@@ -11,20 +11,105 @@
         <result property="available" column="available"/>
         <result property="saleCount" column="sale_count"/>
         <result property="version" column="version"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createUserName" column="create_user_name"/>
         <result property="createTime" column="create_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+        <result property="updateUserName" column="update_user_name"/>
         <result property="updateTime" column="update_time"/>
+        <result property="isDel" column="is_del"/>
     </resultMap>
+
+    <sql id="selectInventoryColumn">
+         id, product_id, quantity, frozen, available, sale_count, version,
+         create_user_id, create_user_name, create_time,
+         update_user_id, update_user_name, update_time, is_del
+    </sql>
+
+    <sql id="queryWhere">
+        <where>
+            <if test="id != null ">
+                AND id = #{id}
+            </if>
+            <if test="idList != null and idList.size()>0">
+                AND id IN
+                <foreach collection="idList" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="productId != null">
+                AND product_id = #{productId}
+            </if>
+            <if test="createBeginTime != null and createBeginTime !=''">
+                AND create_time >= #{createBeginTime}
+            </if>
+            <if test="createEndTime != null and createEndTime !=''">
+                AND create_time <![CDATA[<]]> #{createEndTime}
+            </if>
+            AND is_del = 0
+        </where>
+    </sql>
 
     <select id="findAll" resultMap="InventoryResult">
         SELECT * FROM inventory
     </select>
+
     <select id="findByProductId" resultMap="InventoryResult">
-        SELECT * FROM inventory WHERE product_id = #{productId}
+        SELECT * FROM inventory WHERE product_id = #{productId} AND is_del = 0
+    </select>
+
+    <select id="findByIds" parameterType="Long" resultMap="InventoryResult">
+        SELECT <include refid="selectInventoryColumn"/>
+        FROM inventory
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="searchByCondition" parameterType="cn.net.mall.inventory.entity.InventoryConditionEntity"
+            resultMap="InventoryResult">
+        SELECT <include refid="selectInventoryColumn"/>
+        FROM inventory
+        <include refid="queryWhere"/>
+        <include refid="cn.net.mall.inventory.mapper.BaseMapper.paginationSql"/>
+    </select>
+
+    <select id="searchCount" parameterType="cn.net.mall.inventory.entity.InventoryConditionEntity"
+            resultType="int">
+        SELECT COUNT(*) FROM inventory <include refid="queryWhere"/>
     </select>
 
     <insert id="insert" parameterType="cn.net.mall.inventory.entity.InventoryEntity">
-        INSERT INTO inventory (id, product_id, quantity, frozen, available, sale_count, version, create_time, update_time)
-        VALUES (#{id}, #{productId}, #{quantity}, #{frozen}, #{available}, #{saleCount}, #{version}, NOW(3), NOW(3))
+        INSERT INTO inventory
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            <if test="productId != null">product_id,</if>
+            <if test="quantity != null">quantity,</if>
+            <if test="frozen != null">frozen,</if>
+            <if test="available != null">available,</if>
+            <if test="saleCount != null">sale_count,</if>
+            <if test="version != null">version,</if>
+            create_user_id, create_user_name, create_time,
+            <if test="updateUserId != null">update_user_id,</if>
+            <if test="updateUserName != null and updateUserName != ''">update_user_name,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDel != null">is_del,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{GENERATE_ID},
+            <if test="productId != null">#{productId},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="frozen != null">#{frozen},</if>
+            <if test="available != null">#{available},</if>
+            <if test="saleCount != null">#{saleCount},</if>
+            <if test="version != null">#{version},</if>
+            #{CURRENT_USER_ID}, #{CURRENT_USER_NAME}, now(3),
+            <if test="updateUserId != null">#{updateUserId},</if>
+            <if test="updateUserName != null and updateUserName != ''">#{updateUserName},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDel != null">#{isDel},</if>
+        </trim>
     </insert>
 
     <update id="updateById" parameterType="cn.net.mall.inventory.entity.InventoryEntity">
@@ -40,7 +125,6 @@
         WHERE id = #{id}
     </update>
 
-    <!-- 乐观锁扣减可用库存 -->
     <update id="decrAvailable">
         UPDATE inventory
         SET available = available - #{quantity},
@@ -51,7 +135,6 @@
           AND version = #{version}
     </update>
 
-    <!-- 降级扣减：不带版本号，纯条件判断 -->
     <update id="decrAvailableFallback">
         UPDATE inventory
         SET available = available - #{quantity},
@@ -91,4 +174,14 @@
             update_time = NOW(3)
         WHERE product_id = #{productId}
     </update>
+
+    <delete id="deleteByIds">
+        UPDATE inventory
+        SET is_del = 1, update_time=now(3), update_user_id=#{entity.updateUserId}, update_user_name=#{entity.updateUserName}
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
 </mapper>

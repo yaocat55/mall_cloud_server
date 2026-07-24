@@ -25,7 +25,7 @@ import static cn.net.mall.product.constant.AppConstant.PRODUCT_SERVICE_NAME;
 public interface IndexNoticeFeignClient {
 
     @Operation(summary = "分页查询首页公告", description = "按条件分页查询首页公告列表，请求参数包含 pageNo、pageSize 及可选筛选条件（如公告标题、状态等）")
-    @PostMapping("/v1/indexNotice/searchByPage")
+    @PostMapping("/v1/internal/indexNotice/searchByPage")
     ResponsePageEntity<?> searchByPage(@RequestBody IndexNoticeConditionDTO condition);
 
     @Operation(summary = "新增首页公告", description = "新增首页公告记录，请求体包含公告标题、内容、排序、状态等字段")
@@ -41,6 +41,6 @@ public interface IndexNoticeFeignClient {
     int deleteByIds(@RequestBody @NotNull List<Long> ids);
 
     @Operation(summary = "查询首页公告详情", description = "根据ID查询首页公告详细内容")
-    @GetMapping("/v1/indexNotice/findById")
+    @GetMapping("/v1/internal/indexNotice/findById")
     Object findById(@RequestParam("id") Long id);
 }

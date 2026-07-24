@@ -39,4 +39,32 @@ public interface InventoryFeignClient {
 
     @PostMapping("/batch")
     List<InventoryDTO> getByProductIds(@RequestBody List<Long> productIds);
+
+    // ==================== 库存 CRUD ====================
+
+    @PostMapping("/page")
+    Object searchByPage(@RequestBody Object condition);
+
+    @PostMapping("/init")
+    RowsDTO initInventory(@RequestBody Object entity);
+
+    @PostMapping("/update")
+    RowsDTO updateInventory(@RequestBody Object entity);
+
+    @PostMapping("/deleteByIds")
+    RowsDTO deleteByIds(@RequestBody List<Long> ids);
+
+    // ==================== 批次 / 流水 ====================
+
+    @PostMapping("/batch/page")
+    Object batchPage(@RequestBody Object condition);
+
+    @GetMapping("/batch/{id}")
+    Object batchDetail(@PathVariable Long id);
+
+    @PostMapping("/log/page")
+    Object logPage(@RequestBody Object condition);
+
+    @GetMapping("/log/{id}")
+    Object logDetail(@PathVariable Long id);
 }

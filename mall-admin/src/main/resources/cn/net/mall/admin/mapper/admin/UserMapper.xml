@@ -160,7 +160,7 @@
         SELECT
         <include refid="selectUserColumn"/>
         FROM auth_user
-        WHERE id = #{id}
+        WHERE id = #{id} AND is_del = 0
     </select>
 
     <select id="searchByCondition"
@@ -292,7 +292,7 @@
         SELECT
         <include refid="selectUserColumn"/>
         FROM auth_user
-        WHERE id IN
+        WHERE is_del = 0 AND id IN
         <foreach collection="ids" item="id" open="(" close=")" separator=",">
             #{id}
         </foreach>

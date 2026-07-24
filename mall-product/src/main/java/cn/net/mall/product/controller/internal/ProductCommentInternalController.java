@@ -1,5 +1,7 @@
 package cn.net.mall.product.controller.internal;
 
+import cn.net.mall.entity.ResponsePageEntity;
+import cn.net.mall.product.entity.ProductCommentConditionEntity;
 import cn.net.mall.product.entity.ProductCommentEntity;
 import cn.net.mall.product.service.ProductCommentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +28,20 @@ public class ProductCommentInternalController {
 
     public ProductCommentInternalController(ProductCommentService productCommentService) {
         this.productCommentService = productCommentService;
+    }
+
+    @Operation(summary = "分页查询商品评论",
+               description = "内部服务：由 admin-bff 通过 Feign 调用，按条件分页查询商品评论列表")
+    @PostMapping("/searchByPage")
+    public ResponsePageEntity<?> searchByPage(@RequestBody ProductCommentConditionEntity condition) {
+        return productCommentService.searchByPage(condition);
+    }
+
+    @Operation(summary = "查询商品评论详情",
+               description = "内部服务：由 admin-bff 通过 Feign 调用，根据ID查询商品评论详情")
+    @GetMapping("/findById")
+    public Object findById(@RequestParam("id") Long id) {
+        return productCommentService.findById(id);
     }
 
     @Operation(summary = "新增商品评论",

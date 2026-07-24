@@ -10,6 +10,7 @@ import cn.net.mall.order.entity.OrderEntity;
 import cn.net.mall.order.mapper.OrderMapper;
 import cn.net.mall.order.service.OrderDeliveryAddressService;
 import cn.net.mall.order.service.OrderService;
+import cn.net.mall.order.service.admin.OrderStatisticsService;
 import cn.net.mall.util.FillUserUtil;
 import cn.hutool.core.bean.BeanUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,6 +36,7 @@ public class OrderInternalController {
     private final OrderService orderService;
     private final OrderDeliveryAddressService orderDeliveryAddressService;
     private final OrderMapper orderMapper;
+    private final OrderStatisticsService orderStatisticsService;
 
     // ========== 订单基础操作 ==========
 
@@ -163,5 +165,13 @@ public class OrderInternalController {
     @GetMapping("/deliveryAddress/findById")
     public OrderDeliveryAddressEntity findDeliveryAddressById(@RequestParam("id") Long id) {
         return orderDeliveryAddressService.findById(id);
+    }
+
+    // ========== 订单统计 ==========
+
+    @Operation(summary = "订单统计（内部）", description = "返回总订单数、今日订单数、总销售额、今日销售额、各状态数量")
+    @PostMapping("/statistics")
+    public OrderStatisticsDTO statistics() {
+        return orderStatisticsService.getOrderStatistics();
     }
 }

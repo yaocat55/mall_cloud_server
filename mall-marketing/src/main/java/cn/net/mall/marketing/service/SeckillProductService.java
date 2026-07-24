@@ -200,6 +200,7 @@ public class SeckillProductService extends BaseService<SeckillProductEntity, Sec
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+    	AssertUtil.notEmpty(ids, "请选择要删除的秒杀商品");
         List<SeckillProductEntity> entities = seckillProductMapper.findByIds(ids);
         AssertUtil.notEmpty(entities, "秒杀商品已被删除");
 

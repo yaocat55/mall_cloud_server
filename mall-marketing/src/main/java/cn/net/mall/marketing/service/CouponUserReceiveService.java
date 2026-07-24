@@ -75,6 +75,7 @@ public class CouponUserReceiveService extends BaseService<CouponUserReceiveEntit
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+    	AssertUtil.notEmpty(ids, "请选择要删除的优惠券领取");
         List<CouponUserReceiveEntity> entities = couponUserReceiveMapper.findByIds(ids);
         AssertUtil.notEmpty(entities, "优惠券领取已被删除");
 

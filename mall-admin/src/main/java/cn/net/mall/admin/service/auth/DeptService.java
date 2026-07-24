@@ -154,6 +154,8 @@ public class DeptService extends BaseService<DeptEntity, DeptConditionEntity> {
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+        AssertUtil.notEmpty(ids, "请选择要删除的部门");
+
         List<DeptEntity> deptEntities = deptMapper.findByIds(ids);
         AssertUtil.notEmpty(deptEntities, "部门已被删除");
 

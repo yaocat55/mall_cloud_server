@@ -188,6 +188,7 @@ public class CommonJobService extends BaseService<CommonJobEntity, CommonJobCond
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+	    AssertUtil.notEmpty(ids, "请选择要删除的定时任务");
         List<CommonJobEntity> entities = commonJobMapper.findByIds(ids);
         AssertUtil.notEmpty(entities, "定时任务已被删除");
 

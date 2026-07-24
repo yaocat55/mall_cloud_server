@@ -116,6 +116,7 @@ public class OrderItemService extends BaseService<OrderItemEntity, OrderItemCond
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+    	AssertUtil.notEmpty(ids, "请选择要删除的订单明细");
         List<OrderItemEntity> entities = orderItemMapper.findByIds(ids);
         AssertUtil.notEmpty(entities, "订单明细已被删除");
 

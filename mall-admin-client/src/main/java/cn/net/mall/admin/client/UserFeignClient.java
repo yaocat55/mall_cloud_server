@@ -55,32 +55,32 @@ public interface UserFeignClient {
 
     @Operation(summary = "获取动态验证码",
                description = "内部服务：获取图形验证码（base64图片），由 mall-admin-api 调用")
-    @GetMapping(value = "/v1/auth/web/user/getCode")
+    @GetMapping(value = "/v1/internal/auth/web/user/getCode")
     CaptchaDTO getCode();
 
     @Operation(summary = "用户登录",
                description = "Web端：用户账号密码登录，由 mall-admin-api 通过 Feign 调用")
-    @PostMapping("/v1/auth/web/user/login")
+    @PostMapping("/v1/internal/auth/web/user/login")
     TokenDTO login(@Valid @RequestBody UserLoginDTO userLoginDTO);
 
     @Operation(summary = "手机号登录",
                description = "Web端：用户手机号+验证码登录，由 mall-admin-api 通过 Feign 调用")
-    @PostMapping("/v1/auth/web/user/loginByPhone")
+    @PostMapping("/v1/internal/auth/web/user/loginByPhone")
     TokenDTO loginByPhone(@Valid @RequestBody UserPhoneLoginDTO userPhoneLoginDTO);
 
     @Operation(summary = "重置密码",
                description = "Web端：用户重置密码，由 mall-admin-api 通过 Feign 调用")
-    @PostMapping("/v1/auth/web/user/resetPassword")
+    @PostMapping("/v1/internal/auth/web/user/resetPassword")
     boolean resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO);
 
     @Operation(summary = "获取用户信息",
                description = "内部服务：获取当前用户基本信息，由 mall-admin-api 通过 Feign 调用")
-    @GetMapping(value = "/v1/auth/web/user/info")
+    @GetMapping(value = "/v1/internal/auth/web/user/info")
     UserInfoDTO getUserInfo();
 
     @Operation(summary = "获取当前用户详情",
                description = "内部服务：获取当前登录用户完整详情，由 mall-admin-api 通过 Feign 调用")
-    @GetMapping(value = "/v1/auth/web/user/getUserDetail")
+    @GetMapping(value = "/v1/internal/auth/web/user/getUserDetail")
     UserDTO getUserDetail();
 
     @Operation(summary = "更新头像",
@@ -90,7 +90,7 @@ public interface UserFeignClient {
 
     @Operation(summary = "更新用户信息",
                description = "内部服务：更新用户基本信息，由 mall-admin-api 通过 Feign 调用")
-    @PostMapping("/v1/auth/web/user/updateUser")
+    @PostMapping("/v1/internal/auth/web/user/updateUser")
     void updateUser(@RequestBody @Valid UpdateUserDTO updateUserDTO);
 
     @Operation(summary = "测试登录",
@@ -100,7 +100,7 @@ public interface UserFeignClient {
 
     @Operation(summary = "获取在线用户列表",
                description = "查询当前登录状态未过期的管理端用户")
-    @GetMapping("/v1/auth/web/user/onlineUsers")
+    @GetMapping("/v1/internal/auth/web/user/onlineUsers")
     List<UserDTO> onlineUsers();
 
     @Operation(summary = "今日新增用户数",
@@ -110,6 +110,6 @@ public interface UserFeignClient {
 
     @Operation(summary = "退出登录",
                description = "将当前 token 加入 Redis 黑名单")
-    @PostMapping("/v1/auth/web/user/logout")
+    @PostMapping("/v1/internal/auth/web/user/logout")
     void logout();
 }

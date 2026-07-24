@@ -14,7 +14,7 @@ import static cn.net.mall.product.constant.AppConstant.PRODUCT_SERVICE_NAME;
 @FeignClient(value = PRODUCT_SERVICE_NAME, contextId = "brandFeignClient")
 public interface BrandFeignClient {
     @Operation(summary = "分页查询品牌")
-    @PostMapping("/v1/brand/searchByPage")
+    @PostMapping("/v1/internal/brand/searchByPage")
     ResponsePageEntity<?> searchByPage(@RequestBody BrandConditionDTO condition);
     @Operation(summary = "新增品牌")
     @PostMapping("/v1/internal/brand/insert")

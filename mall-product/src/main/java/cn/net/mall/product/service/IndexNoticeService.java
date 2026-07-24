@@ -166,6 +166,7 @@ public class IndexNoticeService extends BaseService<IndexNoticeEntity, IndexNoti
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+        AssertUtil.notEmpty(ids, "请选择要删除的首页公告");
         List<IndexNoticeEntity> entities = indexNoticeMapper.findByIds(ids);
         AssertUtil.notEmpty(entities, "首页公告已被删除");
 

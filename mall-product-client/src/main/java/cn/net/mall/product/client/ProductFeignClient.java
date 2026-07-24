@@ -207,7 +207,7 @@ public interface ProductFeignClient {
      * @return 商品信息
      */
     @Operation(summary = "通过id查询商品信息（管理端）", description = "通过id查询商品信息")
-    @GetMapping("/v1/product/findById")
+    @GetMapping("/v1/internal/product/findById")
     Object findById(@RequestParam("id") Long id);
 
     /**
@@ -217,7 +217,7 @@ public interface ProductFeignClient {
      * @return 商品分页列表
      */
     @Operation(summary = "分页查询商品列表（管理端）", description = "分页查询商品列表")
-    @PostMapping("/v1/product/searchByPage")
+    @PostMapping("/v1/internal/product/searchByPage")
     ResponsePageEntity<?> searchByPage(@RequestBody ProductConditionDTO condition);
 
     /**

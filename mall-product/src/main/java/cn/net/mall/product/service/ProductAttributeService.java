@@ -77,6 +77,7 @@ public class ProductAttributeService extends BaseService< ProductAttributeEntity
      * @return 结果
      */
 	public int deleteByIds(List<Long> ids) {
+		AssertUtil.notEmpty(ids, "请选择要删除的商品属性");
 		List<ProductAttributeEntity> entities = productAttributeMapper.findByIds(ids);
 		AssertUtil.notEmpty(entities, "商品属性已被删除");
 

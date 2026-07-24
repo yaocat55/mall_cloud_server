@@ -1,5 +1,7 @@
 package cn.net.mall.product.controller.internal;
 
+import cn.net.mall.entity.ResponsePageEntity;
+import cn.net.mall.product.entity.ProductPhotoConditionEntity;
 import cn.net.mall.product.entity.ProductPhotoEntity;
 import cn.net.mall.product.service.ProductPhotoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +28,20 @@ public class ProductPhotoInternalController {
 
     public ProductPhotoInternalController(ProductPhotoService productPhotoService) {
         this.productPhotoService = productPhotoService;
+    }
+
+    @Operation(summary = "分页查询商品图片",
+               description = "内部服务：由 admin-bff 通过 Feign 调用，按条件分页查询商品图片列表")
+    @PostMapping("/searchByPage")
+    public ResponsePageEntity<ProductPhotoEntity> searchByPage(@RequestBody ProductPhotoConditionEntity productPhotoConditionEntity) {
+        return productPhotoService.searchByPage(productPhotoConditionEntity);
+    }
+
+    @Operation(summary = "查询商品图片详情",
+               description = "内部服务：由 admin-bff 通过 Feign 调用，根据ID查询商品图片详情")
+    @GetMapping("/findById")
+    public ProductPhotoEntity findById(Long id) {
+        return productPhotoService.findById(id);
     }
 
     @Operation(summary = "新增商品图片",

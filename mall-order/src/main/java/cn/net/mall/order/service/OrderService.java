@@ -15,6 +15,7 @@ import cn.net.mall.product.dto.*;
 import cn.net.mall.marketing.dto.CouponDTO;
 import cn.net.mall.marketing.dto.OrderPriceCalculateReqDTO;
 import cn.net.mall.entity.auth.JwtUserEntity;
+import cn.net.mall.util.AssertUtil;
 import cn.net.mall.util.FillUserUtil;
 import cn.net.mall.util.OrderCodeUtil;
 import cn.net.mall.exception.BusinessException;
@@ -904,6 +905,7 @@ public class OrderService extends BaseService<OrderEntity, OrderConditionEntity>
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+	    AssertUtil.notEmpty(ids, "请选择要删除的订单");
         // 这里可能需要先删除明细和地址，或者逻辑删除
         // 简单起见，先只删除主表，实际业务中应该级联删除或标记删除
         OrderEntity entity = new OrderEntity();

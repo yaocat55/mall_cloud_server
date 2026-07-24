@@ -3,10 +3,97 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.net.mall.inventory.mapper.InventoryLogMapper">
 
+    <resultMap id="LogResult" type="cn.net.mall.inventory.entity.InventoryLogEntity">
+        <result property="id" column="id"/>
+        <result property="productId" column="product_id"/>
+        <result property="batchId" column="batch_id"/>
+        <result property="type" column="type"/>
+        <result property="quantity" column="quantity"/>
+        <result property="beforeVal" column="before_val"/>
+        <result property="afterVal" column="after_val"/>
+        <result property="orderId" column="order_id"/>
+        <result property="shipmentId" column="shipment_id"/>
+        <result property="remark" column="remark"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createUserName" column="create_user_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+        <result property="updateUserName" column="update_user_name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDel" column="is_del"/>
+    </resultMap>
+
+    <sql id="selectLogColumn">
+         id, product_id, batch_id, type, quantity, before_val, after_val,
+         order_id, shipment_id, remark,
+         create_user_id, create_user_name, create_time,
+         update_user_id, update_user_name, update_time, is_del
+    </sql>
+
+    <sql id="logQueryWhere">
+        <where>
+            <if test="id != null">AND id = #{id}</if>
+            <if test="idList != null and idList.size()>0">
+                AND id IN <foreach collection="idList" item="id" open="(" close=")" separator=",">#{id}</foreach>
+            </if>
+            <if test="productId != null">AND product_id = #{productId}</if>
+            <if test="type != null and type != ''">AND type = #{type}</if>
+            <if test="orderId != null">AND order_id = #{orderId}</if>
+            <if test="createBeginTime != null and createBeginTime !=''">AND create_time >= #{createBeginTime}</if>
+            <if test="createEndTime != null and createEndTime !=''">AND create_time <![CDATA[<]]> #{createEndTime}</if>
+            AND is_del = 0
+        </where>
+    </sql>
+
     <insert id="insert" parameterType="cn.net.mall.inventory.entity.InventoryLogEntity">
-        INSERT INTO inventory_log (id, product_id, batch_id, type, quantity,
-            before_val, after_val, order_id, remark, create_time)
-        VALUES (#{id}, #{productId}, #{batchId}, #{type}, #{quantity},
-            #{beforeVal}, #{afterVal}, #{orderId}, #{remark}, NOW(3))
+        INSERT INTO inventory_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            <if test="productId != null">product_id,</if>
+            <if test="batchId != null">batch_id,</if>
+            <if test="type != null">type,</if>
+            <if test="quantity != null">quantity,</if>
+            <if test="beforeVal != null">before_val,</if>
+            <if test="afterVal != null">after_val,</if>
+            <if test="orderId != null">order_id,</if>
+            <if test="shipmentId != null">shipment_id,</if>
+            <if test="remark != null">remark,</if>
+            create_user_id, create_user_name, create_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{GENERATE_ID},
+            <if test="productId != null">#{productId},</if>
+            <if test="batchId != null">#{batchId},</if>
+            <if test="type != null">#{type},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="beforeVal != null">#{beforeVal},</if>
+            <if test="afterVal != null">#{afterVal},</if>
+            <if test="orderId != null">#{orderId},</if>
+            <if test="shipmentId != null">#{shipmentId},</if>
+            <if test="remark != null">#{remark},</if>
+            #{CURRENT_USER_ID}, #{CURRENT_USER_NAME}, now(3),
+        </trim>
     </insert>
+
+    <select id="findById" parameterType="Long" resultMap="LogResult">
+        SELECT <include refid="selectLogColumn"/> FROM inventory_log WHERE id = #{id}
+    </select>
+
+    <select id="findByIds" parameterType="Long" resultMap="LogResult">
+        SELECT <include refid="selectLogColumn"/> FROM inventory_log
+        WHERE id IN <foreach collection="ids" item="id" open="(" close=")" separator=",">#{id}</foreach>
+    </select>
+
+    <select id="searchByCondition" parameterType="cn.net.mall.inventory.entity.InventoryLogConditionEntity"
+            resultMap="LogResult">
+        SELECT <include refid="selectLogColumn"/> FROM inventory_log
+        <include refid="logQueryWhere"/>
+        <include refid="cn.net.mall.inventory.mapper.BaseMapper.paginationSql"/>
+    </select>
+
+    <select id="searchCount" parameterType="cn.net.mall.inventory.entity.InventoryLogConditionEntity"
+            resultType="int">
+        SELECT COUNT(*) FROM inventory_log <include refid="logQueryWhere"/>
+    </select>
+
 </mapper>

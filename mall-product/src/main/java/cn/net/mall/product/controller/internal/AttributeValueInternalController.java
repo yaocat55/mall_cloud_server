@@ -1,5 +1,7 @@
 package cn.net.mall.product.controller.internal;
 
+import cn.net.mall.entity.ResponsePageEntity;
+import cn.net.mall.product.entity.AttributeValueConditionEntity;
 import cn.net.mall.product.entity.AttributeValueEntity;
 import cn.net.mall.product.service.AttributeValueService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +28,13 @@ public class AttributeValueInternalController {
 
     public AttributeValueInternalController(AttributeValueService attributeValueService) {
         this.attributeValueService = attributeValueService;
+    }
+
+    @Operation(summary = "分页查询属性值",
+               description = "内部服务：由 admin-bff 通过 Feign 调用，分页查询属性值列表")
+    @PostMapping("/searchByPage")
+    public ResponsePageEntity<AttributeValueEntity> searchByPage(@RequestBody AttributeValueConditionEntity condition) {
+        return attributeValueService.searchByPage(condition);
     }
 
     @Operation(summary = "新增属性值",

@@ -95,6 +95,7 @@ public class BrandService extends BaseService< BrandEntity,  BrandConditionEntit
      * @return 结果
      */
 	public int deleteByIds(List<Long> ids) {
+		AssertUtil.notEmpty(ids, "请选择要删除的品牌");
 		List<BrandEntity> entities = brandMapper.findByIds(ids);
 		AssertUtil.notEmpty(entities, "品牌已被删除");
 

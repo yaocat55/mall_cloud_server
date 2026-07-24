@@ -110,6 +110,7 @@ public class UserController {
     @PreAuthorize("hasRole('admin')")
     @PostMapping("/deleteByIds")
     public RowsDTO deleteById(@RequestBody @NotNull List<Long> ids) {
+
         return new RowsDTO(userService.deleteByIds(ids));
     }
 

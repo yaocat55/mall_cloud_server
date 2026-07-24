@@ -96,6 +96,7 @@ public class UnitService extends BaseService<UnitEntity, UnitConditionEntity> {
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+        AssertUtil.notEmpty(ids, "请选择要删除的单位");
         List<UnitEntity> entities = unitMapper.findByIds(ids);
         AssertUtil.notEmpty(entities, "单位已被删除");
 

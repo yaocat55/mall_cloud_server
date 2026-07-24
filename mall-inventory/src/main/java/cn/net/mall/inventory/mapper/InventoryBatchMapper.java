@@ -1,7 +1,7 @@
 package cn.net.mall.inventory.mapper;
 
+import cn.net.mall.inventory.entity.InventoryBatchConditionEntity;
 import cn.net.mall.inventory.entity.InventoryBatchEntity;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -9,8 +9,7 @@ import java.util.List;
 /**
  * 库存批次 Mapper.
  */
-@Mapper
-public interface InventoryBatchMapper {
+public interface InventoryBatchMapper extends BaseMapper<InventoryBatchEntity, InventoryBatchConditionEntity> {
 
     int insert(InventoryBatchEntity entity);
 
@@ -27,4 +26,10 @@ public interface InventoryBatchMapper {
     int decrAvailable(@Param("id") Long id,
                       @Param("quantity") int quantity,
                       @Param("version") int version);
+
+    InventoryBatchEntity findById(Long id);
+
+    List<InventoryBatchEntity> findByIds(List<Long> ids);
+
+    int deleteByIds(@Param("ids") List<Long> ids, @Param("entity") InventoryBatchEntity entity);
 }

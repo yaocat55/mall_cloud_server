@@ -15,15 +15,95 @@
         <result property="inboundTime" column="inbound_time"/>
         <result property="expireTime" column="expire_time"/>
         <result property="status" column="status"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createUserName" column="create_user_name"/>
         <result property="createTime" column="create_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+        <result property="updateUserName" column="update_user_name"/>
         <result property="updateTime" column="update_time"/>
+        <result property="isDel" column="is_del"/>
     </resultMap>
 
+    <sql id="selectBatchColumn">
+         id, product_id, batch_no, quantity, available, supplier, purchase_price,
+         warehouse, inbound_time, expire_time, status,
+         create_user_id, create_user_name, create_time,
+         update_user_id, update_user_name, update_time, is_del
+    </sql>
+
+    <sql id="batchQueryWhere">
+        <where>
+            <if test="id != null">AND id = #{id}</if>
+            <if test="idList != null and idList.size()>0">
+                AND id IN
+                <foreach collection="idList" item="id" open="(" close=")" separator=",">#{id}</foreach>
+            </if>
+            <if test="productId != null">AND product_id = #{productId}</if>
+            <if test="batchNo != null and batchNo != ''">AND batch_no LIKE CONCAT('%', #{batchNo}, '%')</if>
+            <if test="status != null">AND status = #{status}</if>
+            <if test="createBeginTime != null and createBeginTime !=''">AND create_time >= #{createBeginTime}</if>
+            <if test="createEndTime != null and createEndTime !=''">AND create_time <![CDATA[<]]> #{createEndTime}</if>
+            AND is_del = 0
+        </where>
+    </sql>
+
+    <select id="findAvailableByProductId" resultMap="BatchResult">
+        SELECT * FROM inventory_batch
+        WHERE product_id = #{productId} AND available > 0 AND status = 1
+        ORDER BY inbound_time ASC
+    </select>
+
+    <select id="findById" parameterType="Long" resultMap="BatchResult">
+        SELECT <include refid="selectBatchColumn"/> FROM inventory_batch WHERE id = #{id}
+    </select>
+
+    <select id="findByIds" parameterType="Long" resultMap="BatchResult">
+        SELECT <include refid="selectBatchColumn"/> FROM inventory_batch
+        WHERE id IN <foreach collection="ids" item="id" open="(" close=")" separator=",">#{id}</foreach>
+    </select>
+
+    <select id="searchByCondition" parameterType="cn.net.mall.inventory.entity.InventoryBatchConditionEntity"
+            resultMap="BatchResult">
+        SELECT <include refid="selectBatchColumn"/> FROM inventory_batch
+        <include refid="batchQueryWhere"/>
+        <include refid="cn.net.mall.inventory.mapper.BaseMapper.paginationSql"/>
+    </select>
+
+    <select id="searchCount" parameterType="cn.net.mall.inventory.entity.InventoryBatchConditionEntity"
+            resultType="int">
+        SELECT COUNT(*) FROM inventory_batch <include refid="batchQueryWhere"/>
+    </select>
+
     <insert id="insert" parameterType="cn.net.mall.inventory.entity.InventoryBatchEntity">
-        INSERT INTO inventory_batch (id, product_id, batch_no, quantity, available, supplier,
-            purchase_price, warehouse, inbound_time, expire_time, status, create_time, update_time)
-        VALUES (#{id}, #{productId}, #{batchNo}, #{quantity}, #{available}, #{supplier},
-            #{purchasePrice}, #{warehouse}, #{inboundTime}, #{expireTime}, 1, NOW(3), NOW(3))
+        INSERT INTO inventory_batch
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            <if test="productId != null">product_id,</if>
+            <if test="batchNo != null">batch_no,</if>
+            <if test="quantity != null">quantity,</if>
+            <if test="available != null">available,</if>
+            <if test="supplier != null">supplier,</if>
+            <if test="purchasePrice != null">purchase_price,</if>
+            <if test="warehouse != null">warehouse,</if>
+            <if test="inboundTime != null">inbound_time,</if>
+            <if test="expireTime != null">expire_time,</if>
+            <if test="status != null">status,</if>
+            create_user_id, create_user_name, create_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{GENERATE_ID},
+            <if test="productId != null">#{productId},</if>
+            <if test="batchNo != null">#{batchNo},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="available != null">#{available},</if>
+            <if test="supplier != null">#{supplier},</if>
+            <if test="purchasePrice != null">#{purchasePrice},</if>
+            <if test="warehouse != null">#{warehouse},</if>
+            <if test="inboundTime != null">#{inboundTime},</if>
+            <if test="expireTime != null">#{expireTime},</if>
+            <if test="status != null">#{status},</if>
+            #{CURRENT_USER_ID}, #{CURRENT_USER_NAME}, now(3),
+        </trim>
     </insert>
 
     <update id="updateById" parameterType="cn.net.mall.inventory.entity.InventoryBatchEntity">
@@ -37,19 +117,18 @@
         WHERE id = #{id}
     </update>
 
-    <select id="findAvailableByProductId" resultMap="BatchResult">
-        SELECT * FROM inventory_batch
-        WHERE product_id = #{productId}
-          AND available > 0
-          AND status = 1
-        ORDER BY inbound_time ASC
-    </select>
-
     <update id="decrAvailable">
         UPDATE inventory_batch
         SET available = available - #{quantity},
             update_time = NOW(3)
-        WHERE id = #{id}
-          AND available >= #{quantity}
+        WHERE id = #{id} AND available >= #{quantity}
     </update>
+
+    <delete id="deleteByIds">
+        UPDATE inventory_batch
+        SET is_del = 1, update_time=now(3), update_user_id=#{entity.updateUserId}, update_user_name=#{entity.updateUserName}
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">#{id}</foreach>
+    </delete>
+
 </mapper>

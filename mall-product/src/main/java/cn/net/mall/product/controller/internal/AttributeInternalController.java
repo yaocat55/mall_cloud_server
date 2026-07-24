@@ -1,5 +1,7 @@
 package cn.net.mall.product.controller.internal;
 
+import cn.net.mall.entity.ResponsePageEntity;
+import cn.net.mall.product.entity.AttributeConditionEntity;
 import cn.net.mall.product.entity.AttributeEntity;
 import cn.net.mall.product.service.AttributeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +28,13 @@ public class AttributeInternalController {
 
     public AttributeInternalController(AttributeService attributeService) {
         this.attributeService = attributeService;
+    }
+
+    @Operation(summary = "分页查询属性",
+               description = "内部服务：由 admin-bff 通过 Feign 调用，分页查询属性列表")
+    @PostMapping("/searchByPage")
+    public ResponsePageEntity<AttributeEntity> searchByPage(@RequestBody AttributeConditionEntity condition) {
+        return attributeService.searchByPage(condition);
     }
 
     @Operation(summary = "新增属性",

@@ -123,6 +123,8 @@ public class RoleService extends BaseService<RoleEntity, RoleConditionEntity> {
      */
     @Transactional(rollbackFor = Throwable.class)
     public int deleteByIds(List<Long> ids) {
+        AssertUtil.notEmpty(ids, "请选择要删除的角色");
+
         List<RoleEntity> roleEntities = roleMapper.findByIds(ids);
         AssertUtil.notEmpty(roleEntities, "角色已被删除");
 

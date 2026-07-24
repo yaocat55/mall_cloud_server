@@ -182,6 +182,7 @@ public class IndexProductService extends BaseService<IndexProductEntity, IndexPr
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+        AssertUtil.notEmpty(ids, "请选择要删除的首页商品");
         List<IndexProductEntity> entities = indexProductMapper.findByIds(ids);
         AssertUtil.notEmpty(entities, "首页商品已被删除");
 

@@ -264,6 +264,7 @@ public class ProductCommentService extends BaseService<ProductCommentEntity, Pro
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+        AssertUtil.notEmpty(ids, "请选择要删除的商品评论");
         List<ProductCommentEntity> entities = productCommentMapper.findByIds(ids);
         AssertUtil.notEmpty(entities, "商品评论已被删除");
 

@@ -1,5 +1,7 @@
 package cn.net.mall.product.controller.internal;
 
+import cn.net.mall.entity.ResponsePageEntity;
+import cn.net.mall.product.entity.IndexNoticeConditionEntity;
 import cn.net.mall.product.entity.IndexNoticeEntity;
 import cn.net.mall.product.service.IndexNoticeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +28,20 @@ public class IndexNoticeInternalController {
 
     public IndexNoticeInternalController(IndexNoticeService indexNoticeService) {
         this.indexNoticeService = indexNoticeService;
+    }
+
+    @Operation(summary = "分页查询首页公告",
+               description = "内部服务：由 admin-bff 通过 Feign 调用，按条件分页查询首页公告列表")
+    @PostMapping("/searchByPage")
+    public ResponsePageEntity<IndexNoticeEntity> searchByPage(@RequestBody IndexNoticeConditionEntity indexNoticeConditionEntity) {
+        return indexNoticeService.searchByPage(indexNoticeConditionEntity);
+    }
+
+    @Operation(summary = "查询首页公告详情",
+               description = "内部服务：由 admin-bff 通过 Feign 调用，根据ID查询首页公告详情")
+    @GetMapping("/findById")
+    public IndexNoticeEntity findById(Long id) {
+        return indexNoticeService.findById(id);
     }
 
     @Operation(summary = "新增首页公告",

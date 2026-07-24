@@ -23,7 +23,7 @@ import static cn.net.mall.product.constant.AppConstant.PRODUCT_SERVICE_NAME;
 public interface ProductGroupFeignClient {
 
     @Operation(summary = "分页查询商品组", description = "按条件分页查询商品组列表，请求参数包含 pageNo、pageSize 及可选筛选条件（如商品组名称、状态等）")
-    @PostMapping("/v1/productGroup/searchByPage")
+    @PostMapping("/v1/internal/productGroup/searchByPage")
     ResponsePageEntity<?> searchByPage(@RequestBody ProductGroupConditionDTO condition);
 
     @Operation(summary = "新增商品组", description = "新增商品组记录，请求体包含商品组名称、排序、状态等字段")

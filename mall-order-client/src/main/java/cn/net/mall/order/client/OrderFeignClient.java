@@ -241,6 +241,6 @@ public interface OrderFeignClient {
     // ========== 订单统计 (statistics) 管理端 ==========
 
     @Operation(summary = "订单统计", description = "返回总订单数、今日订单数、总销售额、今日销售额、各状态数量")
-    @PostMapping("/v1/admin/trade/statistics")
+    @PostMapping("/v1/internal/order/statistics")
     OrderStatisticsDTO statistics();
 }

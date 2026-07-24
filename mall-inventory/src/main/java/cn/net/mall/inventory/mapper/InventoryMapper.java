@@ -1,7 +1,7 @@
 package cn.net.mall.inventory.mapper;
 
+import cn.net.mall.inventory.entity.InventoryConditionEntity;
 import cn.net.mall.inventory.entity.InventoryEntity;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -9,8 +9,7 @@ import java.util.List;
 /**
  * 库存 Mapper.
  */
-@Mapper
-public interface InventoryMapper {
+public interface InventoryMapper extends BaseMapper<InventoryEntity, InventoryConditionEntity> {
 
     List<InventoryEntity> findAll();
 
@@ -19,6 +18,10 @@ public interface InventoryMapper {
     int updateById(InventoryEntity entity);
 
     int insert(InventoryEntity entity);
+
+    int deleteByIds(@Param("ids") List<Long> ids, @Param("entity") InventoryEntity entity);
+
+    List<InventoryEntity> findByIds(List<Long> ids);
 
     /**
      * 乐观锁扣减可用库存（带版本号，Redis 主路径使用）.
@@ -29,7 +32,6 @@ public interface InventoryMapper {
 
     /**
      * 条件扣减可用库存（不带版本号，Redis 降级路径使用）.
-     * MySQL 行锁保证原子性，不会因版本冲突误报库存不足。
      */
     int decrAvailableFallback(@Param("productId") Long productId,
                               @Param("quantity") int quantity);

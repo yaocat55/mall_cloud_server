@@ -1,5 +1,7 @@
 package cn.net.mall.product.controller.internal;
 
+import cn.net.mall.entity.ResponsePageEntity;
+import cn.net.mall.product.entity.BrandConditionEntity;
 import cn.net.mall.product.entity.BrandEntity;
 import cn.net.mall.product.service.BrandService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +28,13 @@ public class BrandInternalController {
 
     public BrandInternalController(BrandService brandService) {
         this.brandService = brandService;
+    }
+
+    @Operation(summary = "分页查询品牌",
+               description = "内部服务：由 admin-bff 通过 Feign 调用，分页查询品牌列表")
+    @PostMapping("/searchByPage")
+    public ResponsePageEntity<BrandEntity> searchByPage(@RequestBody BrandConditionEntity condition) {
+        return brandService.searchByPage(condition);
     }
 
     @Operation(summary = "新增品牌",

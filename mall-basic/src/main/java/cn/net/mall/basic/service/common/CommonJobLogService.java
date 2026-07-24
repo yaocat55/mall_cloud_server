@@ -73,6 +73,7 @@ public class CommonJobLogService extends BaseService<CommonJobLogEntity, CommonJ
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+    	AssertUtil.notEmpty(ids, "请选择要删除的定时任务执行日志");
         List<CommonJobLogEntity> entities = commonJobLogMapper.findByIds(ids);
         AssertUtil.notEmpty(entities, "定时任务执行日志已被删除");
 

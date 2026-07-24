@@ -101,6 +101,7 @@ public class AttributeService extends BaseService<AttributeEntity, AttributeCond
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+        AssertUtil.notEmpty(ids, "请选择要删除的属性");
         List<AttributeEntity> entities = attributeMapper.findByIds(ids);
         AssertUtil.notEmpty(entities, "属性已被删除");
 

@@ -116,6 +116,7 @@ public class CommonDictService extends BaseService<CommonDictEntity, CommonDictC
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+    	AssertUtil.notEmpty(ids, "请选择要删除的数据字典详情");
         List<CommonDictEntity> dictEntities = commonDictMapper.findByIds(ids);
         AssertUtil.notEmpty(dictEntities, "数据字典详情已被删除");
 

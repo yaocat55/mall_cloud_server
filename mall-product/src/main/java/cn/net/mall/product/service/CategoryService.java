@@ -197,6 +197,7 @@ public class CategoryService extends BaseService<CategoryEntity, CategoryConditi
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+        AssertUtil.notEmpty(ids, "请选择要删除的分类");
         List<CategoryEntity> entities = categoryMapper.findByIds(ids);
         AssertUtil.notEmpty(entities, "分类已被删除");
 

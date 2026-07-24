@@ -93,6 +93,7 @@ public class CommonSmsRecordService extends BaseService<CommonSmsRecordEntity, C
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+    	AssertUtil.notEmpty(ids, "请选择要删除的短信发送记录");
         List<CommonSmsRecordEntity> entities = commonSmsRecordMapper.findByIds(ids);
         AssertUtil.notEmpty(entities, "短信发送记录已被删除");
 

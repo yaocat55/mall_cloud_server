@@ -1,5 +1,7 @@
 package cn.net.mall.product.controller.internal;
 
+import cn.net.mall.entity.ResponsePageEntity;
+import cn.net.mall.product.entity.ProductGroupConditionEntity;
 import cn.net.mall.product.entity.ProductGroupEntity;
 import cn.net.mall.product.service.ProductGroupService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +28,13 @@ public class ProductGroupInternalController {
 
     public ProductGroupInternalController(ProductGroupService productGroupService) {
         this.productGroupService = productGroupService;
+    }
+
+    @Operation(summary = "分页查询商品组",
+               description = "内部服务：由 admin-bff 通过 Feign 调用，按条件分页查询商品组列表")
+    @PostMapping("/searchByPage")
+    public ResponsePageEntity<ProductGroupEntity> searchByPage(@RequestBody ProductGroupConditionEntity productGroupConditionEntity) {
+        return productGroupService.searchByPage(productGroupConditionEntity);
     }
 
     @Operation(summary = "新增商品组",

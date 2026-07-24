@@ -114,6 +114,7 @@ public class ProductFavoritesService extends BaseService<ProductFavoritesEntity,
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+        AssertUtil.notEmpty(ids, "请选择要删除的商品收藏");
         List<ProductFavoritesEntity> entities = productFavoritesMapper.findByIds(ids);
         AssertUtil.notEmpty(entities, "商品收藏已被删除");
 

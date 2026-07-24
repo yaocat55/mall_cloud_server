@@ -20,11 +20,11 @@ import static cn.net.mall.product.constant.AppConstant.PRODUCT_SERVICE_NAME;
 public interface ProductPhotoFeignClient {
 
     @Operation(summary = "分页查询商品图片")
-    @PostMapping("/v1/productPhoto/searchByPage")
+    @PostMapping("/v1/internal/productPhoto/searchByPage")
     ResponsePageEntity<?> searchByPage(@RequestBody ProductPhotoConditionDTO condition);
 
     @Operation(summary = "查询商品图片详情")
-    @GetMapping("/v1/productPhoto/findById")
+    @GetMapping("/v1/internal/productPhoto/findById")
     Object findById(@RequestParam("id") Long id);
 
     @Operation(summary = "新增商品图片")

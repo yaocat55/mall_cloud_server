@@ -23,7 +23,7 @@ import static cn.net.mall.product.constant.AppConstant.PRODUCT_SERVICE_NAME;
 public interface IndexCarouselImageFeignClient {
 
     @Operation(summary = "分页查询首页轮播图", description = "按条件分页查询首页轮播图列表，请求参数包含 pageNo、pageSize 及可选筛选条件（如图片标题、状态等）")
-    @PostMapping("/v1/indexCarouselImage/searchByPage")
+    @PostMapping("/v1/internal/indexCarouselImage/searchByPage")
     ResponsePageEntity<?> searchByPage(@RequestBody IndexCarouselImageConditionDTO condition);
 
     @Operation(summary = "新增首页轮播图", description = "新增首页轮播图记录，请求体包含图片地址、标题、排序、状态等字段")

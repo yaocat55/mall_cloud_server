@@ -75,6 +75,7 @@ public class OrderDeliveryAddressService extends BaseService<OrderDeliveryAddres
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+    	AssertUtil.notEmpty(ids, "请选择要删除的订单收货地址");
         List<OrderDeliveryAddressEntity> entities = orderDeliveryAddressMapper.findByIds(ids);
         AssertUtil.notEmpty(entities, "订单收货地址已被删除");
 

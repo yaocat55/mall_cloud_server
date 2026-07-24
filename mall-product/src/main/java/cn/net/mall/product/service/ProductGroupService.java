@@ -90,6 +90,7 @@ public class ProductGroupService extends BaseService<ProductGroupEntity, Product
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+        AssertUtil.notEmpty(ids, "请选择要删除的商品组");
         List<ProductGroupEntity> entities = productGroupMapper.findByIds(ids);
         AssertUtil.notEmpty(entities, "商品组已被删除");
 

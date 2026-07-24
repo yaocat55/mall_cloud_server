@@ -119,6 +119,7 @@ public class IndexCarouselImageService extends BaseService<IndexCarouselImageEnt
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+        AssertUtil.notEmpty(ids, "请选择要删除的首页轮播图");
         List<IndexCarouselImageEntity> entities = indexCarouselImageMapper.findByIds(ids);
         AssertUtil.notEmpty(entities, "首页轮播图已被删除");
 

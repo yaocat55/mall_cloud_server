@@ -134,6 +134,7 @@ public class AttributeValueService extends BaseService<AttributeValueEntity, Att
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+        AssertUtil.notEmpty(ids, "请选择要删除的属性值");
         List<AttributeValueEntity> entities = attributeValueMapper.findByIds(ids);
         AssertUtil.notEmpty(entities, "属性值已被删除");
 

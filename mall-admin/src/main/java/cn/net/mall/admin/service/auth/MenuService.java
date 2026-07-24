@@ -281,6 +281,8 @@ public class MenuService extends BaseService<MenuEntity, MenuConditionEntity> {
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+        AssertUtil.notEmpty(ids, "请选择要删除的菜单");
+
         List<MenuEntity> menuEntities = menuMapper.findByIds(ids);
         AssertUtil.notEmpty(menuEntities, "菜单已被删除");
 

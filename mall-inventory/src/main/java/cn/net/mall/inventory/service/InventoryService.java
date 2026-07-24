@@ -1,14 +1,17 @@
 package cn.net.mall.inventory.service;
 
+import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.exception.BusinessException;
 import cn.net.mall.inventory.dto.*;
-import cn.net.mall.inventory.entity.InventoryBatchEntity;
-import cn.net.mall.inventory.entity.InventoryEntity;
-import cn.net.mall.inventory.entity.InventoryLogEntity;
+import cn.net.mall.inventory.entity.*;
 import cn.net.mall.inventory.mapper.InventoryBatchMapper;
 import cn.net.mall.inventory.mapper.InventoryLogMapper;
 import cn.net.mall.inventory.mapper.InventoryMapper;
+import cn.net.mall.mapper.BaseMapper;
 import cn.net.mall.redis.RedisUtil;
+import cn.net.mall.service.BaseService;
+import cn.net.mall.util.AssertUtil;
+import cn.net.mall.util.FillUserUtil;
 import cn.net.mall.workid.IdGenerateHelper;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +37,7 @@ import java.util.Objects;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class InventoryService {
+public class InventoryService extends BaseService<InventoryEntity, InventoryConditionEntity> {
 
     private final InventoryMapper inventoryMapper;
     private final InventoryBatchMapper inventoryBatchMapper;
@@ -71,6 +74,43 @@ public class InventoryService {
         } else {
             log.warn("库存预热失败，Redis 可能未连接");
         }
+    }
+
+    // ==================== CRUD ====================
+
+    /**
+     * 根据条件分页查询库存列表
+     */
+    public ResponsePageEntity<InventoryEntity> searchByPage(InventoryConditionEntity condition) {
+        return super.searchByPage(condition);
+    }
+
+    /**
+     * 初始化库存（手动创建库存记录）
+     */
+    public int initInventory(InventoryEntity entity) {
+        return inventoryMapper.insert(entity);
+    }
+
+    /**
+     * 修改库存（手动调整数量）
+     */
+    public int updateInventory(InventoryEntity entity) {
+        return inventoryMapper.updateById(entity);
+    }
+
+    /**
+     * 删除库存
+     */
+    public int deleteByIds(List<Long> ids) {
+    	AssertUtil.notEmpty(ids, "请选择要删除的库存");
+        List<InventoryEntity> entities = inventoryMapper.findByIds(ids);
+        AssertUtil.notEmpty(entities, "库存已被删除");
+
+
+        InventoryEntity entity = new InventoryEntity();
+        FillUserUtil.fillUpdateUserInfo(entity);
+        return inventoryMapper.deleteByIds(ids, entity);
     }
 
     // ==================== 核心方法 ====================
@@ -268,5 +308,10 @@ public class InventoryService {
         log.setOrderId(orderId);
         log.setRemark(remark);
         inventoryLogMapper.insert(log);
+    }
+
+    @Override
+    protected BaseMapper getBaseMapper() {
+        return inventoryMapper;
     }
 }

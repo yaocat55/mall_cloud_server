@@ -1,5 +1,7 @@
 package cn.net.mall.product.controller.internal;
 
+import cn.net.mall.entity.ResponsePageEntity;
+import cn.net.mall.product.entity.UnitConditionEntity;
 import cn.net.mall.product.entity.UnitEntity;
 import cn.net.mall.product.service.UnitService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +28,13 @@ public class UnitInternalController {
 
     public UnitInternalController(UnitService unitService) {
         this.unitService = unitService;
+    }
+
+    @Operation(summary = "分页查询单位",
+               description = "内部服务：由 admin-bff 通过 Feign 调用，分页查询单位列表")
+    @PostMapping("/searchByPage")
+    public ResponsePageEntity<UnitEntity> searchByPage(@RequestBody UnitConditionEntity condition) {
+        return unitService.searchByPage(condition);
     }
 
     @Operation(summary = "新增单位",

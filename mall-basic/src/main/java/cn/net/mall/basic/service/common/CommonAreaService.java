@@ -376,6 +376,7 @@ public class CommonAreaService extends BaseService<CommonAreaEntity, CommonAreaC
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+    	AssertUtil.notEmpty(ids, "请选择要删除的地区");
         List<CommonAreaEntity> entities = commonAreaMapper.findByIds(ids);
         AssertUtil.notEmpty(entities, "地区已被删除");
 

@@ -1,5 +1,7 @@
 package cn.net.mall.product.controller.internal;
 
+import cn.net.mall.entity.ResponsePageEntity;
+import cn.net.mall.product.entity.IndexCarouselImageConditionEntity;
 import cn.net.mall.product.entity.IndexCarouselImageEntity;
 import cn.net.mall.product.service.IndexCarouselImageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +28,13 @@ public class IndexCarouselImageInternalController {
 
     public IndexCarouselImageInternalController(IndexCarouselImageService indexCarouselImageService) {
         this.indexCarouselImageService = indexCarouselImageService;
+    }
+
+    @Operation(summary = "分页查询首页轮播图",
+               description = "内部服务：由 admin-bff 通过 Feign 调用，按条件分页查询首页轮播图列表")
+    @PostMapping("/searchByPage")
+    public ResponsePageEntity<IndexCarouselImageEntity> searchByPage(@RequestBody IndexCarouselImageConditionEntity indexCarouselImageConditionEntity) {
+        return indexCarouselImageService.searchByPage(indexCarouselImageConditionEntity);
     }
 
     @Operation(summary = "新增首页轮播图",

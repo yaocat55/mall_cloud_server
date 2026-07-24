@@ -96,6 +96,7 @@ public class ProductPhotoService extends BaseService<ProductPhotoEntity, Product
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+        AssertUtil.notEmpty(ids, "请选择要删除的商品图片");
         List<ProductPhotoEntity> entities = productPhotoMapper.findByIds(ids);
         AssertUtil.notEmpty(entities, "商品图片已被删除");
 

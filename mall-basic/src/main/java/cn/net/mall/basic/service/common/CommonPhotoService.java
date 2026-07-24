@@ -72,6 +72,7 @@ public class CommonPhotoService extends BaseService< CommonPhotoEntity,  CommonP
      * @return 结果
      */
 	public int deleteByIds(List<Long> ids) {
+    	AssertUtil.notEmpty(ids, "请选择要删除的图片");
 		List<CommonPhotoEntity> entities = commonPhotoMapper.findByIds(ids);
 		AssertUtil.notEmpty(entities, "图片已被删除");
 

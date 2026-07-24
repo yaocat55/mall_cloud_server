@@ -2,8 +2,6 @@ package cn.net.mall.admin.controller.admin;
 
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.product.client.CommentFeignClient;
-import cn.net.mall.util.ApiResult;
-import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,13 +21,13 @@ public class AdminShoppingController {
 
     @Operation(summary = "分页查询商品评论", security = @SecurityRequirement(name = "Bearer Token"))
     @PostMapping("/productComment/page")
-    public ApiResult<ResponsePageEntity<?>> searchCommentPage(@RequestBody ProductCommentConditionDTO c) {
-        return ApiResultUtil.success(commentFeignClient.searchByPage(c));
+    public ResponsePageEntity<?> searchCommentPage(@RequestBody ProductCommentConditionDTO c) {
+        return commentFeignClient.searchByPage(c);
     }
 
     @Operation(summary = "查询商品评论详情", security = @SecurityRequirement(name = "Bearer Token"))
     @GetMapping("/productComment/detail")
-    public ApiResult<Object> findCommentById(@RequestParam("id") Long id) {
-        return ApiResultUtil.success(commentFeignClient.findById(id));
+    public Object findCommentById(@RequestParam("id") Long id) {
+        return commentFeignClient.findById(id);
     }
 }

@@ -23,7 +23,7 @@ import static cn.net.mall.product.constant.AppConstant.PRODUCT_SERVICE_NAME;
 public interface AttributeFeignClient {
 
     @Operation(summary = "分页查询属性", description = "按条件分页查询属性列表，请求参数包含 pageNo、pageSize 及可选筛选条件（如属性名称、属性类型等）")
-    @PostMapping("/v1/attribute/searchByPage")
+    @PostMapping("/v1/internal/attribute/searchByPage")
     ResponsePageEntity<?> searchByPage(@RequestBody AttributeConditionDTO condition);
 
     @Operation(summary = "新增属性", description = "新增属性记录，请求体包含属性名称、属性类型、排序等字段")

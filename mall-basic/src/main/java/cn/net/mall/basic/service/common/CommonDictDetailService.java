@@ -112,6 +112,7 @@ public class CommonDictDetailService {
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+    	AssertUtil.notEmpty(ids, "请选择要删除的数据字典详情");
         List<CommonDictDetailEntity> detailEntityList = commonDictDetailMapper.findByIds(ids);
         AssertUtil.notEmpty(detailEntityList, "数据字典详情已被删除");
 

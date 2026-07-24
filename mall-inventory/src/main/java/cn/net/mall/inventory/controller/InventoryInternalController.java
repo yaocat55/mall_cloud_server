@@ -1,7 +1,10 @@
 package cn.net.mall.inventory.controller;
 
 import cn.net.mall.inventory.dto.*;
+import cn.net.mall.inventory.entity.*;
 import cn.net.mall.inventory.service.InventoryService;
+import cn.net.mall.inventory.service.InventoryBatchService;
+import cn.net.mall.inventory.service.InventoryLogService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -23,6 +26,8 @@ import java.util.List;
 public class InventoryInternalController {
 
     private final InventoryService inventoryService;
+    private final InventoryBatchService inventoryBatchService;
+    private final InventoryLogService inventoryLogService;
 
     @Operation(summary = "冻结库存", description = "下单时调用，Redis Lua 原子扣减，降级到 MySQL 条件扣减")
     @PostMapping("/freeze")
@@ -69,5 +74,57 @@ public class InventoryInternalController {
     @PostMapping("/batch")
     public List<InventoryDTO> getByProductIds(@RequestBody List<Long> productIds) {
         return inventoryService.getByProductIds(productIds);
+    }
+
+    // ==================== 库存 CRUD（Feign 内部使用） ====================
+
+    @Operation(summary = "分页查询库存列表")
+    @PostMapping("/page")
+    public Object searchByPage(@RequestBody InventoryConditionEntity condition) {
+        return inventoryService.searchByPage(condition);
+    }
+
+    @Operation(summary = "初始化库存")
+    @PostMapping("/init")
+    public RowsDTO initInventory(@RequestBody InventoryEntity entity) {
+        return new RowsDTO(inventoryService.initInventory(entity));
+    }
+
+    @Operation(summary = "修改库存")
+    @PostMapping("/update")
+    public RowsDTO updateInventory(@RequestBody InventoryEntity entity) {
+        return new RowsDTO(inventoryService.updateInventory(entity));
+    }
+
+    @Operation(summary = "删除库存")
+    @PostMapping("/deleteByIds")
+    public RowsDTO deleteByIds(@RequestBody List<Long> ids) {
+        return new RowsDTO(inventoryService.deleteByIds(ids));
+    }
+
+    // ==================== 批次 / 流水查询 ====================
+
+    @Operation(summary = "分页查询批次列表")
+    @PostMapping("/batch/page")
+    public Object batchPage(@RequestBody InventoryBatchConditionEntity condition) {
+        return inventoryBatchService.searchByPage(condition);
+    }
+
+    @Operation(summary = "批次详情")
+    @GetMapping("/batch/{id}")
+    public InventoryBatchEntity batchDetail(@PathVariable Long id) {
+        return inventoryBatchService.findById(id);
+    }
+
+    @Operation(summary = "分页查询库存流水")
+    @PostMapping("/log/page")
+    public Object logPage(@RequestBody InventoryLogConditionEntity condition) {
+        return inventoryLogService.searchByPage(condition);
+    }
+
+    @Operation(summary = "流水详情")
+    @GetMapping("/log/{id}")
+    public InventoryLogEntity logDetail(@PathVariable Long id) {
+        return inventoryLogService.findById(id);
     }
 }

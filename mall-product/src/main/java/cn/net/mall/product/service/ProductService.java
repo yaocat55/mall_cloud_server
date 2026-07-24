@@ -1066,6 +1066,7 @@ public class ProductService extends BaseService<ProductEntity, ProductConditionE
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+        AssertUtil.notEmpty(ids, "请选择要删除的商品");
         List<ProductEntity> entities = productMapper.findByIds(ids);
         AssertUtil.notEmpty(entities, "商品已被删除");
 

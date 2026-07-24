@@ -272,6 +272,7 @@ public class ShoppingCartService extends BaseService<ShoppingCartEntity, Shoppin
     }
 
     public int deleteByIds(List<Long> ids) {
+        AssertUtil.notEmpty(ids, "请选择要删除的购物车商品");
         // 原 Service 没有 deleteByIds 方法显式定义？可能是 BaseService 的？
         // 但是 Controller 调用了 shoppingCartService.deleteByIds(ids)
         // 检查 ShoppingCartMapper 有 deleteByIds

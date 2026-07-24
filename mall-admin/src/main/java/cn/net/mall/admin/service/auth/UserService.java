@@ -789,18 +789,27 @@ public class UserService extends BaseService<UserEntity, UserConditionEntity> {
 
 
     /**
-     * 删除岗位对象
+     * 删除用户（软删除）
      *
      * @param ids 系统ID
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+        AssertUtil.notEmpty(ids, "请选择要删除的用户");
+
         List<UserEntity> userEntities = userMapper.findByIds(ids);
         AssertUtil.notEmpty(userEntities, "用户已被删除");
 
         UserEntity userEntity = new UserEntity();
         FillUserUtil.fillUpdateUserInfo(userEntity);
-        return userMapper.deleteByIds(ids, userEntity);
+        int rows = userMapper.deleteByIds(ids, userEntity);
+
+        // 删除后清理：踢人下线 + 清除 registerUser 缓存
+        for (UserEntity entity : userEntities) {
+            kickOut(entity.getId());
+            redisUtil.del(getUserKey(entity.getUserName()));
+        }
+        return rows;
     }
 
     /**

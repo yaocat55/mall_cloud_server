@@ -255,6 +255,7 @@ public class CouponService extends BaseService<CouponEntity, CouponConditionEnti
      * @return 结果
      */
     public int deleteByIds(List<Long> ids) {
+    	AssertUtil.notEmpty(ids, "请选择要删除的优惠券");
         List<CouponEntity> entities = couponMapper.findByIds(ids);
         AssertUtil.notEmpty(entities, "优惠券已被删除");
 
