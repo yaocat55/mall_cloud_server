@@ -32,9 +32,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private MenuMapper menuMapper;
 
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEntity userEntity = userMapper.findByUserName(username);
+
         if (Objects.isNull(userEntity)) {
             return null;
         }
