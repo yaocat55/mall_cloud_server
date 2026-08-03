@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.net.mall.pay.mapper.PayChannelConfigMapper">
+
+    <resultMap type="cn.net.mall.pay.entity.PayChannelConfigEntity" id="PayChannelConfigResult">
+        <result property="id"    column="id" />
+        <result property="channelCode"    column="channel_code" />
+        <result property="channelName"    column="channel_name" />
+        <result property="appId"    column="app_id" />
+        <result property="merchantId"    column="merchant_id" />
+        <result property="appSecret"    column="app_secret" />
+        <result property="publicKey"    column="public_key" />
+        <result property="privateKey"    column="private_key" />
+        <result property="notifyUrl"    column="notify_url" />
+        <result property="refundNotifyUrl"    column="refund_notify_url" />
+        <result property="billDownloadUrl"    column="bill_download_url" />
+        <result property="configJson"    column="config_json" />
+        <result property="status"    column="status" />
+        <result property="version"    column="version" />
+        <result property="createUserId"    column="create_user_id" />
+        <result property="createUserName"    column="create_user_name" />
+        <result property="createTime"    column="create_time" />
+        <result property="updateUserId"    column="update_user_id" />
+        <result property="updateUserName"    column="update_user_name" />
+        <result property="updateTime"    column="update_time" />
+        <result property="isDel"    column="is_del" />
+    </resultMap>
+
+
+    <sql id="paginationSql">
+        <if test="pageSize > 0">
+           LIMIT #{pageBegin} , #{pageSize}
+        </if>
+    </sql>
+
+	<sql id="selectPayChannelConfigColumn">
+         id,
+         channel_code,
+         channel_name,
+         app_id,
+         merchant_id,
+         app_secret,
+         public_key,
+         private_key,
+         notify_url,
+         refund_notify_url,
+         bill_download_url,
+         config_json,
+         status,
+         version,
+         create_user_id,
+         create_user_name,
+         create_time,
+         update_user_id,
+         update_user_name,
+         update_time,
+         is_del
+    </sql>
+
+    <sql id="queryWhere">
+        <where>
+            
+            <if test="id != null ">
+                AND id = #{id}
+            </if>
+            
+            <if test="channelCode != null  and channelCode != ''">
+                AND channel_code = #{channelCode}
+            </if>
+            
+            <if test="channelName != null  and channelName != ''">
+                AND channel_name = #{channelName}
+            </if>
+            
+            <if test="appId != null  and appId != ''">
+                AND app_id = #{appId}
+            </if>
+            
+            <if test="merchantId != null  and merchantId != ''">
+                AND merchant_id = #{merchantId}
+            </if>
+            
+            <if test="appSecret != null  and appSecret != ''">
+                AND app_secret = #{appSecret}
+            </if>
+            
+            <if test="publicKey != null  and publicKey != ''">
+                AND public_key = #{publicKey}
+            </if>
+            
+            <if test="privateKey != null  and privateKey != ''">
+                AND private_key = #{privateKey}
+            </if>
+            
+            <if test="notifyUrl != null  and notifyUrl != ''">
+                AND notify_url = #{notifyUrl}
+            </if>
+            
+            <if test="refundNotifyUrl != null  and refundNotifyUrl != ''">
+                AND refund_notify_url = #{refundNotifyUrl}
+            </if>
+            
+            <if test="billDownloadUrl != null  and billDownloadUrl != ''">
+                AND bill_download_url = #{billDownloadUrl}
+            </if>
+            
+            <if test="configJson != null ">
+                AND config_json = #{configJson}
+            </if>
+            
+            <if test="status != null ">
+                AND status = #{status}
+            </if>
+            
+            <if test="version != null ">
+                AND version = #{version}
+            </if>
+            
+            <if test="createUserId != null ">
+                AND create_user_id = #{createUserId}
+            </if>
+            
+            <if test="createUserName != null  and createUserName != ''">
+                AND create_user_name = #{createUserName}
+            </if>
+            
+            <if test="createTime != null ">
+                AND create_time = #{createTime}
+            </if>
+            
+            <if test="updateUserId != null ">
+                AND update_user_id = #{updateUserId}
+            </if>
+            
+            <if test="updateUserName != null  and updateUserName != ''">
+                AND update_user_name = #{updateUserName}
+            </if>
+            
+            <if test="updateTime != null ">
+                AND update_time = #{updateTime}
+            </if>
+                        AND is_del = 0
+        </where>
+    </sql>
+
+    <select id="findById" parameterType="Long"
+            resultMap="PayChannelConfigResult">
+        SELECT
+        <include refid="selectPayChannelConfigColumn"/>
+        FROM pay_channel_config
+        WHERE id = #{id} AND is_del = 0
+    </select>
+
+    <select id="searchByCondition"
+            parameterType="cn.net.mall.pay.entity.PayChannelConfigConditionEntity"
+            resultMap="PayChannelConfigResult">
+        SELECT
+        <include refid="selectPayChannelConfigColumn"/>
+        FROM pay_channel_config
+        <include refid="queryWhere"/>
+        <include refid="cn.net.mall.pay.mapper.BaseMapper.paginationSql"/>
+    </select>
+
+    <select id="searchCount"
+            parameterType="cn.net.mall.pay.entity.PayChannelConfigConditionEntity"
+            resultType="int">
+        SELECT
+        COUNT(*)
+        FROM pay_channel_config
+        <include refid="queryWhere"/>
+    </select>
+
+
+    <update id="update" parameterType="cn.net.mall.pay.entity.PayChannelConfigEntity">
+        UPDATE pay_channel_config
+        <trim prefix="SET" suffixOverrides=",">
+                                                        
+                    <if test="channelCode != null  and channelCode != ''">
+                        channel_code = #{channelCode},
+                    </if>
+
+                                            
+                    <if test="channelName != null  and channelName != ''">
+                        channel_name = #{channelName},
+                    </if>
+
+                                            
+                    <if test="appId != null  and appId != ''">
+                        app_id = #{appId},
+                    </if>
+
+                                            
+                    <if test="merchantId != null  and merchantId != ''">
+                        merchant_id = #{merchantId},
+                    </if>
+
+                                            
+                    <if test="appSecret != null  and appSecret != ''">
+                        app_secret = #{appSecret},
+                    </if>
+
+                                            
+                    <if test="publicKey != null  and publicKey != ''">
+                        public_key = #{publicKey},
+                    </if>
+
+                                            
+                    <if test="privateKey != null  and privateKey != ''">
+                        private_key = #{privateKey},
+                    </if>
+
+                                            
+                    <if test="notifyUrl != null  and notifyUrl != ''">
+                        notify_url = #{notifyUrl},
+                    </if>
+
+                                            
+                    <if test="refundNotifyUrl != null  and refundNotifyUrl != ''">
+                        refund_notify_url = #{refundNotifyUrl},
+                    </if>
+
+                                            
+                    <if test="billDownloadUrl != null  and billDownloadUrl != ''">
+                        bill_download_url = #{billDownloadUrl},
+                    </if>
+
+                                            
+                    <if test="configJson != null ">
+                        config_json = #{configJson},
+                    </if>
+
+                                            
+                    <if test="status != null ">
+                        status = #{status},
+                    </if>
+
+                                            
+                    <if test="version != null ">
+                        version = #{version},
+                    </if>
+
+                                            
+                    <if test="createUserId != null ">
+                        create_user_id = #{createUserId},
+                    </if>
+
+                                            
+                    <if test="createUserName != null  and createUserName != ''">
+                        create_user_name = #{createUserName},
+                    </if>
+
+                                            
+                    <if test="createTime != null ">
+                        create_time = #{createTime},
+                    </if>
+
+                                            
+                    <if test="updateUserId != null ">
+                        update_user_id = #{updateUserId},
+                    </if>
+
+                                            
+                    <if test="updateUserName != null  and updateUserName != ''">
+                        update_user_name = #{updateUserName},
+                    </if>
+
+                                                                    update_time=now(3)
+        </trim>
+        WHERE id = #{id} AND is_del = 0
+    </update>
+
+    <delete id="deleteByIds">
+        UPDATE pay_channel_config
+        SET is_del = 1, update_time=now(3), update_user_id=#{entity.updateUserId}, update_user_name=#{entity.updateUserName}
+        WHERE is_del = 0 AND id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="insert" parameterType="cn.net.mall.pay.entity.PayChannelConfigEntity">
+        INSERT INTO pay_channel_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            
+                    id,
+
+            
+                    <if test="channelCode != null  and channelCode != ''">
+                        channel_code,
+                    </if>
+
+            
+                    <if test="channelName != null  and channelName != ''">
+                        channel_name,
+                    </if>
+
+            
+                    <if test="appId != null  and appId != ''">
+                        app_id,
+                    </if>
+
+            
+                    <if test="merchantId != null  and merchantId != ''">
+                        merchant_id,
+                    </if>
+
+            
+                    <if test="appSecret != null  and appSecret != ''">
+                        app_secret,
+                    </if>
+
+            
+                    <if test="publicKey != null  and publicKey != ''">
+                        public_key,
+                    </if>
+
+            
+                    <if test="privateKey != null  and privateKey != ''">
+                        private_key,
+                    </if>
+
+            
+                    <if test="notifyUrl != null  and notifyUrl != ''">
+                        notify_url,
+                    </if>
+
+            
+                    <if test="refundNotifyUrl != null  and refundNotifyUrl != ''">
+                        refund_notify_url,
+                    </if>
+
+            
+                    <if test="billDownloadUrl != null  and billDownloadUrl != ''">
+                        bill_download_url,
+                    </if>
+
+            
+                    <if test="configJson != null ">
+                        config_json,
+                    </if>
+
+            
+                    <if test="status != null ">
+                        status,
+                    </if>
+
+            
+                    <if test="version != null ">
+                        version,
+                    </if>
+
+            
+                    create_user_id,
+                    create_user_name,
+                    create_time,
+
+            
+                    <if test="updateUserId != null ">
+                        update_user_id,
+                    </if>
+
+            
+                    <if test="updateUserName != null  and updateUserName != ''">
+                        update_user_name,
+                    </if>
+
+            
+                    <if test="updateTime != null ">
+                        update_time,
+         
+                    </if>
+                    is_del,
+
+                    </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                                #{GENERATE_ID},
+
+                                <if test="channelCode != null  and channelCode != ''">
+                        #{channelCode},
+                    </if>
+
+                                <if test="channelName != null  and channelName != ''">
+                        #{channelName},
+                    </if>
+
+                                <if test="appId != null  and appId != ''">
+                        #{appId},
+                    </if>
+
+                                <if test="merchantId != null  and merchantId != ''">
+                        #{merchantId},
+                    </if>
+
+                                <if test="appSecret != null  and appSecret != ''">
+                        #{appSecret},
+                    </if>
+
+                                <if test="publicKey != null  and publicKey != ''">
+                        #{publicKey},
+                    </if>
+
+                                <if test="privateKey != null  and privateKey != ''">
+                        #{privateKey},
+                    </if>
+
+                                <if test="notifyUrl != null  and notifyUrl != ''">
+                        #{notifyUrl},
+                    </if>
+
+                                <if test="refundNotifyUrl != null  and refundNotifyUrl != ''">
+                        #{refundNotifyUrl},
+                    </if>
+
+                                <if test="billDownloadUrl != null  and billDownloadUrl != ''">
+                        #{billDownloadUrl},
+                    </if>
+
+                                <if test="configJson != null ">
+                        #{configJson},
+                    </if>
+
+                                <if test="status != null ">
+                        #{status},
+                    </if>
+
+                                <if test="version != null ">
+                        #{version},
+                    </if>
+
+                                #{CURRENT_USER_ID},
+                                #{CURRENT_USER_NAME},
+                                now(3),
+
+                                <if test="updateUserId != null ">
+                        #{updateUserId},
+                    </if>
+
+                                <if test="updateUserName != null  and updateUserName != ''">
+                        #{updateUserName},
+                    </if>
+
+                                <if test="updateTime != null ">
+                        #{updateTime},
+                    </if>
+                                0,
+
+                    </trim>
+    </insert>
+
+    <select id="findByIds" parameterType="Long"
+            resultMap="PayChannelConfigResult">
+        SELECT
+          <include refid="selectPayChannelConfigColumn"/>
+        FROM pay_channel_config
+        WHERE is_del = 0 AND id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

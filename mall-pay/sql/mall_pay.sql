@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS `pay_order` (
     `update_user_id`     bigint       NOT NULL              COMMENT '更新人ID',
     `update_user_name`   varchar(64)  NOT NULL              COMMENT '更新人姓名',
     `update_time`        datetime(3)  NOT NULL              COMMENT '更新时间',
+    `is_del`             tinyint      NOT NULL DEFAULT 0    COMMENT '逻辑删除：0否 1是',
     `remark`             varchar(255)         DEFAULT NULL   COMMENT '备注',
     UNIQUE KEY `uk_pay_order_no` (`pay_order_no`),
     UNIQUE KEY `uk_merchant_order_no` (`merchant_order_no`),
@@ -79,6 +80,7 @@ CREATE TABLE IF NOT EXISTS `pay_notify_log` (
     `process_status`   tinyint      NOT NULL DEFAULT 0    COMMENT '处理状态：0待处理 1处理成功 2处理失败 3重复通知忽略',
     `process_msg`      varchar(512)         DEFAULT NULL   COMMENT '处理结果信息',
     `create_time`      datetime(3)  NOT NULL              COMMENT '创建时间',
+    `is_del`           tinyint      NOT NULL DEFAULT 0    COMMENT '逻辑删除：0否 1是',
     KEY `idx_pay_order_id` (`pay_order_id`),
     KEY `idx_create_time` (`create_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='支付渠道回调日志';
@@ -114,6 +116,7 @@ CREATE TABLE IF NOT EXISTS `pay_refund` (
     `update_user_id`    bigint       NOT NULL              COMMENT '更新人ID',
     `update_user_name`  varchar(64)  NOT NULL              COMMENT '更新人姓名',
     `update_time`       datetime(3)  NOT NULL              COMMENT '更新时间',
+    `is_del`            tinyint      NOT NULL DEFAULT 0    COMMENT '逻辑删除：0否 1是',
     `remark`            varchar(255)         DEFAULT NULL   COMMENT '备注',
     UNIQUE KEY `uk_refund_no` (`refund_no`),
     KEY `idx_pay_order_id` (`pay_order_id`),
@@ -147,6 +150,7 @@ CREATE TABLE IF NOT EXISTS `pay_channel_config` (
     `update_user_id`      bigint       NOT NULL              COMMENT '更新人ID',
     `update_user_name`    varchar(64)  NOT NULL              COMMENT '更新人姓名',
     `update_time`         datetime(3)  NOT NULL              COMMENT '更新时间',
+    `is_del`              tinyint      NOT NULL DEFAULT 0    COMMENT '逻辑删除：0否 1是',
     UNIQUE KEY `uk_channel_code` (`channel_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='支付渠道配置';
 
@@ -168,6 +172,7 @@ CREATE TABLE IF NOT EXISTS `pay_biz_config` (
     `update_user_id`     bigint       NOT NULL              COMMENT '更新人ID',
     `update_user_name`   varchar(64)  NOT NULL              COMMENT '更新人姓名',
     `update_time`        datetime(3)  NOT NULL              COMMENT '更新时间',
+    `is_del`             tinyint      NOT NULL DEFAULT 0    COMMENT '逻辑删除：0否 1是',
     UNIQUE KEY `uk_biz_type` (`biz_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='业务渠道接入表';
 
@@ -198,6 +203,7 @@ CREATE TABLE IF NOT EXISTS `recon_batch` (
     `update_user_id`        bigint      NOT NULL              COMMENT '更新人ID',
     `update_user_name`      varchar(64) NOT NULL              COMMENT '更新人姓名',
     `update_time`           datetime(3) NOT NULL              COMMENT '更新时间',
+    `is_del`                tinyint     NOT NULL DEFAULT 0    COMMENT '逻辑删除：0否 1是',
     UNIQUE KEY `uk_channel_trade_date` (`channel_code`, `trade_date`),
     KEY `idx_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='对账批次表';
@@ -251,6 +257,7 @@ CREATE TABLE IF NOT EXISTS `recon_result` (
     `version`          int          NOT NULL DEFAULT 0    COMMENT '乐观锁',
     `create_time`      datetime(3)  NOT NULL              COMMENT '创建时间',
     `update_time`      datetime(3)  NOT NULL              COMMENT '更新时间',
+    `is_del`           tinyint      NOT NULL DEFAULT 0    COMMENT '逻辑删除：0否 1是',
     KEY `idx_batch_no` (`batch_no`),
     KEY `idx_handle_status` (`handle_status`),
     KEY `idx_trade_no` (`trade_no`)

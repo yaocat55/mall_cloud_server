@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.net.mall.pay.mapper.ReconTempMapper">
+
+    <resultMap type="cn.net.mall.pay.entity.ReconTempEntity" id="ReconTempResult">
+        <result property="id"    column="id" />
+        <result property="batchNo"    column="batch_no" />
+        <result property="lineNo"    column="line_no" />
+        <result property="tradeNo"    column="trade_no" />
+        <result property="channelTradeNo"    column="channel_trade_no" />
+        <result property="refundNo"    column="refund_no" />
+        <result property="tradeTime"    column="trade_time" />
+        <result property="tradeType"    column="trade_type" />
+        <result property="amount"    column="amount" />
+        <result property="fee"    column="fee" />
+        <result property="income"    column="income" />
+        <result property="tradeStatus"    column="trade_status" />
+        <result property="payerAccount"    column="payer_account" />
+        <result property="extJson"    column="ext_json" />
+        <result property="createTime"    column="create_time" />
+    </resultMap>
+
+
+    <sql id="paginationSql">
+        <if test="pageSize > 0">
+           LIMIT #{pageBegin} , #{pageSize}
+        </if>
+    </sql>
+
+	<sql id="selectReconTempColumn">         batch_no,
+         line_no,
+         trade_no,
+         channel_trade_no,
+         refund_no,
+         trade_time,
+         trade_type,
+         amount,
+         fee,
+         income,
+         trade_status,
+         payer_account,
+         ext_json,
+         create_time
+    </sql>
+
+    <sql id="queryWhere">
+        <where>
+            
+            <if test="id != null ">
+                AND id = #{id}
+            </if>
+            
+            <if test="batchNo != null  and batchNo != ''">
+                AND batch_no = #{batchNo}
+            </if>
+            
+            <if test="lineNo != null ">
+                AND line_no = #{lineNo}
+            </if>
+            
+            <if test="tradeNo != null  and tradeNo != ''">
+                AND trade_no = #{tradeNo}
+            </if>
+            
+            <if test="channelTradeNo != null  and channelTradeNo != ''">
+                AND channel_trade_no = #{channelTradeNo}
+            </if>
+            
+            <if test="refundNo != null  and refundNo != ''">
+                AND refund_no = #{refundNo}
+            </if>
+            
+            <if test="tradeTime != null ">
+                AND trade_time = #{tradeTime}
+            </if>
+            
+            <if test="tradeType != null  and tradeType != ''">
+                AND trade_type = #{tradeType}
+            </if>
+            
+            <if test="amount != null ">
+                AND amount = #{amount}
+            </if>
+            
+            <if test="fee != null ">
+                AND fee = #{fee}
+            </if>
+            
+            <if test="income != null ">
+                AND income = #{income}
+            </if>
+            
+            <if test="tradeStatus != null  and tradeStatus != ''">
+                AND trade_status = #{tradeStatus}
+            </if>
+            
+            <if test="payerAccount != null  and payerAccount != ''">
+                AND payer_account = #{payerAccount}
+            </if>
+            
+            <if test="extJson != null ">
+                AND ext_json = #{extJson}
+            </if>
+            
+            <if test="createTime != null ">
+                AND create_time = #{createTime}
+            </if>
+        </where>
+    </sql>
+
+    <select id="findById" parameterType="Long"
+            resultMap="ReconTempResult">
+        SELECT
+        <include refid="selectReconTempColumn"/>
+        FROM recon_temp
+        WHERE id = #{id}
+    </select>
+
+    <select id="searchByCondition"
+            parameterType="cn.net.mall.pay.entity.ReconTempConditionEntity"
+            resultMap="ReconTempResult">
+        SELECT
+        <include refid="selectReconTempColumn"/>
+        FROM recon_temp
+        <include refid="queryWhere"/>
+        <include refid="cn.net.mall.pay.mapper.BaseMapper.paginationSql"/>
+    </select>
+
+    <select id="searchCount"
+            parameterType="cn.net.mall.pay.entity.ReconTempConditionEntity"
+            resultType="int">
+        SELECT
+        COUNT(*)
+        FROM recon_temp
+        <include refid="queryWhere"/>
+    </select>
+
+
+    <update id="update" parameterType="cn.net.mall.pay.entity.ReconTempEntity">
+        UPDATE recon_temp
+        <trim prefix="SET" suffixOverrides=",">
+                                                        
+                    <if test="batchNo != null  and batchNo != ''">
+                        batch_no = #{batchNo},
+                    </if>
+
+                                            
+                    <if test="lineNo != null ">
+                        line_no = #{lineNo},
+                    </if>
+
+                                            
+                    <if test="tradeNo != null  and tradeNo != ''">
+                        trade_no = #{tradeNo},
+                    </if>
+
+                                            
+                    <if test="channelTradeNo != null  and channelTradeNo != ''">
+                        channel_trade_no = #{channelTradeNo},
+                    </if>
+
+                                            
+                    <if test="refundNo != null  and refundNo != ''">
+                        refund_no = #{refundNo},
+                    </if>
+
+                                            
+                    <if test="tradeTime != null ">
+                        trade_time = #{tradeTime},
+                    </if>
+
+                                            
+                    <if test="tradeType != null  and tradeType != ''">
+                        trade_type = #{tradeType},
+                    </if>
+
+                                            
+                    <if test="amount != null ">
+                        amount = #{amount},
+                    </if>
+
+                                            
+                    <if test="fee != null ">
+                        fee = #{fee},
+                    </if>
+
+                                            
+                    <if test="income != null ">
+                        income = #{income},
+                    </if>
+
+                                            
+                    <if test="tradeStatus != null  and tradeStatus != ''">
+                        trade_status = #{tradeStatus},
+                    </if>
+
+                                            
+                    <if test="payerAccount != null  and payerAccount != ''">
+                        payer_account = #{payerAccount},
+                    </if>
+
+                                            
+                    <if test="extJson != null ">
+                        ext_json = #{extJson},
+                    </if>
+
+                                            
+                    <if test="createTime != null ">
+                        create_time = #{createTime},
+                    </if>
+
+                                        update_time=now(3)
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteByIds">
+        DELETE FROM recon_temp
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="insert" parameterType="cn.net.mall.pay.entity.ReconTempEntity">
+        INSERT INTO recon_temp
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            
+                    <if test="batchNo != null  and batchNo != ''">
+                        batch_no,
+                    </if>
+
+            
+                    <if test="lineNo != null ">
+                        line_no,
+                    </if>
+
+            
+                    <if test="tradeNo != null  and tradeNo != ''">
+                        trade_no,
+                    </if>
+
+            
+                    <if test="channelTradeNo != null  and channelTradeNo != ''">
+                        channel_trade_no,
+                    </if>
+
+            
+                    <if test="refundNo != null  and refundNo != ''">
+                        refund_no,
+                    </if>
+
+            
+                    <if test="tradeTime != null ">
+                        trade_time,
+                    </if>
+
+            
+                    <if test="tradeType != null  and tradeType != ''">
+                        trade_type,
+                    </if>
+
+            
+                    <if test="amount != null ">
+                        amount,
+                    </if>
+
+            
+                    <if test="fee != null ">
+                        fee,
+                    </if>
+
+            
+                    <if test="income != null ">
+                        income,
+                    </if>
+
+            
+                    <if test="tradeStatus != null  and tradeStatus != ''">
+                        trade_status,
+                    </if>
+
+            
+                    <if test="payerAccount != null  and payerAccount != ''">
+                        payer_account,
+                    </if>
+
+            
+                    <if test="extJson != null ">
+                        ext_json,
+                    </if>
+
+            
+                    <if test="createTime != null ">
+                        create_time,
+                    </if>
+
+                    </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+                                <if test="batchNo != null  and batchNo != ''">
+                        #{batchNo},
+                    </if>
+
+                                <if test="lineNo != null ">
+                        #{lineNo},
+                    </if>
+
+                                <if test="tradeNo != null  and tradeNo != ''">
+                        #{tradeNo},
+                    </if>
+
+                                <if test="channelTradeNo != null  and channelTradeNo != ''">
+                        #{channelTradeNo},
+                    </if>
+
+                                <if test="refundNo != null  and refundNo != ''">
+                        #{refundNo},
+                    </if>
+
+                                <if test="tradeTime != null ">
+                        #{tradeTime},
+                    </if>
+
+                                <if test="tradeType != null  and tradeType != ''">
+                        #{tradeType},
+                    </if>
+
+                                <if test="amount != null ">
+                        #{amount},
+                    </if>
+
+                                <if test="fee != null ">
+                        #{fee},
+                    </if>
+
+                                <if test="income != null ">
+                        #{income},
+                    </if>
+
+                                <if test="tradeStatus != null  and tradeStatus != ''">
+                        #{tradeStatus},
+                    </if>
+
+                                <if test="payerAccount != null  and payerAccount != ''">
+                        #{payerAccount},
+                    </if>
+
+                                <if test="extJson != null ">
+                        #{extJson},
+                    </if>
+
+                                <if test="createTime != null ">
+                        #{createTime},
+                    </if>
+
+                    </trim>
+    </insert>
+
+    <select id="findByIds" parameterType="Long"
+            resultMap="ReconTempResult">
+        SELECT
+          <include refid="selectReconTempColumn"/>
+        FROM recon_temp
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

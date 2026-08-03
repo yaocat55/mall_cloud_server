@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.net.mall.pay.mapper.ReconResultMapper">
+
+    <resultMap type="cn.net.mall.pay.entity.ReconResultEntity" id="ReconResultResult">
+        <result property="id"    column="id" />
+        <result property="batchNo"    column="batch_no" />
+        <result property="channelCode"    column="channel_code" />
+        <result property="tradeNo"    column="trade_no" />
+        <result property="channelTradeNo"    column="channel_trade_no" />
+        <result property="payOrderId"    column="pay_order_id" />
+        <result property="payOrderNo"    column="pay_order_no" />
+        <result property="tradeTime"    column="trade_time" />
+        <result property="platformAmount"    column="platform_amount" />
+        <result property="channelAmount"    column="channel_amount" />
+        <result property="diffType"    column="diff_type" />
+        <result property="diffAmount"    column="diff_amount" />
+        <result property="handleStatus"    column="handle_status" />
+        <result property="handleType"    column="handle_type" />
+        <result property="handleResult"    column="handle_result" />
+        <result property="handleUserId"    column="handle_user_id" />
+        <result property="handleTime"    column="handle_time" />
+        <result property="version"    column="version" />
+        <result property="createTime"    column="create_time" />
+        <result property="updateTime"    column="update_time" />
+        <result property="isDel"    column="is_del" />
+    </resultMap>
+
+
+    <sql id="paginationSql">
+        <if test="pageSize > 0">
+           LIMIT #{pageBegin} , #{pageSize}
+        </if>
+    </sql>
+
+	<sql id="selectReconResultColumn">
+         id,
+         batch_no,
+         channel_code,
+         trade_no,
+         channel_trade_no,
+         pay_order_id,
+         pay_order_no,
+         trade_time,
+         platform_amount,
+         channel_amount,
+         diff_type,
+         diff_amount,
+         handle_status,
+         handle_type,
+         handle_result,
+         handle_user_id,
+         handle_time,
+         version,
+         create_time,
+         update_time,
+         is_del
+    </sql>
+
+    <sql id="queryWhere">
+        <where>
+            
+            <if test="id != null ">
+                AND id = #{id}
+            </if>
+            
+            <if test="batchNo != null  and batchNo != ''">
+                AND batch_no = #{batchNo}
+            </if>
+            
+            <if test="channelCode != null  and channelCode != ''">
+                AND channel_code = #{channelCode}
+            </if>
+            
+            <if test="tradeNo != null  and tradeNo != ''">
+                AND trade_no = #{tradeNo}
+            </if>
+            
+            <if test="channelTradeNo != null  and channelTradeNo != ''">
+                AND channel_trade_no = #{channelTradeNo}
+            </if>
+            
+            <if test="payOrderId != null ">
+                AND pay_order_id = #{payOrderId}
+            </if>
+            
+            <if test="payOrderNo != null  and payOrderNo != ''">
+                AND pay_order_no = #{payOrderNo}
+            </if>
+            
+            <if test="tradeTime != null ">
+                AND trade_time = #{tradeTime}
+            </if>
+            
+            <if test="platformAmount != null ">
+                AND platform_amount = #{platformAmount}
+            </if>
+            
+            <if test="channelAmount != null ">
+                AND channel_amount = #{channelAmount}
+            </if>
+            
+            <if test="diffType != null  and diffType != ''">
+                AND diff_type = #{diffType}
+            </if>
+            
+            <if test="diffAmount != null ">
+                AND diff_amount = #{diffAmount}
+            </if>
+            
+            <if test="handleStatus != null ">
+                AND handle_status = #{handleStatus}
+            </if>
+            
+            <if test="handleType != null ">
+                AND handle_type = #{handleType}
+            </if>
+            
+            <if test="handleResult != null  and handleResult != ''">
+                AND handle_result = #{handleResult}
+            </if>
+            
+            <if test="handleUserId != null ">
+                AND handle_user_id = #{handleUserId}
+            </if>
+            
+            <if test="handleTime != null ">
+                AND handle_time = #{handleTime}
+            </if>
+            
+            <if test="version != null ">
+                AND version = #{version}
+            </if>
+            
+            <if test="createTime != null ">
+                AND create_time = #{createTime}
+            </if>
+            
+            <if test="updateTime != null ">
+                AND update_time = #{updateTime}
+            </if>
+                        AND is_del = 0
+        </where>
+    </sql>
+
+    <select id="findById" parameterType="Long"
+            resultMap="ReconResultResult">
+        SELECT
+        <include refid="selectReconResultColumn"/>
+        FROM recon_result
+        WHERE id = #{id} AND is_del = 0
+    </select>
+
+    <select id="searchByCondition"
+            parameterType="cn.net.mall.pay.entity.ReconResultConditionEntity"
+            resultMap="ReconResultResult">
+        SELECT
+        <include refid="selectReconResultColumn"/>
+        FROM recon_result
+        <include refid="queryWhere"/>
+        <include refid="cn.net.mall.pay.mapper.BaseMapper.paginationSql"/>
+    </select>
+
+    <select id="searchCount"
+            parameterType="cn.net.mall.pay.entity.ReconResultConditionEntity"
+            resultType="int">
+        SELECT
+        COUNT(*)
+        FROM recon_result
+        <include refid="queryWhere"/>
+    </select>
+
+
+    <update id="update" parameterType="cn.net.mall.pay.entity.ReconResultEntity">
+        UPDATE recon_result
+        <trim prefix="SET" suffixOverrides=",">
+                                                        
+                    <if test="batchNo != null  and batchNo != ''">
+                        batch_no = #{batchNo},
+                    </if>
+
+                                            
+                    <if test="channelCode != null  and channelCode != ''">
+                        channel_code = #{channelCode},
+                    </if>
+
+                                            
+                    <if test="tradeNo != null  and tradeNo != ''">
+                        trade_no = #{tradeNo},
+                    </if>
+
+                                            
+                    <if test="channelTradeNo != null  and channelTradeNo != ''">
+                        channel_trade_no = #{channelTradeNo},
+                    </if>
+
+                                            
+                    <if test="payOrderId != null ">
+                        pay_order_id = #{payOrderId},
+                    </if>
+
+                                            
+                    <if test="payOrderNo != null  and payOrderNo != ''">
+                        pay_order_no = #{payOrderNo},
+                    </if>
+
+                                            
+                    <if test="tradeTime != null ">
+                        trade_time = #{tradeTime},
+                    </if>
+
+                                            
+                    <if test="platformAmount != null ">
+                        platform_amount = #{platformAmount},
+                    </if>
+
+                                            
+                    <if test="channelAmount != null ">
+                        channel_amount = #{channelAmount},
+                    </if>
+
+                                            
+                    <if test="diffType != null  and diffType != ''">
+                        diff_type = #{diffType},
+                    </if>
+
+                                            
+                    <if test="diffAmount != null ">
+                        diff_amount = #{diffAmount},
+                    </if>
+
+                                            
+                    <if test="handleStatus != null ">
+                        handle_status = #{handleStatus},
+                    </if>
+
+                                            
+                    <if test="handleType != null ">
+                        handle_type = #{handleType},
+                    </if>
+
+                                            
+                    <if test="handleResult != null  and handleResult != ''">
+                        handle_result = #{handleResult},
+                    </if>
+
+                                            
+                    <if test="handleUserId != null ">
+                        handle_user_id = #{handleUserId},
+                    </if>
+
+                                            
+                    <if test="handleTime != null ">
+                        handle_time = #{handleTime},
+                    </if>
+
+                                            
+                    <if test="version != null ">
+                        version = #{version},
+                    </if>
+
+                                            
+                    <if test="createTime != null ">
+                        create_time = #{createTime},
+                    </if>
+
+                                                                    update_time=now(3)
+        </trim>
+        WHERE id = #{id} AND is_del = 0
+    </update>
+
+    <delete id="deleteByIds">
+        UPDATE recon_result
+        SET is_del = 1, update_time=now(3), update_user_id=#{entity.updateUserId}, update_user_name=#{entity.updateUserName}
+        WHERE is_del = 0 AND id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="insert" parameterType="cn.net.mall.pay.entity.ReconResultEntity">
+        INSERT INTO recon_result
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            
+                    id,
+
+            
+                    <if test="batchNo != null  and batchNo != ''">
+                        batch_no,
+                    </if>
+
+            
+                    <if test="channelCode != null  and channelCode != ''">
+                        channel_code,
+                    </if>
+
+            
+                    <if test="tradeNo != null  and tradeNo != ''">
+                        trade_no,
+                    </if>
+
+            
+                    <if test="channelTradeNo != null  and channelTradeNo != ''">
+                        channel_trade_no,
+                    </if>
+
+            
+                    <if test="payOrderId != null ">
+                        pay_order_id,
+                    </if>
+
+            
+                    <if test="payOrderNo != null  and payOrderNo != ''">
+                        pay_order_no,
+                    </if>
+
+            
+                    <if test="tradeTime != null ">
+                        trade_time,
+                    </if>
+
+            
+                    <if test="platformAmount != null ">
+                        platform_amount,
+                    </if>
+
+            
+                    <if test="channelAmount != null ">
+                        channel_amount,
+                    </if>
+
+            
+                    <if test="diffType != null  and diffType != ''">
+                        diff_type,
+                    </if>
+
+            
+                    <if test="diffAmount != null ">
+                        diff_amount,
+                    </if>
+
+            
+                    <if test="handleStatus != null ">
+                        handle_status,
+                    </if>
+
+            
+                    <if test="handleType != null ">
+                        handle_type,
+                    </if>
+
+            
+                    <if test="handleResult != null  and handleResult != ''">
+                        handle_result,
+                    </if>
+
+            
+                    <if test="handleUserId != null ">
+                        handle_user_id,
+                    </if>
+
+            
+                    <if test="handleTime != null ">
+                        handle_time,
+                    </if>
+
+            
+                    <if test="version != null ">
+                        version,
+                    </if>
+
+            
+                    <if test="createTime != null ">
+                        create_time,
+                    </if>
+
+            
+                    <if test="updateTime != null ">
+                        update_time,
+         
+                    </if>
+                    is_del,
+
+                    </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                                #{GENERATE_ID},
+
+                                <if test="batchNo != null  and batchNo != ''">
+                        #{batchNo},
+                    </if>
+
+                                <if test="channelCode != null  and channelCode != ''">
+                        #{channelCode},
+                    </if>
+
+                                <if test="tradeNo != null  and tradeNo != ''">
+                        #{tradeNo},
+                    </if>
+
+                                <if test="channelTradeNo != null  and channelTradeNo != ''">
+                        #{channelTradeNo},
+                    </if>
+
+                                <if test="payOrderId != null ">
+                        #{payOrderId},
+                    </if>
+
+                                <if test="payOrderNo != null  and payOrderNo != ''">
+                        #{payOrderNo},
+                    </if>
+
+                                <if test="tradeTime != null ">
+                        #{tradeTime},
+                    </if>
+
+                                <if test="platformAmount != null ">
+                        #{platformAmount},
+                    </if>
+
+                                <if test="channelAmount != null ">
+                        #{channelAmount},
+                    </if>
+
+                                <if test="diffType != null  and diffType != ''">
+                        #{diffType},
+                    </if>
+
+                                <if test="diffAmount != null ">
+                        #{diffAmount},
+                    </if>
+
+                                <if test="handleStatus != null ">
+                        #{handleStatus},
+                    </if>
+
+                                <if test="handleType != null ">
+                        #{handleType},
+                    </if>
+
+                                <if test="handleResult != null  and handleResult != ''">
+                        #{handleResult},
+                    </if>
+
+                                <if test="handleUserId != null ">
+                        #{handleUserId},
+                    </if>
+
+                                <if test="handleTime != null ">
+                        #{handleTime},
+                    </if>
+
+                                <if test="version != null ">
+                        #{version},
+                    </if>
+
+                                <if test="createTime != null ">
+                        #{createTime},
+                    </if>
+
+                                <if test="updateTime != null ">
+                        #{updateTime},
+                    </if>
+                                0,
+
+                    </trim>
+    </insert>
+
+    <select id="findByIds" parameterType="Long"
+            resultMap="ReconResultResult">
+        SELECT
+          <include refid="selectReconResultColumn"/>
+        FROM recon_result
+        WHERE is_del = 0 AND id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

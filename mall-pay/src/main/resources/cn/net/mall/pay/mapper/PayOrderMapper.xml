@@ -1,0 +1,723 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.net.mall.pay.mapper.PayOrderMapper">
+
+    <resultMap type="cn.net.mall.pay.entity.PayOrderEntity" id="PayOrderResult">
+        <result property="id"    column="id" />
+        <result property="payOrderNo"    column="pay_order_no" />
+        <result property="bizOrderNo"    column="biz_order_no" />
+        <result property="bizType"    column="biz_type" />
+        <result property="channelCode"    column="channel_code" />
+        <result property="merchantOrderNo"    column="merchant_order_no" />
+        <result property="channelTradeNo"    column="channel_trade_no" />
+        <result property="userId"    column="user_id" />
+        <result property="openId"    column="open_id" />
+        <result property="subject"    column="subject" />
+        <result property="body"    column="body" />
+        <result property="totalAmount"    column="total_amount" />
+        <result property="payAmount"    column="pay_amount" />
+        <result property="refundAmount"    column="refund_amount" />
+        <result property="currency"    column="currency" />
+        <result property="payStatus"    column="pay_status" />
+        <result property="refundStatus"    column="refund_status" />
+        <result property="notifyCount"    column="notify_count" />
+        <result property="notifyTime"    column="notify_time" />
+        <result property="bizNotifyStatus"    column="biz_notify_status" />
+        <result property="clientIp"    column="client_ip" />
+        <result property="deviceInfo"    column="device_info" />
+        <result property="successTime"    column="success_time" />
+        <result property="expireTime"    column="expire_time" />
+        <result property="closedTime"    column="closed_time" />
+        <result property="version"    column="version" />
+        <result property="createUserId"    column="create_user_id" />
+        <result property="createUserName"    column="create_user_name" />
+        <result property="createTime"    column="create_time" />
+        <result property="updateUserId"    column="update_user_id" />
+        <result property="updateUserName"    column="update_user_name" />
+        <result property="updateTime"    column="update_time" />
+        <result property="isDel"    column="is_del" />
+        <result property="remark"    column="remark" />
+    </resultMap>
+
+
+    <sql id="paginationSql">
+        <if test="pageSize > 0">
+           LIMIT #{pageBegin} , #{pageSize}
+        </if>
+    </sql>
+
+	<sql id="selectPayOrderColumn">
+         id,
+         pay_order_no,
+         biz_order_no,
+         biz_type,
+         channel_code,
+         merchant_order_no,
+         channel_trade_no,
+         user_id,
+         open_id,
+         subject,
+         body,
+         total_amount,
+         pay_amount,
+         refund_amount,
+         currency,
+         pay_status,
+         refund_status,
+         notify_count,
+         notify_time,
+         biz_notify_status,
+         client_ip,
+         device_info,
+         success_time,
+         expire_time,
+         closed_time,
+         version,
+         create_user_id,
+         create_user_name,
+         create_time,
+         update_user_id,
+         update_user_name,
+         update_time,
+         is_del,
+         remark
+    </sql>
+
+    <sql id="queryWhere">
+        <where>
+            
+            <if test="id != null ">
+                AND id = #{id}
+            </if>
+            
+            <if test="payOrderNo != null  and payOrderNo != ''">
+                AND pay_order_no = #{payOrderNo}
+            </if>
+            
+            <if test="bizOrderNo != null  and bizOrderNo != ''">
+                AND biz_order_no = #{bizOrderNo}
+            </if>
+            
+            <if test="bizType != null  and bizType != ''">
+                AND biz_type = #{bizType}
+            </if>
+            
+            <if test="channelCode != null  and channelCode != ''">
+                AND channel_code = #{channelCode}
+            </if>
+            
+            <if test="merchantOrderNo != null  and merchantOrderNo != ''">
+                AND merchant_order_no = #{merchantOrderNo}
+            </if>
+            
+            <if test="channelTradeNo != null  and channelTradeNo != ''">
+                AND channel_trade_no = #{channelTradeNo}
+            </if>
+            
+            <if test="userId != null ">
+                AND user_id = #{userId}
+            </if>
+            
+            <if test="openId != null  and openId != ''">
+                AND open_id = #{openId}
+            </if>
+            
+            <if test="subject != null  and subject != ''">
+                AND subject = #{subject}
+            </if>
+            
+            <if test="body != null  and body != ''">
+                AND body = #{body}
+            </if>
+            
+            <if test="totalAmount != null ">
+                AND total_amount = #{totalAmount}
+            </if>
+            
+            <if test="payAmount != null ">
+                AND pay_amount = #{payAmount}
+            </if>
+            
+            <if test="refundAmount != null ">
+                AND refund_amount = #{refundAmount}
+            </if>
+            
+            <if test="currency != null  and currency != ''">
+                AND currency = #{currency}
+            </if>
+            
+            <if test="payStatus != null ">
+                AND pay_status = #{payStatus}
+            </if>
+            
+            <if test="refundStatus != null ">
+                AND refund_status = #{refundStatus}
+            </if>
+            
+            <if test="notifyCount != null ">
+                AND notify_count = #{notifyCount}
+            </if>
+            
+            <if test="notifyTime != null ">
+                AND notify_time = #{notifyTime}
+            </if>
+            
+            <if test="bizNotifyStatus != null ">
+                AND biz_notify_status = #{bizNotifyStatus}
+            </if>
+            
+            <if test="clientIp != null  and clientIp != ''">
+                AND client_ip = #{clientIp}
+            </if>
+            
+            <if test="deviceInfo != null  and deviceInfo != ''">
+                AND device_info = #{deviceInfo}
+            </if>
+            
+            <if test="successTime != null ">
+                AND success_time = #{successTime}
+            </if>
+            
+            <if test="expireTime != null ">
+                AND expire_time = #{expireTime}
+            </if>
+            
+            <if test="closedTime != null ">
+                AND closed_time = #{closedTime}
+            </if>
+            
+            <if test="version != null ">
+                AND version = #{version}
+            </if>
+            
+            <if test="createUserId != null ">
+                AND create_user_id = #{createUserId}
+            </if>
+            
+            <if test="createUserName != null  and createUserName != ''">
+                AND create_user_name = #{createUserName}
+            </if>
+            
+            <if test="createTime != null ">
+                AND create_time = #{createTime}
+            </if>
+            
+            <if test="updateUserId != null ">
+                AND update_user_id = #{updateUserId}
+            </if>
+            
+            <if test="updateUserName != null  and updateUserName != ''">
+                AND update_user_name = #{updateUserName}
+            </if>
+            
+            <if test="updateTime != null ">
+                AND update_time = #{updateTime}
+            </if>
+            
+            <if test="remark != null  and remark != ''">
+                AND remark = #{remark}
+            </if>
+                        AND is_del = 0
+        </where>
+    </sql>
+
+    <select id="findById" parameterType="Long"
+            resultMap="PayOrderResult">
+        SELECT
+        <include refid="selectPayOrderColumn"/>
+        FROM pay_order
+        WHERE id = #{id} AND is_del = 0
+    </select>
+
+    <select id="searchByCondition"
+            parameterType="cn.net.mall.pay.entity.PayOrderConditionEntity"
+            resultMap="PayOrderResult">
+        SELECT
+        <include refid="selectPayOrderColumn"/>
+        FROM pay_order
+        <include refid="queryWhere"/>
+        <include refid="cn.net.mall.pay.mapper.BaseMapper.paginationSql"/>
+    </select>
+
+    <select id="searchCount"
+            parameterType="cn.net.mall.pay.entity.PayOrderConditionEntity"
+            resultType="int">
+        SELECT
+        COUNT(*)
+        FROM pay_order
+        <include refid="queryWhere"/>
+    </select>
+
+
+    <update id="update" parameterType="cn.net.mall.pay.entity.PayOrderEntity">
+        UPDATE pay_order
+        <trim prefix="SET" suffixOverrides=",">
+                                                        
+                    <if test="payOrderNo != null  and payOrderNo != ''">
+                        pay_order_no = #{payOrderNo},
+                    </if>
+
+                                            
+                    <if test="bizOrderNo != null  and bizOrderNo != ''">
+                        biz_order_no = #{bizOrderNo},
+                    </if>
+
+                                            
+                    <if test="bizType != null  and bizType != ''">
+                        biz_type = #{bizType},
+                    </if>
+
+                                            
+                    <if test="channelCode != null  and channelCode != ''">
+                        channel_code = #{channelCode},
+                    </if>
+
+                                            
+                    <if test="merchantOrderNo != null  and merchantOrderNo != ''">
+                        merchant_order_no = #{merchantOrderNo},
+                    </if>
+
+                                            
+                    <if test="channelTradeNo != null  and channelTradeNo != ''">
+                        channel_trade_no = #{channelTradeNo},
+                    </if>
+
+                                            
+                    <if test="userId != null ">
+                        user_id = #{userId},
+                    </if>
+
+                                            
+                    <if test="openId != null  and openId != ''">
+                        open_id = #{openId},
+                    </if>
+
+                                            
+                    <if test="subject != null  and subject != ''">
+                        subject = #{subject},
+                    </if>
+
+                                            
+                    <if test="body != null  and body != ''">
+                        body = #{body},
+                    </if>
+
+                                            
+                    <if test="totalAmount != null ">
+                        total_amount = #{totalAmount},
+                    </if>
+
+                                            
+                    <if test="payAmount != null ">
+                        pay_amount = #{payAmount},
+                    </if>
+
+                                            
+                    <if test="refundAmount != null ">
+                        refund_amount = #{refundAmount},
+                    </if>
+
+                                            
+                    <if test="currency != null  and currency != ''">
+                        currency = #{currency},
+                    </if>
+
+                                            
+                    <if test="payStatus != null ">
+                        pay_status = #{payStatus},
+                    </if>
+
+                                            
+                    <if test="refundStatus != null ">
+                        refund_status = #{refundStatus},
+                    </if>
+
+                                            
+                    <if test="notifyCount != null ">
+                        notify_count = #{notifyCount},
+                    </if>
+
+                                            
+                    <if test="notifyTime != null ">
+                        notify_time = #{notifyTime},
+                    </if>
+
+                                            
+                    <if test="bizNotifyStatus != null ">
+                        biz_notify_status = #{bizNotifyStatus},
+                    </if>
+
+                                            
+                    <if test="clientIp != null  and clientIp != ''">
+                        client_ip = #{clientIp},
+                    </if>
+
+                                            
+                    <if test="deviceInfo != null  and deviceInfo != ''">
+                        device_info = #{deviceInfo},
+                    </if>
+
+                                            
+                    <if test="successTime != null ">
+                        success_time = #{successTime},
+                    </if>
+
+                                            
+                    <if test="expireTime != null ">
+                        expire_time = #{expireTime},
+                    </if>
+
+                                            
+                    <if test="closedTime != null ">
+                        closed_time = #{closedTime},
+                    </if>
+
+                                            
+                    <if test="version != null ">
+                        version = #{version},
+                    </if>
+
+                                            
+                    <if test="createUserId != null ">
+                        create_user_id = #{createUserId},
+                    </if>
+
+                                            
+                    <if test="createUserName != null  and createUserName != ''">
+                        create_user_name = #{createUserName},
+                    </if>
+
+                                            
+                    <if test="createTime != null ">
+                        create_time = #{createTime},
+                    </if>
+
+                                            
+                    <if test="updateUserId != null ">
+                        update_user_id = #{updateUserId},
+                    </if>
+
+                                            
+                    <if test="updateUserName != null  and updateUserName != ''">
+                        update_user_name = #{updateUserName},
+                    </if>
+
+                                                                        
+                    <if test="remark != null  and remark != ''">
+                        remark = #{remark},
+                    </if>
+
+                                        update_time=now(3)
+        </trim>
+        WHERE id = #{id} AND is_del = 0
+    </update>
+
+    <delete id="deleteByIds">
+        UPDATE pay_order
+        SET is_del = 1, update_time=now(3), update_user_id=#{entity.updateUserId}, update_user_name=#{entity.updateUserName}
+        WHERE is_del = 0 AND id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="insert" parameterType="cn.net.mall.pay.entity.PayOrderEntity">
+        INSERT INTO pay_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            
+                    id,
+
+            
+                    <if test="payOrderNo != null  and payOrderNo != ''">
+                        pay_order_no,
+                    </if>
+
+            
+                    <if test="bizOrderNo != null  and bizOrderNo != ''">
+                        biz_order_no,
+                    </if>
+
+            
+                    <if test="bizType != null  and bizType != ''">
+                        biz_type,
+                    </if>
+
+            
+                    <if test="channelCode != null  and channelCode != ''">
+                        channel_code,
+                    </if>
+
+            
+                    <if test="merchantOrderNo != null  and merchantOrderNo != ''">
+                        merchant_order_no,
+                    </if>
+
+            
+                    <if test="channelTradeNo != null  and channelTradeNo != ''">
+                        channel_trade_no,
+                    </if>
+
+            
+                    <if test="userId != null ">
+                        user_id,
+                    </if>
+
+            
+                    <if test="openId != null  and openId != ''">
+                        open_id,
+                    </if>
+
+            
+                    <if test="subject != null  and subject != ''">
+                        subject,
+                    </if>
+
+            
+                    <if test="body != null  and body != ''">
+                        body,
+                    </if>
+
+            
+                    <if test="totalAmount != null ">
+                        total_amount,
+                    </if>
+
+            
+                    <if test="payAmount != null ">
+                        pay_amount,
+                    </if>
+
+            
+                    <if test="refundAmount != null ">
+                        refund_amount,
+                    </if>
+
+            
+                    <if test="currency != null  and currency != ''">
+                        currency,
+                    </if>
+
+            
+                    <if test="payStatus != null ">
+                        pay_status,
+                    </if>
+
+            
+                    <if test="refundStatus != null ">
+                        refund_status,
+                    </if>
+
+            
+                    <if test="notifyCount != null ">
+                        notify_count,
+                    </if>
+
+            
+                    <if test="notifyTime != null ">
+                        notify_time,
+                    </if>
+
+            
+                    <if test="bizNotifyStatus != null ">
+                        biz_notify_status,
+                    </if>
+
+            
+                    <if test="clientIp != null  and clientIp != ''">
+                        client_ip,
+                    </if>
+
+            
+                    <if test="deviceInfo != null  and deviceInfo != ''">
+                        device_info,
+                    </if>
+
+            
+                    <if test="successTime != null ">
+                        success_time,
+                    </if>
+
+            
+                    <if test="expireTime != null ">
+                        expire_time,
+                    </if>
+
+            
+                    <if test="closedTime != null ">
+                        closed_time,
+                    </if>
+
+            
+                    <if test="version != null ">
+                        version,
+                    </if>
+
+            
+                    create_user_id,
+                    create_user_name,
+                    create_time,
+
+            
+                    <if test="updateUserId != null ">
+                        update_user_id,
+                    </if>
+
+            
+                    <if test="updateUserName != null  and updateUserName != ''">
+                        update_user_name,
+                    </if>
+
+            
+                    <if test="updateTime != null ">
+                        update_time,
+         
+                    </if>
+                    is_del,
+
+            
+                    <if test="remark != null  and remark != ''">
+                        remark,
+                    </if>
+
+                    </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                                #{GENERATE_ID},
+
+                                <if test="payOrderNo != null  and payOrderNo != ''">
+                        #{payOrderNo},
+                    </if>
+
+                                <if test="bizOrderNo != null  and bizOrderNo != ''">
+                        #{bizOrderNo},
+                    </if>
+
+                                <if test="bizType != null  and bizType != ''">
+                        #{bizType},
+                    </if>
+
+                                <if test="channelCode != null  and channelCode != ''">
+                        #{channelCode},
+                    </if>
+
+                                <if test="merchantOrderNo != null  and merchantOrderNo != ''">
+                        #{merchantOrderNo},
+                    </if>
+
+                                <if test="channelTradeNo != null  and channelTradeNo != ''">
+                        #{channelTradeNo},
+                    </if>
+
+                                <if test="userId != null ">
+                        #{userId},
+                    </if>
+
+                                <if test="openId != null  and openId != ''">
+                        #{openId},
+                    </if>
+
+                                <if test="subject != null  and subject != ''">
+                        #{subject},
+                    </if>
+
+                                <if test="body != null  and body != ''">
+                        #{body},
+                    </if>
+
+                                <if test="totalAmount != null ">
+                        #{totalAmount},
+                    </if>
+
+                                <if test="payAmount != null ">
+                        #{payAmount},
+                    </if>
+
+                                <if test="refundAmount != null ">
+                        #{refundAmount},
+                    </if>
+
+                                <if test="currency != null  and currency != ''">
+                        #{currency},
+                    </if>
+
+                                <if test="payStatus != null ">
+                        #{payStatus},
+                    </if>
+
+                                <if test="refundStatus != null ">
+                        #{refundStatus},
+                    </if>
+
+                                <if test="notifyCount != null ">
+                        #{notifyCount},
+                    </if>
+
+                                <if test="notifyTime != null ">
+                        #{notifyTime},
+                    </if>
+
+                                <if test="bizNotifyStatus != null ">
+                        #{bizNotifyStatus},
+                    </if>
+
+                                <if test="clientIp != null  and clientIp != ''">
+                        #{clientIp},
+                    </if>
+
+                                <if test="deviceInfo != null  and deviceInfo != ''">
+                        #{deviceInfo},
+                    </if>
+
+                                <if test="successTime != null ">
+                        #{successTime},
+                    </if>
+
+                                <if test="expireTime != null ">
+                        #{expireTime},
+                    </if>
+
+                                <if test="closedTime != null ">
+                        #{closedTime},
+                    </if>
+
+                                <if test="version != null ">
+                        #{version},
+                    </if>
+
+                                #{CURRENT_USER_ID},
+                                #{CURRENT_USER_NAME},
+                                now(3),
+
+                                <if test="updateUserId != null ">
+                        #{updateUserId},
+                    </if>
+
+                                <if test="updateUserName != null  and updateUserName != ''">
+                        #{updateUserName},
+                    </if>
+
+                                <if test="updateTime != null ">
+                        #{updateTime},
+                    </if>
+                                0,
+
+                                <if test="remark != null  and remark != ''">
+                        #{remark},
+                    </if>
+
+                    </trim>
+    </insert>
+
+    <select id="findByIds" parameterType="Long"
+            resultMap="PayOrderResult">
+        SELECT
+          <include refid="selectPayOrderColumn"/>
+        FROM pay_order
+        WHERE is_del = 0 AND id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

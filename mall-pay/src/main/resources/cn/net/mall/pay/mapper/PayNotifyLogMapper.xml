@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.net.mall.pay.mapper.PayNotifyLogMapper">
+
+    <resultMap type="cn.net.mall.pay.entity.PayNotifyLogEntity" id="PayNotifyLogResult">
+        <result property="id"    column="id" />
+        <result property="payOrderId"    column="pay_order_id" />
+        <result property="payOrderNo"    column="pay_order_no" />
+        <result property="channelCode"    column="channel_code" />
+        <result property="channelTradeNo"    column="channel_trade_no" />
+        <result property="notifyType"    column="notify_type" />
+        <result property="rawData"    column="raw_data" />
+        <result property="decryptData"    column="decrypt_data" />
+        <result property="verifyStatus"    column="verify_status" />
+        <result property="processStatus"    column="process_status" />
+        <result property="processMsg"    column="process_msg" />
+        <result property="createTime"    column="create_time" />
+        <result property="isDel"    column="is_del" />
+    </resultMap>
+
+
+    <sql id="paginationSql">
+        <if test="pageSize > 0">
+           LIMIT #{pageBegin} , #{pageSize}
+        </if>
+    </sql>
+
+	<sql id="selectPayNotifyLogColumn">
+         id,
+         pay_order_id,
+         pay_order_no,
+         channel_code,
+         channel_trade_no,
+         notify_type,
+         raw_data,
+         decrypt_data,
+         verify_status,
+         process_status,
+         process_msg,
+         create_time,
+         is_del
+    </sql>
+
+    <sql id="queryWhere">
+        <where>
+            
+            <if test="id != null ">
+                AND id = #{id}
+            </if>
+            
+            <if test="payOrderId != null ">
+                AND pay_order_id = #{payOrderId}
+            </if>
+            
+            <if test="payOrderNo != null  and payOrderNo != ''">
+                AND pay_order_no = #{payOrderNo}
+            </if>
+            
+            <if test="channelCode != null  and channelCode != ''">
+                AND channel_code = #{channelCode}
+            </if>
+            
+            <if test="channelTradeNo != null  and channelTradeNo != ''">
+                AND channel_trade_no = #{channelTradeNo}
+            </if>
+            
+            <if test="notifyType != null  and notifyType != ''">
+                AND notify_type = #{notifyType}
+            </if>
+            
+            <if test="rawData != null  and rawData != ''">
+                AND raw_data = #{rawData}
+            </if>
+            
+            <if test="decryptData != null  and decryptData != ''">
+                AND decrypt_data = #{decryptData}
+            </if>
+            
+            <if test="verifyStatus != null ">
+                AND verify_status = #{verifyStatus}
+            </if>
+            
+            <if test="processStatus != null ">
+                AND process_status = #{processStatus}
+            </if>
+            
+            <if test="processMsg != null  and processMsg != ''">
+                AND process_msg = #{processMsg}
+            </if>
+            
+            <if test="createTime != null ">
+                AND create_time = #{createTime}
+            </if>
+                        AND is_del = 0
+        </where>
+    </sql>
+
+    <select id="findById" parameterType="Long"
+            resultMap="PayNotifyLogResult">
+        SELECT
+        <include refid="selectPayNotifyLogColumn"/>
+        FROM pay_notify_log
+        WHERE id = #{id} AND is_del = 0
+    </select>
+
+    <select id="searchByCondition"
+            parameterType="cn.net.mall.pay.entity.PayNotifyLogConditionEntity"
+            resultMap="PayNotifyLogResult">
+        SELECT
+        <include refid="selectPayNotifyLogColumn"/>
+        FROM pay_notify_log
+        <include refid="queryWhere"/>
+        <include refid="cn.net.mall.pay.mapper.BaseMapper.paginationSql"/>
+    </select>
+
+    <select id="searchCount"
+            parameterType="cn.net.mall.pay.entity.PayNotifyLogConditionEntity"
+            resultType="int">
+        SELECT
+        COUNT(*)
+        FROM pay_notify_log
+        <include refid="queryWhere"/>
+    </select>
+
+
+    <update id="update" parameterType="cn.net.mall.pay.entity.PayNotifyLogEntity">
+        UPDATE pay_notify_log
+        <trim prefix="SET" suffixOverrides=",">
+                                                        
+                    <if test="payOrderId != null ">
+                        pay_order_id = #{payOrderId},
+                    </if>
+
+                                            
+                    <if test="payOrderNo != null  and payOrderNo != ''">
+                        pay_order_no = #{payOrderNo},
+                    </if>
+
+                                            
+                    <if test="channelCode != null  and channelCode != ''">
+                        channel_code = #{channelCode},
+                    </if>
+
+                                            
+                    <if test="channelTradeNo != null  and channelTradeNo != ''">
+                        channel_trade_no = #{channelTradeNo},
+                    </if>
+
+                                            
+                    <if test="notifyType != null  and notifyType != ''">
+                        notify_type = #{notifyType},
+                    </if>
+
+                                            
+                    <if test="rawData != null  and rawData != ''">
+                        raw_data = #{rawData},
+                    </if>
+
+                                            
+                    <if test="decryptData != null  and decryptData != ''">
+                        decrypt_data = #{decryptData},
+                    </if>
+
+                                            
+                    <if test="verifyStatus != null ">
+                        verify_status = #{verifyStatus},
+                    </if>
+
+                                            
+                    <if test="processStatus != null ">
+                        process_status = #{processStatus},
+                    </if>
+
+                                            
+                    <if test="processMsg != null  and processMsg != ''">
+                        process_msg = #{processMsg},
+                    </if>
+
+                                            
+                    <if test="createTime != null ">
+                        create_time = #{createTime},
+                    </if>
+
+                                        update_time=now(3)
+        </trim>
+        WHERE id = #{id} AND is_del = 0
+    </update>
+
+    <delete id="deleteByIds">
+        UPDATE pay_notify_log
+        SET is_del = 1, update_time=now(3), update_user_id=#{entity.updateUserId}, update_user_name=#{entity.updateUserName}
+        WHERE is_del = 0 AND id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="insert" parameterType="cn.net.mall.pay.entity.PayNotifyLogEntity">
+        INSERT INTO pay_notify_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            
+                    id,
+
+            
+                    <if test="payOrderId != null ">
+                        pay_order_id,
+                    </if>
+
+            
+                    <if test="payOrderNo != null  and payOrderNo != ''">
+                        pay_order_no,
+                    </if>
+
+            
+                    <if test="channelCode != null  and channelCode != ''">
+                        channel_code,
+                    </if>
+
+            
+                    <if test="channelTradeNo != null  and channelTradeNo != ''">
+                        channel_trade_no,
+                    </if>
+
+            
+                    <if test="notifyType != null  and notifyType != ''">
+                        notify_type,
+                    </if>
+
+            
+                    <if test="rawData != null  and rawData != ''">
+                        raw_data,
+                    </if>
+
+            
+                    <if test="decryptData != null  and decryptData != ''">
+                        decrypt_data,
+                    </if>
+
+            
+                    <if test="verifyStatus != null ">
+                        verify_status,
+                    </if>
+
+            
+                    <if test="processStatus != null ">
+                        process_status,
+                    </if>
+
+            
+                    <if test="processMsg != null  and processMsg != ''">
+                        process_msg,
+                    </if>
+
+            
+                    <if test="createTime != null ">
+                        create_time,
+                    </if>
+
+                    is_del,
+
+                    </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                                #{GENERATE_ID},
+
+                                <if test="payOrderId != null ">
+                        #{payOrderId},
+                    </if>
+
+                                <if test="payOrderNo != null  and payOrderNo != ''">
+                        #{payOrderNo},
+                    </if>
+
+                                <if test="channelCode != null  and channelCode != ''">
+                        #{channelCode},
+                    </if>
+
+                                <if test="channelTradeNo != null  and channelTradeNo != ''">
+                        #{channelTradeNo},
+                    </if>
+
+                                <if test="notifyType != null  and notifyType != ''">
+                        #{notifyType},
+                    </if>
+
+                                <if test="rawData != null  and rawData != ''">
+                        #{rawData},
+                    </if>
+
+                                <if test="decryptData != null  and decryptData != ''">
+                        #{decryptData},
+                    </if>
+
+                                <if test="verifyStatus != null ">
+                        #{verifyStatus},
+                    </if>
+
+                                <if test="processStatus != null ">
+                        #{processStatus},
+                    </if>
+
+                                <if test="processMsg != null  and processMsg != ''">
+                        #{processMsg},
+                    </if>
+
+                                <if test="createTime != null ">
+                        #{createTime},
+                    </if>
+
+                                0,
+
+                    </trim>
+    </insert>
+
+    <select id="findByIds" parameterType="Long"
+            resultMap="PayNotifyLogResult">
+        SELECT
+          <include refid="selectPayNotifyLogColumn"/>
+        FROM pay_notify_log
+        WHERE is_del = 0 AND id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>
