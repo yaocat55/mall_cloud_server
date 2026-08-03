@@ -27,7 +27,7 @@ public class ForwardController {
 
     private static final Set<String> SERVICE_PREFIXES = Set.of(
             "/auth", "/basic", "/product", "/marketing",
-            "/order", "/pay", "/recommend", "/message"
+            "/order", "/recommend", "/message"
     );
 
     private static final Map<String, String> SERVICE_MAP = new LinkedHashMap<>();
@@ -38,13 +38,12 @@ public class ForwardController {
         SERVICE_MAP.put("/product", "mall-product-api");
         SERVICE_MAP.put("/marketing", "mall-marketing-api");
         SERVICE_MAP.put("/order", "mall-order-api");
-        SERVICE_MAP.put("/pay", "mall-pay-api");
         SERVICE_MAP.put("/recommend", "mall-recommend-api");
         SERVICE_MAP.put("/message", "mall-message-api");
     }
 
     @RequestMapping(path = {"/auth/**", "/basic/**", "/product/**", "/marketing/**",
-            "/order/**", "/pay/**", "/recommend/**", "/message/**"})
+            "/order/**", "/recommend/**", "/message/**"})
     public Object forward(HttpServletRequest request) {
         String path = request.getRequestURI();
 

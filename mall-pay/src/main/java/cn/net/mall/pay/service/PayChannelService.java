@@ -1,6 +1,7 @@
 package cn.net.mall.pay.service;
 
 import cn.net.mall.pay.channel.PayChannelStrategy;
+import cn.net.mall.pay.dto.PayChannelDTO;
 import cn.net.mall.pay.entity.PayChannelConfigConditionEntity;
 import cn.net.mall.pay.entity.PayChannelConfigEntity;
 import cn.net.mall.pay.enums.ChannelCodeEnum;
@@ -67,5 +68,23 @@ public class PayChannelService {
         List<PayChannelConfigEntity> configs = payChannelConfigService.searchByPage(condition).getData();
         AssertUtil.notEmpty(configs, "支付渠道未配置或已禁用: " + channelCode);
         return configs.get(0);
+    }
+
+    /**
+     * 查询启用中的全部支付渠道（前端收银台渲染支付方式用）.
+     *
+     * <p>只返回展示所需字段（编码/名称），不暴露任何密钥。</p>
+     */
+    public List<PayChannelDTO> listAvailableChannels() {
+        PayChannelConfigConditionEntity condition = new PayChannelConfigConditionEntity();
+        condition.setStatus(1);
+        return payChannelConfigService.searchByPage(condition).getData().stream()
+                .map(config -> {
+                    PayChannelDTO dto = new PayChannelDTO();
+                    dto.setChannelCode(config.getChannelCode());
+                    dto.setChannelName(config.getChannelName());
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 }

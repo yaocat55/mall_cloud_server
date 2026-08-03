@@ -1,5 +1,6 @@
 package cn.net.mall.pay.controller.mobile;
 
+import cn.net.mall.pay.dto.PayChannelDTO;
 import cn.net.mall.pay.dto.PayCloseDTO;
 import cn.net.mall.pay.dto.PayCreateDTO;
 import cn.net.mall.pay.dto.PayCreateResult;
@@ -9,6 +10,7 @@ import cn.net.mall.pay.dto.PayRefundQueryDTO;
 import cn.net.mall.pay.dto.PayRefundResult;
 import cn.net.mall.pay.dto.PayRefundQueryResult;
 import cn.net.mall.pay.entity.PayOrderEntity;
+import cn.net.mall.pay.service.PayChannelService;
 import cn.net.mall.pay.service.PayCoreService;
 import cn.net.mall.pay.service.RefundCoreService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,10 +18,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * 移动端支付收银台（C 端专属）.
@@ -38,6 +43,13 @@ public class PayController {
 
     private final PayCoreService payCoreService;
     private final RefundCoreService refundCoreService;
+    private final PayChannelService payChannelService;
+
+    @Operation(summary = "查询可用支付渠道", description = "返回启用中的支付渠道列表，前端收银台渲染支付方式（不含任何密钥）")
+    @GetMapping("/channels")
+    public List<PayChannelDTO> channels() {
+        return payChannelService.listAvailableChannels();
+    }
 
     @Operation(summary = "创建支付单", description = "收银台调起支付前创建支付单，返回拉起支付参数（支付宝 orderStr / 微信 prepay / MOCK 预设串）")
     @PostMapping("/create")

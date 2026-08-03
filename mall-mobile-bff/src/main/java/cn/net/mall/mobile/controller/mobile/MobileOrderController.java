@@ -3,8 +3,6 @@ package cn.net.mall.mobile.controller.mobile;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.order.client.OrderFeignClient;
 import cn.net.mall.order.dto.*;
-import cn.net.mall.pay.client.PayFeignClient;
-import cn.net.mall.pay.dto.PayWebDTO;
 import cn.net.mall.util.ApiResult;
 import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,11 +15,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/mobile/v1/order")
 @RequiredArgsConstructor
-@Tag(name = "移动端-订单", description = "订单创建、支付、查询聚合接口")
+@Tag(name = "移动端-订单", description = "订单创建、查询聚合接口")
 public class MobileOrderController {
 
     private final OrderFeignClient orderFeignClient;
-    private final PayFeignClient payFeignClient;
 
     @Operation(summary = "确认订单", description = "预下单，获取订单确认信息（金额、优惠等）")
     @PostMapping("/confirm")
@@ -66,12 +63,6 @@ public class MobileOrderController {
     public ApiResult<Void> evaluate(@RequestBody OrderEvaluateDTO dto) {
         orderFeignClient.evaluate(dto);
         return ApiResultUtil.success();
-    }
-
-    @Operation(summary = "模拟支付")
-    @PostMapping("/pay/mock")
-    public ApiResult<Boolean> mockPay(@RequestBody PayWebDTO dto) {
-        return ApiResultUtil.success(payFeignClient.mockPay(dto));
     }
 
     @Operation(summary = "获取用户各状态订单数量")
