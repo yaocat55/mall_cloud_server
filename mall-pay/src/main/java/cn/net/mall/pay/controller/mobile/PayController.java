@@ -11,8 +11,6 @@ import cn.net.mall.pay.dto.PayRefundQueryResult;
 import cn.net.mall.pay.entity.PayOrderEntity;
 import cn.net.mall.pay.service.PayCoreService;
 import cn.net.mall.pay.service.RefundCoreService;
-import cn.net.mall.util.ApiResult;
-import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -29,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
  * <p>前端/移动端支付链路：前端 → 网关 → mall-order（下单）→ Feign 调 mall-pay 创建支付单 →
  * 返回拉起支付参数 → 前端调起渠道支付。支付结果经渠道回调 + MQ 通知业务方。</p>
  * <p>本控制器面向 C 端用户收银台（创建支付单、查状态、关单、退款申请）。</p>
+ * <p>返回值由 common-web 的 {@code GlobalApiResultHandler} 自动包装为 ApiResult（/v1/** 前缀），无需手动包裹。</p>
  */
 @Tag(name = "移动端-支付收银台", description = "移动端：创建支付单、查询支付状态、关闭支付、申请退款")
 @RestController
@@ -42,31 +41,31 @@ public class PayController {
 
     @Operation(summary = "创建支付单", description = "收银台调起支付前创建支付单，返回拉起支付参数（支付宝 orderStr / 微信 prepay / MOCK 预设串）")
     @PostMapping("/create")
-    public ApiResult<PayCreateResult> create(@RequestBody @Valid PayCreateDTO dto) {
-        return ApiResultUtil.success(payCoreService.create(dto));
+    public PayCreateResult create(@RequestBody @Valid PayCreateDTO dto) {
+        return payCoreService.create(dto);
     }
 
     @Operation(summary = "查询支付状态", description = "按 payOrderNo 或 bizOrderNo 查询支付单当前状态")
     @PostMapping("/query")
-    public ApiResult<PayOrderEntity> query(@RequestBody @Valid PayQueryDTO dto) {
-        return ApiResultUtil.success(payCoreService.query(dto));
+    public PayOrderEntity query(@RequestBody @Valid PayQueryDTO dto) {
+        return payCoreService.query(dto);
     }
 
     @Operation(summary = "关闭支付", description = "关闭未支付订单（用户取消/超时），释放占用")
     @PostMapping("/close")
-    public ApiResult<Boolean> close(@RequestBody @Valid PayCloseDTO dto) {
-        return ApiResultUtil.success(payCoreService.close(dto.getPayOrderNo(), dto.getReason()));
+    public Boolean close(@RequestBody @Valid PayCloseDTO dto) {
+        return payCoreService.close(dto.getPayOrderNo(), dto.getReason());
     }
 
     @Operation(summary = "申请退款", description = "售后退款申请，自动退款或进入人工审核")
     @PostMapping("/refund/apply")
-    public ApiResult<PayRefundResult> applyRefund(@RequestBody @Valid PayRefundDTO dto) {
-        return ApiResultUtil.success(refundCoreService.apply(dto));
+    public PayRefundResult applyRefund(@RequestBody @Valid PayRefundDTO dto) {
+        return refundCoreService.apply(dto);
     }
 
     @Operation(summary = "查询退款结果", description = "按退款单号查询退款状态")
     @PostMapping("/refund/query")
-    public ApiResult<PayRefundQueryResult> queryRefund(@RequestBody @Valid PayRefundQueryDTO dto) {
-        return ApiResultUtil.success(refundCoreService.queryRefund(dto.getRefundNo()));
+    public PayRefundQueryResult queryRefund(@RequestBody @Valid PayRefundQueryDTO dto) {
+        return refundCoreService.queryRefund(dto.getRefundNo());
     }
 }

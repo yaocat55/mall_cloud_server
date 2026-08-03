@@ -5,8 +5,6 @@ import cn.net.mall.pay.dto.RowsDTO;
 import cn.net.mall.pay.entity.ReconResultEntity;
 import cn.net.mall.pay.entity.ReconResultConditionEntity;
 import cn.net.mall.pay.service.ReconResultService;
-import cn.net.mall.util.ApiResult;
-import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
@@ -35,31 +33,31 @@ public class ReconResultController {
 
     @Operation(summary = "通过id查询对账逐笔结果")
     @GetMapping("/{id}")
-    public ApiResult<ReconResultEntity> findById(@PathVariable Long id) {
-        return ApiResultUtil.success(reconResultservice.findById(id));
+    public ReconResultEntity findById(@PathVariable Long id) {
+        return reconResultservice.findById(id);
     }
 
     @Operation(summary = "分页查询对账逐笔结果")
     @PostMapping("/page")
-    public ApiResult<ResponsePageEntity<ReconResultEntity>> searchByPage(@RequestBody ReconResultConditionEntity condition) {
-        return ApiResultUtil.success(reconResultservice.searchByPage(condition));
+    public ResponsePageEntity<ReconResultEntity> searchByPage(@RequestBody ReconResultConditionEntity condition) {
+        return reconResultservice.searchByPage(condition);
     }
 
     @Operation(summary = "新增对账逐笔结果")
     @PostMapping("/insert")
-    public ApiResult<RowsDTO> insert(@RequestBody ReconResultEntity entity) {
-        return ApiResultUtil.success(new RowsDTO(reconResultservice.insert(entity)));
+    public RowsDTO insert(@RequestBody ReconResultEntity entity) {
+        return new RowsDTO(reconResultservice.insert(entity));
     }
 
     @Operation(summary = "修改对账逐笔结果")
     @PostMapping("/update")
-    public ApiResult<RowsDTO> update(@RequestBody ReconResultEntity entity) {
-        return ApiResultUtil.success(new RowsDTO(reconResultservice.update(entity)));
+    public RowsDTO update(@RequestBody ReconResultEntity entity) {
+        return new RowsDTO(reconResultservice.update(entity));
     }
 
     @Operation(summary = "批量删除对账逐笔结果")
     @PostMapping("/deleteByIds")
-    public ApiResult<RowsDTO> deleteByIds(@RequestBody @NotNull List<Long> ids) {
-        return ApiResultUtil.success(new RowsDTO(reconResultservice.deleteByIds(ids)));
+    public RowsDTO deleteByIds(@RequestBody @NotNull List<Long> ids) {
+        return new RowsDTO(reconResultservice.deleteByIds(ids));
     }
 }

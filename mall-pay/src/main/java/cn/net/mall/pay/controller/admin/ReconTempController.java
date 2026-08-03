@@ -5,8 +5,6 @@ import cn.net.mall.pay.dto.RowsDTO;
 import cn.net.mall.pay.entity.ReconTempEntity;
 import cn.net.mall.pay.entity.ReconTempConditionEntity;
 import cn.net.mall.pay.service.ReconTempService;
-import cn.net.mall.util.ApiResult;
-import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
@@ -35,31 +33,31 @@ public class ReconTempController {
 
     @Operation(summary = "通过id查询对账临时数据")
     @GetMapping("/{id}")
-    public ApiResult<ReconTempEntity> findById(@PathVariable Long id) {
-        return ApiResultUtil.success(reconTempservice.findById(id));
+    public ReconTempEntity findById(@PathVariable Long id) {
+        return reconTempservice.findById(id);
     }
 
     @Operation(summary = "分页查询对账临时数据")
     @PostMapping("/page")
-    public ApiResult<ResponsePageEntity<ReconTempEntity>> searchByPage(@RequestBody ReconTempConditionEntity condition) {
-        return ApiResultUtil.success(reconTempservice.searchByPage(condition));
+    public ResponsePageEntity<ReconTempEntity> searchByPage(@RequestBody ReconTempConditionEntity condition) {
+        return reconTempservice.searchByPage(condition);
     }
 
     @Operation(summary = "新增对账临时数据")
     @PostMapping("/insert")
-    public ApiResult<RowsDTO> insert(@RequestBody ReconTempEntity entity) {
-        return ApiResultUtil.success(new RowsDTO(reconTempservice.insert(entity)));
+    public RowsDTO insert(@RequestBody ReconTempEntity entity) {
+        return new RowsDTO(reconTempservice.insert(entity));
     }
 
     @Operation(summary = "修改对账临时数据")
     @PostMapping("/update")
-    public ApiResult<RowsDTO> update(@RequestBody ReconTempEntity entity) {
-        return ApiResultUtil.success(new RowsDTO(reconTempservice.update(entity)));
+    public RowsDTO update(@RequestBody ReconTempEntity entity) {
+        return new RowsDTO(reconTempservice.update(entity));
     }
 
     @Operation(summary = "批量删除对账临时数据")
     @PostMapping("/deleteByIds")
-    public ApiResult<RowsDTO> deleteByIds(@RequestBody @NotNull List<Long> ids) {
-        return ApiResultUtil.success(new RowsDTO(reconTempservice.deleteByIds(ids)));
+    public RowsDTO deleteByIds(@RequestBody @NotNull List<Long> ids) {
+        return new RowsDTO(reconTempservice.deleteByIds(ids));
     }
 }

@@ -5,8 +5,6 @@ import cn.net.mall.pay.dto.RowsDTO;
 import cn.net.mall.pay.entity.ReconBatchEntity;
 import cn.net.mall.pay.entity.ReconBatchConditionEntity;
 import cn.net.mall.pay.service.ReconBatchService;
-import cn.net.mall.util.ApiResult;
-import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
@@ -35,31 +33,31 @@ public class ReconBatchController {
 
     @Operation(summary = "通过id查询对账批次")
     @GetMapping("/{id}")
-    public ApiResult<ReconBatchEntity> findById(@PathVariable Long id) {
-        return ApiResultUtil.success(reconBatchservice.findById(id));
+    public ReconBatchEntity findById(@PathVariable Long id) {
+        return reconBatchservice.findById(id);
     }
 
     @Operation(summary = "分页查询对账批次")
     @PostMapping("/page")
-    public ApiResult<ResponsePageEntity<ReconBatchEntity>> searchByPage(@RequestBody ReconBatchConditionEntity condition) {
-        return ApiResultUtil.success(reconBatchservice.searchByPage(condition));
+    public ResponsePageEntity<ReconBatchEntity> searchByPage(@RequestBody ReconBatchConditionEntity condition) {
+        return reconBatchservice.searchByPage(condition);
     }
 
     @Operation(summary = "新增对账批次")
     @PostMapping("/insert")
-    public ApiResult<RowsDTO> insert(@RequestBody ReconBatchEntity entity) {
-        return ApiResultUtil.success(new RowsDTO(reconBatchservice.insert(entity)));
+    public RowsDTO insert(@RequestBody ReconBatchEntity entity) {
+        return new RowsDTO(reconBatchservice.insert(entity));
     }
 
     @Operation(summary = "修改对账批次")
     @PostMapping("/update")
-    public ApiResult<RowsDTO> update(@RequestBody ReconBatchEntity entity) {
-        return ApiResultUtil.success(new RowsDTO(reconBatchservice.update(entity)));
+    public RowsDTO update(@RequestBody ReconBatchEntity entity) {
+        return new RowsDTO(reconBatchservice.update(entity));
     }
 
     @Operation(summary = "批量删除对账批次")
     @PostMapping("/deleteByIds")
-    public ApiResult<RowsDTO> deleteByIds(@RequestBody @NotNull List<Long> ids) {
-        return ApiResultUtil.success(new RowsDTO(reconBatchservice.deleteByIds(ids)));
+    public RowsDTO deleteByIds(@RequestBody @NotNull List<Long> ids) {
+        return new RowsDTO(reconBatchservice.deleteByIds(ids));
     }
 }

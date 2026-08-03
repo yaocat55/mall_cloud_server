@@ -5,8 +5,6 @@ import cn.net.mall.pay.dto.RowsDTO;
 import cn.net.mall.pay.entity.PayBizConfigEntity;
 import cn.net.mall.pay.entity.PayBizConfigConditionEntity;
 import cn.net.mall.pay.service.PayBizConfigService;
-import cn.net.mall.util.ApiResult;
-import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
@@ -35,31 +33,31 @@ public class PayBizConfigController {
 
     @Operation(summary = "通过id查询业务渠道接入")
     @GetMapping("/{id}")
-    public ApiResult<PayBizConfigEntity> findById(@PathVariable Long id) {
-        return ApiResultUtil.success(payBizConfigservice.findById(id));
+    public PayBizConfigEntity findById(@PathVariable Long id) {
+        return payBizConfigservice.findById(id);
     }
 
     @Operation(summary = "分页查询业务渠道接入")
     @PostMapping("/page")
-    public ApiResult<ResponsePageEntity<PayBizConfigEntity>> searchByPage(@RequestBody PayBizConfigConditionEntity condition) {
-        return ApiResultUtil.success(payBizConfigservice.searchByPage(condition));
+    public ResponsePageEntity<PayBizConfigEntity> searchByPage(@RequestBody PayBizConfigConditionEntity condition) {
+        return payBizConfigservice.searchByPage(condition);
     }
 
     @Operation(summary = "新增业务渠道接入")
     @PostMapping("/insert")
-    public ApiResult<RowsDTO> insert(@RequestBody PayBizConfigEntity entity) {
-        return ApiResultUtil.success(new RowsDTO(payBizConfigservice.insert(entity)));
+    public RowsDTO insert(@RequestBody PayBizConfigEntity entity) {
+        return new RowsDTO(payBizConfigservice.insert(entity));
     }
 
     @Operation(summary = "修改业务渠道接入")
     @PostMapping("/update")
-    public ApiResult<RowsDTO> update(@RequestBody PayBizConfigEntity entity) {
-        return ApiResultUtil.success(new RowsDTO(payBizConfigservice.update(entity)));
+    public RowsDTO update(@RequestBody PayBizConfigEntity entity) {
+        return new RowsDTO(payBizConfigservice.update(entity));
     }
 
     @Operation(summary = "批量删除业务渠道接入")
     @PostMapping("/deleteByIds")
-    public ApiResult<RowsDTO> deleteByIds(@RequestBody @NotNull List<Long> ids) {
-        return ApiResultUtil.success(new RowsDTO(payBizConfigservice.deleteByIds(ids)));
+    public RowsDTO deleteByIds(@RequestBody @NotNull List<Long> ids) {
+        return new RowsDTO(payBizConfigservice.deleteByIds(ids));
     }
 }
