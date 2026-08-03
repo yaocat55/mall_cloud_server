@@ -3,7 +3,14 @@
 -- 数据库：cloud_mall_pay（本地 MySQL，root/123456，端口 33081）
 -- 共 8 张表：业务侧 5 张 + 对账侧 3 张
 -- 对应设计文档：docs/37-统一支付服务设计方案.md
+--
+-- ⚠️ 建库规范：本脚本含中文注释，导入必须指定 utf8mb4 连接字符集
+--   命令行导入：mysql --default-character-set=utf8mb4 < mall_pay.sql
+--   Navicat/IDE 导入：连接选项字符集设为 utf8mb4
 -- ============================================================
+
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
 
 CREATE DATABASE IF NOT EXISTS `cloud_mall_pay` DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_general_ci;
 
