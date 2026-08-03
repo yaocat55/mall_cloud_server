@@ -1,9 +1,8 @@
 #!/bin/bash
-# basic 微服务 + BFF basic 读聚合 接口测试
-# 验证写透传迁移 + Handler 包装
+# basic 微服务 接口测试
+# 验证 basic 公开接口 + Handler 包装
 
 BASE_BASIC="http://localhost:8022"
-BASE_BFF="http://localhost:8090"
 PASS=0
 FAIL=0
 GREEN='\033[32m'
@@ -39,7 +38,7 @@ test_api() {
 
 echo ""
 echo "=========================================="
-echo " Basic + BFF 写透传迁移验证测试"
+echo " Basic 微服务接口测试"
 echo "=========================================="
 echo ""
 
@@ -51,33 +50,17 @@ echo -e "  ${GREEN}✅${NC} Token 获取成功"
 echo ""
 T=$TOKEN
 
-echo "--- 1. 写操作直通 basic 微服务 ---"
+echo "--- 1. basic 公开接口 ---"
 test_api "GET" "$BASE_BASIC" "/v1/commonPhotoGroup/findById" "id=1" \
-    "图片分组查询(直通)" "$T"
+    "图片分组查询" "$T"
 test_api "POST" "$BASE_BASIC" "/v1/commonPhotoGroup/searchByPage" '{}' \
-    "图片分组分页(直通)" "$T"
+    "图片分组分页" "$T"
+test_api "POST" "$BASE_BASIC" "/v1/commonSensitiveWord/searchByPage" '{}' \
+    "敏感词分页" "$T"
+test_api "POST" "$BASE_BASIC" "/v1/commonPhoto/searchByPage" '{}' \
+    "图片分页" "$T"
 
-echo "--- 2. BFF 读聚合 ---"
-test_api "POST" "$BASE_BFF" "/admin/v1/basic/sensitiveWord/page" \
-    '{}' "敏感词分页(BFF)" "$T"
-test_api "POST" "$BASE_BFF" "/admin/v1/basic/photo/page" \
-    '{}' "图片分页(BFF)" "$T"
-test_api "POST" "$BASE_BFF" "/admin/v1/basic/photoGroup/page" \
-    '{}' "图片分组分页(BFF)" "$T"
-
-echo "--- 3. 旧 BFF 写透传已删除（应404）---"
-test_api "POST" "$BASE_BFF" "/admin/v1/basic/sensitiveWord/insert" \
-    '{"word":"test"}' "旧:新增敏感词(应404)" "$T"
-test_api "POST" "$BASE_BFF" "/admin/v1/basic/sensitiveWord/delete" \
-    '{"ids":[999]}' "旧:删除敏感词(应404)" "$T"
-test_api "POST" "$BASE_BFF" "/admin/v1/basic/photo/insert" \
-    '{}' "旧:新增图片(应404)" "$T"
-test_api "POST" "$BASE_BFF" "/admin/v1/basic/photo/delete" \
-    '{"ids":[999]}' "旧:删除图片(应404)" "$T"
-test_api "POST" "$BASE_BFF" "/admin/v1/basic/photoGroup/insert" \
-    '{}' "旧:新增图片分组(应404)" "$T"
-
-echo "--- 4. Feign 内部路径 /v1/internal/ ---"
+echo "--- 2. Feign 内部路径 /v1/internal/ ---"
 test_api "POST" "$BASE_BASIC" "/v1/internal/commonPhotoGroup/searchByPage" '{}' \
     "内部:图片分组分页(裸DTO)" "$T"
 

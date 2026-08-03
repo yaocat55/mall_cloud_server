@@ -9,7 +9,6 @@ set -e
 
 # -------------------- 配置 --------------------
 ADMIN="http://localhost:8030"
-BFF="http://localhost:8090"
 BASIC="http://localhost:8022"
 PRODUCT="http://localhost:8023"
 MARKETING="http://localhost:8024"
@@ -88,71 +87,64 @@ echo ""
 # 跳过写操作(insert/update/delete/approve/reject/push) 和文件上传
 
 declare -a TESTS=(
-  # ===== A: RBAC =====
-  "A1.3 用户信息           |GET|${BFF}/admin/v1/auth/userInfo"
-  "A1.4 用户详情           |GET|${BFF}/admin/v1/auth/userDetail"
-  "A1.5 菜单树             |GET|${BFF}/admin/v1/auth/menus"
-  "A2.1 用户分页           |POST|${BFF}/admin/v1/user/page|{\"entity\":{},\"page\":{\"pageNum\":1,\"pageSize\":10}}"
-  "A2.2 用户编辑数据       |GET|${BFF}/admin/v1/user/1/edit-data"
-  "A3.1 角色分页           |POST|${BFF}/admin/v1/system/role/page|{}"
-  "A3.2 角色列表           |GET|${BFF}/admin/v1/system/role/all"
-  "A4.1 部门分页           |POST|${BFF}/admin/v1/system/dept/page|{}"
-  "A4.2 部门树             |GET|${BFF}/admin/v1/system/dept/tree"
-  "A5.1 岗位分页           |POST|${BFF}/admin/v1/system/job/page|{}"
-  "A5.2 岗位列表           |GET|${BFF}/admin/v1/system/job/all"
-  "A6.1 菜单树(系统)       |GET|${BFF}/admin/v1/system/menu/tree"
-  "A6.2 菜单列表           |POST|${BFF}/admin/v1/system/menu/list|{}"
+  # ===== A: RBAC (mall-admin 直连) =====
+  "A1.1 验证码(无需Token) |GET|${ADMIN}/v1/auth/web/user/getCode"
+  "A1.3 用户信息           |GET|${ADMIN}/v1/auth/web/user/info"
+  "A1.4 用户详情           |GET|${ADMIN}/v1/auth/web/user/getUserDetail"
+  "A1.5 菜单树             |GET|${ADMIN}/v1/auth/web/user/menus"
+  "A2.1 用户分页           |POST|${ADMIN}/v1/auth/user/searchByPage|{\"pageNo\":1,\"pageSize\":10}"
+  "A3.1 角色分页           |POST|${ADMIN}/v1/auth/role/searchByPage|{}"
+  "A3.2 角色列表           |GET|${ADMIN}/v1/auth/role/all"
+  "A4.1 部门分页           |POST|${ADMIN}/v1/auth/dept/searchByPage|{}"
+  "A4.2 部门树             |POST|${ADMIN}/v1/auth/dept/searchByTree|{}"
+  "A5.1 岗位分页           |POST|${ADMIN}/v1/auth/job/searchByPage|{}"
+  "A5.2 岗位列表           |GET|${ADMIN}/v1/auth/job/all"
+  "A6.1 菜单树(系统)       |GET|${ADMIN}/v1/auth/menu/getMenuTree"
+  "A6.2 菜单列表           |POST|${ADMIN}/v1/auth/menu/searchByPage|{}"
 
-  # ===== B: 商品 =====
-  "B1.1 商品分页           |POST|${BFF}/admin/v1/product/page|{\"entity\":{},\"page\":{\"pageNum\":1,\"pageSize\":10}}"
-  "B1.2 商品详情           |GET|${BFF}/admin/v1/product/detail?id=1833339862330556416"
-  "B1.3 商品编辑数据       |GET|${BFF}/admin/v1/product/1/edit-data"
-  "B2.1 分类分页           |POST|${BFF}/admin/v1/product-mgr/category/page|{}"
-  "B2.2 分类树             |POST|${BFF}/admin/v1/product-mgr/category/tree|{}"
-  "B3.1 品牌分页           |POST|${BFF}/admin/v1/product-mgr/brand/page|{}"
-  "B4.1 单位分页           |POST|${BFF}/admin/v1/product-mgr/unit/page|{}"
-  "B5.1 属性分页           |POST|${BFF}/admin/v1/product-extra/attribute/page|{}"
-  "B5.2 属性值分页         |POST|${BFF}/admin/v1/product-extra/attributeValue/page|{}"
-  "B5.3 商品分组分页       |POST|${BFF}/admin/v1/product-extra/productGroup/page|{}"
+  # ===== B: 商品 (mall-product 直连) =====
+  "B1.1 商品分页           |POST|${PRODUCT}/v1/product/searchByPage|{\"pageNo\":1,\"pageSize\":10}"
+  "B1.2 商品详情           |GET|${PRODUCT}/v1/product/findById?id=1833339862330556416"
+  "B2.1 分类分页           |POST|${PRODUCT}/v1/category/searchByPage|{}"
+  "B2.2 分类树             |POST|${PRODUCT}/v1/category/searchByTree|{}"
+  "B3.1 品牌分页           |POST|${PRODUCT}/v1/brand/searchByPage|{}"
+  "B4.1 单位分页           |POST|${PRODUCT}/v1/unit/searchByPage|{}"
+  "B5.1 属性分页           |POST|${PRODUCT}/v1/attribute/searchByPage|{}"
+  "B5.2 属性值分页         |POST|${PRODUCT}/v1/attributeValue/searchByPage|{}"
+  "B5.3 商品分组分页       |POST|${PRODUCT}/v1/productGroup/searchByPage|{}"
 
   # ===== C: 运营 =====
-  "C1 公告分页            |POST|${BFF}/admin/v1/product-extra/indexNotice/page|{}"
-  "C2 首页商品分页        |POST|${BFF}/admin/v1/product-extra/indexProduct/page|{}"
-  "C3 轮播图分页          |POST|${BFF}/admin/v1/product-extra/indexCarouselImage/page|{}"
-  "C4 商品图片分页        |POST|${BFF}/admin/v1/product-extra/productPhoto/page|{}"
+  "C1 公告分页            |POST|${PRODUCT}/v1/indexNotice/searchByPage|{}"
+  "C2 首页商品分页        |POST|${PRODUCT}/v1/indexProduct/searchByPage|{}"
+  "C3 轮播图分页          |POST|${PRODUCT}/v1/indexCarouselImage/searchByPage|{}"
+  "C4 商品图片分页        |POST|${PRODUCT}/v1/productPhoto/searchByPage|{}"
 
-  # ===== D: 基础数据 =====
-  "D1 图片库分页          |POST|${BFF}/admin/v1/basic/photo/page|{}"
-  "D2 图片分组分页        |POST|${BFF}/admin/v1/basic/photoGroup/page|{}"
-  "D3 敏感词分页          |POST|${BFF}/admin/v1/basic/sensitiveWord/page|{}"
+  # ===== D: 基础数据 (mall-basic 直连) =====
+  "D1 图片库分页          |POST|${BASIC}/v1/commonPhoto/searchByPage|{}"
+  "D2 图片分组分页        |POST|${BASIC}/v1/commonPhotoGroup/searchByPage|{}"
+  "D3 敏感词分页          |POST|${BASIC}/v1/commonSensitiveWord/searchByPage|{}"
 
-  # ===== E: 通知 =====
-  "E1 通知分页            |POST|${BFF}/admin/v1/basic/notify/page|{}"
+  # ===== E: 通知 (mall-message 直连) =====
+  "E1 通知分页            |POST|${MESSAGE}/v1/message/notify/searchByPage|{}"
 
-  # ===== F: 订单与售后 =====
-  "F1 订单分页            |POST|${BFF}/admin/v1/order/page|{\"entity\":{},\"page\":{\"pageNum\":1,\"pageSize\":10}}"
-  "F2 退货分页            |POST|${BFF}/admin/v1/order/return/page|{}"
-  "F3 退货详情            |GET|${BFF}/admin/v1/order/return/detail?id=1"
+  # ===== F: 订单与售后 (mall-order 直连) =====
+  "F1 订单分页            |POST|${ORDER}/v1/admin/order/page|{\"pageNo\":1,\"pageSize\":10}"
+  "F2 退货分页            |POST|${ORDER}/v1/admin/order/return/page|{}"
+  "F3 退货详情            |GET|${ORDER}/v1/admin/order/return/detail?id=1"
 
-  # ===== G: 营销 =====
-  "G1 优惠券分页          |POST|${BFF}/admin/v1/marketing/coupon/page|{}"
-  "G2 秒杀分页            |POST|${BFF}/admin/v1/marketing/seckill/page|{}"
-  "G3 发券记录分页        |POST|${BFF}/admin/v1/marketing/couponUserProvide/page|{}"
-  "G4 领券记录分页        |POST|${BFF}/admin/v1/marketing/couponUserReceive/page|{}"
+  # ===== G: 营销 (mall-marketing 直连) =====
+  "G1 优惠券分页          |POST|${MARKETING}/v1/coupon/searchByPage|{}"
+  "G2 秒杀分页            |POST|${MARKETING}/v1/seckillProduct/searchByPage|{}"
+  "G3 发券记录分页        |POST|${MARKETING}/v1/couponUserProvide/searchByPage|{}"
+  "G4 领券记录分页        |POST|${MARKETING}/v1/couponUserReceive/searchByPage|{}"
 
-  # ===== H: 评价 =====
-  "H1 评价分页            |POST|${BFF}/admin/v1/shopping/productComment/page|{}"
-  "H2 评价详情            |GET|${BFF}/admin/v1/shopping/productComment/detail?id=1"
+  # ===== H: 评价 (mall-product 直连) =====
+  "H1 评价分页            |POST|${PRODUCT}/v1/productComment/searchByPage|{}"
+  "H2 评价详情            |GET|${PRODUCT}/v1/productComment/findById?id=1"
 
-  # ===== I: 库存 =====
-  "I1 库存查询            |GET|${BFF}/admin/v1/inventory/1833339862330556416"
-  "I2 批量库存查询        |POST|${BFF}/admin/v1/inventory/batch|[1833339862330556416]"
-
-  # ===== J: 仪表盘 =====
-  "J1 仪表盘统计          |GET|${BFF}/admin/v1/dashboard/stats"
-
-  # ===== 不可变数据的详情接口 (via ADMIN 直连) =====
-  "A1.1 验证码(无需Token) |GET|${BFF}/admin/v1/auth/getCode"
+  # ===== I: 库存 (mall-inventory 直连) =====
+  "I1 库存查询            |GET|${INVENTORY}/v1/inventory/1833339862330556416"
+  "I2 批量库存查询        |POST|${INVENTORY}/v1/inventory/batch|[1833339862330556416]"
 )
 
 TOTAL_TESTS=${#TESTS[@]}

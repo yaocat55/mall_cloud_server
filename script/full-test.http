@@ -4,7 +4,6 @@
 ### ============================================================
 
 @ADMIN = http://localhost:8030
-@BFF = http://localhost:8090
 @BASIC = http://localhost:8022
 @PRODUCT = http://localhost:8023
 @MARKETING = http://localhost:8024
@@ -29,15 +28,15 @@ Content-Type: application/json
 ### ============================================================
 
 ### 1. 用户分页查询
-POST {{BFF}}/admin/v1/user/page
+POST {{ADMIN}}/v1/auth/user/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 
-{"entity":{},"page":{"pageNum":1,"pageSize":10}}
+{"pageNo":1,"pageSize":10}
 ### 响应: {"code":200,"data":{"totalCount":3,"pageNo":1,"pageSize":10,"totalPage":1,"list":[{"id":13,"userName":"admin","phone":"182****6777","email":"12lisu@163.com","deptName":"运营部","validStatus":true,"isDel":0,"createTime":"2024-01-22"}]}}
 
 ### 2. 按ID查询单个用户
-POST {{BFF}}/admin/v1/user/findByIds
+POST {{ADMIN}}/v1/auth/user/findByIds
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}、
 
@@ -45,7 +44,7 @@ Authorization: Bearer {{login.response.body.data.token}}、
 ### 响应: {"code":200,"data":[{"id":13,"userName":"admin","phone":"182****6777","email":"12lisu@163.com","validStatus":true,"isDel":0}]}
 
 ### 3. 按手机号查询用户
-GET {{BFF}}/admin/v1/user/findByPhone?phone=13959758081
+GET {{ADMIN}}/v1/auth/user/findByPhone?phone=13959758081
 Authorization: Bearer {{login.response.body.data.token}}
 ### 响应: {"code":200,"data":{"id":2077676246750052352,"userName":"姚铭烨","phone":"13959758081","email":"yaomingye55@gmail.com"}}
 
@@ -74,7 +73,7 @@ Authorization: Bearer {{login.response.body.data.token}}
 ### 响应: {"code":200,"data":{"rows":1}}
 
 ### 7. 角色分页查询
-POST {{BFF}}/admin/v1/system/role/page
+POST {{ADMIN}}/v1/auth/role/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 
@@ -82,7 +81,7 @@ Authorization: Bearer {{login.response.body.data.token}}
 ### 响应: {"code":200,"data":{"totalCount":3,"list":[{"id":1,"name":"超级管理员","remark":"拥有所有权限"}]}}
 
 ### 8. 角色列表（下拉选择器用）
-GET {{BFF}}/admin/v1/system/role/all
+GET {{ADMIN}}/v1/auth/role/all
 Authorization: Bearer {{login.response.body.data.token}}
 
 ### 响应: {"code":200,"data":[{"id":1,"name":"超级管理员"},{"id":2,"name":"普通用户"}]}
@@ -105,14 +104,14 @@ Authorization: Bearer {{login.response.body.data.token}}
 ### 响应: {"code":200,"data":{"rows":1}}
 
 ### 11. 部门分页查询
-POST {{BFF}}/admin/v1/system/dept/page
+POST {{ADMIN}}/v1/auth/dept/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
 ### 响应: {"code":200,"data":{"totalCount":1,"list":[{"id":1,"name":"总公司","pid":0,"validStatus":true}]}}
 
 ### 12. 部门树
-GET {{BFF}}/admin/v1/system/dept/tree
+GET {{ADMIN}}/v1/auth/dept/searchByTree
 Authorization: Bearer {{login.response.body.data.token}}
 ### 响应: {"code":200,"data":[{"id":1,"name":"总公司","pid":0,"children":[{"id":4021505884786,"name":"运营部"}]}]}
 
@@ -131,14 +130,14 @@ Authorization: Bearer {{login.response.body.data.token}}
 ### 响应: {"code":200,"data":{"rows":1}}
 
 ### 15. 岗位分页查询
-POST {{BFF}}/admin/v1/system/job/page
+POST {{ADMIN}}/v1/auth/job/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
 ### 响应: {"code":200,"data":{"totalCount":1,"list":[{"id":7,"name":"管理员"}]}}
 
 ### 16. 岗位列表（下拉选择器用）
-GET {{BFF}}/admin/v1/system/job/all
+GET {{ADMIN}}/v1/auth/job/all
 Authorization: Bearer {{login.response.body.data.token}}
 ### 响应: {"code":200,"data":[{"id":7,"name":"管理员"}]}
 
@@ -157,12 +156,12 @@ Authorization: Bearer {{login.response.body.data.token}}
 ### 响应: {"code":200,"data":{"rows":1}}
 
 ### 19. 菜单树
-GET {{BFF}}/admin/v1/system/menu/tree
+GET {{ADMIN}}/v1/auth/menu/getMenuTree
 Authorization: Bearer {{login.response.body.data.token}}
 ### 响应: {"code":200,"data":[{"id":1,"name":"系统管理","children":[{"id":2,"name":"用户管理"}]}]}
 
 ### 20. 菜单列表
-POST {{BFF}}/admin/v1/system/menu/list
+POST {{ADMIN}}/v1/auth/menu/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
@@ -188,47 +187,47 @@ Authorization: Bearer {{login.response.body.data.token}}
 ### ============================================================
 
 ### 23. 商品分页查询
-POST {{BFF}}/admin/v1/product/page
+POST {{PRODUCT}}/v1/product/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
-{"entity":{},"page":{"pageNum":1,"pageSize":10}}
+{"pageNo":1,"pageSize":10}
 ### 响应: {"code":200,"data":{"totalCount":1,"list":[{"id":1833339862330556416,"name":"测试商品","price":99.99,"categoryName":"手机数码","brandName":"华为"}]}}
 
 ### 24. 商品详情
-GET {{BFF}}/admin/v1/product/detail?id=1833339862330556416
+GET {{PRODUCT}}/v1/product/findById?id=1833339862330556416
 Authorization: Bearer {{login.response.body.data.token}}
 ### 响应: {"code":200,"data":{"id":1833339862330556416,"name":"测试商品","price":99.99,"categoryId":1806965539515801603,"brandId":1806609234968473601}}
 
 ### 25. 新增商品
-POST {{PRODUCT}}/admin/v1/product/insert
+POST {{PRODUCT}}/v1/product/insert
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {"name":"测试商品","price":99.99,"status":1,"categoryId":1806965539515801603,"brandId":1806609234968473601,"unitId":1807039393319260160}
 ### 响应: {"code":200,"data":{"rows":1}}
 
 ### 26. 修改商品
-POST {{PRODUCT}}/admin/v1/product/update
+POST {{PRODUCT}}/v1/product/update
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {"id":1833339862330556416,"price":88.88}
 ### 响应: {"code":200,"data":{"rows":1}}
 
 ### 27. 删除商品
-POST {{PRODUCT}}/admin/v1/product/deleteByIds
+POST {{PRODUCT}}/v1/product/deleteByIds
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 [999]
 ### 响应: {"code":200,"data":{"rows":1}}
 
 ### 28. 分类分页查询
-POST {{BFF}}/admin/v1/product-mgr/category/page
+POST {{PRODUCT}}/v1/category/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
 ### 响应: {"code":200,"data":{"totalCount":5,"list":[{"id":1806965539515801603,"name":"手机数码","parentId":0,"level":1}]}}
 
 ### 29. 分类树
-POST {{BFF}}/admin/v1/product-mgr/category/tree
+POST {{PRODUCT}}/v1/category/searchByTree
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
@@ -249,7 +248,7 @@ Authorization: Bearer {{login.response.body.data.token}}
 ### 响应: {"code":200,"data":{"rows":1}}
 
 ### 32. 品牌分页查询
-POST {{BFF}}/admin/v1/product-mgr/brand/page
+POST {{PRODUCT}}/v1/brand/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
@@ -270,7 +269,7 @@ Authorization: Bearer {{login.response.body.data.token}}
 ### 响应: {"code":200,"data":{"rows":1}}
 
 ### 35. 单位分页查询
-POST {{BFF}}/admin/v1/product-mgr/unit/page
+POST {{PRODUCT}}/v1/unit/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
@@ -291,21 +290,21 @@ Authorization: Bearer {{login.response.body.data.token}}
 ### 响应: {"code":200,"data":{"rows":1}}
 
 ### 38. 属性分页查询
-POST {{BFF}}/admin/v1/product-extra/attribute/page
+POST {{PRODUCT}}/v1/attribute/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
 ### 响应: {"code":200,"data":{"totalCount":0,"list":[]}}
 
 ### 39. 属性值分页查询
-POST {{BFF}}/admin/v1/product-extra/attributeValue/page
+POST {{PRODUCT}}/v1/attributeValue/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
 ### 响应: {"code":200,"data":{"totalCount":0,"list":[]}}
 
 ### 40. 商品分组分页查询
-POST {{BFF}}/admin/v1/product-extra/productGroup/page
+POST {{PRODUCT}}/v1/productGroup/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
@@ -317,28 +316,28 @@ Authorization: Bearer {{login.response.body.data.token}}
 ### ============================================================
 
 ### 41. 公告分页
-POST {{BFF}}/admin/v1/product-extra/indexNotice/page
+POST {{PRODUCT}}/v1/indexNotice/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
 ### 响应: {"code":200,"data":{"totalCount":0,"list":[]}}
 
 ### 42. 首页商品分页
-POST {{BFF}}/admin/v1/product-extra/indexProduct/page
+POST {{PRODUCT}}/v1/indexProduct/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
 ### 响应: {"code":200,"data":{"totalCount":0,"list":[]}}
 
 ### 43. 轮播图分页
-POST {{BFF}}/admin/v1/product-extra/indexCarouselImage/page
+POST {{PRODUCT}}/v1/indexCarouselImage/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
 ### 响应: {"code":200,"data":{"totalCount":0,"list":[]}}
 
 ### 44. 商品图片分页
-POST {{BFF}}/admin/v1/product-extra/productPhoto/page
+POST {{PRODUCT}}/v1/productPhoto/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
@@ -350,28 +349,28 @@ Authorization: Bearer {{login.response.body.data.token}}
 ### ============================================================
 
 ### 45. 图片分页
-POST {{BFF}}/admin/v1/basic/photo/page
+POST {{BASIC}}/v1/commonPhoto/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
 ### 响应: {"code":200,"data":{"totalCount":0,"list":[]}}
 
 ### 46. 图片分组分页
-POST {{BFF}}/admin/v1/basic/photoGroup/page
+POST {{BASIC}}/v1/commonPhotoGroup/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
 ### 响应: {"code":200,"data":{"totalCount":0,"list":[]}}
 
 ### 47. 敏感词分页
-POST {{BFF}}/admin/v1/basic/sensitiveWord/page
+POST {{BASIC}}/v1/commonSensitiveWord/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
 ### 响应: {"code":200,"data":{"totalCount":0,"list":[]}}
 
 ### 48. 通知分页
-POST {{BFF}}/admin/v1/basic/notify/page
+POST {{MESSAGE}}/v1/message/notify/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
@@ -397,33 +396,33 @@ Authorization: Bearer {{login.response.body.data.token}}
 ### ============================================================
 
 ### 51. 订单分页
-POST {{BFF}}/admin/v1/order/page
+POST {{ORDER}}/v1/admin/order/page
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
-{"entity":{},"page":{"pageNum":1,"pageSize":10}}
+{"pageNo":1,"pageSize":10}
 ### 响应: {"code":200,"data":{"totalCount":0,"list":[]}}
 
 ### 52. 退货分页
-POST {{BFF}}/admin/v1/order/return/page
+POST {{ORDER}}/v1/admin/order/return/page
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
 ### 响应: {"code":200,"data":{"totalCount":0,"list":[]}}
 
 ### 53. 退货详情
-GET {{BFF}}/admin/v1/order/return/detail?id=1
+GET {{ORDER}}/v1/admin/order/return/detail?id=1
 Authorization: Bearer {{login.response.body.data.token}}
 ### 响应: {"code":200,"data":null}
 
 ### 54. 退货审批通过
-POST {{ORDER}}/v1/return/approve
+POST {{ORDER}}/v1/trade/return/approve
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {"id":1}
 ### 响应: {"code":200,"data":{"rows":1}}
 
 ### 55. 退货审批拒绝
-POST {{ORDER}}/v1/return/reject
+POST {{ORDER}}/v1/trade/return/reject
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {"id":1,"reason":"不符合条件"}
@@ -435,28 +434,28 @@ Authorization: Bearer {{login.response.body.data.token}}
 ### ============================================================
 
 ### 56. 优惠券分页
-POST {{BFF}}/admin/v1/marketing/coupon/page
+POST {{MARKETING}}/v1/coupon/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
 ### 响应: {"code":200,"data":{"totalCount":0,"list":[]}}
 
 ### 57. 秒杀分页
-POST {{BFF}}/admin/v1/marketing/seckill/page
+POST {{MARKETING}}/v1/seckillProduct/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
 ### 响应: {"code":200,"data":{"totalCount":0,"list":[]}}
 
 ### 58. 发券记录分页
-POST {{BFF}}/admin/v1/marketing/couponUserProvide/page
+POST {{MARKETING}}/v1/couponUserProvide/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
 ### 响应: {"code":200,"data":{"totalCount":0,"list":[]}}
 
 ### 59. 领券记录分页
-POST {{BFF}}/admin/v1/marketing/couponUserReceive/page
+POST {{MARKETING}}/v1/couponUserReceive/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
@@ -468,14 +467,14 @@ Authorization: Bearer {{login.response.body.data.token}}
 ### ============================================================
 
 ### 60. 评价分页
-POST {{BFF}}/admin/v1/shopping/productComment/page
+POST {{PRODUCT}}/v1/productComment/searchByPage
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {}
 ### 响应: {"code":200,"data":{"totalCount":0,"list":[]}}
 
 ### 61. 评价详情
-GET {{BFF}}/admin/v1/shopping/productComment/detail?id=1
+GET {{PRODUCT}}/v1/productComment/findById?id=1
 Authorization: Bearer {{login.response.body.data.token}}
 ### 响应: {"code":200,"data":null}
 
@@ -485,12 +484,12 @@ Authorization: Bearer {{login.response.body.data.token}}
 ### ============================================================
 
 ### 62. 库存查询
-GET {{BFF}}/admin/v1/inventory/1833339862330556416
+GET {{INVENTORY}}/v1/inventory/1833339862330556416
 Authorization: Bearer {{login.response.body.data.token}}
 ### 响应: {"code":200,"data":{"productId":1833339862330556416,"quantity":0,"available":0,"frozen":0,"saleCount":0}}
 
 ### 63. 批量库存查询
-POST {{BFF}}/admin/v1/inventory/batch
+POST {{INVENTORY}}/v1/inventory/batch
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 [1833339862330556416]
@@ -505,41 +504,31 @@ Authorization: Bearer {{login.response.body.data.token}}
 
 
 ### ============================================================
-### 仪表盘
-### ============================================================
-
-### 65. 统计数据
-GET {{BFF}}/admin/v1/dashboard/stats
-Authorization: Bearer {{login.response.body.data.token}}
-### 响应: {"code":200,"data":{"productCount":50,"userCount":100,"orderCount":200}}
-
-
-### ============================================================
 ### 认证
 ### ============================================================
 
-### 66. 获取验证码
-GET {{BFF}}/admin/v1/auth/getCode
+### 65. 获取验证码
+GET {{ADMIN}}/v1/auth/web/user/getCode
 ### 响应: {"code":200,"data":{"uuid":"Cxxx...","img":"data:image/png;base64,..."}}
 
 ### 67. 登录
-POST {{BFF}}/admin/v1/auth/login
+POST {{ADMIN}}/v1/auth/web/user/login
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.data.token}}
 {"username":"admin","password":"admin123"}
 ### 响应: {"code":200,"data":{"token":"eyJhbG...","user":{"id":13,"userName":"admin"}}}
 
 ### 68. 当前用户信息
-GET {{BFF}}/admin/v1/auth/userInfo
+GET {{ADMIN}}/v1/auth/web/user/info
 Authorization: Bearer {{login.response.body.data.token}}
 ### 响应: {"code":200,"data":{"userName":"admin","roles":["ROLE_admin"],"permissions":["*:*:*"]}}
 
 ### 69. 当前用户详情
-GET {{BFF}}/admin/v1/auth/userDetail
+GET {{ADMIN}}/v1/auth/web/user/getUserDetail
 Authorization: Bearer {{login.response.body.data.token}}
 ### 响应: {"code":200,"data":{"id":13,"userName":"admin","phone":"182****6777","email":"12lisu@163.com"}}
 
 ### 70. 菜单树（导航用）
-GET {{BFF}}/admin/v1/auth/menus
+GET {{ADMIN}}/v1/auth/web/user/menus
 Authorization: Bearer {{login.response.body.data.token}}
 ### 响应: {"code":200,"data":[{"id":1,"name":"系统管理","path":"/system","icon":"system","children":[]}]}
