@@ -137,6 +137,9 @@ mall-pay/src/main/java/cn/net/mall/pay/
 │   ├── AesCryptor.java                    # 渠道密钥 AES 加解密（crypto.secret-key）
 │   ├── NotifySecurity.java                # 回调安全：timestamp 窗口 + nonce 去重（Redis）+ IP 白名单
 │   └── MoneyUtil.java                     # 分/元 换算（支付宝元→分，只在此处）
+```
+> 📌 **加密/签名实现依据**：渠道侧的具体算法（支付宝 RSA2 / 微信 SHA256-RSA2048 + AES-256-GCM 回调解密 / 签名串格式 / 平台证书验签）见 `docs/39` 第二章「加密与签名机制」。`AesCryptor`/`NotifySecurity` 是实现类，算法细节以 39 为准。
+```
 ├── recon/                                 # 对账子系统
 │   ├── ReconJob.java                      # 对账定时任务（@Scheduled 次日10:30，入口）
 │   ├── ReconService.java                  # 对账编排：下载→解析→入库→对比→结果
