@@ -1,12 +1,21 @@
 package cn.net.mall.pay.controller.mobile;
 
-import cn.hutool.extra.qrcode.QrCodeUtil;
-import cn.net.mall.order.dto.OrderDTO;
-import cn.net.mall.pay.dto.PayWebDTO;
-import cn.net.mall.pay.integration.AliPayIntegration;
-import cn.net.mall.pay.service.PayService;
+import cn.net.mall.pay.dto.PayCloseDTO;
+import cn.net.mall.pay.dto.PayCreateDTO;
+import cn.net.mall.pay.dto.PayCreateResult;
+import cn.net.mall.pay.dto.PayQueryDTO;
+import cn.net.mall.pay.dto.PayRefundDTO;
+import cn.net.mall.pay.dto.PayRefundQueryDTO;
+import cn.net.mall.pay.dto.PayRefundResult;
+import cn.net.mall.pay.dto.PayRefundQueryResult;
+import cn.net.mall.pay.entity.PayOrderEntity;
+import cn.net.mall.pay.service.PayCoreService;
+import cn.net.mall.pay.service.RefundCoreService;
+import cn.net.mall.util.ApiResult;
+import cn.net.mall.util.ApiResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,58 +23,50 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
-
 /**
- * 支付操作
+ * 移动端支付收银台（C 端专属）.
+ *
+ * <p>前端/移动端支付链路：前端 → 网关 → mall-order（下单）→ Feign 调 mall-pay 创建支付单 →
+ * 返回拉起支付参数 → 前端调起渠道支付。支付结果经渠道回调 + MQ 通知业务方。</p>
+ * <p>本控制器面向 C 端用户收银台（创建支付单、查状态、关单、退款申请）。</p>
  */
-@Tag(name = "移动端-支付", description = "移动端：支付、二维码生成")
+@Tag(name = "移动端-支付收银台", description = "移动端：创建支付单、查询支付状态、关闭支付、申请退款")
 @RestController
 @RequestMapping("/v1/mobile/pay")
 @Validated
 @RequiredArgsConstructor
 public class PayController {
 
-    private final AliPayIntegration aliPayIntegration;
-    private final PayService payService;
+    private final PayCoreService payCoreService;
+    private final RefundCoreService refundCoreService;
 
-    /**
-     * 模拟支付接口
-     *
-     * @param payWebDTO 参数
-     * @return 是否支付成功
-     */
-    @PostMapping("/mockPay")
-    @Operation(summary = "模拟支付接口")
-    public Boolean mockPay(@RequestBody @Valid PayWebDTO payWebDTO) {
-        return payService.mockPay(payWebDTO);
+    @Operation(summary = "创建支付单", description = "收银台调起支付前创建支付单，返回拉起支付参数（支付宝 orderStr / 微信 prepay / MOCK 预设串）")
+    @PostMapping("/create")
+    public ApiResult<PayCreateResult> create(@RequestBody @Valid PayCreateDTO dto) {
+        return ApiResultUtil.success(payCoreService.create(dto));
     }
 
-    /**
-     * 支付接口
-     *
-     * @param orderDTO 订单实体
-     * @param response 响应
-     * @throws Exception
-     */
-    @PostMapping("/doPay")
-    @Operation(summary = "支付接口")
-    public void doPay(@RequestBody OrderDTO orderDTO, HttpServletResponse response) throws Exception {
-        String qrUrl = aliPayIntegration.pay(orderDTO);
-        QrCodeUtil.generate(qrUrl, 300, 300, "png", response.getOutputStream());
+    @Operation(summary = "查询支付状态", description = "按 payOrderNo 或 bizOrderNo 查询支付单当前状态")
+    @PostMapping("/query")
+    public ApiResult<PayOrderEntity> query(@RequestBody @Valid PayQueryDTO dto) {
+        return ApiResultUtil.success(payCoreService.query(dto));
     }
 
-    /**
-     * 创建支付二维码
-     *
-     * @param orderDTO 订单实体
-     * @return 二维码url
-     * @throws Exception
-     */
-    @PostMapping("/createQrCode")
-    @Operation(summary = "创建支付二维码")
-    public String createQrCode(@RequestBody OrderDTO orderDTO) throws Exception {
-        return aliPayIntegration.pay(orderDTO);
+    @Operation(summary = "关闭支付", description = "关闭未支付订单（用户取消/超时），释放占用")
+    @PostMapping("/close")
+    public ApiResult<Boolean> close(@RequestBody @Valid PayCloseDTO dto) {
+        return ApiResultUtil.success(payCoreService.close(dto.getPayOrderNo(), dto.getReason()));
+    }
+
+    @Operation(summary = "申请退款", description = "售后退款申请，自动退款或进入人工审核")
+    @PostMapping("/refund/apply")
+    public ApiResult<PayRefundResult> applyRefund(@RequestBody @Valid PayRefundDTO dto) {
+        return ApiResultUtil.success(refundCoreService.apply(dto));
+    }
+
+    @Operation(summary = "查询退款结果", description = "按退款单号查询退款状态")
+    @PostMapping("/refund/query")
+    public ApiResult<PayRefundQueryResult> queryRefund(@RequestBody @Valid PayRefundQueryDTO dto) {
+        return ApiResultUtil.success(refundCoreService.queryRefund(dto.getRefundNo()));
     }
 }

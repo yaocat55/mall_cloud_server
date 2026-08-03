@@ -1,10 +1,11 @@
 package cn.net.mall.pay.integration;
 
 import cn.net.mall.order.dto.OrderDTO;
-import com.alibaba.fastjson.JSONObject;
+import cn.net.mall.json.JacksonMapper;
 import com.alipay.easysdk.factory.Factory;
 import com.alipay.easysdk.kernel.Config;
 import com.alipay.easysdk.payment.facetoface.models.AlipayTradePrecreateResponse;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class AliPayIntegration {
+    private final JacksonMapper jacksonMapper = new JacksonMapper();
+
     @Autowired
     private Config config;
 
@@ -32,7 +35,7 @@ public class AliPayIntegration {
                         orderDTO.getPayAmount().toString());
         //参照官方文档响应示例，解析返回结果
         String httpBodyStr = payResponse.getHttpBody();
-        JSONObject jsonObject = JSONObject.parseObject(httpBodyStr);
-        return jsonObject.getJSONObject("alipay_trade_precreate_response").get("qr_code").toString();
+        JsonNode jsonNode = jacksonMapper.readTree(httpBodyStr);
+        return jsonNode.get("alipay_trade_precreate_response").get("qr_code").asText();
     }
 }
