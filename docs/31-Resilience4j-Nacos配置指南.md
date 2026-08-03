@@ -1,5 +1,7 @@
 # Resilience4j Nacos 配置指南
 
+
+> 📌 **归档说明：** `mall-admin-bff` 已于 2026-08-03 整体拆除，admin 前端直连各微服务（见 `40-adminBFF拆除方案.md`）。本文档描述的 admin-bff 相关内容已过时，仅作历史演进记录；mobile-bff 部分仍有效。
 > 熔断降级（Circuit Breaker）+ 重试（Retry）+ 超时控制（TimeLimiter）
 > 配合 `common-web` 中的 `FeignErrorDecoder` + `FallbackFactory` 使用
 

@@ -1,5 +1,7 @@
 # 移除 `@NoLogin` 注解 & 统一 Gateway 白名单 — 影响分析
 
+
+> 📌 **归档说明：** `mall-admin-bff` 已于 2026-08-03 整体拆除，admin 前端直连各微服务（见 `40-adminBFF拆除方案.md`）。本文档描述的 admin-bff 相关内容已过时，仅作历史演进记录；mobile-bff 部分仍有效。
 ## 一、背景
 
 项目由单体架构向微服务架构演进的过程中，鉴权体系从"每个服务自己管"变成了"Gateway 统一入口校验"。但 `@NoLogin` 注解 + `NoLoginMap` + `initNoLogin()` 反射扫描这套单体时代的白名单机制仍然保留在 `mall-auth` 中，与 Gateway `AuthFilter` 的白名单形成**两套平行体系**。

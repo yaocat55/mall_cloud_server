@@ -1,5 +1,7 @@
 # Spring Security 统一管理（mall-auth-api-starter）
 
+
+> 📌 **归档说明：** `mall-admin-bff` 已于 2026-08-03 整体拆除，admin 前端直连各微服务（见 `40-adminBFF拆除方案.md`）。本文档描述的 admin-bff 相关内容已过时，仅作历史演进记录；mobile-bff 部分仍有效。
 > 此文已从"计划"更新为"现状 + 使用指南"。
 > 详见 `AuthSecurityAutoConfiguration` 和 `PermitAllProvider`。
 

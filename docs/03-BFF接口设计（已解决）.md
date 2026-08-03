@@ -1,5 +1,7 @@
 # BFF 聚合 API 设计方案
 
+
+> 📌 **归档说明：** `mall-admin-bff` 已于 2026-08-03 整体拆除，admin 前端直连各微服务（见 `40-adminBFF拆除方案.md`）。本文档描述的 admin-bff 相关内容已过时，仅作历史演进记录；mobile-bff 部分仍有效。
 > 目标：前端只需看两个文档（mall-admin-api、mall-mobile-api）就能写出完整应用。
 
 ---

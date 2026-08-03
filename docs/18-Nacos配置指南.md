@@ -45,7 +45,6 @@ spring:
 | `resilience4j.circuitbreaker` | 熔断阈值（窗口 10 / 50% 熔断） |
 | `resilience4j.retry` | 重试策略（最多 3 次 / 500ms 间隔） |
 | `resilience4j.timelimiter` | 超时控制（API 5s / BFF 10s） |
-
 ### 服务独立配置
 
 各服务 yml 只保留自身特有的配置（数据库、中间件、业务参数），**不再重复声明 Redis、JWT、devtools、bean-override 等公共项**。
@@ -60,7 +59,6 @@ spring:
 | `mall-gateway-dev.yaml` | Gateway | 路由规则、Sentinel 限流、白名单 |
 | `mall-gateway-flow-rules` | Gateway | Sentinel 流控规则 |
 | `mall-admin-api-dev.yaml` | Admin | 数据库、MyBatis、登录过期时间 |
-| `mall-admin-bff-dev.yaml` | Admin BFF | timelimiter 10s（BFF 超时放宽） |
 | `mall-mobile-bff-dev.yaml` | Mobile BFF | timelimiter 10s（BFF 超时放宽） |
 | `mall-basic-api-dev.yaml` | Basic | 数据库、MongoDB、MinIO、RocketMQ、短信密钥 |
 | `mall-customer-api-dev.yaml` | Customer | 数据库、MyBatis |

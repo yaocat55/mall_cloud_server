@@ -115,8 +115,8 @@
 | 字典管理 | key-value 技术常量，运营不需要理解 |
 | 定时任务 | 技术运维，非运营职责 |
 ## 技术实现
-- admin-bff 提供 `POST /admin/v1/user/page`（聚合：用户列表 + 部门列表 + 岗位列表）
-- admin-bff 提供 `GET /admin/v1/user/{id}/edit-data`（聚合：用户详情 + 部门树 + 岗位列表）
+- 用户列表：前端直连 mall-admin，调用 `POST /api/admin-api/v1/auth/user/searchByPage`（请求体：`{"pageNo":1,"pageSize":10}`），部门列表与岗位列表分别调 `dept` / `job` 接口自行聚合
+- 用户编辑数据：原 `GET /admin/v1/user/{id}/edit-data` 已删除，前端自行聚合（用户详情 `findById` + 部门树 `dept/searchByTree` + 岗位列表 `job/all`）
 - 后端根据用户的 `dept_id` + `job_id` 自动确定 `role_id`，写入 `auth_user_role`
 - 菜单树由后端根据 `auth_role_menu` 查询返回，前端只负责渲染
 
