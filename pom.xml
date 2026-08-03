@@ -31,7 +31,6 @@
         <module>mall-pay-client</module>
         <module>mall-recommend</module>
         <module>mall-message</module>
-        <module>mall-admin-bff</module>
         <module>mall-mobile-bff</module>
         <module>mall-customer</module>
         <module>mall-customer-client</module>
