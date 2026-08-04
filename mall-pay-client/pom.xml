@@ -22,8 +22,8 @@
         </dependency>
         <dependency>
             <groupId>cn.net.mall</groupId>
-            <artifactId>mall-order-client</artifactId>
-            <version>${mall-order-client.version}</version>
+            <artifactId>common-sensitive</artifactId>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

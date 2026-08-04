@@ -19,4 +19,13 @@ public class OrderSubmitRespDTO implements Serializable {
 
     @Schema(description = "应付金额", example = "0")
     private BigDecimal payAmount;
+
+    @Schema(description = "支付订单号")
+    private String payOrderNo;
+
+    @Schema(description = "渠道编码")
+    private String channelCode;
+
+    @Schema(description = "拉起支付参数（支付宝 orderStr / 微信 prepay_id）")
+    private String prepayParams;
 }

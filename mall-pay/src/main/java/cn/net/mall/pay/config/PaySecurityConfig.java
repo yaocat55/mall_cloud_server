@@ -9,6 +9,6 @@ import java.util.List;
 public class PaySecurityConfig {
     @Bean
     public PermitAllProvider payMobilePermitUrls() {
-        return () -> List.of("/v1/mobile/**");
+        return () -> List.of("/v1/mobile/**", "/v1/notify/**");
     }
 }
