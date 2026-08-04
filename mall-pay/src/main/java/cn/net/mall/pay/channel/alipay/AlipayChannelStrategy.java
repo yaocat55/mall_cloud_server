@@ -48,8 +48,7 @@ import java.util.Map;
 @Slf4j
 public class AlipayChannelStrategy implements PayChannelStrategy {
 
-    /** 支付宝网关地址（沙箱 / 正式） */
-    private static final String GATEWAY_URL = "https://openapi-sandbox.dl.alipaydev.com/gateway.do";
+    /** 支付宝网关地址——正式环境 / 沙箱环境从 pay_channel_config 的 config_json 字段读取 */
 
     /** 支付宝回调验签编码 */
     private static final String CHARSET = "UTF-8";
@@ -235,8 +234,21 @@ public class AlipayChannelStrategy implements PayChannelStrategy {
     // ============ private ============
 
     private AlipayClient buildClient(PayChannelConfigEntity config) {
+        // 网关地址优先从 config_json 读取，为空则走沙箱
+        String gatewayUrl = "https://openapi-sandbox.dl.alipaydev.com/gateway.do";
+        if (config.getConfigJson() != null && !config.getConfigJson().isEmpty()) {
+            try {
+                com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                com.fasterxml.jackson.databind.JsonNode node = mapper.readTree(config.getConfigJson());
+                if (node.has("gatewayUrl")) {
+                    gatewayUrl = node.get("gatewayUrl").asText();
+                }
+            } catch (Exception e) {
+                log.warn("解析渠道 config_json 失败, 使用默认沙箱网关", e);
+            }
+        }
         return new DefaultAlipayClient(
-                GATEWAY_URL,
+                gatewayUrl,
                 config.getAppId(),
                 config.getPrivateKey(),
                 AlipayConstants.FORMAT_JSON,
