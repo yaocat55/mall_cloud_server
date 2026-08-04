@@ -58,9 +58,13 @@ public interface PayChannelStrategy {
     boolean verifyNotify(Map<String, String> params, String rawBody, PayChannelConfigEntity config);
 
     /**
-     * 解析回调报文为统一对象
+     * 解析回调报文为统一对象.
+     *
+     * @param params  回调请求参数（支付宝为 request parameter map，微信为解密后的 XML/JSON map）
+     * @param rawBody 回调原始报文
+     * @param config  渠道配置
      */
-    PayNotifyMessage parseNotify(String rawBody, PayChannelConfigEntity config);
+    PayNotifyMessage parseNotify(Map<String, String> params, String rawBody, PayChannelConfigEntity config);
 
     /**
      * 下载对账单（30 秒链接原子下载），返回文件内容

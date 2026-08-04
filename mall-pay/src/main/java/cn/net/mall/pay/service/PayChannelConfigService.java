@@ -24,6 +24,9 @@ public class PayChannelConfigService extends BaseService< PayChannelConfigEntity
 	@Autowired
 	private PayChannelConfigMapper payChannelConfigMapper;
 
+	@Autowired
+	private PayChannelService payChannelService;
+
 	/**
      * 查询支付渠道配置信息
      *
@@ -59,7 +62,8 @@ public class PayChannelConfigService extends BaseService< PayChannelConfigEntity
 	@Transactional(rollbackFor = Exception.class)
 	public int insert(PayChannelConfigEntity payChannelConfigEntity) {
 	    int rows = payChannelConfigMapper.insert(payChannelConfigEntity);
-		return rows;
+	    payChannelService.evictConfig(payChannelConfigEntity.getChannelCode());
+	    return rows;
 	}
 
 	/**
@@ -71,7 +75,8 @@ public class PayChannelConfigService extends BaseService< PayChannelConfigEntity
 	@Transactional(rollbackFor = Exception.class)
 	public int update(PayChannelConfigEntity payChannelConfigEntity) {
 	    int rows = payChannelConfigMapper.update(payChannelConfigEntity);
-		return rows;
+	    payChannelService.evictConfig(payChannelConfigEntity.getChannelCode());
+	    return rows;
 	}
 
 	/**

@@ -48,7 +48,8 @@ public class AlipayNotifyController {
             // 1. 读取原始报文
             String rawBody = new BufferedReader(request.getReader()).lines()
                     .collect(Collectors.joining("\n"));
-            // 2. 提取参数为 Map
+
+            // 2. 提取回调参数为 Map
             Map<String, String> params = request.getParameterMap().entrySet().stream()
                     .collect(Collectors.toMap(Map.Entry::getKey, e -> {
                         String[] vals = e.getValue();
@@ -56,45 +57,57 @@ public class AlipayNotifyController {
                     }));
 
             // 3. 先落 notify_log（原始报文不丢）
-            PayNotifyLogEntity log = new PayNotifyLogEntity();
-            log.setId(idGenerator.nextId());
-            log.setChannelCode("ALIPAY");
-            log.setNotifyType("PAY");
-            log.setRawData(rawBody);
-            log.setVerifyStatus(0);
-            log.setProcessStatus(0);
-            log.setCreateTime(new Date());
-            payNotifyLogService.insert(log);
+            PayNotifyLogEntity logEntity = new PayNotifyLogEntity();
+            logEntity.setId(idGenerator.nextId());
+            logEntity.setChannelCode("ALIPAY");
+            logEntity.setNotifyType("PAY");
+            logEntity.setRawData(rawBody);
+            logEntity.setVerifyStatus(0);
+            logEntity.setProcessStatus(0);
+            logEntity.setCreateTime(new Date());
+            payNotifyLogService.insert(logEntity);
 
             // 4. 验签
             PayChannelConfigEntity config = payChannelService.getConfig("ALIPAY");
             PayChannelStrategy strategy = payChannelService.getStrategy("ALIPAY");
             if (!strategy.verifyNotify(params, rawBody, config)) {
-                log.setVerifyStatus(2);
-                log.setProcessStatus(2);
-                log.setProcessMsg("验签失败");
-                payNotifyLogService.update(log);
+                logEntity.setVerifyStatus(2);
+                logEntity.setProcessStatus(2);
+                logEntity.setProcessMsg("验签失败");
+                payNotifyLogService.update(logEntity);
                 return "failure";
             }
-            log.setVerifyStatus(1);
+            logEntity.setVerifyStatus(1);
 
-            // 5. 解析回调报文 → 统一对象 → 更新支付状态
-            PayNotifyMessage message = strategy.parseNotify(rawBody, config);
-            if (message != null && message.getPayStatus() != null
-                    && PayStatusEnum.PAYMENT.getValue().equals(message.getPayStatus())) {
-                // 回调成功处理由 PayCoreService.handleNotify 完成（乐观锁流转 10 → 20）
-                payCoreService.handleNotify(null, null, null, null);
-
-                log.setChannelTradeNo(message != null ? null : null);
-                log.setPayOrderId(null);
-                log.setPayOrderNo(null);
-                log.setProcessStatus(1);
-                log.setProcessMsg("处理成功");
-            } else {
-                log.setProcessStatus(2);
-                log.setProcessMsg("未识别的回调状态");
+            // 5. 解析回调报文 → 统一对象
+            PayNotifyMessage message = strategy.parseNotify(params, rawBody, config);
+            if (message == null || message.getMerchantOrderNo() == null) {
+                logEntity.setProcessStatus(2);
+                logEntity.setProcessMsg("回调报文解析失败：无法提取商户订单号");
+                payNotifyLogService.update(logEntity);
+                return "failure";
             }
-            payNotifyLogService.update(log);
+
+            // 记录渠道交易号
+            logEntity.setChannelTradeNo(message.getChannelTradeNo());
+
+            // 6. 只有支付成功才更新支付单状态
+            if (PayStatusEnum.PAYMENT.getValue().equals(message.getPayStatus())) {
+                payCoreService.handleNotify(
+                        message.getMerchantOrderNo(),
+                        message.getChannelTradeNo(),
+                        message.getPayAmount(),
+                        message.getSuccessTime());
+
+                logEntity.setPayOrderNo(message.getPayOrderNo() != null ? message.getPayOrderNo() : message.getMerchantOrderNo());
+                logEntity.setProcessStatus(1);
+                logEntity.setProcessMsg("处理成功");
+            } else {
+                // 非支付成功通知（如退款通知），仅记录
+                logEntity.setProcessStatus(3);
+                logEntity.setProcessMsg("非支付成功通知，已记录");
+            }
+            payNotifyLogService.update(logEntity);
             return "success";
 
         } catch (Exception e) {

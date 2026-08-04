@@ -10,6 +10,7 @@ import cn.net.mall.pay.entity.PayChannelConfigEntity;
 import cn.net.mall.pay.entity.PayOrderConditionEntity;
 import cn.net.mall.pay.entity.PayOrderEntity;
 import cn.net.mall.pay.enums.PayStatusEnum;
+import cn.net.mall.pay.service.NotifyService;
 import cn.net.mall.pay.support.IdGenerator;
 import cn.net.mall.util.AssertUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +44,9 @@ public class PayCoreService {
 
     @Autowired
     private IdGenerator idGenerator;
+
+    @Autowired
+    private NotifyService notifyService;
 
     @Value("${mall.pay.order.expire-minutes:30}")
     private int expireMinutes;
@@ -133,7 +137,7 @@ public class PayCoreService {
 
     /**
      * 主动查单兜底：待支付且创建超过 queryAfterMinutes 的订单，调渠道 query().
-     * 渠道确认成功后本地流转已支付。
+     * 渠道确认成功后本地流转已支付，并回填渠道交易号/金额/成功时间。
      */
     @Transactional(rollbackFor = Exception.class)
     public void queryUnpaidOrders() {
@@ -148,8 +152,23 @@ public class PayCoreService {
                 PayChannelConfigEntity config = payChannelService.getConfig(order.getChannelCode());
                 PayQueryResult queryResult = payChannelService.getStrategy(order.getChannelCode())
                         .query(order.getMerchantOrderNo(), config);
-                if (queryResult.isSuccess()) {
-                    markPaid(order);
+                if (queryResult != null && queryResult.isSuccess()) {
+                    order.setChannelTradeNo(queryResult.getChannelTradeNo());
+                    order.setPayStatus(PayStatusEnum.PAYMENT.getValue());
+                    if (queryResult.getPayAmount() != null) {
+                        order.setPayAmount(queryResult.getPayAmount());
+                    }
+                    if (queryResult.getSuccessTime() != null) {
+                        order.setSuccessTime(queryResult.getSuccessTime());
+                    } else {
+                        order.setSuccessTime(new Date());
+                    }
+                    payOrderService.update(order);
+                    log.info("主动查单确认支付成功: payOrderNo={}, channelTradeNo={}",
+                            order.getPayOrderNo(), queryResult.getChannelTradeNo());
+
+                    // 异步通知业务方
+                    notifyService.sendPaySuccessNotify(order);
                 }
             } catch (Exception e) {
                 log.warn("主动查单失败, payOrderNo={}, err={}", order.getPayOrderNo(), e.getMessage());
@@ -193,11 +212,38 @@ public class PayCoreService {
     }
 
     /**
-     * 回调处理：乐观锁 10 → 20，回填渠道交易号/成功时间/实付金额，通知业务方.
+     * 回调处理：按 merchant_order_no 反查支付单 → 乐观锁 10 → 20 → 回填渠道交易号/成功时间/实付金额.
      */
     @Transactional(rollbackFor = Exception.class)
-    public void handleNotify(PayOrderEntity order, String channelTradeNo, Long payAmount, Date successTime) {
-        markPaid(order);
+    public void handleNotify(String merchantOrderNo, String channelTradeNo, Long payAmount, Date successTime) {
+        PayOrderEntity order = findByMerchantOrderNo(merchantOrderNo);
+        if (order == null) {
+            log.warn("回调找不到支付单: merchantOrderNo={}", merchantOrderNo);
+            return;
+        }
+        if (!PayStatusEnum.WAIT_PAY.getValue().equals(order.getPayStatus())) {
+            log.info("支付单非待支付态，回调忽略: payOrderNo={}, status={}", order.getPayOrderNo(), order.getPayStatus());
+            return;
+        }
+        // 回填渠道信息
+        order.setChannelTradeNo(channelTradeNo);
+        if (payAmount != null) {
+            order.setPayAmount(payAmount);
+        }
+        if (successTime != null) {
+            order.setSuccessTime(successTime);
+        } else {
+            order.setSuccessTime(new Date());
+        }
+        order.setPayStatus(PayStatusEnum.PAYMENT.getValue());
+        order.setNotifyCount(order.getNotifyCount() != null ? order.getNotifyCount() + 1 : 1);
+        order.setNotifyTime(new Date());
+        payOrderService.update(order);
+        log.info("回调处理成功: payOrderNo={}, channelTradeNo={}, payAmount={}分",
+                order.getPayOrderNo(), channelTradeNo, order.getPayAmount());
+
+        // 异步通知业务方（如 mall-order）
+        notifyService.sendPaySuccessNotify(order);
     }
 
     /**
@@ -248,6 +294,19 @@ public class PayCoreService {
         condition.setBizType(bizType);
         condition.setBizOrderNo(bizOrderNo);
         condition.setPayStatus(PayStatusEnum.WAIT_PAY.getValue());
+        List<PayOrderEntity> orders = payOrderService.searchByPage(condition).getData();
+        return orders.isEmpty() ? null : orders.get(0);
+    }
+
+    /**
+     * 按商户订单号查支付单.
+     */
+    private PayOrderEntity findByMerchantOrderNo(String merchantOrderNo) {
+        if (merchantOrderNo == null) {
+            return null;
+        }
+        PayOrderConditionEntity condition = new PayOrderConditionEntity();
+        condition.setMerchantOrderNo(merchantOrderNo);
         List<PayOrderEntity> orders = payOrderService.searchByPage(condition).getData();
         return orders.isEmpty() ? null : orders.get(0);
     }

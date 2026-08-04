@@ -107,7 +107,7 @@ public class MockChannelStrategy implements PayChannelStrategy {
     }
 
     @Override
-    public PayNotifyMessage parseNotify(String rawBody, PayChannelConfigEntity config) {
+    public PayNotifyMessage parseNotify(Map<String, String> params, String rawBody, PayChannelConfigEntity config) {
         // MOCK 回调报文：前端/测试模拟支付成功时，构造一个 PayNotifyMessage
         PayNotifyMessage message = new PayNotifyMessage();
         message.setPayStatus(PayStatusEnum.PAYMENT.getValue());

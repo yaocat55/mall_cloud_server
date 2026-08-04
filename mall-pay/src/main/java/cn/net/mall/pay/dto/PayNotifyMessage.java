@@ -17,6 +17,10 @@ public class PayNotifyMessage implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /** 渠道交易号（回调/查询时渠道侧返回） */
+    @Schema(description = "渠道交易号")
+    private String channelTradeNo;
+
     /** 支付订单号 */
     @Schema(description = "支付订单号")
     private String payOrderNo;
