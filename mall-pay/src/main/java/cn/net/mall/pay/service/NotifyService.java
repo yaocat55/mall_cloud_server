@@ -1,5 +1,6 @@
 package cn.net.mall.pay.service;
 
+import cn.net.mall.mq.producer.MqProducer;
 import cn.net.mall.pay.dto.PayNotifyMessage;
 import cn.net.mall.pay.entity.PayBizConfigConditionEntity;
 import cn.net.mall.pay.entity.PayBizConfigEntity;
@@ -8,10 +9,6 @@ import cn.net.mall.pay.entity.PayOrderEntity;
 import cn.net.mall.pay.enums.BizNotifyStatusEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.rocketmq.client.producer.SendCallback;
-import org.apache.rocketmq.client.producer.SendResult;
-import org.apache.rocketmq.spring.core.RocketMQTemplate;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -29,7 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class NotifyService {
 
-    private final ObjectProvider<RocketMQTemplate> rocketMQTemplateProvider;
+    private final MqProducer mqProducer;
     private final PayBizConfigService payBizConfigService;
     private final PayOrderService payOrderService;
 
@@ -54,31 +51,13 @@ public class NotifyService {
         message.setChannelCode(order.getChannelCode());
         message.setSuccessTime(new Date());
 
-        RocketMQTemplate rocketMQTemplate = rocketMQTemplateProvider.getIfAvailable();
-        if (rocketMQTemplate == null) {
-            log.warn("RocketMQTemplate 不存在，跳过发送, payOrderNo={}", order.getPayOrderNo());
-            return;
-        }
-
         String topic = bizConfig.getNotifyMqTopic();
         String tag = bizConfig.getNotifyMqTag();
-        String destination = (tag != null && !tag.isEmpty()) ? (topic + ":" + tag) : topic;
 
         try {
-            rocketMQTemplate.asyncSend(destination, message, new SendCallback() {
-                @Override
-                public void onSuccess(SendResult sendResult) {
-                    order.setBizNotifyStatus(BizNotifyStatusEnum.SUCCESS.getValue());
-                    payOrderService.update(order);
-                    log.info("支付通知发送成功, payOrderNo={}, topic={}", order.getPayOrderNo(), destination);
-                }
-                @Override
-                public void onException(Throwable throwable) {
-                    order.setBizNotifyStatus(BizNotifyStatusEnum.FAILED.getValue());
-                    payOrderService.update(order);
-                    log.error("支付通知发送失败, payOrderNo={}, topic={}", order.getPayOrderNo(), destination, throwable);
-                }
-            });
+            mqProducer.send(topic, tag, message, order.getPayOrderNo());
+            order.setBizNotifyStatus(BizNotifyStatusEnum.SUCCESS.getValue());
+            payOrderService.update(order);
         } catch (Exception e) {
             order.setBizNotifyStatus(BizNotifyStatusEnum.FAILED.getValue());
             payOrderService.update(order);
@@ -102,6 +81,38 @@ public class NotifyService {
             }
             log.info("重试支付通知, payOrderNo={}, notifyCount={}", order.getPayOrderNo(), order.getNotifyCount());
             sendPaySuccessNotify(order);
+        }
+    }
+
+    /**
+     * 发送支付关闭异步通知（超时/用户取消 → 业务方释放库存）.
+     */
+    public void sendPayClosedNotify(PayOrderEntity order) {
+        PayBizConfigEntity bizConfig = getBizConfig(order.getBizType());
+        if (bizConfig == null) {
+            log.warn("未找到业务方配置, bizType={}, payOrderNo={}", order.getBizType(), order.getPayOrderNo());
+            return;
+        }
+
+        PayNotifyMessage message = new PayNotifyMessage();
+        message.setNotifyType("CLOSED");
+        message.setPayOrderNo(order.getPayOrderNo());
+        message.setMerchantOrderNo(order.getMerchantOrderNo());
+        message.setBizOrderNo(order.getBizOrderNo());
+        message.setBizType(order.getBizType());
+        message.setPayAmount(order.getTotalAmount());
+        message.setPayStatus(order.getPayStatus());
+        message.setChannelCode(order.getChannelCode());
+        message.setSuccessTime(new Date());
+
+        String topic = bizConfig.getNotifyMqTopic();
+        String tag = bizConfig.getNotifyMqTag();
+
+        try {
+            mqProducer.send(topic, tag, message, order.getPayOrderNo());
+            log.info("支付关闭通知已发送: payOrderNo={}, bizOrderNo={}", order.getPayOrderNo(), order.getBizOrderNo());
+        } catch (Exception e) {
+            log.error("支付关闭通知发送异常, payOrderNo={}", order.getPayOrderNo(), e);
         }
     }
 

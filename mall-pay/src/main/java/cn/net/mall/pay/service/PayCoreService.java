@@ -10,6 +10,7 @@ import cn.net.mall.pay.entity.PayChannelConfigEntity;
 import cn.net.mall.pay.entity.PayOrderConditionEntity;
 import cn.net.mall.pay.entity.PayOrderEntity;
 import cn.net.mall.pay.enums.PayStatusEnum;
+import cn.net.mall.pay.mapper.PayOrderMapper;
 import cn.net.mall.pay.service.NotifyService;
 import cn.net.mall.pay.support.IdGenerator;
 import cn.net.mall.util.AssertUtil;
@@ -48,8 +49,14 @@ public class PayCoreService {
     @Autowired
     private NotifyService notifyService;
 
+    @Autowired
+    private PayOrderMapper payOrderMapper;
+
     @Value("${mall.pay.order.expire-minutes:30}")
     private int expireMinutes;
+
+    @Value("${mall.pay.order.query-after-minutes:5}")
+    private int queryAfterMinutes;
 
     /**
      * 创建支付单（幂等）.
@@ -138,11 +145,20 @@ public class PayCoreService {
     /**
      * 主动查单兜底：待支付且创建超过 queryAfterMinutes 的订单，调渠道 query().
      * 渠道确认成功后本地流转已支付，并回填渠道交易号/金额/成功时间。
+     *
+     * <p>只查 queryAfterMinutes 前 ~ expireMinutes 前创建的订单，避免查刚创建的
+     * （浪费渠道配额）和已过期的（关单逻辑处理）。每批最多 100 条。</p>
      */
     @Transactional(rollbackFor = Exception.class)
     public void queryUnpaidOrders() {
+        Date now = new Date();
         PayOrderConditionEntity condition = new PayOrderConditionEntity();
         condition.setPayStatus(PayStatusEnum.WAIT_PAY.getValue());
+        // 只查创建超过 queryAfterMinutes 的订单（刚创建的等回调就好）
+        condition.setCreateTimeBefore(addMinutes(now, -queryAfterMinutes));
+        // 只查未过期的（已过期的交给关单 Job 处理）
+        condition.setCreateTimeAfter(addMinutes(now, -expireMinutes));
+        condition.setPageSize(100);
         List<PayOrderEntity> waitingOrders = payOrderService.searchByPage(condition).getData();
         for (PayOrderEntity order : waitingOrders) {
             if (order.getSuccessTime() != null) {
@@ -178,16 +194,36 @@ public class PayCoreService {
 
     /**
      * 超时关单：expire_time 过期未支付的支付单关闭为 30 已关闭.
+     *
+     * <p>每批处理 pageSize 条，避免一次性加载全部待支付订单。</p>
+     * <p>关单三步：本地状态 10→30 → 调渠道 close → MQ 通知业务方释放资源。</p>
      */
     @Transactional(rollbackFor = Exception.class)
     public void closeExpiredOrders() {
         PayOrderConditionEntity condition = new PayOrderConditionEntity();
         condition.setPayStatus(PayStatusEnum.WAIT_PAY.getValue());
+        condition.setPageSize(100); // 每批最多 100 条
         List<PayOrderEntity> waitingOrders = payOrderService.searchByPage(condition).getData();
         Date now = new Date();
         for (PayOrderEntity order : waitingOrders) {
-            if (order.getExpireTime() != null && order.getExpireTime().before(now)) {
-                closeOrder(order, "支付超时自动关闭");
+            if (order.getExpireTime() == null || !order.getExpireTime().before(now)) {
+                continue;
+            }
+            closeOrder(order, "支付超时自动关闭");
+
+            // 调渠道关闭（尽力而为，渠道失败不阻塞本地关单）
+            try {
+                PayChannelConfigEntity config = payChannelService.getConfig(order.getChannelCode());
+                payChannelService.getStrategy(order.getChannelCode()).close(order.getMerchantOrderNo(), config);
+            } catch (Exception e) {
+                log.warn("渠道关单失败（本地已关）, payOrderNo={}, err={}", order.getPayOrderNo(), e.getMessage());
+            }
+
+            // 通知业务方释放资源
+            try {
+                notifyService.sendPayClosedNotify(order);
+            } catch (Exception e) {
+                log.warn("关单通知发送失败, payOrderNo={}, err={}", order.getPayOrderNo(), e.getMessage());
             }
         }
     }
@@ -212,7 +248,9 @@ public class PayCoreService {
     }
 
     /**
-     * 回调处理：按 merchant_order_no 反查支付单 → 乐观锁 10 → 20 → 回填渠道交易号/成功时间/实付金额.
+     * 回调处理：按 merchant_order_no 反查支付单 → CAS 乐观锁 10 → 20 → 回填渠道交易号/成功时间/实付金额.
+     *
+     * <p>用 updatePayStatusOnNotify（WHERE pay_status=10）做 CAS，并发回调只生效一次。</p>
      */
     @Transactional(rollbackFor = Exception.class)
     public void handleNotify(String merchantOrderNo, String channelTradeNo, Long payAmount, Date successTime) {
@@ -236,9 +274,12 @@ public class PayCoreService {
             order.setSuccessTime(new Date());
         }
         order.setPayStatus(PayStatusEnum.PAYMENT.getValue());
-        order.setNotifyCount(order.getNotifyCount() != null ? order.getNotifyCount() + 1 : 1);
-        order.setNotifyTime(new Date());
-        payOrderService.update(order);
+        order.setBizNotifyStatus(0); // 待通知
+        int rows = payOrderMapper.updatePayStatusOnNotify(order);
+        if (rows == 0) {
+            log.info("CAS 乐观锁拦截（并发回调或已被其他流程处理）: payOrderNo={}", order.getPayOrderNo());
+            return;
+        }
         log.info("回调处理成功: payOrderNo={}, channelTradeNo={}, payAmount={}分",
                 order.getPayOrderNo(), channelTradeNo, order.getPayAmount());
 
@@ -271,8 +312,12 @@ public class PayCoreService {
         order.setPayStatus(PayStatusEnum.CLOSED.getValue());
         order.setClosedTime(new Date());
         order.setRemark(reason);
-        payOrderService.update(order);
-        log.info("支付单已关闭: payOrderNo={}, reason={}", order.getPayOrderNo(), reason);
+        int rows = payOrderMapper.updatePayStatusOnClose(order);
+        if (rows > 0) {
+            log.info("支付单已关闭: payOrderNo={}, reason={}", order.getPayOrderNo(), reason);
+        } else {
+            log.info("CAS 拦截关单（已被其他流程处理）: payOrderNo={}", order.getPayOrderNo());
+        }
     }
 
     /**

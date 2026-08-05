@@ -193,6 +193,18 @@ public class PayOrderConditionEntity extends RequestConditionEntity {
 	private Date createTime;
 
 	/**
+	 *  创建时间小于此值（查单兜底用：只查已过 N 分钟的订单）
+     */
+	@Schema(description = "创建时间小于")
+	private Date createTimeBefore;
+
+	/**
+	 *  创建时间大于此值（查单兜底用：只查未过期的订单）
+     */
+	@Schema(description = "创建时间大于")
+	private Date createTimeAfter;
+
+	/**
 	 *  更新人ID
      */
 	@Schema(description = "更新人ID")

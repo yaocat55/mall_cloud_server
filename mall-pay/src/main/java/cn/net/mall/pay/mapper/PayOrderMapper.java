@@ -2,7 +2,7 @@ package cn.net.mall.pay.mapper;
 
 import cn.net.mall.pay.entity.PayOrderConditionEntity;
 import cn.net.mall.pay.entity.PayOrderEntity;
-import cn.net.mall.pay.mapper.BaseMapper;
+import cn.net.mall.mapper.BaseMapper;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
@@ -53,4 +53,22 @@ public interface PayOrderMapper extends BaseMapper<PayOrderEntity, PayOrderCondi
      * @return 部门信息
     */
 	List<PayOrderEntity> findByIds(List<Long> ids);
+
+	// ============ 对账专用 ============
+
+	/** 按渠道 + 成功时间范围查询支付成功订单 */
+	List<PayOrderEntity> selectByChannelAndSuccessTime(@Param("channelCode") String channelCode,
+			@Param("startTime") java.util.Date startTime, @Param("endTime") java.util.Date endTime);
+
+	/** 按渠道 + 成功时间统计平台侧总额和笔数 */
+	java.util.Map<String, Object> sumByChannelAndSuccessTime(@Param("channelCode") String channelCode,
+			@Param("startTime") java.util.Date startTime, @Param("endTime") java.util.Date endTime);
+
+	// ============ 状态机 CAS update ============
+
+	/** 回调更新支付状态（乐观锁：WHERE pay_status = 10，防止并发回调重复处理） */
+	int updatePayStatusOnNotify(PayOrderEntity payOrderEntity);
+
+	/** 关闭支付单（乐观锁：WHERE pay_status = 10，防止并发关单覆盖已支付单） */
+	int updatePayStatusOnClose(PayOrderEntity payOrderEntity);
 }

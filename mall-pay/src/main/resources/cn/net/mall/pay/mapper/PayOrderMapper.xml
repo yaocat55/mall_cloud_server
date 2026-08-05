@@ -203,6 +203,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null ">
                 AND create_time = #{createTime}
             </if>
+            <if test="createTimeBefore != null ">
+                AND create_time &lt; #{createTimeBefore}
+            </if>
+            <if test="createTimeAfter != null ">
+                AND create_time &gt; #{createTimeAfter}
+            </if>
             
             <if test="updateUserId != null ">
                 AND update_user_id = #{updateUserId}
@@ -718,6 +724,71 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <foreach collection="ids" item="id" open="(" close=")" separator=",">
             #{id}
         </foreach>
+    </select>
+
+    <!-- ============ 状态机 CAS update ============ -->
+
+    <!--
+        回调更新（乐观锁：WHERE pay_status = 10，防止并发回调重复处理）。
+        如果 affected rows = 0 说明已被其他回调处理，上层返回 success 即可。
+    -->
+    <update id="updatePayStatusOnNotify" parameterType="cn.net.mall.pay.entity.PayOrderEntity">
+        UPDATE pay_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="channelTradeNo != null  and channelTradeNo != ''">
+                channel_trade_no = #{channelTradeNo},
+            </if>
+            <if test="payAmount != null ">
+                pay_amount = #{payAmount},
+            </if>
+            <if test="successTime != null ">
+                success_time = #{successTime},
+            </if>
+            pay_status = 20,
+            notify_count = COALESCE(notify_count, 0) + 1,
+            notify_time = NOW(3),
+            biz_notify_status = #{bizNotifyStatus},
+            update_time = NOW(3)
+        </trim>
+        WHERE id = #{id} AND pay_status = 10 AND is_del = 0
+    </update>
+
+    <!-- 关单（乐观锁：WHERE pay_status = 10，防止覆盖已支付单） -->
+    <update id="updatePayStatusOnClose" parameterType="cn.net.mall.pay.entity.PayOrderEntity">
+        UPDATE pay_order
+        SET pay_status = 30,
+            closed_time = #{closedTime},
+            remark = #{remark},
+            update_time = NOW(3)
+        WHERE id = #{id} AND pay_status = 10 AND is_del = 0
+    </update>
+
+    <!-- ============ 对账专用查询 ============ -->
+
+    <!-- 按渠道 + 支付成功时间范围查询所有支付成功订单（对账撮合用） -->
+    <select id="selectByChannelAndSuccessTime" resultMap="PayOrderResult">
+        SELECT <include refid="selectPayOrderColumn"/>
+        FROM pay_order
+        WHERE is_del = 0
+          AND channel_code = #{channelCode}
+          AND pay_status = 20
+          AND success_time >= #{startTime}
+          AND success_time &lt; #{endTime}
+    </select>
+
+    <!-- 按渠道 + 支付成功时间统计平台侧净额和笔数（对账总额校验用）。
+         平台侧净额 = SUM(pay_amount) - SUM(refund_amount)，与渠道侧 income 口径一致。 -->
+    <select id="sumByChannelAndSuccessTime" resultType="map">
+        SELECT
+            COUNT(*) as platform_count,
+            COALESCE(SUM(pay_amount), 0)
+            - COALESCE(SUM(refund_amount), 0) as platform_total_amount
+        FROM pay_order
+        WHERE is_del = 0
+          AND channel_code = #{channelCode}
+          AND pay_status = 20
+          AND success_time >= #{startTime}
+          AND success_time &lt; #{endTime}
     </select>
 
 </mapper>
