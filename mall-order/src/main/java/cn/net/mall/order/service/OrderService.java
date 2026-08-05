@@ -1,9 +1,6 @@
 package cn.net.mall.order.service;
 
 import cn.net.mall.order.enums.OrderStatusEnum;
-import cn.net.mall.pay.client.PayFeignClient;
-import cn.net.mall.pay.dto.PayCreateDTO;
-import cn.net.mall.pay.dto.PayCreateResult;
 import cn.net.mall.workid.IdGenerateHelper;
 import cn.net.mall.mapper.BaseMapper;
 import cn.net.mall.marketing.client.MarketingFeignClient;
@@ -48,7 +45,9 @@ import cn.net.mall.util.BetweenTimeUtil;
 import cn.net.mall.redis.RedisUtil;
 import cn.net.mall.order.config.BusinessConfig;
 import cn.net.mall.order.message.OrderTimeoutCancelMessage;
-import cn.net.mall.order.helper.MqHelper;
+import cn.net.mall.mq.producer.MqProducer;
+import cn.net.mall.pay.client.PayFeignClient;
+import cn.net.mall.pay.dto.PayCloseDTO;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
 import lombok.RequiredArgsConstructor;
@@ -108,7 +107,7 @@ public class OrderService extends BaseService<OrderEntity, OrderConditionEntity>
     private final PayFeignClient payFeignClient;
 
     private final RedisUtil redisUtil;
-    private final MqHelper mqHelper;
+    private final MqProducer mqProducer;
     private final BusinessConfig businessConfig;
 
     // private final ElasticsearchOperations elasticsearchOperations;
@@ -590,7 +589,7 @@ public class OrderService extends BaseService<OrderEntity, OrderConditionEntity>
             // 补偿：库存已扣但订单创建失败，发 MQ 通知 product 回滚库存
             log.error("订单创建失败，发起库存回滚补偿, items={}", cartItems, e);
             if (!CollectionUtils.isEmpty(cartItems)) {
-                mqHelper.send(businessConfig.getStockRollbackTopic(), cartItems);
+                mqProducer.send(businessConfig.getStockRollbackTopic(), cartItems);
             }
             throw e;
         }
@@ -616,27 +615,6 @@ public class OrderService extends BaseService<OrderEntity, OrderConditionEntity>
         resp.setCode(orderEntity.getCode());
         resp.setPayAmount(orderEntity.getPaymentAmount());
 
-        // 调用支付服务创建支付单（方案 A：下单后立即建支付单，拿拉起参数）
-        if (submitDTO.getChannelCode() != null && orderEntity.getId() != null) {
-            PayCreateDTO payCreate = new PayCreateDTO();
-            payCreate.setBizOrderNo(orderEntity.getCode());
-            payCreate.setBizType("MALL_ORDER");
-            payCreate.setChannelCode(submitDTO.getChannelCode());
-            payCreate.setUserId(orderEntity.getUserId());
-            payCreate.setTotalAmount(orderEntity.getPaymentAmount() != null
-                    ? orderEntity.getPaymentAmount().multiply(new java.math.BigDecimal(100)).longValue()
-                    : 0L);
-            payCreate.setSubject("商城订单 " + orderEntity.getCode());
-            try {
-                PayCreateResult payResult = payFeignClient.create(payCreate);
-                resp.setPayOrderNo(payResult.getPayOrderNo());
-                resp.setPrepayParams(payResult.getPrepayParams());
-                resp.setChannelCode(payResult.getChannelCode());
-            } catch (Exception e) {
-                log.warn("创建支付单失败, orderCode={}, err={}", orderEntity.getCode(), e.getMessage());
-            }
-        }
-
         return resp;
     }
 
@@ -644,7 +622,7 @@ public class OrderService extends BaseService<OrderEntity, OrderConditionEntity>
         OrderTimeoutCancelMessage msg = new OrderTimeoutCancelMessage();
         msg.setOrderId(orderId);
         msg.setCode(code);
-        mqHelper.sendDelay(
+        mqProducer.sendDelay(
                 businessConfig.getOrderTimeoutCancelTopic(),
                 businessConfig.getOrderTimeoutCancelTag(),
                 msg,
