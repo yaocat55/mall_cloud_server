@@ -111,13 +111,6 @@ spring:
             - Path=/api/admin/**
           filters:
             - StripPrefix=2
-        - id: mall-mobile-bff
-          uri: lb://mall-mobile-bff
-          order: 8006
-          predicates:
-            - Path=/api/mobile/**
-          filters:
-            - StripPrefix=2
         - id: mall-order-api
           uri: lb://mall-order-api
           order: 8007
