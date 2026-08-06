@@ -23,7 +23,7 @@ import java.util.Date;
  *
  * <p>供 admin 前端通过 Gateway 直连，无 @PreAuthorize 校验，信任内部调用方。</p>
  */
-@Tag(name = "内部服务-退货管理", description = "内部微服务：供 admin-bff 通过 Feign 调用")
+@Tag(name = "内部服务-退货管理", description = "内部微服务：供 admin 前端通过 Gateway 直连")
 @RestController
 @RequestMapping("/v1/internal/return")
 @RequiredArgsConstructor
