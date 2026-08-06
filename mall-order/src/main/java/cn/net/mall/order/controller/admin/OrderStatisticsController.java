@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 订单统计（管理端）.
  *
- * <p>供 admin-bff 调用，返回订单核心统计数据。</p>
+ * <p>供 admin 前端通过 Gateway 直连，返回订单核心统计数据。</p>
  */
 @Tag(name = "订单统计", description = "管理后台：订单统计")
 @RestController

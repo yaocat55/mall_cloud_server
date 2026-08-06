@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * 交易配送地址管理（管理端）.
  *
- * <p>供 admin-bff 调用，管理所有用户的订单配送地址。</p>
+ * <p>供 admin 前端通过 Gateway 直连，管理所有用户的订单配送地址。</p>
  */
 @Tag(name = "交易配送地址管理", description = "管理后台：订单配送地址 CRUD。需 Bearer Token + admin 角色")
 @Validated

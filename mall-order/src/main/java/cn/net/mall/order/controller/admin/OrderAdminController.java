@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 /**
  * 订单管理（管理端）.
  *
- * <p>供 admin 前端通过 Gateway 直连，替代原 admin-bff 的订单读接口。</p>
+ * <p>供 admin 前端通过 Gateway 直连。</p>
  */
 @Tag(name = "订单管理（管理端）", description = "管理后台：订单分页查询、退货审核（只读操作）")
 @RestController

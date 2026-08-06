@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * 退货/退款审核管理（管理端）.
  *
- * <p>供 admin-bff 调用，审批用户提交的退货退款申请。</p>
+ * <p>供 admin 前端通过 Gateway 直连，审批用户提交的退货退款申请。</p>
  */
 @Tag(name = "退货退款审核", description = "管理后台：退货退款申请审批。需 Bearer Token + admin 角色")
 @Validated

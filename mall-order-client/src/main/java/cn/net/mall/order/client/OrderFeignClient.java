@@ -39,7 +39,7 @@ import static cn.net.mall.order.constant.AppConstant.ORDER_SERVICE_NAME;
  *
 *   - mall-pay（支付服务）— 支付回调时查询订单信息
  *   - mall-mobile-api（BFF 服务）— 移动端接口聚合
- *   - mall-admin-bff（管理后台 BFF）— 管理端接口聚合
+ *   - admin 前端（经 Gateway 直连）— 管理端接口
  *
 */
 @FeignClient(value = ORDER_SERVICE_NAME, contextId = "orderFeignClient",
