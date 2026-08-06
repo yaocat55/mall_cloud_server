@@ -24,7 +24,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * <ul>
  *   <li>{@code /v1/**} — 内部微服务公开接口</li>
  *   <li>{@code /admin/v1/**} — admin-bff 聚合接口</li>
- *   <li>{@code /mobile/v1/**} — mobile-bff 聚合接口</li>
+ *   <li>{@code /mobile/v1/**} — 移动端 C 接口</li>
  *   <li>{@code /v1/internal/**} — ⛔ 不包装（Feign 内部调用需要裸 DTO）</li>
  *   <li>非以上前缀（如 ForwardController 的代理路径）— ⛔ 不包装</li>
  * </ul>

@@ -25,7 +25,7 @@ import java.util.List;
  * <p>路径 {@code /v1/internal/pay} 避免被 {@code GlobalApiResultHandler} 包装，
  * 返回裸 DTO 供 Feign 消费。</p>
  *
- * <p>调用方：mall-order（创建/查询/关闭），mall-mobile-bff（渠道列表/创建/查询）</p>
+ * <p>调用方：mall-order（创建/查询/关闭）</p>
  */
 @Tag(name = "内部服务-支付", description = "内部微服务：创建/查询/关闭/渠道列表")
 @RestController

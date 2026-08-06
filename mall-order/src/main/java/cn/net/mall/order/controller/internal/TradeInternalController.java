@@ -36,7 +36,7 @@ public class TradeInternalController {
         return orderService.getTradeByCode(code);
     }
 
-    @Operation(summary = "创建订单", description = "内部服务：由 mall-mobile-api(BFF) 通过 Feign 调用，创建新订单")
+    @Operation(summary = "创建订单", description = "内部服务：Feign 调用，创建新订单")
     @PostMapping("/create")
     public Long create(@RequestBody OrderDTO orderDTO) {
         OrderEntity entity = new OrderEntity();
