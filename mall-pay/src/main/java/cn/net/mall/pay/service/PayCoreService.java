@@ -100,7 +100,7 @@ public class PayCoreService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    private void doInsertOrder(PayOrderEntity order) {
+    public void doInsertOrder(PayOrderEntity order) {
         payOrderService.insert(order);
     }
 

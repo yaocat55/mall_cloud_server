@@ -11,10 +11,17 @@ import cn.net.mall.pay.entity.PayChannelConfigEntity;
 import cn.net.mall.pay.entity.PayOrderEntity;
 import cn.net.mall.pay.entity.PayRefundEntity;
 import cn.net.mall.pay.enums.PayStatusEnum;
+import cn.net.mall.pay.support.BillCsvParser;
+import cn.net.mall.pay.support.MoneyUtil;
 import cn.net.mall.pay.support.WechatConfigFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wechat.pay.java.core.notification.NotificationParser;
 import com.wechat.pay.java.core.notification.RequestParam;
+import com.wechat.pay.java.service.billdownload.BillDownloadServiceExtension;
+import com.wechat.pay.java.service.billdownload.DigestBillEntity;
+import com.wechat.pay.java.service.billdownload.model.BillType;
+import com.wechat.pay.java.service.billdownload.model.GetTradeBillRequest;
+import com.wechat.pay.java.service.billdownload.model.TarType;
 import com.wechat.pay.java.service.payments.jsapi.JsapiService;
 import com.wechat.pay.java.service.payments.jsapi.model.CloseOrderRequest;
 import com.wechat.pay.java.service.payments.jsapi.model.Payer;
@@ -32,6 +39,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
@@ -39,6 +47,8 @@ import java.security.Signature;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
@@ -324,13 +334,77 @@ public class WechatMiniStrategy implements PayChannelStrategy {
 
     @Override
     public byte[] downloadBill(LocalDate tradeDate, PayChannelConfigEntity config) {
-        log.info("[WECHAT_MINI] 对账单下载请求: tradeDate={}（占位）", tradeDate);
-        return new byte[0];
+        try {
+            BillDownloadServiceExtension billService = new BillDownloadServiceExtension.Builder()
+                    .config(wechatConfigFactory.getConfig(config))
+                    .build();
+
+            GetTradeBillRequest getTradeBillRequest = new GetTradeBillRequest();
+            getTradeBillRequest.setBillDate(tradeDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+            getTradeBillRequest.setBillType(BillType.ALL);
+            getTradeBillRequest.setTarType(TarType.GZIP);
+
+            DigestBillEntity digest = billService.getTradeBill(getTradeBillRequest);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            byte[] buf = new byte[4096];
+            int n;
+            try (java.io.InputStream is = digest.getInputStream()) {
+                while ((n = is.read(buf)) != -1) {
+                    baos.write(buf, 0, n);
+                }
+            }
+
+            byte[] csvContent = baos.toByteArray();
+            log.info("[WECHAT_MINI] 对账单下载成功: tradeDate={}, size={}bytes", tradeDate, csvContent.length);
+            return csvContent;
+
+        } catch (Exception e) {
+            log.error("[WECHAT_MINI] 对账单下载异常, tradeDate={}", tradeDate, e);
+            return new byte[0];
+        }
     }
 
     @Override
     public List<BillRow> parseBill(byte[] content) {
-        return Collections.emptyList();
+        if (content == null || content.length == 0) {
+            return Collections.emptyList();
+        }
+        try {
+            List<Map<String, String>> rows = BillCsvParser.parse(content, StandardCharsets.UTF_8);
+            List<BillRow> result = new ArrayList<>(rows.size());
+            for (Map<String, String> row : rows) {
+                BillRow bill = new BillRow();
+                bill.setTradeNo(row.get("商户订单号"));
+                bill.setChannelTradeNo(row.get("微信订单号"));
+                bill.setTradeTime(parseDateTime(row.get("交易时间")));
+                bill.setTradeStatus(row.get("交易状态"));
+                bill.setPayerAccount(row.get("用户标识"));
+
+                String tradeStatus = row.get("交易状态");
+                if ("REFUND".equals(tradeStatus)) {
+                    bill.setTradeType("REFUND");
+                } else {
+                    bill.setTradeType("PAY");
+                }
+                bill.setRefundNo(row.get("微信退款单号"));
+
+                bill.setAmount(MoneyUtil.yuanToFen(row.get("应结订单金额（元）")));
+                bill.setFee(MoneyUtil.yuanToFen(row.get("手续费（元）")));
+
+                Long amount = bill.getAmount() != null ? bill.getAmount() : 0L;
+                Long fee = bill.getFee() != null ? bill.getFee() : 0L;
+                bill.setIncome(amount - fee);
+
+                bill.setExtJson(extractExtJson(row));
+                result.add(bill);
+            }
+            log.info("[WECHAT_MINI] 对账单解析完成, 共{}行", result.size());
+            return result;
+        } catch (Exception e) {
+            log.error("[WECHAT_MINI] 对账单解析异常", e);
+            return Collections.emptyList();
+        }
     }
 
     // ============ private ============
@@ -399,6 +473,34 @@ public class WechatMiniStrategy implements PayChannelStrategy {
         int len = der[pos++] & 0xff;
         if (len > 128) { int lb = len & 0x7f; len = 0; for (int i = 0; i < lb; i++) len = (len << 8) | (der[pos++] & 0xff); }
         return pos + len - 1; // skip content, return new position
+    }
+
+    /** 解析日期时间字符串（格式 yyyy-MM-dd HH:mm:ss） */
+    private Date parseDateTime(String str) {
+        if (str == null || str.isEmpty()) return null;
+        try {
+            return new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(str);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /** 提取特有字段为 extJson，排除已映射字段 */
+    private String extractExtJson(Map<String, String> row) {
+        Map<String, String> ext = new LinkedHashMap<>();
+        row.forEach((k, v) -> {
+            if (!k.equals("微信订单号") && !k.equals("商户订单号")
+                    && !k.equals("交易状态") && !k.equals("交易时间")
+                    && !k.equals("应结订单金额（元）") && !k.equals("手续费（元）")
+                    && !k.equals("用户标识") && !k.equals("微信退款单号")) {
+                ext.put(k, v);
+            }
+        });
+        try {
+            return objectMapper.writeValueAsString(ext);
+        } catch (Exception e) {
+            return "{}";
+        }
     }
 
     private PayPrepayResult fail(String errMsg) {

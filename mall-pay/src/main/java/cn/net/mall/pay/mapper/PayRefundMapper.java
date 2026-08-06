@@ -2,7 +2,7 @@ package cn.net.mall.pay.mapper;
 
 import cn.net.mall.pay.entity.PayRefundConditionEntity;
 import cn.net.mall.pay.entity.PayRefundEntity;
-import cn.net.mall.pay.mapper.BaseMapper;
+import cn.net.mall.mapper.BaseMapper;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
@@ -53,4 +53,10 @@ public interface PayRefundMapper extends BaseMapper<PayRefundEntity, PayRefundCo
      * @return 部门信息
     */
 	List<PayRefundEntity> findByIds(List<Long> ids);
+
+	// ============ 对账专用 ============
+
+	/** 按渠道 + 退款成功时间统计退款总金额和笔数 */
+	java.util.Map<String, Object> sumByChannelAndSuccessTime(@Param("channelCode") String channelCode,
+			@Param("startTime") java.util.Date startTime, @Param("endTime") java.util.Date endTime);
 }

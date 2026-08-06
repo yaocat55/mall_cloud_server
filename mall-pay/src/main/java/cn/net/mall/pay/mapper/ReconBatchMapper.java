@@ -2,7 +2,7 @@ package cn.net.mall.pay.mapper;
 
 import cn.net.mall.pay.entity.ReconBatchConditionEntity;
 import cn.net.mall.pay.entity.ReconBatchEntity;
-import cn.net.mall.pay.mapper.BaseMapper;
+import cn.net.mall.mapper.BaseMapper;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 

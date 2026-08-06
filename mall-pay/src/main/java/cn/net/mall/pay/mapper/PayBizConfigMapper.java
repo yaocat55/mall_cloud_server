@@ -2,17 +2,11 @@ package cn.net.mall.pay.mapper;
 
 import cn.net.mall.pay.entity.PayBizConfigConditionEntity;
 import cn.net.mall.pay.entity.PayBizConfigEntity;
-import cn.net.mall.pay.mapper.BaseMapper;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
-/**
- * 业务渠道接入 mapper
- *
- * @author yaomingye
- * @date 2026-08-03 15:35:10
- */
-public interface PayBizConfigMapper extends BaseMapper<PayBizConfigEntity, PayBizConfigConditionEntity> {
+// 业务渠道接入 mapper
+public interface PayBizConfigMapper extends cn.net.mall.mapper.BaseMapper<PayBizConfigEntity, PayBizConfigConditionEntity> {
 	/**
      * 查询业务渠道接入信息
      *

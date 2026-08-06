@@ -2,8 +2,9 @@ package cn.net.mall.pay.mapper;
 
 import cn.net.mall.pay.entity.ReconTempConditionEntity;
 import cn.net.mall.pay.entity.ReconTempEntity;
-import cn.net.mall.pay.mapper.BaseMapper;
+import cn.net.mall.mapper.BaseMapper;
 import java.util.List;
+import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -52,4 +53,21 @@ public interface ReconTempMapper extends BaseMapper<ReconTempEntity, ReconTempCo
      * @return 部门信息
     */
 	List<ReconTempEntity> findByIds(List<Long> ids);
+
+	// ============ 对账专用 ============
+
+	/** 批量插入临时表（一次 INSERT 多行） */
+	int batchInsert(List<ReconTempEntity> list);
+
+	/** 按批次号查询全量临时数据 */
+	List<ReconTempEntity> selectByBatchNo(@Param("batchNo") String batchNo);
+
+	/** 按批次号删除 */
+	int deleteByBatchNo(@Param("batchNo") String batchNo);
+
+	/** 按批次号统计渠道侧总额和笔数 */
+	Map<String, Object> sumByBatchNo(@Param("batchNo") String batchNo);
+
+	/** 按批次号统计退款项总额 */
+	Map<String, Object> sumRefundByBatchNo(@Param("batchNo") String batchNo);
 }

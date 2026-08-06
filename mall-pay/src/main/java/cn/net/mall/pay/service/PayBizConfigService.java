@@ -10,7 +10,7 @@ import cn.net.mall.pay.entity.PayBizConfigEntity;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.util.AssertUtil;
 import cn.net.mall.util.FillUserUtil;
-import cn.net.mall.pay.mapper.BaseMapper;
+import cn.net.mall.mapper.BaseMapper;
 import cn.net.mall.service.BaseService;
 /**
  * 业务渠道接入 服务层

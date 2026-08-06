@@ -620,4 +620,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </select>
 
+    <!-- ============ 对账专用查询 ============ -->
+
+    <!-- 按渠道 + 退款成功时间统计退款总金额和笔数 -->
+    <select id="sumByChannelAndSuccessTime" resultType="map">
+        SELECT
+            COUNT(*) as refund_count,
+            COALESCE(SUM(refund_amount), 0) as refund_total_amount
+        FROM pay_refund
+        WHERE is_del = 0
+          AND channel_code = #{channelCode}
+          AND refund_status = 2
+          AND success_time >= #{startTime}
+          AND success_time &lt; #{endTime}
+    </select>
+
 </mapper>

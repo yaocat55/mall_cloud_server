@@ -12,6 +12,7 @@ import cn.net.mall.pay.entity.PayOrderEntity;
 import cn.net.mall.pay.entity.PayRefundEntity;
 import cn.net.mall.pay.enums.PayStatusEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +38,7 @@ import java.util.Map;
  */
 @Slf4j
 @Component
+@ConditionalOnProperty(name = "mall.pay.mock.enabled", havingValue = "true")
 public class MockChannelStrategy implements PayChannelStrategy {
 
     /** dev/test 开关：mall.pay.mock.enabled，prod 置 false */
@@ -108,10 +110,12 @@ public class MockChannelStrategy implements PayChannelStrategy {
 
     @Override
     public PayNotifyMessage parseNotify(Map<String, String> params, String rawBody, PayChannelConfigEntity config) {
-        // MOCK 回调报文：前端/测试模拟支付成功时，构造一个 PayNotifyMessage
+        // MOCK 回调报文：前端/测试模拟支付成功时，构造一个 PayNotifyMessage。
+        // 若调用方通过 MockNotifyController 传入了 merchantOrderNo，则填入（否则 handleNotify 无法反查支付单）。
         PayNotifyMessage message = new PayNotifyMessage();
         message.setPayStatus(PayStatusEnum.PAYMENT.getValue());
         message.setNotifyType("PAY");
+        message.setMerchantOrderNo(params.getOrDefault("merchantOrderNo", null));
         message.setSuccessTime(new Date());
         return message;
     }

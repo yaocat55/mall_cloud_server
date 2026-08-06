@@ -10,7 +10,7 @@ import cn.net.mall.pay.entity.ReconTempEntity;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.util.AssertUtil;
 import cn.net.mall.util.FillUserUtil;
-import cn.net.mall.pay.mapper.BaseMapper;
+import cn.net.mall.mapper.BaseMapper;
 import cn.net.mall.service.BaseService;
 /**
  * 对账临时（按批次批量插入，对账完成保留N天后清理） 服务层

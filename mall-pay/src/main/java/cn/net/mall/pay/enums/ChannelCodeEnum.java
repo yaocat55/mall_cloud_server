@@ -4,6 +4,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * 支付渠道编码枚举.
  */
@@ -37,5 +40,10 @@ public enum ChannelCodeEnum {
             }
         }
         return null;
+    }
+
+    /** 返回除 MOCK 以外的真实渠道（对账遍历用） */
+    public static List<ChannelCodeEnum> realChannels() {
+        return Arrays.asList(ALIPAY, WECHAT_PAY, WECHAT_MINI);
     }
 }

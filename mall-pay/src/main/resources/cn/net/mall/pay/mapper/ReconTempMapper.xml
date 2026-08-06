@@ -370,4 +370,48 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </select>
 
+    <!-- ============ 对账专用查询 ============ -->
+
+    <!-- 批量插入，一次 INSERT 多行（MyBatis foreach），避免逐行往返延迟 -->
+    <insert id="batchInsert">
+        INSERT INTO recon_temp (batch_no, line_no, trade_no, channel_trade_no,
+            refund_no, trade_time, trade_type, amount, fee, income,
+            trade_status, payer_account, ext_json, create_time)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.batchNo}, #{item.lineNo}, #{item.tradeNo}, #{item.channelTradeNo},
+             #{item.refundNo}, #{item.tradeTime}, #{item.tradeType}, #{item.amount}, #{item.fee}, #{item.income},
+             #{item.tradeStatus}, #{item.payerAccount}, #{item.extJson}, now(3))
+        </foreach>
+    </insert>
+
+    <!-- 按批次号查询全量临存（对账撮合用） -->
+    <select id="selectByBatchNo" resultMap="ReconTempResult">
+        SELECT <include refid="selectReconTempColumn"/>
+        FROM recon_temp
+        WHERE batch_no = #{batchNo}
+    </select>
+
+    <!-- 按批次号删除临时数据（重新对账或清理用） -->
+    <delete id="deleteByBatchNo">
+        DELETE FROM recon_temp WHERE batch_no = #{batchNo}
+    </delete>
+
+    <!-- 按批次号统计渠道侧总额和笔数 -->
+    <select id="sumByBatchNo" resultType="map">
+        SELECT
+            COUNT(*) as channel_count,
+            COALESCE(SUM(income), 0) as channel_total_amount
+        FROM recon_temp
+        WHERE batch_no = #{batchNo}
+    </select>
+
+    <!-- 按批次号统计退款项总额（tradeType=REFUND） -->
+    <select id="sumRefundByBatchNo" resultType="map">
+        SELECT
+            COALESCE(SUM(income), 0) as refund_total_amount
+        FROM recon_temp
+        WHERE batch_no = #{batchNo} AND trade_type = 'REFUND'
+    </select>
+
 </mapper>

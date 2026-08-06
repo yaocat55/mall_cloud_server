@@ -7,8 +7,8 @@ import lombok.Getter;
 /**
  * 支付状态枚举（对应 pay_order.pay_status）.
  *
- * <p>状态只关心「收钱」；收完钱之后的退款走 refund_status 维度，不回退 pay_status。</p>
- * <p>待支付/支付中已合并为单一待支付态（10）。</p>
+ * 状态只关心「收钱」；收完钱之后的退款走 refund_status 维度，不回退 pay_status。
+ * 待支付/支付中已合并为单一待支付态（10）。
  */
 @AllArgsConstructor
 @Getter
