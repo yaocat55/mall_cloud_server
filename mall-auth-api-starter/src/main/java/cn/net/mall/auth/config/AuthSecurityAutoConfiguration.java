@@ -78,7 +78,7 @@ public class AuthSecurityAutoConfiguration {
     }
 
     /**
-     * 不带 Redis 黑名单检查的 JWT 认证过滤器（mobile-bff 等无需 Redis 的服务使用）.
+     * 不带 Redis 黑名单检查的 JWT 认证过滤器（无需 Redis 的服务使用）.
      *
      * <p>仅在不存在 RedisUtil Bean 且没有自定义 JwtAuthenticationFilter 时创建。</p>
      */

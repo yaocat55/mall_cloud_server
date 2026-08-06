@@ -41,7 +41,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     /**
      * 不含 Redis 黑名单检查的过滤器（仅 JWT 验签）.
      *
-     * <p>适用于不需要踢人下线功能的服务（如 mobile-bff）。</p>
+     * <p>适用于不需要踢人下线功能的服务。</p>
      */
     public JwtAuthenticationFilter(String tokenSecret) {
         this.tokenSecret = tokenSecret;

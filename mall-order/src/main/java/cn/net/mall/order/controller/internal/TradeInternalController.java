@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.*;
 /**
  * 内部服务-交易.
  *
- * <p>供 mall-pay / mall-mobile-api 通过 Feign 调用，操作订单核心流转。</p>
+ * <p>供 mall-pay 通过 Feign 调用，支付回调时查询订单信息。</p>
  */
-@Tag(name = "内部服务-交易", description = "内部微服务：mall-pay / mall-mobile-api 通过 Feign 调用")
+@Tag(name = "内部服务-交易", description = "内部微服务：mall-pay 通过 Feign 调用")
 @RestController
 @RequestMapping("/v1/internal/trade")
 public class TradeInternalController {
