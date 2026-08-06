@@ -46,8 +46,6 @@ import cn.net.mall.redis.RedisUtil;
 import cn.net.mall.order.config.BusinessConfig;
 import cn.net.mall.order.message.OrderTimeoutCancelMessage;
 import cn.net.mall.mq.producer.MqProducer;
-import cn.net.mall.pay.client.PayFeignClient;
-import cn.net.mall.pay.dto.PayCloseDTO;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
 import lombok.RequiredArgsConstructor;
@@ -103,8 +101,6 @@ public class OrderService extends BaseService<OrderEntity, OrderConditionEntity>
     private final OrderEsRepository orderEsRepository;
 
     private final AddressFeignClient addressFeignClient;
-
-    private final PayFeignClient payFeignClient;
 
     private final RedisUtil redisUtil;
     private final MqProducer mqProducer;
