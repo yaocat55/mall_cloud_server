@@ -17,6 +17,7 @@ import cn.net.mall.exception.BusinessException;
 import cn.net.mall.workid.IdGenerateHelper;
 import cn.net.mall.mapper.BaseMapper;
 import cn.net.mall.product.es.EsTemplate;
+import cn.net.mall.mq.producer.MqProducer;
 import cn.net.mall.product.helper.*;
 import cn.net.mall.product.mapper.*;
 import cn.net.mall.product.mapper.ProductCommentMapper;
@@ -88,9 +89,9 @@ public class ProductService extends BaseService<ProductEntity, ProductConditionE
     private final MongoTemplate mongoTemplate;
     private final ThreadPoolExecutor productDetailThreadPoolExecutor;
     private final EsTemplate esTemplate;
-    private final MqHelper mqHelper;
+    private final MqProducer mqProducer;
 
-    public ProductService(ProductMapper productMapper, CategoryMapper categoryMapper, BrandMapper brandMapper, UnitMapper unitMapper, AttributeMapper attributeMapper, AttributeValueMapper attributeValueMapper, ProductPhotoMapper productPhotoMapper, ProductAttributeMapper productAttributeMapper, ProductDetailMapper productDetailMapper, TransactionTemplate transactionTemplate, ProductHelper productHelper, BusinessConfig businessConfig, IdGenerateHelper idGenerateHelper, ProductFavoritesMapper productFavoritesMapper, ProductCommentMapper productCommentMapper, ProductGroupMapper productGroupMapper, ProductGroupHelper productGroupHelper, ProductGroupAttributeMapper productGroupAttributeMapper, CategoryHelper categoryHelper, BrandHelper brandHelper, UnitHelper unitHelper, MongoTemplate mongoTemplate,ThreadPoolExecutor productDetailThreadPoolExecutor, EsTemplate esTemplate, MqHelper mqHelper) {
+    public ProductService(ProductMapper productMapper, CategoryMapper categoryMapper, BrandMapper brandMapper, UnitMapper unitMapper, AttributeMapper attributeMapper, AttributeValueMapper attributeValueMapper, ProductPhotoMapper productPhotoMapper, ProductAttributeMapper productAttributeMapper, ProductDetailMapper productDetailMapper, TransactionTemplate transactionTemplate, ProductHelper productHelper, BusinessConfig businessConfig, IdGenerateHelper idGenerateHelper, ProductFavoritesMapper productFavoritesMapper, ProductCommentMapper productCommentMapper, ProductGroupMapper productGroupMapper, ProductGroupHelper productGroupHelper, ProductGroupAttributeMapper productGroupAttributeMapper, CategoryHelper categoryHelper, BrandHelper brandHelper, UnitHelper unitHelper, MongoTemplate mongoTemplate,ThreadPoolExecutor productDetailThreadPoolExecutor, EsTemplate esTemplate, MqProducer mqProducer) {
         this.productMapper = productMapper;
         this.categoryMapper = categoryMapper;
         this.brandMapper = brandMapper;
@@ -115,7 +116,7 @@ public class ProductService extends BaseService<ProductEntity, ProductConditionE
         this.mongoTemplate = mongoTemplate;
         this.productDetailThreadPoolExecutor = productDetailThreadPoolExecutor;
         this.esTemplate = esTemplate;
-        this.mqHelper = mqHelper;
+        this.mqProducer = mqProducer;
     }
 
     /**
@@ -235,7 +236,7 @@ public class ProductService extends BaseService<ProductEntity, ProductConditionE
         try {
             String topic = businessConfig.getRecommendProductViewTopic();
             log.info("发送浏览消息 topic={} msgId={} userId={} productId={}", topic, msg.getId(), msg.getUserId(), msg.getProductId());
-            mqHelper.send(businessConfig.getRecommendProductViewTopic(), msg);
+            mqProducer.send(businessConfig.getRecommendProductViewTopic(), msg);
             log.info("浏览消息发送成功 topic={} msgId={}", topic, msg.getId());
         } catch (Exception e) {
             log.error("浏览消息发送失败 topic={} msgId={} error={}", businessConfig.getRecommendProductViewTopic(), msg.getId(), e.toString());

@@ -3,7 +3,7 @@ package cn.net.mall.basic.service.common;
 import cn.net.mall.basic.entity.common.CommonJobConditionEntity;
 import cn.net.mall.basic.entity.common.CommonJobEntity;
 import cn.net.mall.basic.enums.CommonJobOperateTypeEnum;
-import cn.net.mall.basic.helper.MqHelper;
+import cn.net.mall.mq.producer.MqProducer;
 import cn.net.mall.basic.mapper.common.CommonJobMapper;
 import cn.net.mall.entity.ResponsePageEntity;
 import cn.net.mall.exception.BusinessException;
@@ -32,11 +32,11 @@ import java.util.Optional;
 public class CommonJobService extends BaseService<CommonJobEntity, CommonJobConditionEntity> {
 
     private final CommonJobMapper commonJobMapper;
-    private final MqHelper mqHelper;
+    private final MqProducer mqProducer;
 
-    public CommonJobService(CommonJobMapper commonJobMapper, MqHelper mqHelper) {
+    public CommonJobService(CommonJobMapper commonJobMapper, MqProducer mqProducer) {
         this.commonJobMapper = commonJobMapper;
-        this.mqHelper = mqHelper;
+        this.mqProducer = mqProducer;
     }
 
     @Value("${mall.mgt.commonJobTopic:COMMON_JOB_TOPIC}")
@@ -135,7 +135,7 @@ public class CommonJobService extends BaseService<CommonJobEntity, CommonJobCond
     }
 
     private void sendDynamicJobMessage(CommonJobEntity commonJobEntity) {
-        mqHelper.send(commonJobTopic, commonJobEntity);
+        mqProducer.send(commonJobTopic, commonJobEntity);
     }
 
     /**
