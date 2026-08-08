@@ -13,7 +13,6 @@ import java.util.List;
  * 收货地址 Feign 客户端
  *
  * **调用方：**
- * - mall-mobile-bff（移动端 BFF）
  * - mall-order（订单服务）
  */
 @FeignClient(value = "mall-customer-api", contextId = "addressFeignClient")
